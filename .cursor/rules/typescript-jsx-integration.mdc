@@ -1,0 +1,96 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# TypeScript 和 JSX 集成指南
+
+## TypeScript 配置
+项目使用现代 TypeScript 设置以提供优秀的开发者体验：
+
+### 根配置
+- [tsconfig.json](mdc:tsconfig.json) - 工作区级别的 TypeScript 配置
+- 目标: ES2020+ 用于现代浏览器功能
+- 模块: ESNext 与 bundler 解析
+- 启用严格模式以确保类型安全
+
+### 包特定配置
+- [packages/core/tsconfig.json](mdc:packages/core/tsconfig.json) - 核心包 TypeScript 配置
+- [packages/babel-plugin/tsconfig.json](mdc:packages/babel-plugin/tsconfig.json) - Babel 插件 TypeScript 配置
+
+## JSX 设置
+### 零配置 JSX 体验
+用户可以使用 `.tsx` 文件而无需任何导入：
+
+```tsx
+// 开箱即用！
+function App() {
+  return <div>Hello World!</div>
+}
+```
+
+### JSX 类型和运行时
+- [packages/core/src/jsx-types.ts](mdc:packages/core/src/jsx-types.ts) - 完整的 JSX 类型定义
+- [packages/core/src/jsx-runtime.ts](mdc:packages/core/src/jsx-runtime.ts) - JSX 工厂函数
+
+### 用户配置模板
+推荐的消费者 `tsconfig.json`:
+```json
+{
+  "compilerOptions": {
+    "jsx": "preserve",
+    "jsxImportSource": "@vanilla-dom/core",
+    "lib": ["DOM", "ES2020"],
+    "module": "ESNext",
+    "moduleResolution": "bundler"
+  }
+}
+```
+
+## 关键 TypeScript 特性
+- **全局 JSX 命名空间**: JSX 无需导入即可工作
+- **内置元素**: 完整的 HTML 元素类型覆盖
+- **组件属性**: 类型安全的组件属性
+- **事件处理器**: 正确的事件类型
+- **DOM 引用**: 类型安全的 DOM 元素访问
+
+## 开发模式
+### 组件定义
+```tsx
+interface Props {
+  title: string
+  onClick?: () => void
+}
+
+function MyComponent({ title, onClick }: Props) {
+  return <button onClick={onClick}>{title}</button>
+}
+```
+
+### 事件处理
+```tsx
+function handleClick(event: MouseEvent) {
+  console.log('Button clicked!')
+}
+
+<button onClick={handleClick}>Click me</button>
+```
+
+### DOM 引用
+```tsx
+const inputRef = createRef<HTMLInputElement>()
+<input ref={inputRef} type="text" />
+```
+
+## 类型安全优势
+- **编译时验证**: 在运行时之前捕获错误
+- **IntelliSense 支持**: IDE 中的完整自动完成
+- **重构安全**: 可靠的代码转换
+- **API 契约**: 组件间的清晰接口
+
+## 构建集成
+- **tsup**: 快速 TypeScript 编译
+- **类型生成**: 自动 .d.ts 文件创建
+- **包优化**: 友好的 tree-shaking 类型
+- **IDE 支持**: 优秀的 VS Code 集成
+

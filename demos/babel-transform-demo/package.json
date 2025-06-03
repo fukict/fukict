@@ -1,0 +1,28 @@
+{
+  "name": "babel-transform-demo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "测试 @vanilla-dom/babel-plugin 的 JSX 转换效果",
+  "scripts": {
+    "clean": "rm -rf dist",
+    "test": "npm run transform && node test-runner.mjs",
+    "test-all": "npm run test && npm run test-ts && npm run test-webpack",
+    "test-ts": "npm run transform-ts && node test-runner-ts.mjs",
+    "test-webpack": "npm run transform-webpack && node test-runner-webpack.mjs",
+    "transform": "babel src/test.jsx --out-file dist/test.js",
+    "transform-ts": "babel src/test.tsx --out-file dist/test-ts.js",
+    "transform-webpack": "babel src/test.tsx --out-file dist/test-webpack.js --config-file ./babel-webpack.config.js"
+  },
+  "dependencies": {
+    "@vanilla-dom/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.0",
+    "@babel/plugin-syntax-jsx": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/preset-typescript": "^7.0.0",
+    "@vanilla-dom/babel-plugin": "workspace:*",
+    "typescript": "^5.0.0"
+  }
+}

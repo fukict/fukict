@@ -1,0 +1,57 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# 演示和示例指南
+
+## 概览
+demos 目录包含各种示例实现，展示 vanilla-dom 的不同集成模式和用例。
+
+## 演示结构
+- [demos/](mdc:demos) - 根演示目录
+- [demos/README.md](mdc:demos/README.md) - 所有可用演示的文档
+
+## 可用演示
+
+### 基础演示
+- [demos/basic-demo/](mdc:demos/basic-demo) - 无构建的原生演示
+- **目的**: 展示不使用任何构建工具的基本用法
+- **功能**: 计数器组件、Todo 列表、性能压力测试
+- **用法**: `cd demos/basic-demo && ./start.sh`
+
+### Babel 转换演示  
+- [demos/babel-transform-demo/](mdc:demos/babel-transform-demo) - JSX 编译演示
+- **目的**: 展示 babel 插件如何转换 JSX 代码
+- **功能**: 转换前后的示例对比
+
+### Webpack 演示
+- [demos/webpack-demo/](mdc:demos/webpack-demo) - Webpack 集成
+- **目的**: 展示如何将 vanilla-dom 与 Webpack 集成
+- **功能**: 生产构建设置、JSX 编译
+- **用法**: `cd demos/webpack-demo && npm start`
+
+### Vite 演示
+- [demos/vite-demo/](mdc:demos/vite-demo) - 现代 Vite 集成
+- **目的**: 展示与 Vite 的现代开发体验
+- **功能**: 热模块替换、TypeScript 支持
+- **用法**: `cd demos/vite-demo && npm run dev`
+
+### Rsbuild 演示
+- [demos/rsbuild-demo/](mdc:demos/rsbuild-demo) - Rsbuild 集成
+- **目的**: 展示与 Rsbuild 打包器的集成
+- **功能**: 快速构建时间、现代工具
+
+## 通用演示功能
+- **计数器组件**: 基本响应式状态管理
+- **Todo 列表**: CRUD 操作和列表渲染
+- **性能测试**: 1000+ 节点的压力测试
+- **实时监控**: 性能指标显示
+
+## 开发说明
+- 每个演示都应独立工作
+- 演示展示不同的工具链集成
+- 专注于实际使用模式
+- 在适用的地方包含性能基准测试
+- 在各演示中保持示例模式的一致性
+

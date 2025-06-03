@@ -1,0 +1,45 @@
+{
+  "name": "@vanilla-dom/widget",
+  "version": "0.1.0",
+  "description": "Component abstraction layer for vanilla-dom",
+  "keywords": [
+    "dom",
+    "jsx",
+    "components",
+    "vanilla",
+    "widget",
+    "typescript"
+  ],
+  "license": "MIT",
+  "author": "Your Name",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "clean": "rm -rf dist",
+    "dev": "tsup --watch",
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@vanilla-dom/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  }
+}

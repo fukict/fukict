@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@vanilla-dom/core Basic Demo</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        color: #4a5568;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .demo-section {
+        margin-bottom: 30px;
+        padding: 20px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        background: #f7fafc;
+      }
+
+      .demo-section h3 {
+        margin-top: 0;
+        color: #2d3748;
+      }
+
+      button {
+        background: #4299e1;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        margin: 5px;
+        transition: background-color 0.2s;
+      }
+
+      button:hover {
+        background: #3182ce;
+      }
+
+      .counter {
+        font-size: 1.2em;
+        font-weight: bold;
+        color: #2d3748;
+      }
+
+      .dynamic-list {
+        list-style: none;
+        padding: 0;
+      }
+
+      .dynamic-list li {
+        background: white;
+        margin: 5px 0;
+        padding: 10px;
+        border-radius: 4px;
+        border-left: 4px solid #4299e1;
+      }
+
+      input {
+        padding: 8px 12px;
+        border: 1px solid #cbd5e0;
+        border-radius: 4px;
+        margin: 5px;
+      }
+
+      .performance-stats {
+        background: #e6fffa;
+        border: 1px solid #81e6d9;
+        padding: 15px;
+        border-radius: 6px;
+        margin-top: 20px;
+      }
+
+      .api-info {
+        background: #fff5f5;
+        border: 1px solid #fed7d7;
+        padding: 15px;
+        border-radius: 6px;
+        margin-top: 20px;
+      }
+
+      code {
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 4px;
+        padding: 2px 6px;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        font-size: 0.9em;
+        color: #d63384;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🚀 @vanilla-dom/core Basic Demo</h1>
+      <p style="text-align: center; color: #718096">
+        直接使用 ES 模块，无需编译的高性能客户端渲染演示
+      </p>
+
+      <!-- Demo 容器 -->
+      <div id="demo-root"></div>
+
+      <div class="api-info">
+        <h4>📚 API 使用说明</h4>
+        <p>
+          <strong>hyperscript 函数签名：</strong><br />
+          <code>hyperscript(type, props, events, ...children)</code><br /><br />
+          • <strong>type</strong>: 元素类型或组件函数<br />
+          • <strong>props</strong>: 属性对象（如 className, id 等）<br />
+          • <strong>events</strong>: 事件对象（如 { click: handler }）<br />
+          • <strong>children</strong>: 子元素（可变参数）
+        </p>
+      </div>
+
+      <div class="performance-stats">
+        <h4>📊 性能统计</h4>
+        <div id="perf-stats">加载中...</div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { hyperscript, render } from '../../packages/core/dist/index.js';
+
+      // 性能计时开始
+      const startTime = performance.now();
+
+      // 应用状态
+      let appState = {
+        counter: 0,
+        todos: ['学习 Vanilla DOM', '构建高性能应用'],
+        inputValue: '',
+      };
+
+      // 组件：计数器
+      function Counter({ count, onIncrement, onDecrement }) {
+        return hyperscript(
+          'div',
+          { class: 'demo-section' },
+          null,
+          hyperscript('h3', null, null, '🔢 计数器组件'),
+          hyperscript('div', { class: 'counter' }, null, `当前计数: ${count}`),
+          hyperscript(
+            'div',
+            null,
+            null,
+            hyperscript('button', null, { click: onDecrement }, '➖ 减少'),
+            hyperscript('button', null, { click: onIncrement }, '➕ 增加'),
+          ),
+        );
+      }
+
+      // 组件：Todo 列表
+      function TodoList({ todos, inputValue, onInputChange, onAddTodo }) {
+        return hyperscript(
+          'div',
+          { class: 'demo-section' },
+          null,
+          hyperscript('h3', null, null, '📝 Todo 列表'),
+          hyperscript(
+            'div',
+            null,
+            null,
+            hyperscript(
+              'input',
+              {
+                type: 'text',
+                placeholder: '添加新任务...',
+                value: inputValue,
+              },
+              {
+                input: e => onInputChange(e.target.value),
+              },
+            ),
+            hyperscript('button', null, { click: onAddTodo }, '添加'),
+          ),
+          hyperscript(
+            'ul',
+            { class: 'dynamic-list' },
+            null,
+            ...todos.map((todo, index) =>
+              hyperscript('li', { key: index }, null, `${index + 1}. ${todo}`),
+            ),
+          ),
+        );
+      }
+
+      // 组件：性能展示
+      function PerformanceDemo({ onStressTest }) {
+        return hyperscript(
+          'div',
+          { class: 'demo-section' },
+          null,
+          hyperscript('h3', null, null, '⚡ 性能测试'),
+          hyperscript('p', null, null, '测试大量 DOM 节点的创建和更新性能'),
+          hyperscript(
+            'button',
+            null,
+            { click: onStressTest },
+            '运行压力测试 (1000 节点)',
+          ),
+        );
+      }
+
+      // 组件：API 演示
+      function APIDemo() {
+        return hyperscript(
+          'div',
+          { class: 'demo-section' },
+          null,
+          hyperscript('h3', null, null, '🔧 API 使用示例'),
+          hyperscript('p', null, null, '正确的 hyperscript 调用方式：'),
+          hyperscript(
+            'div',
+            {
+              style:
+                'background: #f8f9fa; padding: 10px; border-radius: 4px; margin: 10px 0;',
+            },
+            null,
+            hyperscript('div', null, null, '✅ 有属性无事件：'),
+            hyperscript(
+              'code',
+              null,
+              null,
+              'hyperscript("div", { class: "box" }, null, "内容")',
+            ),
+            hyperscript('br'),
+            hyperscript('div', null, null, '✅ 无属性有事件：'),
+            hyperscript(
+              'code',
+              null,
+              null,
+              'hyperscript("button", null, { click: handler }, "按钮")',
+            ),
+            hyperscript('br'),
+            hyperscript('div', null, null, '✅ 既有属性又有事件：'),
+            hyperscript(
+              'code',
+              null,
+              null,
+              'hyperscript("button", { class: "btn" }, { click: handler }, "按钮")',
+            ),
+          ),
+        );
+      }
+
+      // 主应用组件
+      function App(state) {
+        return hyperscript(
+          'div',
+          null,
+          null,
+          // 计数器演示
+          hyperscript(Counter, {
+            count: state.counter,
+            onIncrement: () => updateState({ counter: state.counter + 1 }),
+            onDecrement: () =>
+              updateState({ counter: Math.max(0, state.counter - 1) }),
+          }),
+
+          // Todo 列表演示
+          hyperscript(TodoList, {
+            todos: state.todos,
+            inputValue: state.inputValue,
+            onInputChange: value => updateState({ inputValue: value }),
+            onAddTodo: () => {
+              if (state.inputValue.trim()) {
+                updateState({
+                  todos: [...state.todos, state.inputValue.trim()],
+                  inputValue: '',
+                });
+              }
+            },
+          }),
+
+          // API 演示
+          hyperscript(APIDemo),
+
+          // 性能测试演示
+          hyperscript(PerformanceDemo, {
+            onStressTest: runStressTest,
+          }),
+        );
+      }
+
+      // 状态更新函数
+      function updateState(newState) {
+        appState = { ...appState, ...newState };
+        renderApp();
+      }
+
+      function renderApp() {
+        const vnode = hyperscript(App, appState);
+
+        // 简单直接的重新渲染（清空容器后重新渲染）
+        const container = document.getElementById('demo-root');
+        render(vnode, {
+          container: container,
+          replace: true, // 清空容器内容
+        });
+      }
+
+      // 压力测试函数
+      function runStressTest() {
+        const testStart = performance.now();
+
+        // 创建 1000 个节点的 VNode 树
+        const bigList = Array.from({ length: 1000 }, (_, i) =>
+          hyperscript(
+            'div',
+            {
+              key: i,
+              style: `padding: 2px; background: hsl(${i % 360}, 50%, 95%)`,
+            },
+            null,
+            `节点 ${i + 1}`,
+          ),
+        );
+
+        const stressVNode = hyperscript(
+          'div',
+          { class: 'demo-section' },
+          null,
+          hyperscript('h3', null, null, '🧪 压力测试结果'),
+          hyperscript(
+            'div',
+            {
+              style:
+                'max-height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;',
+            },
+            null,
+            ...bigList,
+          ),
+        );
+
+        // 渲染到新容器
+        const stressContainer = document.createElement('div');
+        document.querySelector('.container').appendChild(stressContainer);
+
+        render(stressVNode, { container: stressContainer });
+
+        const testEnd = performance.now();
+
+        // 显示性能结果
+        setTimeout(() => {
+          alert(
+            `压力测试完成！\n创建 1000 个节点耗时: ${(testEnd - testStart).toFixed(2)}ms`,
+          );
+
+          // 3秒后移除测试容器
+          setTimeout(() => {
+            stressContainer.remove();
+          }, 3000);
+        }, 100);
+      }
+
+      // 初始渲染
+      renderApp();
+
+      // 显示性能统计
+      const endTime = performance.now();
+      document.getElementById('perf-stats').innerHTML = `
+            <div>🚀 应用启动时间: ${(endTime - startTime).toFixed(2)}ms</div>
+            <div>📦 使用包: @vanilla-dom/core v0.1.0</div>
+            <div>⚡ 渲染模式: 客户端直接渲染 (无编译)</div>
+            <div>🎯 更新策略: 完全重新渲染 (简单模式)</div>
+            <div>🔧 核心函数: hyperscript (参数: type, props, events, children)</div>
+        `;
+
+      // 全局调试
+      window.vanillaDomDemo = {
+        appState,
+        updateState,
+        renderApp,
+        // 暴露 API 供测试
+        hyperscript,
+        render,
+      };
+
+      console.log('🎉 @vanilla-dom/core demo 已加载完成!');
+      console.log('📝 可在控制台通过 window.vanillaDomDemo 访问应用状态');
+      console.log('🔧 核心 API: hyperscript(type, props, events, ...children)');
+    </script>
+  </body>
+</html>

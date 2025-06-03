@@ -1,0 +1,58 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Babel 插件指南 (@vanilla-dom/babel-plugin)
+
+## 包概览
+babel 插件处理编译时 JSX 转换，将 JSX 语法转换为优化的节点树数据结构。这通过预处理静态内容分析实现运行时性能优化。
+
+## 关键源文件
+
+### 插件核心
+- [packages/babel-plugin/src/index.ts](mdc:packages/babel-plugin/src/index.ts) - 主要插件导出和入口点
+- [packages/babel-plugin/src/plugin.ts](mdc:packages/babel-plugin/src/plugin.ts) - 核心 Babel 插件实现和 AST 转换逻辑
+- [packages/babel-plugin/src/utils.ts](mdc:packages/babel-plugin/src/utils.ts) - JSX 处理和优化的工具函数
+- [packages/babel-plugin/src/types.ts](mdc:packages/babel-plugin/src/types.ts) - 插件配置和 AST 节点的类型定义
+
+## 配置文件
+- [packages/babel-plugin/package.json](mdc:packages/babel-plugin/package.json) - 包配置和 Babel 依赖项
+- [packages/babel-plugin/tsconfig.json](mdc:packages/babel-plugin/tsconfig.json) - TypeScript 配置
+- [packages/babel-plugin/tsup.config.ts](mdc:packages/babel-plugin/tsup.config.ts) - 插件分发的构建配置
+
+## 核心功能
+- **JSX 转换**: 将 JSX 元素转换为优化的节点树数据结构
+- **静态分析**: 在编译时识别静态内容与动态内容
+- **代码生成**: 为 DOM 创建生成高效的运行时代码
+- **事件优化**: 检测和优化事件处理器模式
+
+## 转换示例
+插件将：
+```jsx
+<div class="container" onClick={handler}>
+  <span>{text}</span>
+</div>
+```
+
+转换为优化的数据结构：
+```javascript
+{
+  type: "div",
+  props: { class: "container", onClick: handler },
+  children: [
+    { type: "span", props: {}, children: [{ type: "text", value: text }] }
+  ]
+}
+```
+
+## 测试
+- [packages/babel-plugin/tests/](mdc:packages/babel-plugin/tests) - 插件转换测试和边界情况
+
+## 开发说明
+- 专注于编译时优化以减少运行时开销
+- 正确处理所有 JSX 语法模式
+- 生成 TypeScript 兼容的输出
+- 保持与标准 Babel 插件架构的兼容性
+- 考虑边界情况，如片段、子元素数组和动态属性
+
