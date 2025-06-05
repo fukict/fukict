@@ -1,105 +1,65 @@
-import type {
-  StateUpdater,
-  WidgetLifecycle,
-  WidgetOptions,
-  WidgetProps,
-  WidgetRenderFunction,
-  WidgetState,
-} from './types';
-import { type VNode, render } from '@vanilla-dom/core';
+import type { VNode } from '@vanilla-dom/core';
+import { render } from '@vanilla-dom/core';
+import type { WidgetProps, DOMQuery, DOMBatchQuery } from './types';
 
 /**
- * Widget 抽象基类
- *
- * 提供组件化开发的基础设施，包括：
- * - 生命周期管理
- * - 状态管理
- * - 自动重渲染
- * - 事件处理
+ * 高阶 Widget 基类
+ * 
+ * 用于单个复杂组件封装场景：
+ * - 只在初始化时接收 props
+ * - 后期不允许 props 变更触发重渲染
+ * - 提供简洁的 DOM 查询和操作接口
+ * - 手动控制渲染时机
  */
-export abstract class Widget<
-  TProps extends WidgetProps = WidgetProps,
-  TState extends WidgetState = WidgetState,
-> implements WidgetLifecycle
-{
+export abstract class Widget<TProps extends WidgetProps = WidgetProps> {
   /**
-   * 组件属性
+   * 初始属性（只读）
    */
-  protected props: TProps;
+  protected readonly props: TProps;
 
   /**
-   * 组件状态
+   * 根 DOM 元素
    */
-  protected state: TState;
-
-  /**
-   * 组件配置选项
-   */
-  protected options: WidgetOptions;
-
-  /**
-   * 当前渲染的 DOM 元素
-   */
-  protected element: Element | null = null;
+  protected root: Element | null = null;
 
   /**
    * 当前的 VNode 树
    */
-  protected currentVNode: VNode | null = null;
+  protected vnode: VNode | null = null;
 
   /**
    * 是否已挂载
    */
-  protected isMounted = false;
+  private _isMounted = false;
 
-  /**
-   * 是否正在更新
-   */
-  protected isUpdating = false;
-
-  constructor(
-    props: TProps = {} as TProps,
-    initialState: TState = {} as TState,
-    options: WidgetOptions = {},
-  ) {
-    this.props = props;
-    this.state = initialState;
-    this.options = {
-      autoRender: true,
-      ...options,
-    };
+  constructor(initialProps: TProps) {
+    this.props = { ...initialProps };
   }
 
   /**
    * 抽象渲染方法，必须由子类实现
    */
-  abstract render(): VNode | VNode[] | string | number | null | undefined;
+  abstract render(): VNode;
 
   /**
    * 挂载组件到指定容器
    */
-  async mount(container: Element): Promise<void> {
-    if (this.isMounted) {
+  mount(container: Element): void {
+    if (this._isMounted) {
       console.warn('Widget is already mounted');
       return;
     }
 
     try {
-      // 执行挂载前生命周期
-      await this.beforeMount?.();
-
       // 执行渲染
       const vnode = this.render();
-      if (vnode) {
-        this.currentVNode = Array.isArray(vnode) ? vnode[0] : (vnode as VNode);
-        render(this.currentVNode, { container });
-        this.element = container.firstElementChild;
-      }
-
-      this.isMounted = true;
-
-      // 执行挂载后生命周期
-      await this.afterMount?.();
+      this.vnode = vnode;
+      
+      // 渲染到容器
+      render(vnode, { container });
+      this.root = container.firstElementChild;
+      
+      this._isMounted = true;
     } catch (error) {
       console.error('Error during widget mount:', error);
       throw error;
@@ -109,28 +69,22 @@ export abstract class Widget<
   /**
    * 卸载组件
    */
-  async unmount(): Promise<void> {
-    if (!this.isMounted) {
+  unmount(): void {
+    if (!this._isMounted) {
       console.warn('Widget is not mounted');
       return;
     }
 
     try {
-      // 执行卸载前生命周期
-      await this.beforeUnmount?.();
-
       // 清理 DOM
-      if (this.element && this.element.parentNode) {
-        this.element.parentNode.removeChild(this.element);
+      if (this.root && this.root.parentNode) {
+        this.root.parentNode.removeChild(this.root);
       }
 
       // 重置状态
-      this.element = null;
-      this.currentVNode = null;
-      this.isMounted = false;
-
-      // 执行卸载后生命周期
-      await this.afterUnmount?.();
+      this.root = null;
+      this.vnode = null;
+      this._isMounted = false;
     } catch (error) {
       console.error('Error during widget unmount:', error);
       throw error;
@@ -138,171 +92,104 @@ export abstract class Widget<
   }
 
   /**
-   * 更新组件状态
+   * 获取挂载状态
    */
-  async setState(
-    updater: Partial<TState> | StateUpdater<TState>,
-  ): Promise<void> {
-    if (!this.isMounted || this.isUpdating) {
-      return;
-    }
-
-    const prevState = { ...this.state };
-    const prevProps = { ...this.props };
-
-    // 计算新状态
-    const newState =
-      typeof updater === 'function' ? updater(this.state) : updater;
-
-    const nextState = { ...this.state, ...newState };
-
-    // 检查是否需要更新
-    if (!this.shouldUpdate(prevProps, prevState, this.props, nextState)) {
-      return;
-    }
-
-    this.isUpdating = true;
-
-    try {
-      // 执行更新前生命周期
-      await this.beforeUpdate?.(prevProps, prevState);
-
-      // 更新状态
-      this.state = nextState;
-
-      // 重新渲染（如果启用自动渲染）
-      if (this.options.autoRender) {
-        await this.forceUpdate();
-      }
-
-      // 执行更新后生命周期
-      await this.afterUpdate?.(prevProps, prevState);
-    } catch (error) {
-      console.error('Error during widget update:', error);
-      throw error;
-    } finally {
-      this.isUpdating = false;
-    }
+  get isMounted(): boolean {
+    return this._isMounted;
   }
 
   /**
-   * 更新组件属性
+   * 获取根 DOM 元素
    */
-  async setProps(newProps: Partial<TProps>): Promise<void> {
-    const prevProps = { ...this.props };
-    const prevState = { ...this.state };
-    const nextProps = { ...this.props, ...newProps };
-
-    // 检查是否需要更新
-    if (!this.shouldUpdate(prevProps, prevState, nextProps, this.state)) {
-      return;
+  getRoot(): Element {
+    if (!this.root) {
+      throw new Error('Widget is not mounted or root element not found');
     }
-
-    this.isUpdating = true;
-
-    try {
-      // 执行更新前生命周期
-      await this.beforeUpdate?.(prevProps, prevState);
-
-      // 更新属性
-      this.props = nextProps;
-
-      // 重新渲染（如果启用自动渲染）
-      if (this.options.autoRender) {
-        await this.forceUpdate();
-      }
-
-      // 执行更新后生命周期
-      await this.afterUpdate?.(prevProps, prevState);
-    } catch (error) {
-      console.error('Error during widget props update:', error);
-      throw error;
-    } finally {
-      this.isUpdating = false;
-    }
+    return this.root;
   }
 
   /**
-   * 强制重新渲染
+   * 单个 DOM 查询
    */
-  async forceUpdate(): Promise<void> {
-    if (!this.isMounted || !this.element?.parentNode) {
-      return;
+  $(selector: string): DOMQuery | null {
+    if (!this.root) {
+      return null;
     }
 
-    try {
-      const vnode = this.render();
-      if (vnode) {
-        const newVNode = Array.isArray(vnode) ? vnode[0] : (vnode as VNode);
+    const element = this.root.querySelector(selector);
+    if (!element) {
+      return null;
+    }
 
-        // 这里应该使用 core 包的 updateDOM 方法进行精确更新
-        // 暂时使用简单的重新渲染
-        const container = this.element.parentNode as Element;
-        if (this.element) {
-          container.removeChild(this.element);
+    return {
+      element,
+      get: (attr: string) => this.getElementAttribute(element, attr),
+      set: (attr: string, value: any) => this.setElementAttribute(element, attr, value),
+    };
+  }
+
+  /**
+   * 批量 DOM 查询
+   */
+  $$(selector: string): DOMBatchQuery {
+    if (!this.root) {
+      return {
+        elements: [],
+        batchGet: () => [],
+        batchSet: (() => {}) as any,
+      };
+    }
+
+    const elements = Array.from(this.root.querySelectorAll(selector));
+
+    return {
+      elements,
+      batchGet: (attr: string) => 
+        elements.map(el => this.getElementAttribute(el, attr)),
+      batchSet: ((attrOrAttrs: string | Record<string, any>, value?: any) => {
+        if (typeof attrOrAttrs === 'string') {
+          // 单属性批量设置
+          elements.forEach(el => this.setElementAttribute(el, attrOrAttrs, value));
+        } else {
+          // 多属性批量设置
+          const attrs = attrOrAttrs;
+          elements.forEach(el => {
+            Object.entries(attrs).forEach(([attr, val]) => {
+              this.setElementAttribute(el, attr, val);
+            });
+          });
         }
-
-        render(newVNode, { container });
-        this.element = container.firstElementChild;
-        this.currentVNode = newVNode;
-      }
-    } catch (error) {
-      console.error('Error during force update:', error);
-      throw error;
-    }
+      }) as DOMBatchQuery['batchSet'],
+    };
   }
 
   /**
-   * 判断是否需要更新
+   * 获取元素属性的内部实现
    */
-  protected shouldUpdate(
-    prevProps: TProps,
-    prevState: TState,
-    nextProps: TProps,
-    nextState: TState,
-  ): boolean {
-    // 如果有自定义的 shouldUpdate 函数，使用它
-    if (this.options.shouldUpdate) {
-      return this.options.shouldUpdate(
-        prevProps,
-        prevState,
-        nextProps,
-        nextState,
-      );
+  private getElementAttribute(element: Element, attr: string): any {
+    // 检查属性是否存在于 DOM 对象上
+    if (attr in element) {
+      return (element as any)[attr];
     }
-
-    // 简单的浅比较
-    return (
-      !this.shallowEqual(prevProps, nextProps) ||
-      !this.shallowEqual(prevState, nextState)
-    );
+    
+    // 否则使用 getAttribute
+    return element.getAttribute(attr);
   }
 
   /**
-   * 浅比较两个对象
+   * 设置元素属性的内部实现
    */
-  protected shallowEqual(obj1: any, obj2: any): boolean {
-    const keys1 = Object.keys(obj1);
-    const keys2 = Object.keys(obj2);
-
-    if (keys1.length !== keys2.length) {
-      return false;
-    }
-
-    for (const key of keys1) {
-      if (obj1[key] !== obj2[key]) {
-        return false;
+  private setElementAttribute(element: Element, attr: string, value: any): void {
+    // 检查属性是否存在于 DOM 对象上
+    if (attr in element) {
+      (element as any)[attr] = value;
+    } else {
+      // 使用 setAttribute/removeAttribute
+      if (value === null || value === undefined) {
+        element.removeAttribute(attr);
+      } else {
+        element.setAttribute(attr, String(value));
       }
     }
-
-    return true;
   }
-
-  // 生命周期钩子的默认实现（可选重写）
-  beforeMount?(): void | Promise<void>;
-  afterMount?(): void | Promise<void>;
-  beforeUpdate?(prevProps: TProps, prevState: TState): void | Promise<void>;
-  afterUpdate?(prevProps: TProps, prevState: TState): void | Promise<void>;
-  beforeUnmount?(): void | Promise<void>;
-  afterUnmount?(): void | Promise<void>;
 }

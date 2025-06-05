@@ -67,9 +67,5 @@ module: {
 const testButton = (
   <button on:click={() => console.log('测试点击')}>Test Events</button>
 );
-console.log('Test button VNode:', testButton);
-console.log('Test button events:', testButton.events);
 
-const app = <App />;
-
-render(app, { container: document.getElementById('app')! });
+render(<App />, { container: document.getElementById('app')! });

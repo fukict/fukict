@@ -1,91 +1,86 @@
 import type { VNode } from '@vanilla-dom/core';
 
 /**
- * Widget 状态类型
- */
-export type WidgetState = Record<string, any>;
-
-/**
  * Widget 属性类型
  */
 export type WidgetProps = Record<string, any>;
 
 /**
- * Widget 生命周期钩子函数类型
+ * 简易函数组件实例类型
  */
-export interface WidgetLifecycle {
+export interface SimpleWidgetInstance {
   /**
-   * 组件挂载前调用
+   * 当前的 DOM 元素
    */
-  beforeMount?(): void | Promise<void>;
+  element: Element | null;
 
   /**
-   * 组件挂载后调用
+   * 更新 props 并重新渲染
    */
-  afterMount?(): void | Promise<void>;
+  update: (newProps: WidgetProps) => void;
 
   /**
-   * 组件更新前调用
+   * 挂载组件到指定容器
    */
-  beforeUpdate?(
-    prevProps: WidgetProps,
-    prevState: WidgetState,
-  ): void | Promise<void>;
+  mount: (container: Element) => void;
 
   /**
-   * 组件更新后调用
+   * 销毁组件
    */
-  afterUpdate?(
-    prevProps: WidgetProps,
-    prevState: WidgetState,
-  ): void | Promise<void>;
-
-  /**
-   * 组件卸载前调用
-   */
-  beforeUnmount?(): void | Promise<void>;
-
-  /**
-   * 组件卸载后调用
-   */
-  afterUnmount?(): void | Promise<void>;
+  destroy: () => void;
 }
 
 /**
- * Widget 渲染函数类型
+ * 简易函数组件类型
  */
-export type WidgetRenderFunction = () =>
-  | VNode
-  | VNode[]
-  | string
-  | number
-  | null
-  | undefined;
+export type SimpleWidgetRender<T extends WidgetProps> = (props: T) => VNode;
 
 /**
- * Widget 状态更新函数类型
+ * 简易函数组件工厂类型
  */
-export type StateUpdater<T extends WidgetState> = (
-  prevState: T,
-) => Partial<T> | T;
+export type SimpleWidgetFactory<T extends WidgetProps> = (
+  renderFn: SimpleWidgetRender<T>
+) => (props: T) => SimpleWidgetInstance;
 
 /**
- * Widget 配置选项
+ * DOM 元素单个查询结果
  */
-export interface WidgetOptions {
+export interface DOMQuery {
   /**
-   * 是否自动重渲染（当状态变化时）
-   * @default true
+   * 查询到的 DOM 元素
    */
-  autoRender?: boolean;
+  element: Element | null;
 
   /**
-   * 自定义状态比较函数
+   * 获取元素属性
    */
-  shouldUpdate?(
-    prevProps: WidgetProps,
-    prevState: WidgetState,
-    nextProps: WidgetProps,
-    nextState: WidgetState,
-  ): boolean;
+  get: (attr: string) => any;
+
+  /**
+   * 设置元素属性
+   */
+  set: (attr: string, value: any) => void;
+}
+
+/**
+ * DOM 元素批量查询结果
+ */
+export interface DOMBatchQuery {
+  /**
+   * 查询到的 DOM 元素列表
+   */
+  elements: Element[];
+
+  /**
+   * 批量获取属性
+   */
+  batchGet: (attr: string) => any[];
+
+  /**
+   * 批量设置属性（支持重载）
+   */
+  batchSet: {
+    (attr: string, value: any): void;
+    (attrs: Record<string, any>): void;
+  };
 }

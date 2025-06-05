@@ -31,11 +31,6 @@ const domToVNodeMap = new WeakMap<Node, VNode>();
  * 将 VNode 转换为 DOM 元素
  */
 export function createDOMFromTree(vnode: VNode): Node {
-  // 确保 children 总是数组
-  if (!Array.isArray(vnode.children)) {
-    vnode.children = [];
-  }
-
   if (typeof vnode.type === 'function') {
     // 处理组件
     return createDOMFromComponent(vnode);
@@ -57,8 +52,9 @@ export function createDOMFromTree(vnode: VNode): Node {
   } else {
   }
 
-  // 渲染子节点
-  for (const child of vnode.children) {
+  // 渲染子节点 - 使用局部变量，不修改原始数据
+  const children = Array.isArray(vnode.children) ? vnode.children : [];
+  for (const child of children) {
     const childNode = createDOMFromChild(child);
     if (childNode) {
       appendChild(element, childNode);
@@ -78,11 +74,6 @@ export function createDOMFromTree(vnode: VNode): Node {
 function createDOMFromComponent(vnode: VNode): Node {
   const component = vnode.type as ComponentFunction;
   const childVNode = component(vnode.props || {});
-
-  // 确保组件返回的 VNode 有正确的 children 结构
-  if (!Array.isArray(childVNode.children)) {
-    childVNode.children = [];
-  }
 
   const domNode = createDOMFromTree(childVNode);
 
@@ -149,8 +140,10 @@ export function updateDOM(
     // 更新事件监听器
     updateEvents(domNode as Element, newVNode.events, oldVNode.events);
 
-    // 更新子节点
-    updateChildren(domNode as Element, oldVNode.children, newVNode.children);
+    // 更新子节点 - 使用安全的方式处理 children
+    const oldChildren = Array.isArray(oldVNode.children) ? oldVNode.children : [];
+    const newChildren = Array.isArray(newVNode.children) ? newVNode.children : [];
+    updateChildren(domNode as Element, oldChildren, newChildren);
 
     // 更新映射关系
     domToVNodeMap.set(domNode, newVNode);

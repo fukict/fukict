@@ -33,7 +33,7 @@
     "test:watch": "vitest",
     "type-check": "tsc --noEmit"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@vanilla-dom/core": "workspace:*"
   },
   "devDependencies": {
