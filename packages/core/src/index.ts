@@ -15,7 +15,22 @@ export type {
   DOMProps,
   RenderOptions,
   UpdateContext,
+  RefCallback,
 } from './types.js';
+
+// 导出组件注册机制
+export {
+  registerComponentDetector,
+  getAllDetectors,
+  isComponentRegistered,
+  createComponentInstance,
+  getComponentReference,
+} from './component-registry.js';
+
+export type {
+  ComponentInstance,
+  ComponentDetector,
+} from './component-registry.js';
 
 // 导出渲染引擎
 export { render, createDOMFromTree, updateDOM, hydrate } from './renderer.js';

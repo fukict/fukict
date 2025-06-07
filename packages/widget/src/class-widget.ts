@@ -1,17 +1,24 @@
+import type { DOMBatchQuery, DOMQuery, WidgetProps } from './types';
 import type { VNode } from '@vanilla-dom/core';
 import { render } from '@vanilla-dom/core';
-import type { WidgetProps, DOMQuery, DOMBatchQuery } from './types';
 
 /**
  * 高阶 Widget 基类
- * 
+ *
  * 用于单个复杂组件封装场景：
  * - 只在初始化时接收 props
  * - 后期不允许 props 变更触发重渲染
  * - 提供简洁的 DOM 查询和操作接口
  * - 手动控制渲染时机
+ * - 自动支持组件注册机制
  */
 export abstract class Widget<TProps extends WidgetProps = WidgetProps> {
+  /**
+   * 组件类型标志 - 用于 babel-plugin 自动识别
+   * 所有继承自 Widget 的类都会自动获得此标志
+   */
+  static __COMPONENT_TYPE__ = 'WIDGET_CLASS';
+
   /**
    * 初始属性（只读）
    */
@@ -42,11 +49,27 @@ export abstract class Widget<TProps extends WidgetProps = WidgetProps> {
   abstract render(): VNode;
 
   /**
+   * 组件挂载后的生命周期钩子
+   * 子类可重写此方法进行初始化操作
+   */
+  protected onMounted(): void {
+    // 默认为空实现，子类可重写
+  }
+
+  /**
+   * 组件卸载前的生命周期钩子
+   * 子类可重写此方法进行清理操作
+   */
+  protected onUnmounting(): void {
+    // 默认为空实现，子类可重写
+  }
+
+  /**
    * 挂载组件到指定容器
    */
   mount(container: Element): void {
     if (this._isMounted) {
-      console.warn('Widget is already mounted');
+      console.warn('[@vanilla-dom/widget] Widget is already mounted');
       return;
     }
 
@@ -54,14 +77,17 @@ export abstract class Widget<TProps extends WidgetProps = WidgetProps> {
       // 执行渲染
       const vnode = this.render();
       this.vnode = vnode;
-      
+
       // 渲染到容器
       render(vnode, { container });
       this.root = container.firstElementChild;
-      
+
       this._isMounted = true;
+
+      // 调用生命周期钩子
+      this.onMounted();
     } catch (error) {
-      console.error('Error during widget mount:', error);
+      console.error('[@vanilla-dom/widget] Error during widget mount:', error);
       throw error;
     }
   }
@@ -71,11 +97,14 @@ export abstract class Widget<TProps extends WidgetProps = WidgetProps> {
    */
   unmount(): void {
     if (!this._isMounted) {
-      console.warn('Widget is not mounted');
+      console.warn('[@vanilla-dom/widget] Widget is not mounted');
       return;
     }
 
     try {
+      // 调用生命周期钩子
+      this.onUnmounting();
+
       // 清理 DOM
       if (this.root && this.root.parentNode) {
         this.root.parentNode.removeChild(this.root);
@@ -86,7 +115,7 @@ export abstract class Widget<TProps extends WidgetProps = WidgetProps> {
       this.vnode = null;
       this._isMounted = false;
     } catch (error) {
-      console.error('Error during widget unmount:', error);
+      console.error('[@vanilla-dom/widget] Error during widget unmount:', error);
       throw error;
     }
   }
@@ -100,6 +129,13 @@ export abstract class Widget<TProps extends WidgetProps = WidgetProps> {
 
   /**
    * 获取根 DOM 元素
+   */
+  get element(): Element | null {
+    return this.root;
+  }
+
+  /**
+   * 获取根 DOM 元素 (兼容旧 API)
    */
   getRoot(): Element {
     if (!this.root) {
@@ -124,7 +160,8 @@ export abstract class Widget<TProps extends WidgetProps = WidgetProps> {
     return {
       element,
       get: (attr: string) => this.getElementAttribute(element, attr),
-      set: (attr: string, value: any) => this.setElementAttribute(element, attr, value),
+      set: (attr: string, value: any) =>
+        this.setElementAttribute(element, attr, value),
     };
   }
 
@@ -144,12 +181,14 @@ export abstract class Widget<TProps extends WidgetProps = WidgetProps> {
 
     return {
       elements,
-      batchGet: (attr: string) => 
+      batchGet: (attr: string) =>
         elements.map(el => this.getElementAttribute(el, attr)),
       batchSet: ((attrOrAttrs: string | Record<string, any>, value?: any) => {
         if (typeof attrOrAttrs === 'string') {
           // 单属性批量设置
-          elements.forEach(el => this.setElementAttribute(el, attrOrAttrs, value));
+          elements.forEach(el =>
+            this.setElementAttribute(el, attrOrAttrs, value),
+          );
         } else {
           // 多属性批量设置
           const attrs = attrOrAttrs;
@@ -171,7 +210,7 @@ export abstract class Widget<TProps extends WidgetProps = WidgetProps> {
     if (attr in element) {
       return (element as any)[attr];
     }
-    
+
     // 否则使用 getAttribute
     return element.getAttribute(attr);
   }
@@ -179,7 +218,11 @@ export abstract class Widget<TProps extends WidgetProps = WidgetProps> {
   /**
    * 设置元素属性的内部实现
    */
-  private setElementAttribute(element: Element, attr: string, value: any): void {
+  private setElementAttribute(
+    element: Element,
+    attr: string,
+    value: any,
+  ): void {
     // 检查属性是否存在于 DOM 对象上
     if (attr in element) {
       (element as any)[attr] = value;

@@ -11,35 +11,62 @@
     "typescript"
   ],
   "license": "MIT",
-  "author": "Your Name",
+  "author": "xiaoyown",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vanilla-dom/vanilla-dom.git",
+    "directory": "packages/widget"
+  },
   "type": "module",
+  "sideEffects": false,
   "exports": {
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./jsx-runtime": {
+      "import": "./dist/jsx-runtime.js",
+      "types": "./dist/jsx-runtime.d.ts"
+    },
+    "./class-widget": {
+      "import": "./dist/class-widget.js",
+      "types": "./dist/class-widget.d.ts"
+    },
+    "./functional-widget": {
+      "import": "./dist/functional-widget.js",
+      "types": "./dist/functional-widget.d.ts"
+    },
+    "./adapters": {
+      "import": "./dist/adapters.js",
+      "types": "./dist/adapters.d.ts"
+    },
+    "./types": {
+      "import": "./dist/types.js",
+      "types": "./dist/types.d.ts"
     }
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "scripts": {
-    "build": "tsup",
-    "clean": "rm -rf dist",
+    "build": "premove dist && tsup",
     "dev": "tsup --watch",
     "test": "vitest --run",
     "test:watch": "vitest",
     "type-check": "tsc --noEmit"
   },
-  "peerDependencies": {
-    "@vanilla-dom/core": "workspace:*"
-  },
   "devDependencies": {
     "@types/node": "^20.0.0",
+    "premove": "^4.0.0",
     "tsup": "^8.0.0",
     "typescript": "^5.0.0",
     "vitest": "^1.0.0"
+  },
+  "peerDependencies": {
+    "@vanilla-dom/core": "workspace:*"
   }
 }

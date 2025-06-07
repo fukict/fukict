@@ -1,0 +1,54 @@
+{
+  "name": "@vanilla-dom/babel-preset-widget",
+  "version": "0.1.0",
+  "description": "Babel preset for @vanilla-dom/widget - provides optimized JSX transformation for Widget components",
+  "keywords": [
+    "babel",
+    "preset",
+    "vanilla-dom",
+    "widget",
+    "jsx",
+    "typescript",
+    "components"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vanilla-dom/vanilla-dom.git",
+    "directory": "packages/babel-preset-widget"
+  },
+  "license": "MIT",
+  "author": "xiaoyown",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "echo \"No tests for preset\" && exit 0"
+  },
+  "dependencies": {
+    "@vanilla-dom/babel-plugin": "workspace:*"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.8",
+    "@babel/types": "^7.25.8",
+    "tsup": "^8.3.5",
+    "typescript": "^5.6.3"
+  },
+  "peerDependencies": {
+    "@babel/core": "^7.0.0"
+  }
+}

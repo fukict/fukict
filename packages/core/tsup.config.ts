@@ -1,30 +1,27 @@
-import { defineConfig } from 'tsup';
+import { Options, defineConfig } from 'tsup';
 
-export default defineConfig([
-  {
-    // 主要入口点
-    entry: ['src/index.ts'],
+function createConfig(entries: string[]): Options[] {
+  return entries.map((entry, index) => ({
+    entry: [entry],
     format: ['esm'],
     dts: true,
     sourcemap: true,
-    clean: true,
-    external: [],
-    treeshake: false,
+    clean: false,
+    target: 'es2020',
     minify: false,
     splitting: false,
     outDir: 'dist',
-  },
-  {
-    // JSX 运行时入口点
-    entry: ['src/jsx-runtime.ts'],
-    format: ['esm'],
-    dts: true,
-    sourcemap: true,
-    clean: false, // 不清理，避免覆盖第一个构建
-    external: [],
-    treeshake: false,
-    minify: false,
-    splitting: false,
-    outDir: 'dist',
-  },
+  }));
+}
+
+const config = createConfig([
+  'src/index.ts',
+  'src/component-registry.ts',
+  'src/jsx-runtime.ts',
+  'src/jsx-types.ts',
+  'src/renderer.ts',
+  'src/types.ts',
+  'src/dom-utils.ts',
 ]);
+
+export default defineConfig(config);

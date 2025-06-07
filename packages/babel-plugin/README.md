@@ -1,14 +1,14 @@
 # @vanilla-dom/babel-plugin
 
-Babel plugin for transforming JSX into @vanilla-dom/core function calls.
+Babel 插件，将 JSX 语法编译为优化的 @vanilla-dom/core VNode 调用，支持编译时优化和组件自动注册。
 
 ## Installation
 
 ```bash
-npm install --save-dev @vanilla-dom/babel-plugin
-# or
+pnpm install --save-dev @vanilla-dom/babel-plugin
+# 推荐使用 pnpm
 pnpm add -D @vanilla-dom/babel-plugin
-# or
+# 或
 yarn add -D @vanilla-dom/babel-plugin
 ```
 
@@ -244,19 +244,69 @@ The plugin works seamlessly with TypeScript. Make sure your `tsconfig.json` incl
 }
 ```
 
-## Development
+## 🚀 编译时优化特性
+
+### 静态分析优化
+- **静态内容识别**：编译时识别静态 HTML 部分
+- **动态插值标记**：标记需要运行时更新的位置
+- **事件优化**：自动识别可委托的事件处理
+
+### 组件自动注册
+- **标志检测**：自动检测 `__COMPONENT_TYPE__` 标志
+- **零配置**：无需手动列举组件类型
+- **第三方扩展**：支持任何第三方组件编码范式库
+
+### 转换优化
+```jsx
+// 编译前
+<div className="container" onClick={handler}>
+  <span>{text}</span>
+</div>
+
+// 编译后
+hyperscript('div', 
+  { className: 'container', onClick: handler }, 
+  null,
+  hyperscript('span', null, null, text)
+);
+```
+
+## 🔧 高级配置
+
+### 组件注册支持
+
+```javascript
+// babel.config.js
+module.exports = {
+  plugins: [
+    [
+      '@vanilla-dom/babel-plugin',
+      {
+        // 启用组件自动注册（推荐）
+        enableComponentRegistry: true,
+        // 自定义导入源
+        importSource: '@vanilla-dom/core',
+        // 开发模式调试
+        development: process.env.NODE_ENV === 'development'
+      }
+    ]
+  ]
+};
+```
+
+## 🛠️ 开发
 
 ```bash
-# Install dependencies
+# 安装依赖
 pnpm install
 
-# Build the plugin
+# 构建插件
 pnpm run build
 
-# Run tests
+# 运行测试
 pnpm run test
 
-# Watch mode for development
+# 开发模式
 pnpm run dev
 ```
 

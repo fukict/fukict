@@ -20,18 +20,18 @@
 2. **运行转换测试**:
 
    ```bash
-   npm run test
+   pnpm run test
    ```
 
 3. **仅转换代码**:
 
    ```bash
-   npm run transform
+   pnpm run transform
    ```
 
 4. **清理输出**:
    ```bash
-   npm run clean
+   pnpm run clean
    ```
 
 ## 📝 测试用例
@@ -220,7 +220,7 @@ module.exports = {
 
 ```bash
 # 转换后直接查看输出
-npm run transform && cat dist/test.js
+pnpm run transform && cat dist/test.js
 ```
 
 ### 对比转换前后

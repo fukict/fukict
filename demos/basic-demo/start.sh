@@ -12,7 +12,7 @@ echo "🌐 启动本地服务器..."
 # 检查 serve 是否安装
 if ! command -v serve &> /dev/null; then
     echo "📦 正在安装 serve..."
-    npm install -g serve
+    pnpm install -g serve
 fi
 
 # 启动服务器

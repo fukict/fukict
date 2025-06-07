@@ -1,5 +1,3 @@
-import { hyperscript } from '@vanilla-dom/core';
-
 interface Todo {
   id: number;
   text: string;

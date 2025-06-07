@@ -86,19 +86,19 @@ npx serve .
 
 # Vite Demo - 现代开发
 cd vite-demo
-npm run dev
+pnpm run dev
 
 # Rsbuild Demo - 极速构建
 cd rsbuild-demo
-npm run dev
+pnpm run dev
 
 # Webpack Demo - 成熟方案
 cd webpack-demo
-npm run dev
+pnpm run dev
 
 # Babel Transform Demo - 转换测试
 cd babel-transform-demo
-npm run test
+pnpm run test
 ```
 
 ## 🛠️ 核心技术栈

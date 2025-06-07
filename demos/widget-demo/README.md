@@ -1,19 +1,29 @@
-# Vanilla DOM Widget Demo
+# Widget Demo
 
-这个 demo 展示了 `@vanilla-dom/widget` 包的简易函数范式功能，使用 Vite 作为构建工具。
+这是 `@vanilla-dom/widget` 包的官方演示项目，展示了组件化开发的最佳实践。
 
-## 🎯 功能特性
+## 🎯 项目特色
 
-### 简易函数范式演示
-- 展示如何使用 `createWidget` 创建函数组件
-- 演示 JSX 语法在 vanilla-dom 中的使用
-- 响应式数据渲染和模板语法
-- 与 core 包无缝衔接
+### 完整的组件示例
 
-### UI 组件示例
-- **计数器组件**: 展示基础交互功能
-- **Todo List**: 演示列表渲染和状态管理
-- **表单处理**: 展示表单元素和验证功能
+- **SimpleGreeting** - 基础 Widget 类组件
+- **Counter** - 带状态管理的交互组件
+- **TodoList** - 复杂分层架构组件（Domain + UI）
+- **函数组件** - 使用 `createWidget` 创建的轻量组件
+
+### 分层架构演示
+
+项目中的 `TodoList` 组件采用了推荐的分层架构模式：
+
+- `TodoListDomain.ts` - 纯业务逻辑层，不包含 UI
+- `TodoListUI.tsx` - UI 层，继承 Widget，组合使用 Domain
+- `index.ts` - 统一导出，提供清晰的 API
+
+### 现代化开发配置
+
+- **Vite** - 快速的开发服务器和构建工具
+- **Babel** - 使用 `@vanilla-dom/babel-plugin` 处理 JSX 和组件注册
+- **TypeScript** - 完整的类型支持
 
 ## 🚀 快速开始
 
@@ -23,30 +33,22 @@
 pnpm install
 ```
 
-### 开发模式
+### 开发服务器
 
 ```bash
-pnpm dev
+pnpm run dev
 ```
-
-访问 http://localhost:3000 查看 demo。
 
 ### 构建生产版本
 
 ```bash
-pnpm build
+pnpm run build
 ```
 
-### 预览生产版本
+### 预览构建结果
 
 ```bash
-pnpm preview
-```
-
-### 类型检查
-
-```bash
-pnpm type-check
+pnpm run preview
 ```
 
 ## 📁 项目结构
@@ -54,144 +56,163 @@ pnpm type-check
 ```
 widget-demo/
 ├── src/
-│   ├── App.tsx              # 主应用组件，包含所有示例
-│   └── main.ts              # 入口文件
-├── index.html               # HTML 模板
-├── vite.config.ts           # Vite 配置
-├── tsconfig.json            # TypeScript 配置
-└── package.json             # 项目配置
+│   ├── components/
+│   │   ├── Counter.tsx              # 简单交互组件
+│   │   ├── SimpleGreeting.tsx       # 基础展示组件
+│   │   └── TodoList/               # 分层架构组件
+│   │       ├── TodoListDomain.ts   # 业务逻辑层
+│   │       ├── TodoListUI.tsx      # UI 层
+│   │       └── index.ts            # 统一导出
+│   ├── main.tsx                    # 入口文件
+│   └── vite-env.d.ts              # Vite 类型声明
+├── vite.config.ts                  # Vite 配置
+├── package.json
+└── README.md
 ```
 
-## 🎨 核心技术
+## 🎨 组件特性演示
 
-- **Vite**: 快速的前端构建工具
-- **TypeScript**: 类型安全的 JavaScript
-- **@vanilla-dom/widget**: 组件化抽象层
-- **@vanilla-dom/core**: 核心渲染引擎
-- **JSX**: 声明式 UI 语法
+### 1. 基础 Widget 组件
 
-## 📝 代码示例
-
-### 简易函数组件
-
-```tsx
-import { createWidget } from '@vanilla-dom/widget';
-
-const App = createWidget(() => (
-  <div className="app">
-    <h1>Hello Vanilla DOM!</h1>
-    <p>这是一个简易函数组件示例</p>
+```typescript
+export class SimpleGreeting extends Widget<GreetingProps> {
+  public render() {
+    return (
+      <div className="greeting">
+        <h2>👋 {this.props.message}</h2>
+        <p>来自 {this.props.from}</p>
   </div>
-));
-
-// 使用组件
-const app = App({});
-(app as any).mount(document.getElementById('root')!);
-```
-
-### 动态数据渲染
-
-```tsx
-const todos = [
-  { id: '1', text: '学习 Vanilla DOM', completed: true },
-  { id: '2', text: '构建 Widget Demo', completed: false }
-];
-
-const TodoApp = createWidget(() => (
-  <div className="todo-app">
-    <ul>
-      {todos.map(todo => (
-        <li key={todo.id} className={todo.completed ? 'completed' : ''}>
-          {todo.text}
-        </li>
-      ))}
-    </ul>
-  </div>
-));
-```
-
-### JSX 和样式
-
-```tsx
-const StyledComponent = createWidget(() => (
-  <div className="container">
-    <h2>样式示例</h2>
-    <button className="btn btn-primary">点击我</button>
-    
-    <style jsx>{`
-      .container {
-        padding: 20px;
-        background: white;
-        border-radius: 8px;
-      }
-      
-      .btn {
-        padding: 10px 20px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-      
-      .btn-primary {
-        background: #007bff;
-        color: white;
-      }
-    `}</style>
-  </div>
-));
-```
-
-## 🔧 配置说明
-
-### Vite 配置
-
-```ts
-export default defineConfig({
-  esbuild: {
-    jsxFactory: 'h',  // 使用 hyperscript 函数
-    jsxFragment: 'Fragment',
-    jsxInject: `import { h, Fragment } from '@vanilla-dom/core'`,
-  },
-});
-```
-
-**重要提示**: 必须使用 `h` 作为 JSX 工厂函数，而不是 `createElement`，因为 `h` 是 vanilla-dom 的正确 JSX 编译函数。
-
-### TypeScript 配置
-
-```json
-{
-  "compilerOptions": {
-    "jsx": "preserve",
-    "jsxImportSource": "@vanilla-dom/core"
+    );
   }
 }
 ```
 
-## 🎯 学习要点
+### 2. 状态管理
 
-1. **简易函数范式**: 理解如何使用 `createWidget` 创建组件
-2. **JSX 语法**: 掌握 JSX 在 vanilla-dom 中的使用方法
-3. **数据渲染**: 学习动态数据和列表渲染
-4. **样式处理**: 了解如何在组件中使用样式
-5. **类型安全**: 体验完整的 TypeScript 支持
-6. **配置要点**: 正确配置 JSX 工厂函数以避免 DOM 属性冲突
+```typescript
+export class Counter extends Widget<CounterProps> {
+  private count: number;
 
-## ⚠️ 常见问题
+  private increment() {
+    this.count++;
+    this.updateDisplay();
+  }
 
-### JSX 配置错误
-如果遇到 `Cannot set property children of #<Element> which has only a getter` 错误，请确保：
+  private updateDisplay() {
+    const display = this.$('.count-display');
+    if (display?.element) {
+      display.element.textContent = this.count.toString();
+    }
+  }
+}
+```
 
-1. 使用 `h` 作为 JSX 工厂函数，而不是 `createElement`
-2. 正确导入 `import { h, Fragment } from '@vanilla-dom/core'`
-3. TypeScript 配置使用 `jsxImportSource: "@vanilla-dom/core"`
+### 3. 分层架构（推荐模式）
+
+```typescript
+// Domain 层 - 纯业务逻辑
+export class TodoListDomain {
+  private todos: TodoItem[] = [];
+
+  addTodo(text: string): boolean {
+    // 业务验证和逻辑
+    if (!text.trim()) return false;
+    this.todos.push({
+      /* ... */
+    });
+    this.notifyDataChange();
+    return true;
+  }
+}
+
+// UI 层 - 组合使用 Domain
+export class TodoListUI extends Widget<TodoListProps> {
+  private domain: TodoListDomain;
+
+  constructor(props: TodoListProps) {
+    super(props);
+    this.domain = new TodoListDomain(props);
+  }
+
+  private handleAddTodo() {
+    // UI 交互处理
+    if (this.domain.addTodo(inputValue)) {
+      this.clearInput();
+    }
+  }
+}
+```
+
+### 4. 函数组件
+
+```typescript
+const SimpleWidget = createWidget((props: { message: string }) => {
+  return (
+    <div className="simple-widget">
+      <h3>🎯 函数组件演示</h3>
+      <p>{props.message}</p>
+  </div>
+  );
+});
+```
+
+## 🔧 配置说明
+
+### Babel 配置
+
+项目使用内联 Babel 配置（在 `vite.config.ts` 中），包含：
+
+- `@babel/plugin-syntax-jsx` - JSX 语法支持
+- `@vanilla-dom/babel-plugin` - 组件注册和转换
+- `@babel/preset-typescript` - TypeScript 支持
+
+### Vite 配置特点
+
+- `jsx: 'preserve'` - 让 Babel 处理 JSX，不使用 esbuild
+- 自定义 Babel 插件 - 实现组件自动注册
+- 扩展名解析 - 支持 `.tsx` 自动解析
+
+## 📖 学习资源
+
+- [组件架构指南](../../packages/widget/ARCHITECTURE_GUIDE.md) - 分层架构详细说明
+- [Widget API 文档](../../packages/widget/README.md) - 完整 API 参考
+- [Babel Plugin 指南](../../packages/babel-plugin/README.md) - JSX 编译配置
+
+## 🚧 开发指南
+
+### 添加新组件
+
+1. 在 `src/components/` 下创建组件文件
+2. 简单组件直接使用 `.tsx` 文件
+3. 复杂组件创建目录，使用分层架构
+4. 在 `main.tsx` 中引入和使用
+
+### 使用分层架构
+
+1. 创建 `ComponentDomain.ts` - 纯业务逻辑，不继承 Widget
+2. 创建 `ComponentUI.tsx` - 继承 Widget，组合使用 Domain
+3. 创建 `index.ts` - 统一导出
+
+### 组件测试
+
+- Domain 层：纯逻辑测试，易于单元测试
+- UI 层：集成测试，验证交互逻辑
+- 端到端：完整功能验证
+
+## ⚡ 性能优化
+
+- **按需更新** - 只更新变化的 DOM 节点
+- **事件委托** - 合理使用事件绑定
+- **内存管理** - 及时清理事件监听器
+- **分层设计** - 业务逻辑与 UI 分离，便于优化
 
 ## 🔗 相关链接
 
-- [Vanilla DOM 核心包](../../packages/core)
-- [Widget 包文档](../../packages/widget)
-- [Vite 官方文档](https://vitejs.dev/)
+- [Vanilla DOM 项目主页](../../README.md)
+- [Core 包文档](../../packages/core/README.md)
+- [Babel Plugin 文档](../../packages/babel-plugin/README.md)
+- [更多演示项目](../)
 
-## 📄 许可证
+---
 
-MIT 
+**🎉 享受 Vanilla DOM 的组件化开发体验！**

@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "declaration": true,
+    "allowJs": true,
+    "checkJs": false
+  },
+  "exclude": ["dist", "node_modules"],
+  "extends": "../../tsconfig.json",
+  "include": ["src/**/*"]
+}

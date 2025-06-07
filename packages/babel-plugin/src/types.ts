@@ -1,4 +1,4 @@
-import type { PluginObj, types as t } from '@babel/core';
+import type { PluginObj } from '@babel/core';
 
 export interface PluginOptions {
   // 是否开启开发模式（用于调试和错误边界）
@@ -7,6 +7,10 @@ export interface PluginOptions {
   importSource?: string;
   // 是否自动注入 JSX 运行时导入
   runtime?: 'automatic' | 'classic';
+  // 是否启用组件自动注册（默认：true）
+  enableComponentRegistry?: boolean;
+  // 转换目标名称（默认：'__registered_component__'）
+  transformTarget?: string;
 }
 
 export interface BabelPluginState {
@@ -15,6 +19,8 @@ export interface BabelPluginState {
   runtimeImportAdded?: boolean;
   // 文件路径信息
   filename?: string;
+  // 组件检测缓存
+  componentDetectionCache?: Map<string, boolean>;
 }
 
 export type VanillaDomPlugin = PluginObj<BabelPluginState>;

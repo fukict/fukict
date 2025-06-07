@@ -1,5 +1,3 @@
-import { hyperscript } from '@vanilla-dom/core';
-
 export function Counter() {
   let count = 0;
 

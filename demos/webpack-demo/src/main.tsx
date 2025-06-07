@@ -1,6 +1,63 @@
 import { Counter } from './Counter';
 import { render } from '@vanilla-dom/core';
 
+// 简单的未注册函数组件，用于测试新的处理逻辑
+function SimpleGreeting({ name }: { name: string }) {
+  return <p>👋 Hello, {name}! 这是一个未注册的函数组件。</p>;
+}
+
+// ref 功能演示组件
+function RefDemo() {
+  let inputElement: HTMLInputElement | null = null;
+
+  const handleRef = (el: Element | null) => {
+    if (el) {
+      inputElement = el as HTMLInputElement;
+      console.log('✅ Ref 回调被调用:', el);
+    }
+  };
+
+  const focusInput = () => {
+    if (inputElement) {
+      inputElement.focus();
+      inputElement.style.border = '2px solid #4299e1';
+    }
+  };
+
+  const clearInput = () => {
+    if (inputElement) {
+      inputElement.value = '';
+      inputElement.style.border = '';
+    }
+  };
+
+  return (
+    <div className="demo-section">
+      <h3 className="demo-title">Ref 功能演示</h3>
+      <p>这个演示展示了新的 ref 功能:</p>
+      
+      <div style="margin: 15px 0;">
+        <input 
+          ref={handleRef}
+          type="text" 
+          placeholder="使用 ref 获取的输入框"
+          style="padding: 8px; margin-right: 10px; border: 1px solid #ccc; border-radius: 4px;"
+        />
+        <button className="btn" on:click={focusInput} style="margin-right: 5px;">
+          聚焦输入框
+        </button>
+        <button className="btn" on:click={clearInput}>
+          清空输入框
+        </button>
+      </div>
+      
+      <p style="color: #666; font-size: 0.9rem;">
+        ✅ 使用 ref 回调获取 DOM 元素引用，可以直接操作元素
+      </p>
+    </div>
+  );
+}
+
 function App() {
   return (
     <div className="app">
@@ -22,6 +79,8 @@ function App() {
           <li>组件化开发 ✅</li>
           <li>Webpack 构建 ✅</li>
           <li>TypeScript 支持 ✅</li>
+          <li>未注册函数组件支持 ✅</li>
+          <li>Ref 功能支持 ✅</li>
         </ul>
         <button
           className="btn"
@@ -29,7 +88,13 @@ function App() {
         >
           测试事件处理
         </button>
+        
+        {/* 测试未注册的函数组件 */}
+        <SimpleGreeting name="vanilla-dom 用户" />
       </div>
+
+      {/* 新增：Ref 功能演示 */}
+      <RefDemo />
 
       <Counter />
 
@@ -62,10 +127,5 @@ module: {
     </div>
   );
 }
-
-// 临时测试events
-const testButton = (
-  <button on:click={() => console.log('测试点击')}>Test Events</button>
-);
 
 render(<App />, { container: document.getElementById('app')! });

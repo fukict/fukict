@@ -1,6 +1,5 @@
 import { Counter } from './components/Counter';
 import { TodoApp } from './components/TodoApp';
-import { hyperscript } from '@vanilla-dom/core';
 
 export function App() {
   return (

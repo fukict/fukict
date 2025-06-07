@@ -1,3 +1,6 @@
+// Ref 回调函数类型
+export type RefCallback = (element: Element | null) => void;
+
 // VNode 节点树数据结构
 export interface VNode {
   type: string | ComponentFunction;
@@ -5,6 +8,7 @@ export interface VNode {
   events: Record<string, EventListener> | null; // 新增：编译时分离的事件监听器
   children: VNodeChild[];
   key?: string | number;
+  ref?: RefCallback; // 新增：ref 回调
 }
 
 // 子节点类型
@@ -17,6 +21,7 @@ export type ComponentFunction = (props: Record<string, any>) => VNode;
 export interface DOMProps extends Record<string, any> {
   children?: VNodeChild | VNodeChild[];
   key?: string | number;
+  ref?: RefCallback; // 新增：ref 支持
 }
 
 // 编译时事件处理器映射

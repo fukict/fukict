@@ -60,8 +60,7 @@ export function setProperty(element: Element, key: string, value: any): void {
 
 export function removeProperty(
   element: Element,
-  key: string,
-  oldValue: any,
+  key: string
 ): void {
   if (key === 'children') return;
 
@@ -82,7 +81,7 @@ export function updateProperty(
   if (newValue === oldValue) return;
 
   if (newValue == null) {
-    removeProperty(element, key, oldValue);
+    removeProperty(element, key);
   } else {
     setProperty(element, key, newValue);
   }

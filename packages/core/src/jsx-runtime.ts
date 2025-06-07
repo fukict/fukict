@@ -10,7 +10,7 @@ export function hyperscript(
   events: Record<string, EventListener> | null,
   ...children: VNodeChild[]
 ): VNode {
-  const { children: propsChildren, key, ...restProps } = props || {};
+  const { children: propsChildren, key, ref, ...restProps } = props || {};
 
   // 确保 children 总是一个数组
   const finalChildren: VNodeChild[] = [];
@@ -31,6 +31,7 @@ export function hyperscript(
     events: events,
     children: finalChildren,
     key,
+    ref, // 新增：提取并保存 ref
   };
 }
 

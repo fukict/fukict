@@ -1,13 +1,17 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { createWidget } from '../src/simple';
 import type { VNode } from '@vanilla-dom/core';
+
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // 模拟 @vanilla-dom/core 的 render 函数
 const mockRender = vi.fn((vnode: VNode, options: { container: Element }) => {
   // 简单的模拟实现
   const element = document.createElement('div');
   element.innerHTML = `<div class="rendered-content">Mock Content</div>`;
-  options.container.appendChild(element.firstElementChild!);
+  const firstChild = element.firstElementChild;
+  if (firstChild) {
+    options.container.appendChild(firstChild);
+  }
 });
 
 vi.mock('@vanilla-dom/core', () => ({
@@ -105,7 +109,9 @@ describe('简易函数组件', () => {
   });
 
   it('应该进行深度比较，相同的 props 不触发重新渲染', () => {
-    const renderFn = (props: { data: { name: string; age: number } }): VNode => ({
+    const renderFn = (props: {
+      data: { name: string; age: number };
+    }): VNode => ({
       type: 'div',
       props: {},
       events: null,
@@ -130,7 +136,7 @@ describe('简易函数组件', () => {
 
   it('在未挂载状态下更新应该显示警告', () => {
     const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    
+
     const renderFn = (props: { text: string }): VNode => ({
       type: 'div',
       props: {},
@@ -144,8 +150,10 @@ describe('简易函数组件', () => {
     // 在未挂载状态下更新
     instance.update({ text: 'Updated' });
 
-    expect(consoleSpy).toHaveBeenCalledWith('Widget not mounted, cannot update');
-    
+    expect(consoleSpy).toHaveBeenCalledWith(
+      'Widget not mounted, cannot update',
+    );
+
     consoleSpy.mockRestore();
   });
-}); 
+});

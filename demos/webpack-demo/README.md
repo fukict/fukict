@@ -118,12 +118,12 @@ function App() {
 pnpm install
 
 # 开发模式 (http://localhost:3001)
-npm run dev
+pnpm run dev
 # 或
-npm start
+pnpm start
 
 # 生产构建
-npm run build
+pnpm run build
 ```
 
 ## 🎯 性能对比
@@ -175,7 +175,7 @@ npm run build
 
 ```bash
 # 构建优化版本
-npm run build
+pnpm run build
 
 # 构建产物在 dist/ 目录
 # 可部署到任何静态托管服务

@@ -29,13 +29,13 @@ demos 目录包含各种示例实现，展示 vanilla-dom 的不同集成模式�
 - [demos/webpack-demo/](mdc:demos/webpack-demo) - Webpack 集成
 - **目的**: 展示如何将 vanilla-dom 与 Webpack 集成
 - **功能**: 生产构建设置、JSX 编译
-- **用法**: `cd demos/webpack-demo && npm start`
+- **用法**: `cd demos/webpack-demo && pnpm start`
 
 ### Vite 演示
 - [demos/vite-demo/](mdc:demos/vite-demo) - 现代 Vite 集成
 - **目的**: 展示与 Vite 的现代开发体验
 - **功能**: 热模块替换、TypeScript 支持
-- **用法**: `cd demos/vite-demo && npm run dev`
+- **用法**: `cd demos/vite-demo && pnpm run dev`
 
 ### Rsbuild 演示
 - [demos/rsbuild-demo/](mdc:demos/rsbuild-demo) - Rsbuild 集成

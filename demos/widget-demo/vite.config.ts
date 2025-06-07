@@ -1,13 +1,14 @@
 import * as babel from '@babel/core';
 
-import { defineConfig } from 'vite';
 import { resolve } from 'path';
+import { defineConfig } from 'vite';
 
 export default defineConfig({
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
     },
+    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
   },
   esbuild: {
     jsx: 'preserve',
@@ -23,7 +24,18 @@ export default defineConfig({
 
         const result = await babel.transformAsync(code, {
           filename: id,
-          plugins: ['@babel/plugin-syntax-jsx', '@vanilla-dom/babel-plugin'],
+          presets: [
+            [
+              resolve(
+                __dirname,
+                '../../packages/babel-preset-widget/dist/index.cjs',
+              ),
+              {
+                enableComponentRegistry: true,
+                importSource: '@vanilla-dom/widget',
+              },
+            ],
+          ],
           sourceMaps: true,
         });
 
@@ -47,4 +59,4 @@ export default defineConfig({
     open: true,
     port: 3000,
   },
-}); 
+});

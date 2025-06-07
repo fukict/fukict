@@ -11,8 +11,17 @@
     "typescript"
   ],
   "license": "MIT",
-  "author": "",
+  "author": "xiaoyown",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vanilla-dom/vanilla-dom.git",
+    "directory": "packages/core"
+  },
   "type": "module",
+  "sideEffects": [
+    "./src/jsx-types.ts",
+    "./dist/jsx-types.js"
+  ],
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -21,16 +30,33 @@
     "./jsx-runtime": {
       "import": "./dist/jsx-runtime.js",
       "types": "./dist/jsx-runtime.d.ts"
+    },
+    "./jsx-types": {
+      "import": "./dist/jsx-types.js",
+      "types": "./dist/jsx-types.d.ts"
+    },
+    "./component-registry": {
+      "import": "./dist/component-registry.js",
+      "types": "./dist/component-registry.d.ts"
+    },
+    "./renderer": {
+      "import": "./dist/renderer.js",
+      "types": "./dist/renderer.d.ts"
+    },
+    "./dom-utils": {
+      "import": "./dist/dom-utils.js",
+      "types": "./dist/dom-utils.d.ts"
     }
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "premove dist && tsup",
     "dev": "tsup --watch",
     "test": "vitest --run",
     "test:watch": "vitest",
@@ -38,6 +64,7 @@
   },
   "devDependencies": {
     "jsdom": "^24.0.0",
+    "premove": "^4.0.0",
     "tsup": "^8.0.0",
     "typescript": "^5.0.0",
     "vitest": "^1.0.0"

@@ -57,13 +57,13 @@ export default defineConfig({
 pnpm install
 
 # 启动开发服务器 (http://localhost:3000)
-npm run dev
+pnpm run dev
 
 # 构建生产版本
-npm run build
+pnpm run build
 
 # 预览构建结果
-npm run preview
+pnpm run preview
 ```
 
 ## 📝 JSX 转换示例
@@ -155,7 +155,7 @@ demos/vite-demo/
 
 ```bash
 # 构建优化版本
-npm run build
+pnpm run build
 
 # 构建产物在 dist/ 目录
 # 可直接部署到 Vercel、Netlify 等

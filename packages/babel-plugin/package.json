@@ -9,8 +9,14 @@
     "compiler"
   ],
   "license": "MIT",
-  "author": "vanilla-dom",
+  "author": "xiaoyown",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vanilla-dom/vanilla-dom.git",
+    "directory": "packages/babel-plugin"
+  },
   "type": "module",
+  "sideEffects": false,
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -22,7 +28,8 @@
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "scripts": {
     "build": "tsup",

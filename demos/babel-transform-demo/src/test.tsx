@@ -2,7 +2,7 @@
 
 interface ButtonProps {
   onClick: () => void;
-  children: any;
+  children?: any;
 }
 
 function handleClick() {
@@ -26,11 +26,6 @@ const tsComponent = (
     <span>TypeScript Content</span>
   </TypedComponent>
 );
-
-// 3. 复杂TypeScript结构
-interface FormData {
-  value: string;
-}
 
 const tsForm = (
   <form on:submit={(e: Event) => e.preventDefault()}>
