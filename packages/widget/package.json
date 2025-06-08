@@ -1,6 +1,6 @@
 {
   "name": "@vanilla-dom/widget",
-  "version": "0.1.0",
+  "version": "0.0.0-alpha-20250608081318",
   "description": "Component abstraction layer for vanilla-dom",
   "keywords": [
     "dom",
@@ -10,15 +10,15 @@
     "widget",
     "typescript"
   ],
-  "license": "MIT",
-  "author": "xiaoyown",
   "repository": {
     "type": "git",
     "url": "https://github.com/vanilla-dom/vanilla-dom.git",
     "directory": "packages/widget"
   },
-  "type": "module",
+  "license": "MIT",
+  "author": "xiaoyown",
   "sideEffects": false,
+  "type": "module",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -43,6 +43,9 @@
     "./types": {
       "import": "./dist/types.js",
       "types": "./dist/types.d.ts"
+    },
+    "./jsx-types": {
+      "types": "./types/jsx.d.ts"
     }
   },
   "main": "./dist/index.js",
@@ -50,11 +53,11 @@
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
+    "types",
     "README.md"
   ],
   "scripts": {
-    "build": "premove dist && tsup",
-    "dev": "tsup --watch",
+    "clean": "premove dist",
     "test": "vitest --run",
     "test:watch": "vitest",
     "type-check": "tsc --noEmit"
@@ -62,11 +65,13 @@
   "devDependencies": {
     "@types/node": "^20.0.0",
     "premove": "^4.0.0",
-    "tsup": "^8.0.0",
-    "typescript": "^5.0.0",
+    "typescript": "^5.6.3",
     "vitest": "^1.0.0"
   },
   "peerDependencies": {
     "@vanilla-dom/core": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

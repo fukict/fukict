@@ -1,0 +1,43 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: Vanilla DOM 开发核心规则 - 架构、性能、TypeScript、Widget
+globs: ["**/*"]
+---
+
+# Vanilla DOM 开发指南
+
+## 📦 架构
+- @vanilla-dom/core: 渲染引擎 < 10KB
+- @vanilla-dom/babel-plugin: JSX 编译优化  
+- @vanilla-dom/widget: 组件编码范式
+- @vanilla-dom/preset-widget: 零配置
+
+## 🛠️ 开发规范
+- pnpm (强制) + tsup + Vitest
+- DOM 精确操作，自动清理事件
+- 100% TypeScript 覆盖
+
+## 🎯 Widget 模式
+```tsx
+// 类组件
+class MyWidget extends Widget<Props> {
+  render() { return <div>{this.props.title}</div> }
+}
+// 函数组件  
+const MyWidget = createWidget<Props>(({ title }) => <div>{title}</div>)
+```
+
+## ⚡ Token 优化
+- description < 120 字符
+- 并行工具调用，避免冗余
+- 精准 glob 匹配
+- 代码示例 > 文字解释
+
+## 🚨 关键防护
+- **目录**: 确认 `pwd`，`packages/{name}/` 非根目录
+- **Vite**: `esbuild: false`, babel 接管 JSX
+- **发布**: `pnpm release` (Production/Alpha/Beta/RC)

@@ -24,18 +24,7 @@ export default defineConfig({
 
         const result = await babel.transformAsync(code, {
           filename: id,
-          presets: [
-            [
-              resolve(
-                __dirname,
-                '../../packages/babel-preset-widget/dist/index.cjs',
-              ),
-              {
-                enableComponentRegistry: true,
-                importSource: '@vanilla-dom/widget',
-              },
-            ],
-          ],
+          presets: [['@vanilla-dom/babel-preset-widget']],
           sourceMaps: true,
         });
 

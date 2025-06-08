@@ -1,11 +1,11 @@
-import {
-  createComponentInstance,
-  getComponentReference,
-  isComponentRegistered,
-} from './component-registry.js';
+import type {
+  ComponentFunction,
+  RenderOptions,
+  VNode,
+  VNodeChild,
+} from '../types/index';
 import {
   appendChild,
-  batchUpdate,
   clearChildren,
   createElement,
   createTextNode,
@@ -15,13 +15,11 @@ import {
   setProperty,
   updateEvents,
   updateProperty,
-} from './dom-utils.js';
-import type {
-  ComponentFunction,
-  RenderOptions,
-  VNode,
-  VNodeChild,
-} from './types.js';
+} from './dom-utils';
+import {
+  isRegisteredComponent,
+  renderRegisteredComponent,
+} from './pattern-registry';
 
 /**
  * 核心渲染引擎
@@ -39,11 +37,6 @@ export function createDOMFromTree(vnode: VNode): Node {
   if (typeof vnode.type === 'function') {
     // 处理组件
     return createDOMFromComponent(vnode);
-  }
-
-  // 处理注册的组件类型
-  if (vnode.type === '__registered_component__') {
-    return createDOMFromRegisteredComponent(vnode);
   }
 
   // 处理原生元素
@@ -88,47 +81,47 @@ export function createDOMFromTree(vnode: VNode): Node {
 function createDOMFromComponent(vnode: VNode): Node {
   const component = vnode.type as ComponentFunction;
 
-  // 检查是否为已注册的组件（仅检查，不创建实例）
-  if (isComponentRegistered(component)) {
-    // 如果是已注册的组件，转换为注册组件类型处理
-    const registeredVNode: VNode = {
-      type: '__registered_component__',
-      props: {
-        component,
-        componentProps: vnode.props || {},
-        onMount: vnode.props?.onMount || null,
-      },
-      events: null,
-      children: [],
-    };
-    return createDOMFromRegisteredComponent(registeredVNode);
+  // 检查是否为已注册的编码范式组件
+  if (isRegisteredComponent(component)) {
+    const props = vnode.props || {};
+    const children = vnode.children || [];
+
+    // 使用注册的范式处理器渲染组件
+    const renderedVNode = renderRegisteredComponent(component, props, children);
+    if (renderedVNode) {
+      return createDOMFromTree(renderedVNode);
+    }
   }
 
-  // 如果组件未注册，直接调用函数组件并处理返回的 VNode
+  // 处理普通函数组件
   try {
     const props = vnode.props || {};
     const children = vnode.children || [];
-    
+
     // 调用函数组件，传入 props 和 children
     const result = component({ ...props, children });
-    
+
     // 如果函数返回 VNode，递归处理
     if (result && typeof result === 'object' && 'type' in result) {
       return createDOMFromTree(result);
     }
-    
+
     // 如果返回字符串或数字，创建文本节点
     if (typeof result === 'string' || typeof result === 'number') {
       return createTextNode(String(result));
     }
-    
+
     // 如果返回 null、undefined 或 false，创建空文本节点
     return createTextNode('');
-    
   } catch (error) {
     // 如果函数调用出错，记录错误并返回错误信息
-    console.error(`Error rendering component ${component.name || 'Anonymous'}:`, error);
-    return createTextNode(`[Component Error: ${component.name || 'Anonymous'}]`);
+    console.error(
+      `[@vanilla-dom/core] Error rendering component ${component.name || 'Anonymous'}:`,
+      error,
+    );
+    return createTextNode(
+      `[Component Error: ${component.name || 'Anonymous'}]`,
+    );
   }
 }
 
@@ -148,54 +141,17 @@ function createDOMFromChild(child: VNodeChild): Node | null {
 }
 
 /**
- * 处理注册组件 VNode
- */
-function createDOMFromRegisteredComponent(vnode: VNode): Node {
-  const props = vnode.props || {};
-  const { component, componentProps, onMount } = props;
-  const instance = createComponentInstance(component, componentProps);
-
-  if (instance) {
-    const container = createElement('div');
-    instance.mount(container);
-
-    // 获取实例引用并调用回调
-    if (onMount) {
-      const ref = getComponentReference(component, instance);
-      onMount(ref);
-    }
-
-    // 返回实际的 DOM 元素
-    const actualElement = instance.element || container.firstElementChild;
-    if (actualElement) {
-      // 建立映射关系
-      vNodeToDOMMap.set(vnode, actualElement);
-      domToVNodeMap.set(actualElement, vnode);
-      return actualElement;
-    }
-  }
-
-  // 如果组件创建失败，返回空的文本节点
-  const emptyNode = createTextNode('');
-  vNodeToDOMMap.set(vnode, emptyNode);
-  domToVNodeMap.set(emptyNode, vnode);
-  return emptyNode;
-}
-
-/**
  * 渲染 VNode 到容器
  */
 export function render(vnode: VNode, options: RenderOptions): void {
-  batchUpdate(() => {
-    const { container, replace = false } = options;
+  const { container, replace = false } = options;
 
-    if (replace) {
-      clearChildren(container);
-    }
+  if (replace) {
+    clearChildren(container);
+  }
 
-    const domNode = createDOMFromTree(vnode);
-    appendChild(container, domNode);
-  });
+  const domNode = createDOMFromTree(vnode);
+  appendChild(container, domNode);
 }
 
 /**
@@ -206,48 +162,42 @@ export function updateDOM(
   newVNode: VNode,
   domNode: Node,
 ): void {
-  batchUpdate(() => {
-    // 类型改变，完全替换
-    if (oldVNode.type !== newVNode.type) {
-      const newDomNode = createDOMFromTree(newVNode);
-      const parent = domNode.parentNode;
-      if (parent) {
-        parent.replaceChild(newDomNode, domNode);
-      }
-      return;
+  // 类型改变，完全替换
+  if (oldVNode.type !== newVNode.type) {
+    const newDomNode = createDOMFromTree(newVNode);
+    const parent = domNode.parentNode;
+    if (parent) {
+      parent.replaceChild(newDomNode, domNode);
     }
-    // 对于原生元素，进行常规更新
-    // 更新属性
-    updateProperties(domNode as Element, oldVNode.props, newVNode.props);
+    return;
+  }
+  // 对于原生元素，进行常规更新
+  // 更新属性
+  updateProperties(domNode as Element, oldVNode.props, newVNode.props);
 
-    // 更新事件监听器
-    updateEvents(domNode as Element, newVNode.events, oldVNode.events);
+  // 更新事件监听器
+  updateEvents(domNode as Element, newVNode.events, oldVNode.events);
 
-    // 更新子节点 - 使用安全的方式处理 children
-    const oldChildren = Array.isArray(oldVNode.children)
-      ? oldVNode.children
-      : [];
-    const newChildren = Array.isArray(newVNode.children)
-      ? newVNode.children
-      : [];
-    updateChildren(domNode as Element, oldChildren, newChildren);
+  // 更新子节点 - 使用安全的方式处理 children
+  const oldChildren = Array.isArray(oldVNode.children) ? oldVNode.children : [];
+  const newChildren = Array.isArray(newVNode.children) ? newVNode.children : [];
+  updateChildren(domNode as Element, oldChildren, newChildren);
 
-    // 更新 ref 回调
-    if (oldVNode.ref !== newVNode.ref) {
-      // 如果旧的 ref 存在，先调用 null
-      if (oldVNode.ref) {
-        oldVNode.ref(null);
-      }
-      // 如果新的 ref 存在，调用新的 ref
-      if (newVNode.ref) {
-        newVNode.ref(domNode as Element);
-      }
+  // 更新 ref 回调
+  if (oldVNode.ref !== newVNode.ref) {
+    // 如果旧的 ref 存在，先调用 null
+    if (oldVNode.ref) {
+      oldVNode.ref(null);
     }
+    // 如果新的 ref 存在，调用新的 ref
+    if (newVNode.ref) {
+      newVNode.ref(domNode as Element);
+    }
+  }
 
-    // 更新映射关系
-    domToVNodeMap.set(domNode, newVNode);
-    vNodeToDOMMap.set(newVNode, domNode);
-  });
+  // 更新映射关系
+  domToVNodeMap.set(domNode, newVNode);
+  vNodeToDOMMap.set(newVNode, domNode);
 }
 
 /**
@@ -275,7 +225,7 @@ function updateProperties(
 }
 
 /**
- * 更新子节点（简单实现，后续可优化为 key-based diffing）
+ * 更新子节点 - 简单实现，保持 Core 层职责单一
  */
 function updateChildren(
   parent: Element,

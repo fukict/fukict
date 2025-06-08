@@ -1,0 +1,12 @@
+# @vanilla-dom/widget
+
+## 0.0.0-alpha-20250608081318
+
+### Minor Changes
+
+- pre-release refactoring - core architecture improvement and toolchain integration
+
+### Patch Changes
+
+- Updated dependencies
+  - @vanilla-dom/core@0.0.0-alpha-20250608081318

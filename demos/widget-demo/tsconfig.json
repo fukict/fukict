@@ -25,7 +25,10 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+
+    /* TypeScript types */
+    "types": ["@vanilla-dom/widget/jsx-types"]
   },
   "exclude": ["node_modules", "dist"],
   "include": ["src/**/*.ts", "src/**/*.tsx"]

@@ -20,7 +20,9 @@ const config = createConfig([
   'src/jsx-extensions.ts',
   'src/class-widget.ts',
   'src/functional-widget.ts',
+  'src/pattern-handlers.ts',
   'src/adapters.ts',
+  'src/scheduler.ts',
   'src/types.ts',
 ]);
 

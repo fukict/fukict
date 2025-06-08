@@ -35,22 +35,26 @@ function RefDemo() {
     <div className="demo-section">
       <h3 className="demo-title">Ref 功能演示</h3>
       <p>这个演示展示了新的 ref 功能:</p>
-      
+
       <div style="margin: 15px 0;">
-        <input 
+        <input
           ref={handleRef}
-          type="text" 
+          type="text"
           placeholder="使用 ref 获取的输入框"
           style="padding: 8px; margin-right: 10px; border: 1px solid #ccc; border-radius: 4px;"
         />
-        <button className="btn" on:click={focusInput} style="margin-right: 5px;">
+        <button
+          className="btn"
+          on:click={focusInput}
+          style="margin-right: 5px;"
+        >
           聚焦输入框
         </button>
         <button className="btn" on:click={clearInput}>
           清空输入框
         </button>
       </div>
-      
+
       <p style="color: #666; font-size: 0.9rem;">
         ✅ 使用 ref 回调获取 DOM 元素引用，可以直接操作元素
       </p>
@@ -88,7 +92,7 @@ function App() {
         >
           测试事件处理
         </button>
-        
+
         {/* 测试未注册的函数组件 */}
         <SimpleGreeting name="vanilla-dom 用户" />
       </div>

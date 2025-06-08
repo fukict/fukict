@@ -11,6 +11,83 @@
 - **灵活的渲染方式** - 支持 JSX 和手动实例化
 - **高性能** - 基于原生 DOM 操作，无虚拟 DOM 开销
 
+## 🔄 组件生命周期
+
+```mermaid
+graph LR
+    A["组件创建"] --> B["DOM 挂载"]
+    B --> C["onMounted 调用"]
+    C --> D["用户交互"]
+    D --> E["组件销毁"]
+    E --> F["onUnmounting 调用"]
+```
+
+**两种使用方式：**
+
+```mermaid
+graph TD
+    subgraph "JSX 方式 (推荐)"
+    A1["&lt;Widget /&gt;"] --> A2["自动渲染"]
+    A2 --> A3["onMounted 回调"]
+    end
+
+    subgraph "手动方式"
+    B1["new Widget()"] --> B2["instance.mount()"]
+    B2 --> B3["onMounted 生命周期"]
+    end
+```
+
+**生命周期特性：**
+
+- ✅ `onMounted` 在任何渲染方式下都只调用一次
+- ✅ Widget 类和函数组件都有统一的生命周期管理
+- ✅ 支持外部 `onMounted` 回调获取组件实例
+- ✅ `onUnmounting` 负责清理资源（事件监听器、定时器等）
+
+> 📋 详细技术流程请参考 [LIFECYCLE.md](./LIFECYCLE.md)
+
+## 📊 组件编码范式对比
+
+```mermaid
+graph LR
+    subgraph "Widget Class Component"
+    A1["class MyWidget extends Widget"] --> A2["constructor(props)"]
+    A2 --> A3["render(): VNode"]
+    A3 --> A4["onMounted(): void"]
+    A4 --> A5["$() / $$()] DOM 查询"]
+    A5 --> A6["onUnmounting(): void"]
+    end
+
+    subgraph "Function Component"
+    B1["createWidget((props) => VNode)"] --> B2["factory function"]
+    B2 --> B3["renderWithLifecycle"]
+    B3 --> B4["onMounted callback"]
+    B4 --> B5["instance methods"]
+    end
+
+    subgraph "Domain + UI 分层"
+    C1["TodoListDomain"] --> C2["业务逻辑"]
+    C2 --> C3["数据管理"]
+    C4["TodoListUI extends Widget"] --> C5["UI 渲染"]
+    C5 --> C6["用户交互"]
+    C1 --> C4
+    end
+
+    A6 --> D["DOM 销毁"]
+    B5 --> D
+    C6 --> D
+```
+
+### 选择指南
+
+| 特性         | Widget Class                 | Function Component | Domain + UI          |
+| ------------ | ---------------------------- | ------------------ | -------------------- |
+| **适用场景** | 复杂组件状态管理             | 简单 UI 渲染       | 复杂业务逻辑         |
+| **状态管理** | 实例属性                     | props 传递         | Domain 层            |
+| **DOM 查询** | `$()` / `$$()`               | 手动 ref           | 分离关注点           |
+| **生命周期** | `onMounted` / `onUnmounting` | 外部回调           | Domain + UI 各自管理 |
+| **代码组织** | 单文件                       | 单函数             | 多文件分层           |
+
 ## 📦 安装
 
 ```bash

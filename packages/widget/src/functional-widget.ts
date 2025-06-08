@@ -1,3 +1,4 @@
+import { immediateRender, scheduleRender } from './scheduler';
 import type {
   SimpleWidgetFactory,
   SimpleWidgetInstance,
@@ -16,7 +17,7 @@ import { render, updateDOM } from '@vanilla-dom/core';
  * - 无配置选项，专注简单重复渲染
  * - 使用 core 包的精确更新算法
  * - 自动支持组件注册机制
- * 
+ *
  * @example
  * ```tsx
  * const Counter = createWidget<{ count: number }>(({ count }) => (
@@ -95,13 +96,34 @@ export const createWidget: SimpleWidgetFactory<any> = <T extends WidgetProps>(
         updateRender(newProps as T);
       },
 
-      mount: (targetContainer: Element) => {
+      mount: async (
+        targetContainer: Element,
+        immediate = false,
+      ): Promise<void> => {
         if (isMounted) {
           console.warn('[@vanilla-dom/widget] Widget is already mounted');
           return;
         }
-        initialRender(targetContainer);
-        isMounted = true;
+
+        const mountTask = () => {
+          initialRender(targetContainer);
+          isMounted = true;
+        };
+
+        if (immediate) {
+          immediateRender(mountTask);
+        } else {
+          return new Promise<void>((resolve, reject) => {
+            scheduleRender(() => {
+              try {
+                mountTask();
+                resolve();
+              } catch (error) {
+                reject(error);
+              }
+            });
+          });
+        }
       },
 
       destroy,
@@ -110,13 +132,50 @@ export const createWidget: SimpleWidgetFactory<any> = <T extends WidgetProps>(
     return instance;
   };
 
+  // 创建带生命周期的渲染函数（用于 JSX 渲染）
+  const renderWithLifecycle = (
+    props: any,
+    onMountedCallback?: (instance: any) => void,
+  ) => {
+    const vnode = renderFn(props);
+
+    // 如果有 onMounted 回调，通过 ref 处理（仅在 JSX 渲染时生效）
+    if (onMountedCallback) {
+      const originalRef = vnode.ref;
+      let isMounted = false; // 确保 onMounted 只调用一次
+
+      vnode.ref = (element: Element | null) => {
+        // 先调用原有的 ref 回调
+        if (originalRef) {
+          originalRef(element);
+        }
+
+        if (isMounted) {
+          console.warn('[@vanilla-dom/widget] Widget is already mounted');
+          return;
+        }
+
+        // 只在第一次挂载时调用 onMounted
+        if (element) {
+          isMounted = true;
+          // 创建一个简单的实例对象传给回调
+          const instance = factory(props);
+          onMountedCallback(instance);
+        }
+      };
+    }
+
+    return vnode;
+  };
+
   // 添加组件类型标志 - 用于 babel-plugin 自动识别
   (factory as any).__COMPONENT_TYPE__ = 'WIDGET_FUNCTION';
 
+  // 暴露带生命周期的渲染函数
+  (factory as any).__RENDER_WITH_LIFECYCLE__ = renderWithLifecycle;
+
   return factory;
 };
-
-
 
 /**
  * 深度克隆对象

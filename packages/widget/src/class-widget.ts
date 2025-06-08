@@ -1,3 +1,4 @@
+import { immediateRender, scheduleRender } from './scheduler';
 import type { DOMBatchQuery, DOMQuery, WidgetProps } from './types';
 import type { VNode } from '@vanilla-dom/core';
 import { render } from '@vanilla-dom/core';
@@ -49,6 +50,32 @@ export abstract class Widget<TProps extends WidgetProps = WidgetProps> {
   abstract render(): VNode;
 
   /**
+   * 带生命周期处理的渲染方法
+   * 自动处理 onMounted 回调
+   */
+  protected renderWithLifecycle(): VNode {
+    const vnode = this.render();
+
+    // 添加 ref 回调来处理 onMounted
+    const originalRef = vnode.ref;
+    vnode.ref = (element: Element | null) => {
+      // 先调用原有的 ref 回调
+      if (originalRef) {
+        originalRef(element);
+      }
+
+      // 如果元素存在且还未挂载，调用 onMounted
+      if (element && !this._isMounted) {
+        this.root = element;
+        this._isMounted = true;
+        this.onMounted();
+      }
+    };
+
+    return vnode;
+  }
+
+  /**
    * 组件挂载后的生命周期钩子
    * 子类可重写此方法进行初始化操作
    */
@@ -65,30 +92,45 @@ export abstract class Widget<TProps extends WidgetProps = WidgetProps> {
   }
 
   /**
-   * 挂载组件到指定容器
+   * 挂载组件到指定容器（异步渲染，支持调度）
    */
-  mount(container: Element): void {
+  async mount(container: Element, immediate = false): Promise<void> {
     if (this._isMounted) {
       console.warn('[@vanilla-dom/widget] Widget is already mounted');
       return;
     }
 
-    try {
-      // 执行渲染
-      const vnode = this.render();
-      this.vnode = vnode;
+    const renderTask = () => {
+      try {
+        // 执行渲染（使用带生命周期的渲染，会自动调用 onMounted）
+        const vnode = this.renderWithLifecycle();
+        this.vnode = vnode;
 
-      // 渲染到容器
-      render(vnode, { container });
-      this.root = container.firstElementChild;
+        // 渲染到容器
+        render(vnode, { container });
+      } catch (error) {
+        console.error(
+          '[@vanilla-dom/widget] Error during widget mount:',
+          error,
+        );
+        throw error;
+      }
+    };
 
-      this._isMounted = true;
-
-      // 调用生命周期钩子
-      this.onMounted();
-    } catch (error) {
-      console.error('[@vanilla-dom/widget] Error during widget mount:', error);
-      throw error;
+    // 根据 immediate 参数选择渲染方式
+    if (immediate) {
+      immediateRender(renderTask);
+    } else {
+      return new Promise<void>((resolve, reject) => {
+        scheduleRender(() => {
+          try {
+            renderTask();
+            resolve();
+          } catch (error) {
+            reject(error);
+          }
+        });
+      });
     }
   }
 
@@ -115,7 +157,10 @@ export abstract class Widget<TProps extends WidgetProps = WidgetProps> {
       this.vnode = null;
       this._isMounted = false;
     } catch (error) {
-      console.error('[@vanilla-dom/widget] Error during widget unmount:', error);
+      console.error(
+        '[@vanilla-dom/widget] Error during widget unmount:',
+        error,
+      );
       throw error;
     }
   }

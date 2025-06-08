@@ -58,10 +58,7 @@ export function setProperty(element: Element, key: string, value: any): void {
   }
 }
 
-export function removeProperty(
-  element: Element,
-  key: string
-): void {
+export function removeProperty(element: Element, key: string): void {
   if (key === 'children') return;
 
   // 移除普通属性（事件已在编译时分离）
@@ -122,10 +119,4 @@ export function updateEvents(
   if (newEvents) {
     setEvents(element, newEvents);
   }
-}
-
-// 批量更新优化
-export function batchUpdate(callback: () => void): void {
-  // 简单实现，后续可以优化为 requestAnimationFrame 或 MessageChannel
-  callback();
 }

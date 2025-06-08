@@ -1,6 +1,6 @@
+import { Widget } from './class-widget';
 import { createWidget } from './functional-widget';
 import type { WidgetProps } from './types';
-import { Widget } from './class-widget';
 import type { ComponentFunction, VNode } from '@vanilla-dom/core';
 
 /**

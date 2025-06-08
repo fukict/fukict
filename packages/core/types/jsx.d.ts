@@ -1,4 +1,4 @@
-import type { DOMProps, VNode } from './types.js';
+import type { DOMProps, VNode } from './index';
 
 declare global {
   namespace JSX {
@@ -244,5 +244,5 @@ declare global {
   }
 }
 
-// 导出一个空对象以使此文件成为模块
+// 导出一个空对象以确保此文件被视为模块
 export {};

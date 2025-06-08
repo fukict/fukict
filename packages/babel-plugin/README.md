@@ -247,33 +247,35 @@ The plugin works seamlessly with TypeScript. Make sure your `tsconfig.json` incl
 ## 🚀 编译时优化特性
 
 ### 静态分析优化
+
 - **静态内容识别**：编译时识别静态 HTML 部分
 - **动态插值标记**：标记需要运行时更新的位置
 - **事件优化**：自动识别可委托的事件处理
 
-### 组件自动注册
-- **标志检测**：自动检测 `__COMPONENT_TYPE__` 标志
-- **零配置**：无需手动列举组件类型
+### 组件处理
+
+- **运行时注册**：组件注册交由运行时处理
+- **零配置**：无需手动配置组件类型
 - **第三方扩展**：支持任何第三方组件编码范式库
 
 ### 转换优化
+
 ```jsx
 // 编译前
 <div className="container" onClick={handler}>
   <span>{text}</span>
-</div>
+</div>;
 
 // 编译后
-hyperscript('div', 
-  { className: 'container', onClick: handler }, 
+hyperscript(
+  'div',
+  { className: 'container', onClick: handler },
   null,
-  hyperscript('span', null, null, text)
+  hyperscript('span', null, null, text),
 );
 ```
 
 ## 🔧 高级配置
-
-### 组件注册支持
 
 ```javascript
 // babel.config.js
@@ -282,15 +284,13 @@ module.exports = {
     [
       '@vanilla-dom/babel-plugin',
       {
-        // 启用组件自动注册（推荐）
-        enableComponentRegistry: true,
         // 自定义导入源
         importSource: '@vanilla-dom/core',
         // 开发模式调试
-        development: process.env.NODE_ENV === 'development'
-      }
-    ]
-  ]
+        development: process.env.NODE_ENV === 'development',
+      },
+    ],
+  ],
 };
 ```
 

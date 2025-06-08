@@ -3,7 +3,7 @@
  *
  * 编译时的组件标志识别逻辑 - 通用检测工具函数
  */
-import type { types as t } from '@babel/core';
+import type * as t from '@babel/types';
 
 // 通用检测工具函数 - 可以被配置中的检测器使用
 
@@ -27,7 +27,7 @@ export function hasStaticComponentType(
   expectedType: string,
   t: typeof import('@babel/types'),
 ): boolean {
-  if (t.isClassDeclaration(node)) {
+  if (t.isClassDeclaration(node) && node.body) {
     return node.body.body.some(member => {
       if (
         t.isClassProperty(member) &&
@@ -124,109 +124,4 @@ export function detectComponentType(
   }
 
   return null;
-}
-
-// 创建注册组件的 JSX 转换
-export function transformToRegisteredComponent(
-  elementName: string,
-  attributes: t.JSXAttribute[],
-  children: (
-    | t.JSXElement
-    | t.JSXFragment
-    | t.JSXText
-    | t.JSXExpressionContainer
-  )[],
-  transformTarget: string = '__registered_component__',
-  t: typeof import('@babel/types'),
-): t.CallExpression {
-  // 分离 onMount 属性
-  const onMountAttribute = attributes.find(
-    attr =>
-      t.isJSXAttribute(attr) &&
-      t.isJSXIdentifier(attr.name) &&
-      attr.name.name === 'onMount',
-  );
-
-  const otherAttributes = attributes.filter(attr => attr !== onMountAttribute);
-
-  // 生成 props 对象
-  const propsProperties: t.ObjectProperty[] = [];
-
-  for (const attr of otherAttributes) {
-    if (t.isJSXAttribute(attr) && t.isJSXIdentifier(attr.name)) {
-      let value: t.Expression;
-
-      if (attr.value === null) {
-        // 布尔属性: <Component enabled />
-        value = t.booleanLiteral(true);
-      } else if (t.isStringLiteral(attr.value)) {
-        // 字符串属性: <Component title="hello" />
-        value = attr.value;
-      } else if (
-        t.isJSXExpressionContainer(attr.value) &&
-        !t.isJSXEmptyExpression(attr.value.expression)
-      ) {
-        // 表达式属性: <Component count={5} />
-        value = attr.value.expression;
-      } else {
-        continue; // 跳过无效的属性
-      }
-
-      propsProperties.push(
-        t.objectProperty(t.identifier(attr.name.name), value),
-      );
-    }
-  }
-
-  const componentPropsObject = t.objectExpression(propsProperties);
-
-  // 构建 VNode 的 props 对象
-  const vnodePropsProperties: t.ObjectProperty[] = [
-    t.objectProperty(t.identifier('component'), t.identifier(elementName)),
-    t.objectProperty(t.identifier('componentProps'), componentPropsObject),
-  ];
-
-  // 添加 onMount 回调
-  if (onMountAttribute && onMountAttribute.value) {
-    if (
-      t.isJSXExpressionContainer(onMountAttribute.value) &&
-      !t.isJSXEmptyExpression(onMountAttribute.value.expression)
-    ) {
-      vnodePropsProperties.push(
-        t.objectProperty(
-          t.identifier('onMount'),
-          onMountAttribute.value.expression,
-        ),
-      );
-    }
-  }
-
-  const vnodePropsObject = t.objectExpression(vnodePropsProperties);
-
-  // 处理子元素
-  const processedChildren = children
-    .filter(child => !t.isJSXText(child) || child.value.trim() !== '')
-    .map(child => {
-      if (t.isJSXText(child)) {
-        return t.stringLiteral(child.value);
-      } else if (
-        t.isJSXExpressionContainer(child) &&
-        !t.isJSXEmptyExpression(child.expression)
-      ) {
-        return child.expression;
-      } else if (t.isJSXElement(child) || t.isJSXFragment(child)) {
-        // 子 JSX 元素会在其他地方处理
-        return child as any;
-      }
-      return null;
-    })
-    .filter((child): child is t.Expression => child !== null);
-
-  // 创建 hyperscript 调用
-  return t.callExpression(t.identifier('hyperscript'), [
-    t.stringLiteral(transformTarget),
-    vnodePropsObject,
-    t.nullLiteral(), // events 参数
-    ...processedChildren,
-  ]);
 }

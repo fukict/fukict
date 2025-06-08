@@ -169,15 +169,19 @@ MyFactory.__COMPONENT_TYPE__ = 'WIDGET_FUNCTION'; // 自动添加
 
 ```jsx
 // 编译前
-<TodoList maxItems={20} onMount={instance => (this.todoList = instance)} />;
+<TodoList maxItems={20} />;
 
 // 编译后 (babel-plugin 自动转换)
-hyperscript('__registered_component__', {
-  component: TodoList,
-  componentProps: { maxItems: 20 },
-  onMount: instance => (this.todoList = instance),
-});
+hyperscript(
+  TodoList,
+  {
+    maxItems: 20,
+  },
+  null,
+);
 ```
+
+组件的识别和实例化由 @vanilla-dom/core 的编码范式注册机制在运行时处理。
 
 ## 📋 开发指南
 
@@ -202,7 +206,7 @@ hyperscript('__registered_component__', {
 
 ```jsx
 // 适用于布局中的固定组件
-<TodoList maxItems={20} onMount={instance => (this.todoList = instance)} />
+<TodoList maxItems={20} />
 ```
 
 #### 动态组件 → 直接实例化

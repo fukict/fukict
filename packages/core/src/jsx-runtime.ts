@@ -1,4 +1,4 @@
-import type { ComponentFunction, VNode, VNodeChild } from './types.js';
+import type { ComponentFunction, VNode, VNodeChild } from '../types/index';
 
 /**
  * 核心VNode创建函数 - hyperscript
@@ -12,7 +12,7 @@ export function hyperscript(
 ): VNode {
   const { children: propsChildren, key, ref, ...restProps } = props || {};
 
-  // 确保 children 总是一个数组
+  // 简单 children 处理
   const finalChildren: VNodeChild[] = [];
 
   // 处理 props 中的 children
@@ -31,7 +31,7 @@ export function hyperscript(
     events: events,
     children: finalChildren,
     key,
-    ref, // 新增：提取并保存 ref
+    ref,
   };
 }
 

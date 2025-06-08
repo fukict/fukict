@@ -1,6 +1,6 @@
 {
   "name": "@vanilla-dom/babel-preset-widget",
-  "version": "0.1.0",
+  "version": "0.0.0-alpha-20250608081318",
   "description": "Babel preset for @vanilla-dom/widget - provides optimized JSX transformation for Widget components",
   "keywords": [
     "babel",
@@ -18,8 +18,8 @@
   },
   "license": "MIT",
   "author": "xiaoyown",
-  "type": "module",
   "sideEffects": false,
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -35,8 +35,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
+    "clean": "premove dist",
     "test": "echo \"No tests for preset\" && exit 0"
   },
   "dependencies": {
@@ -45,10 +44,13 @@
   "devDependencies": {
     "@babel/core": "^7.25.8",
     "@babel/types": "^7.25.8",
-    "tsup": "^8.3.5",
+    "premove": "^4.0.0",
     "typescript": "^5.6.3"
   },
   "peerDependencies": {
     "@babel/core": "^7.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

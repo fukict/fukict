@@ -1,27 +1,29 @@
 {
   "name": "@vanilla-dom/core",
-  "version": "0.1.0",
-  "description": "Vanilla DOM core runtime - high-performance client-side rendering with JSX support",
+  "version": "0.0.0-alpha-20250608081318",
+  "description": "轻量级 DOM 渲染引擎，VNode 到 DOM 转换",
   "keywords": [
     "dom",
     "jsx",
     "vanilla",
     "client-side",
     "rendering",
-    "typescript"
+    "typescript",
+    "vnode",
+    "performance",
+    "lightweight",
+    "component-pattern",
+    "ref-callback"
   ],
-  "license": "MIT",
-  "author": "xiaoyown",
   "repository": {
     "type": "git",
     "url": "https://github.com/vanilla-dom/vanilla-dom.git",
     "directory": "packages/core"
   },
+  "license": "MIT",
+  "author": "xiaoyown",
+  "sideEffects": false,
   "type": "module",
-  "sideEffects": [
-    "./src/jsx-types.ts",
-    "./dist/jsx-types.js"
-  ],
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -31,13 +33,15 @@
       "import": "./dist/jsx-runtime.js",
       "types": "./dist/jsx-runtime.d.ts"
     },
+    "./types": {
+      "types": "./types/index.d.ts"
+    },
     "./jsx-types": {
-      "import": "./dist/jsx-types.js",
-      "types": "./dist/jsx-types.d.ts"
+      "types": "./types/jsx.d.ts"
     },
     "./component-registry": {
-      "import": "./dist/component-registry.js",
-      "types": "./dist/component-registry.d.ts"
+      "import": "./dist/pattern-registry.js",
+      "types": "./dist/pattern-registry.d.ts"
     },
     "./renderer": {
       "import": "./dist/renderer.js",
@@ -53,11 +57,11 @@
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
+    "types",
     "README.md"
   ],
   "scripts": {
-    "build": "premove dist && tsup",
-    "dev": "tsup --watch",
+    "clean": "premove dist",
     "test": "vitest --run",
     "test:watch": "vitest",
     "type-check": "tsc --noEmit"
@@ -65,11 +69,13 @@
   "devDependencies": {
     "jsdom": "^24.0.0",
     "premove": "^4.0.0",
-    "tsup": "^8.0.0",
-    "typescript": "^5.0.0",
+    "typescript": "^5.6.3",
     "vitest": "^1.0.0"
   },
   "peerDependencies": {
     "typescript": ">=4.5.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

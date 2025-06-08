@@ -1,46 +1,31 @@
 ---
 description: 
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
-# 核心包指南 (@vanilla-dom/core)
+---
+description: 核心包开发指南 - DOM 渲染引擎与性能优化
+globs: ['packages/core/**/*']
+---
 
-## 包概览
-核心包是处理 DOM 渲染和操作的运行时引擎。它接收来自 babel 插件编译的节点树，并高效地将其转换为真实的 DOM 元素。
+# 核心包 (@vanilla-dom/core)
 
-## 关键源文件
+## 核心文件
+- `src/renderer.ts` - 渲染引擎 (render, createDOMFromTree)
+- `src/dom-utils.ts` - DOM 操作工具
+- `src/jsx-runtime.ts` - JSX 运行时 (h, Fragment)
+- `src/types.ts` - VNode 核心类型
 
-### 入口点
-- [packages/core/src/index.ts](mdc:packages/core/src/index.ts) - 主要导出和公共 API
+## 特性
+- VNode → DOM 高效转换
+- 精确 DOM 更新与差异对比
+- 零配置 JSX 支持
+- 完整 TypeScript 类型定义
+- 内存管理与事件清理
 
-### 核心组件
-- [packages/core/src/renderer.ts](mdc:packages/core/src/renderer.ts) - 主要渲染引擎，包含 `render()`、`createDOMFromTree()` 和 DOM 差异对比
-- [packages/core/src/dom-utils.ts](mdc:packages/core/src/dom-utils.ts) - DOM 操作工具和浏览器兼容性助手
-- [packages/core/src/types.ts](mdc:packages/core/src/types.ts) - VNode 和渲染的核心类型定义
-
-### JSX 支持
-- [packages/core/src/jsx-runtime.ts](mdc:packages/core/src/jsx-runtime.ts) - JSX 运行时工厂函数 (`h`、`Fragment`)
-- [packages/core/src/jsx-types.ts](mdc:packages/core/src/jsx-types.ts) - 完整的 JSX 类型定义和 IntrinsicElements
-
-## 配置文件
-- [packages/core/package.json](mdc:packages/core/package.json) - 包配置和依赖项
-- [packages/core/tsconfig.json](mdc:packages/core/tsconfig.json) - TypeScript 配置
-- [packages/core/tsup.config.ts](mdc:packages/core/tsup.config.ts) - 构建配置
-- [packages/core/vitest.config.ts](mdc:packages/core/vitest.config.ts) - 测试配置
-
-## 关键特性
-- **渲染引擎**: 将 VNode 树转换为真实 DOM 元素
-- **DOM 工具**: 高效的 DOM 操作和批量更新
-- **TypeScript 集成**: JSX 元素的完整类型定义
-- **零配置 JSX**: 开箱即用的 `.tsx` 文件支持
-- **性能优化**: 精确的 DOM 更新和内存管理
-
-## 测试
-- [packages/core/tests/](mdc:packages/core/tests) - 所有核心功能的单元测试
-
-## 开发说明
-- 专注于性能和最小包体积
-- 所有 DOM 操作都应该高效且精确定向
-- TypeScript 类型应提供优秀的开发者体验
-- 内存管理至关重要 - 清理事件监听器和引用
+## 开发原则
+- 性能优先，< 10KB 体积
+- 精确定向 DOM 操作
+- 优秀 TypeScript DX
+- 自动清理引用和监听器
 

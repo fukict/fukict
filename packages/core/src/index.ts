@@ -4,8 +4,7 @@
  * 高性能客户端渲染库核心包
  * 提供 VNode 到 DOM 的转换、渲染引擎和 TypeScript 支持
  */
-// 导入 JSX 类型定义，确保全局 JSX 命名空间可用
-import './jsx-types.js';
+// JSX 类型定义通过单独的 @vanilla-dom/core/jsx-types 入口点提供
 
 // 导出类型定义
 export type {
@@ -16,24 +15,21 @@ export type {
   RenderOptions,
   UpdateContext,
   RefCallback,
-} from './types.js';
+} from '../types/index';
 
-// 导出组件注册机制
+// 导出组件编码范式注册机制
 export {
-  registerComponentDetector,
-  getAllDetectors,
-  isComponentRegistered,
-  createComponentInstance,
-  getComponentReference,
-} from './component-registry.js';
+  registerComponentPattern,
+  getAllPatterns,
+  isRegisteredComponent,
+  getComponentPattern,
+  renderRegisteredComponent,
+} from './pattern-registry';
 
-export type {
-  ComponentInstance,
-  ComponentDetector,
-} from './component-registry.js';
+export type { ComponentPatternHandler } from './pattern-registry';
 
 // 导出渲染引擎
-export { render, createDOMFromTree, updateDOM, hydrate } from './renderer.js';
+export { render, createDOMFromTree, updateDOM, hydrate } from './renderer';
 
 // 导出 DOM 工具集
 export {
@@ -48,8 +44,7 @@ export {
   setProperty,
   removeProperty,
   updateProperty,
-  batchUpdate,
-} from './dom-utils.js';
+} from './dom-utils';
 
 // 导出 JSX 辅助函数
 export {
@@ -59,7 +54,7 @@ export {
   jsx, // 兼容性别名（babel-plugin使用）
   jsxs, // 兼容性别名
   jsxDEV, // 兼容性别名
-} from './jsx-runtime.js';
+} from './jsx-runtime';
 
 // 版本信息
 export const version = '0.1.0';

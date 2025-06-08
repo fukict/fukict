@@ -1,6 +1,6 @@
 {
   "name": "@vanilla-dom/babel-plugin",
-  "version": "0.1.0",
+  "version": "0.0.0-alpha-20250608081318",
   "description": "Babel plugin for @vanilla-dom JSX compilation",
   "keywords": [
     "babel-plugin",
@@ -8,15 +8,15 @@
     "vanilla-dom",
     "compiler"
   ],
-  "license": "MIT",
-  "author": "xiaoyown",
   "repository": {
     "type": "git",
     "url": "https://github.com/vanilla-dom/vanilla-dom.git",
     "directory": "packages/babel-plugin"
   },
-  "type": "module",
+  "license": "MIT",
+  "author": "xiaoyown",
   "sideEffects": false,
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -32,27 +32,29 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
+    "clean": "premove dist",
     "lint": "eslint src --ext .ts",
     "test": "vitest --run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@babel/core": "^7.23.0",
-    "@babel/parser": "^7.23.0",
+    "@babel/core": "^7.25.8",
+    "@babel/parser": "^7.25.8",
     "@babel/plugin-syntax-jsx": "^7.27.1",
-    "@babel/traverse": "^7.23.0",
-    "@babel/types": "^7.23.0",
+    "@babel/traverse": "^7.25.8",
+    "@babel/types": "^7.25.8",
     "@types/babel__core": "^7.20.0",
     "@types/babel__traverse": "^7.20.0",
     "@types/node": "^20.0.0",
-    "tsup": "^8.0.0",
-    "typescript": "^5.0.0",
+    "premove": "^4.0.0",
+    "typescript": "^5.6.3",
     "vitest": "^1.0.0"
   },
   "peerDependencies": {
     "@babel/core": "^7.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

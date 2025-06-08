@@ -2,13 +2,13 @@
 
 专为 @vanilla-dom/widget 设计的零配置 Babel 预设，提供开箱即用的组件开发环境。
 
-## 🎯 设计目标  
+## 🎯 设计目标
 
 `@vanilla-dom/babel-preset-widget` 是一个用 **TypeScript 编写**的 Babel preset，为基于 Widget 编码范式的项目提供完整的构建配置。使用此 preset，您可以获得：
 
 - **零配置体验**：开箱即用的完整开发环境
 - **自动组件注册**：Widget 类和 createWidget 函数自动识别
-- **编译时优化**：JSX 静态分析和性能优化  
+- **编译时优化**：JSX 静态分析和性能优化
 - **类型安全**：完整的 TypeScript 支持
 
 ## 特性
@@ -53,7 +53,7 @@ class TodoList extends Widget {
   }
 }
 
-// createWidget 函数 - 自动获得 WIDGET_FUNCTION 标志  
+// createWidget 函数 - 自动获得 WIDGET_FUNCTION 标志
 const Button = createWidget(props => {
   return <button>{props.text}</button>;
 });
@@ -62,7 +62,7 @@ const Button = createWidget(props => {
 function App() {
   return (
     <div>
-      <TodoList onMount={instance => console.log('TodoList mounted')} />
+      <TodoList onMounted={instance => console.log('TodoList mounted')} />
       <Button text="Click me" />
     </div>
   );
@@ -79,14 +79,11 @@ module.exports = {
     [
       '@vanilla-dom/preset-widget',
       {
-        // 是否启用组件注册功能（默认：true）
-        enableComponentRegistry: true,
-
-        // 自定义组件检测器（可选）
-        customDetectors: [],
+        // 自定义 JSX 运行时导入路径
+        importSource: '@vanilla-dom/core',
 
         // 开发模式调试（默认：跟随 NODE_ENV）
-        debug: process.env.NODE_ENV === 'development',
+        development: process.env.NODE_ENV === 'development',
       },
     ],
   ],
@@ -100,9 +97,9 @@ module.exports = {
 ```typescript
 // 类型定义（内部使用，用户无需关心）
 interface PresetOptions {
-  enableComponentRegistry?: boolean;
-  customDetectors?: any[];
-  debug?: boolean;
+  development?: boolean;
+  importSource?: string;
+  typescript?: boolean | object;
 }
 ```
 
@@ -124,19 +121,23 @@ interface PresetOptions {
 
 ### JSX 转换
 
-在 JSX 中直接使用组件时，会自动转换为组件注册调用：
+在 JSX 中直接使用组件时，会自动转换为 hyperscript 调用，组件的注册和实例化由运行时处理：
 
 ```jsx
 // 编译前
-<TodoList maxItems={20} onMount={instance => (this.todoList = instance)} />;
+<TodoList maxItems={20} />;
 
 // 编译后
-hyperscript('__registered_component__', {
-  component: TodoList,
-  componentProps: { maxItems: 20 },
-  onMount: instance => (this.todoList = instance),
-});
+hyperscript(
+  TodoList,
+  {
+    maxItems: 20,
+  },
+  null,
+);
 ```
+
+组件的识别和实例化逻辑交由 @vanilla-dom/core 的编码范式注册机制处理，babel 插件只负责 JSX 到 hyperscript 的转换。
 
 ## 使用示例
 
@@ -161,11 +162,11 @@ function App() {
     <div>
       <TodoList
         maxItems={20}
-        onMount={instance => console.log('TodoList mounted:', instance)}
+        onMounted={instance => console.log('TodoList mounted:', instance)}
       />
       <SimpleButton
         text="点击我"
-        onMount={instance => console.log('Button mounted:', instance)}
+        onMounted={instance => console.log('Button mounted:', instance)}
       />
     </div>
   );

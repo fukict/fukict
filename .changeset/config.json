@@ -1,0 +1,17 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@3.1.1/schema.json",
+  "access": "public",
+  "baseBranch": "main",
+  "changelog": "@changesets/cli/changelog",
+  "commit": false,
+  "fixed": [],
+  "ignore": [
+    "babel-transform-demo",
+    "vanilla-dom-rsbuild-demo",
+    "vanilla-dom-vite-demo",
+    "vanilla-dom-webpack-demo",
+    "widget-demo"
+  ],
+  "linked": [],
+  "updateInternalDependencies": "patch"
+}

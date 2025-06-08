@@ -27,9 +27,11 @@ export interface ComponentInstance {
   element: Element | null;
 
   /**
-   * 挂载组件到指定容器
+   * 挂载组件到指定容器（异步，支持调度渲染）
+   * @param container 目标容器
+   * @param immediate 是否立即渲染，默认 false（使用调度）
    */
-  mount: (container: Element) => void;
+  mount: (container: Element, immediate?: boolean) => Promise<void>;
 
   /**
    * 销毁组件

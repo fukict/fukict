@@ -11,8 +11,6 @@ interface PresetOptions {
   development?: boolean;
   /** 自定义 JSX 运行时导入路径 */
   importSource?: string;
-  /** 是否启用组件自动注册 */
-  enableComponentRegistry?: boolean;
   /** TypeScript 配置 */
   typescript?:
     | boolean
@@ -39,7 +37,6 @@ export default function presetWidget(
   const {
     development = api.env('development'),
     importSource = '@vanilla-dom/core',
-    enableComponentRegistry = true,
     typescript = true,
   } = options;
 
@@ -72,10 +69,8 @@ export default function presetWidget(
     {
       development,
       importSource,
-      enableComponentRegistry,
       // 专为 Widget 优化的配置
       runtime: 'automatic',
-      transformTarget: '__registered_component__',
     },
   ]);
 
