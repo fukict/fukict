@@ -28,7 +28,7 @@ import { render, updateDOM } from '@vanilla-dom/core';
 export const createWidget: SimpleWidgetFactory<any> = <T extends WidgetProps>(
   renderFn: SimpleWidgetRender<T>,
 ) => {
-  const factory = (props: T): SimpleWidgetInstance => {
+  const factory = (props: T = {} as T): SimpleWidgetInstance => {
     let currentElement: Element | null = null;
     let currentVNode: VNode | null = null;
     let currentProps: T = deepClone(props);

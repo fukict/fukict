@@ -77,7 +77,7 @@ export type SimpleWidgetRender<T extends WidgetProps> = (props: T) => VNode;
  */
 export type SimpleWidgetFactory<T extends WidgetProps> = (
   renderFn: SimpleWidgetRender<T>,
-) => (props: T) => SimpleWidgetInstance;
+) => (props?: T) => SimpleWidgetInstance;
 
 /**
  * DOM 元素单个查询结果

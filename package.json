@@ -23,7 +23,8 @@
   "author": "xiaoyown <xiaoyown@example.com>",
   "type": "module",
   "scripts": {
-    "build": "pnpm -r build",
+    "build": "pnpm build:pkg && pnpm build:demos",
+    "build:demos": "pnpm --filter './demos/*' build",
     "build:pkg": "./scripts/build-package.sh core babel-plugin widget babel-preset-widget",
     "build:pkg:watch": "./scripts/build-package.sh core widget babel-plugin babel-preset-widget watch",
     "changeset": "changeset",

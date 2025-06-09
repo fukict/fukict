@@ -43,9 +43,6 @@
     "./types": {
       "import": "./dist/types.js",
       "types": "./dist/types.d.ts"
-    },
-    "./jsx-types": {
-      "types": "./types/jsx.d.ts"
     }
   },
   "main": "./dist/index.js",

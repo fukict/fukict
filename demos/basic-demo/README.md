@@ -131,7 +131,7 @@ hyperscript('div', { style: 'color: red' }, null, 'Hello!');
 ## 🔗 相关资源
 
 - [Vanilla DOM 核心库](../../packages/core/)
-- [TypeScript 类型定义](../../packages/core/src/jsx-types.ts)
+- [TypeScript 类型定义](../../packages/core/types/jsx.d.ts)
 - [更多构建工具示例](../)
 
 ## 📝 学习路径

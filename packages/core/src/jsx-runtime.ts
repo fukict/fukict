@@ -62,6 +62,8 @@ function normalizeChildren(children: any): VNodeChild[] {
   return [children];
 }
 
+export type { JSX } from '../types/jsx';
+
 /**
  * Hyperscript 函数 - hyperscript的直接别名
  * 用于手动创建VNode的便捷接口

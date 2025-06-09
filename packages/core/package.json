@@ -36,7 +36,7 @@
     "./types": {
       "types": "./types/index.d.ts"
     },
-    "./jsx-types": {
+    "./types/jsx": {
       "types": "./types/jsx.d.ts"
     },
     "./component-registry": {

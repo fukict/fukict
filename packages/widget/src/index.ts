@@ -1,5 +1,3 @@
-// 导入 JSX 类型扩展（仅类型，不会打包到 JS 中）
-import type {} from '../types/jsx';
 // 自动注册 Widget 编码范式处理器
 import { registerWidgetPatterns } from './pattern-handlers';
 

@@ -21,7 +21,7 @@ export type ComponentFunction = (props: Record<string, any>) => VNode;
 export interface DOMProps extends Record<string, any> {
   children?: VNodeChild | VNodeChild[];
   key?: string | number;
-  ref?: RefCallback; // 新增：ref 支持
+  ref?: RefCallback;
 }
 
 // 编译时事件处理器映射

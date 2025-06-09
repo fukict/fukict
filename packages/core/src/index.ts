@@ -4,7 +4,6 @@
  * 高性能客户端渲染库核心包
  * 提供 VNode 到 DOM 的转换、渲染引擎和 TypeScript 支持
  */
-// JSX 类型定义通过单独的 @vanilla-dom/core/jsx-types 入口点提供
 
 // 导出类型定义
 export type {
@@ -47,14 +46,7 @@ export {
 } from './dom-utils';
 
 // 导出 JSX 辅助函数
-export {
-  hyperscript, // 主要API - VNode创建函数
-  h, // Hyperscript别名
-  Fragment, // Fragment组件
-  jsx, // 兼容性别名（babel-plugin使用）
-  jsxs, // 兼容性别名
-  jsxDEV, // 兼容性别名
-} from './jsx-runtime';
+export * from './jsx-runtime';
 
 // 版本信息
 export const version = '0.1.0';
