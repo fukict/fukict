@@ -2,56 +2,64 @@
 
 ## 概述
 
-本指南介绍了在 Vanilla DOM 生态系统中组件开发的最佳实践，特别是针对复杂组件的文件分离模式。
+本指南介绍 Vanilla DOM 生态系统中的组件开发最佳实践，特别是复杂组件的分层架构模式。
 
-## 📂 组件分层架构
+## 📂 分层架构
 
 ### 适用场景
 
-- **简单组件** (< 100 行代码): 单文件 `.tsx` 即可
-- **中等复杂度** (100-300 行): 考虑使用 hooks 或 mixin 模式
-- **高复杂度** (> 300 行): **强烈推荐** Domain + UI 分层架构
+- **简单组件** (< 100 行): 单文件 `.tsx`
+- **复杂组件** (> 100 行): **推荐** Domain + UI 分层架构
 
 ### 文件结构
 
 ```
 components/
-├── SimpleComponent.tsx           # 简单组件，单文件
-├── MediumComponent/             # 中等复杂度组件
-│   ├── index.tsx
-│   └── hooks.ts
+├── SimpleComponent.tsx           # 简单组件
 └── ComplexComponent/            # 复杂组件，分层架构
-    ├── ComponentDomain.ts       # 业务逻辑层
-    ├── ComponentUI.tsx          # UI 层
-    └── index.ts                 # 统一导出
+    ├── ComplexComponent.domain.ts    # 业务逻辑层
+    ├── ComplexComponent.ui.tsx       # UI 层
+    └── ComplexComponent.ts           # 统一导出
 ```
+
+### 🔧 VSCode 编辑器配置
+
+为了让分层文件在侧边栏中嵌套显示，在 VSCode 设置中添加：
+
+```json
+{
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "*.ts": "${capture}.domain.ts,${capture}.ui.tsx,${capture}.test.ts"
+  }
+}
+```
+
+配置后效果：
+```
+📁 components/
+  📄 TodoList.ts
+    📄 TodoList.domain.ts
+    📄 TodoList.ui.tsx
+  📄 Counter.tsx
+```
+
+**配置方法**: 
+1. 打开 VSCode 设置 (`Cmd/Ctrl + ,`)
+2. 搜索 "file nesting" 
+3. 启用相关选项并编辑 patterns
 
 ## 🎯 分层架构详解
 
-### Domain 层 (.ts 文件)
+### Domain 层 (.domain.ts)
 
-**职责:**
-
-- 数据管理和状态维护
-- 业务规则验证
-- 核心业务逻辑
-- 与外部服务交互
-- 事件回调管理
-
-**特点:**
-
-- 纯 TypeScript，不包含 JSX
-- **不继承 Widget**，纯业务逻辑类
-- 通过组合模式被 UI 层使用
-- 易于单元测试
-
-**示例:**
+**职责**: 数据管理、业务规则、核心逻辑
 
 ```typescript
 export class TodoListDomain {
   protected todos: TodoItem[] = [];
 
-  // 业务方法
   addTodo(text: string): boolean {
     // 业务规则验证
     if (!text.trim()) {
@@ -60,40 +68,22 @@ export class TodoListDomain {
     }
 
     // 数据操作
-    const newTodo = {
-      /* ... */
-    };
+    const newTodo = { id: Date.now().toString(), text: text.trim(), completed: false };
     this.todos.push(newTodo);
     this.notifyDataChange();
     return true;
   }
 
-  // 事件通知
+  // 事件通知机制
   private notifyDataChange(): void {
     this.onTodosChange?.(this.getTodos());
   }
 }
 ```
 
-### UI 层 (.tsx 文件)
+### UI 层 (.ui.tsx)
 
-**职责:**
-
-- 界面渲染 (JSX)
-- 用户交互处理
-- 事件绑定
-- DOM 操作
-- 样式管理
-
-**特点:**
-
-- 继承自 Widget 基类
-- 通过组合模式使用 Domain 层
-- 专注于视觉呈现
-- 响应业务层的数据变化
-- 包含样式定义
-
-**示例:**
+**职责**: 界面渲染、用户交互、事件绑定
 
 ```typescript
 export class TodoListUI extends Widget<TodoListProps> {
@@ -101,215 +91,277 @@ export class TodoListUI extends Widget<TodoListProps> {
 
   constructor(props: TodoListProps) {
     super(props);
-
-    // 组合：创建业务逻辑实例
+    // 组合模式：使用 Domain 层
     this.domain = new TodoListDomain(props);
-
-    // 注册业务层事件
     this.domain.setTodosChangeHandler(this.handleTodosChange.bind(this));
-    this.domain.setErrorHandler(this.handleError.bind(this));
   }
 
-  // UI 事件处理
-  private handleAddTodo(): void {
+  private handleAddTodo = (e: Event): void => {
+    e.preventDefault();
     const input = this.$('.todo-input');
-    if (input && input.element) {
+    if (input?.element) {
       const text = (input.element as HTMLInputElement).value;
-      if (this.domain.addTodo(text)) {  // 调用业务层方法
+      if (this.domain.addTodo(text)) {
         (input.element as HTMLInputElement).value = '';
       }
     }
-  }
+  };
 
-  // JSX 渲染
-  public render() {
+  render() {
     return (
       <div className="todo-widget">
-        <input className="todo-input" />
-        <button on:click={this.handleAddTodo.bind(this)}>添加</button>
-        {/* 样式定义 */}
-        <style>{/* CSS */}</style>
+        <form on:submit={this.handleAddTodo}>
+          <input className="todo-input" placeholder="输入待办事项..." />
+          <button type="submit">添加</button>
+        </form>
+        <style>{`/* CSS 样式 */`}</style>
       </div>
     );
   }
 }
 ```
 
-### 统一导出 (index.ts)
+### 统一导出 (.ts)
 
 ```typescript
-export { ComponentDomain } from './ComponentDomain';
-export { ComponentUI } from './ComponentUI';
-export type { ComponentProps, ComponentState } from './ComponentDomain';
+// 导出业务逻辑层
+export { TodoListDomain } from './TodoList.domain';
+
+// 导出 UI 层  
+export { TodoListUI } from './TodoList.ui';
+
+// 导出类型定义
+export type { TodoItem, TodoListProps } from './TodoList.domain';
 
 // 默认导出 UI 组件
-export { ComponentUI as Component } from './ComponentUI';
+export { TodoListUI as TodoList } from './TodoList.ui';
 ```
-
-## 🔧 组件注册机制
-
-### 自动识别标志
-
-所有继承自 `Widget` 的类会自动获得组件标志：
-
-```typescript
-export class MyWidget extends Widget {
-  static __COMPONENT_TYPE__ = 'WIDGET_CLASS'; // 自动添加
-}
-
-const MyFactory = createWidget(() => {
-  /* */
-});
-MyFactory.__COMPONENT_TYPE__ = 'WIDGET_FUNCTION'; // 自动添加
-```
-
-### Babel 插件转换
-
-在 JSX 中使用注册的组件：
-
-```jsx
-// 编译前
-<TodoList maxItems={20} />;
-
-// 编译后 (babel-plugin 自动转换)
-hyperscript(
-  TodoList,
-  {
-    maxItems: 20,
-  },
-  null,
-);
-```
-
-组件的识别和实例化由 @vanilla-dom/core 的编码范式注册机制在运行时处理。
 
 ## 📋 开发指南
 
-### 1. 设计原则
+### 设计原则
 
 - **单一职责**: Domain 管业务，UI 管界面
-- **组合优于继承**: UI 层组合使用 Domain，而不是继承
-- **依赖倒置**: UI 层依赖 Domain 层接口，不依赖具体实现
-- **开闭原则**: 易于扩展，无需修改核心逻辑
+- **组合优于继承**: UI 层组合使用 Domain
 - **可测试性**: 业务逻辑独立，便于单元测试
 
-### 2. 命名约定
+### 命名约定
 
-- Domain 文件: `ComponentNameDomain.ts`
-- UI 文件: `ComponentNameUI.tsx`
-- 导出文件: `index.ts`
-- 组件标志: `__COMPONENT_TYPE__` (全大写 + 下划线)
+- Domain 文件: `ComponentName.domain.ts`
+- UI 文件: `ComponentName.ui.tsx`  
+- 导出文件: `ComponentName.ts`
 
-### 3. 使用场景指导
-
-#### 静态/固定组件 → JSX
+### 使用场景
 
 ```jsx
-// 适用于布局中的固定组件
+// 静态组件 → JSX 渲染
 <TodoList maxItems={20} />
-```
 
-#### 动态组件 → 直接实例化
-
-```typescript
-// 适用于运行时动态创建/销毁
+// 动态组件 → 直接实例化
 const modal = new ModalWidget({ title: '确认' });
 modal.mount(document.body);
-
-// 使用完毕后销毁
-modal.destroy();
+modal.unmount(); // 使用完毕后销毁
 ```
 
-### 4. 最佳实践
+### 最佳实践
 
-1. **错误处理**: Domain 层统一错误处理和用户通知
-2. **状态管理**: 所有状态变更通过 Domain 层方法
-3. **事件通信**: 使用回调函数而非直接 DOM 事件
-4. **样式管理**: CSS 定义在 UI 层的 `<style>` 标签中
-5. **类型安全**: 严格定义接口，使用 TypeScript
+#### 1. 错误处理
+- **Domain 层**：统一错误处理和用户通知
+- **UI 层**：通过回调响应错误状态，更新界面提示
 
-### 5. 性能考虑
+#### 2. 状态管理
+- **所有状态变更**：通过 Domain 层方法，保证数据一致性
+- **状态同步**：使用事件回调通知 UI 层更新
 
-- Domain 层避免频繁 DOM 操作
-- UI 层使用批量更新减少重绘
-- 合理使用事件防抖/节流
-- 及时清理事件监听器
+#### 3. 事件通信
+- **UI → Domain**：直接调用 Domain 方法
+- **Domain → UI**：使用回调函数，避免直接 DOM 操作
+- **用户交互**：在 JSX 中使用 `on:event` 绑定
 
-## 🚀 迁移指南
+#### 4. 样式管理
+- **CSS 定义**：在 UI 层的 `<style>` 标签中
+- **动态样式**：通过 className 切换，避免直接修改 style
 
-### 从单文件组件迁移
+#### 5. 类型安全
+- **严格接口**：定义完整的 Props、State 类型
+- **泛型支持**：Widget<Props> 确保类型正确传递
 
-1. 创建 Domain 层，移动业务逻辑
-2. 保留 UI 层，改为组合 Domain 类
-3. 重构事件处理，使用回调模式
-4. 创建统一导出文件
-5. 更新导入语句
+### 性能考虑
 
-### 示例对比
+- **Domain 层**：避免频繁 DOM 操作，专注数据处理
+- **UI 层**：使用批量更新减少重绘
+- **事件处理**：合理使用防抖/节流，及时清理监听器
+- **内存管理**：及时清理定时器、监听器、大对象引用
 
-**迁移前 (单文件):**
+### 内存管理
+
+两种组件类型在销毁时有不同的处理方式：
+
+- **Class 组件**: 提供 `onUnmounting()` 钩子，销毁前手动清空可能存在内存泄漏的变量存储（定时器、监听器、大对象引用等）
+- **Function 组件**: 不提供销毁钩子，避免内部定义可能导致内存泄漏的变量；事件监听直接在 JSX 上处理，随 DOM 销毁自动清理
+
+#### Class 组件 - 手动清理
 
 ```typescript
+  export class TimerWidget extends Widget<TimerProps> {
+    private timer: NodeJS.Timeout | null = null;
+    private domain: TimerDomain;
+    private eventListeners: Array<() => void> = [];
+    private heavyData: Map<string, any> | null = null;
+
+  constructor(props: TimerProps) {
+    super(props);
+    this.domain = new TimerDomain(props);
+    this.timer = setInterval(() => this.domain.tick(), 1000);
+  }
+
+  protected onUnmounting(): void {
+    // 清理定时器
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
+    }
+    
+    // 清理事件监听器
+    if (this.eventListeners) {
+      this.eventListeners.forEach(cleanup => cleanup());
+      this.eventListeners = [];
+    }
+    
+    // 清理大对象引用
+    this.heavyData = null;
+    
+    // 清理 Domain 层引用
+    this.domain.destroy?.();
+    this.domain = null as any;
+  }
+
+  render() {
+    return (
+      <div>
+        <button on:click={this.handleClick}>
+          {this.domain.getTime()}
+        </button>
+      </div>
+    );
+  }
+}
+```
+
+#### Function 组件 - 避免复杂状态
+
+Function 组件不提供销毁钩子，因此要避免创建需要手动清理的资源：
+
+```typescript
+// ✅ 推荐：轻量级，事件在 JSX 中处理
+const SimpleButton = createWidget<{ label: string; onClick: () => void }>(
+  ({ label, onClick }) => (
+    <button on:click={onClick}>
+      {label}
+    </button>
+  )
+);
+
+// ✅ 推荐：接收外部状态，不内部维护
+const TodoItem = createWidget<{ todo: TodoItem; onToggle: (id: string) => void }>(
+  ({ todo, onToggle }) => (
+    <li className={todo.completed ? 'completed' : ''}>
+      <input 
+        type="checkbox" 
+        checked={todo.completed}
+        on:change={() => onToggle(todo.id)}
+      />
+      <span>{todo.text}</span>
+    </li>
+  )
+);
+
+// ❌ 避免：无法清理的复杂状态
+const ComplexWidget = createWidget<Props>(props => {
+  const timer = setInterval(() => {}, 1000); // ❌ 无法清理，会内存泄漏
+  const heavyData = new Map(); // ❌ 可能泄漏
+  const listeners = []; // ❌ 无法清理事件监听器
+  
+  return <div>...</div>;
+});
+```
+
+**Function 组件核心原则**：
+- ✅ 纯展示逻辑，无状态管理
+- ✅ 事件处理通过 props 传入
+- ✅ 事件绑定直接在 JSX 上，自动清理
+- ❌ 不创建定时器、监听器、大对象
+
+### 迁移指南
+
+#### 从单文件组件重构为分层架构
+
+```typescript
+// 重构前：单文件组件
 export class TodoList extends Widget {
   private todos: TodoItem[] = [];
 
   addTodo(text: string) {
-    // 业务逻辑 + UI 更新混合
-    this.todos.push({ /* */ });
-    this.updateUI();
+    // ❌ 业务逻辑与 UI 更新混合
+    this.todos.push({ id: Date.now(), text, completed: false });
+    this.updateUI(); // 直接操作 DOM
   }
 
   render() {
     return <div>{/* JSX */}</div>;
   }
 }
-```
 
-**迁移后 (分层):**
-
-```typescript
-// Domain 层
+// 重构后：分层架构
+// TodoList.domain.ts - 纯业务逻辑
 export class TodoListDomain {
-  protected todos: TodoItem[] = [];
+  private todos: TodoItem[] = [];
 
   addTodo(text: string): boolean {
-    // 纯业务逻辑
-    this.todos.push({ /* */ });
-    this.notifyDataChange();
+    // ✅ 纯业务逻辑，数据验证
+    if (!text.trim()) return false;
+    
+    this.todos.push({ id: Date.now(), text, completed: false });
+    this.notifyDataChange(); // 通知 UI 层
     return true;
   }
 }
 
-// UI 层
+// TodoList.ui.tsx - 纯 UI 逻辑
 export class TodoListUI extends Widget<TodoListProps> {
   private domain: TodoListDomain;
 
   constructor(props: TodoListProps) {
     super(props);
     this.domain = new TodoListDomain(props);
-  }
-
-  private handleAddTodo() {
-    // UI 交互处理
-    if (this.domain.addTodo(inputValue)) {
-      this.clearInput();
-    }
-  }
-
-  render() {
-    return <div>{/* JSX */}</div>;
+    // ✅ 通过回调响应数据变化
+    this.domain.setTodosChangeHandler(this.handleDataChange.bind(this));
   }
 }
 ```
 
-## 📚 总结
+#### 重构步骤
 
-这种分层架构模式提供了：
+1. **提取业务逻辑** → 创建 Domain 类
+2. **保留 UI 逻辑** → 改造为组合 Domain
+3. **重构事件处理** → 使用回调模式
+4. **创建统一导出** → 便于使用
 
-✅ **更好的可维护性** - 职责分离，代码清晰  
-✅ **更强的可测试性** - 业务逻辑独立测试  
-✅ **更高的可复用性** - Domain 层可复用  
-✅ **更好的团队协作** - 前端/后端逻辑分工明确  
-✅ **更强的类型安全** - 严格的接口定义
+## 📚 最佳实践总结
 
-对于复杂组件，强烈建议采用这种分层架构模式。
+### ✅ 优势
+
+- **可维护性**: 职责分离，代码清晰
+- **可测试性**: 业务逻辑独立测试  
+- **可复用性**: Domain 层可在不同 UI 间复用
+- **团队协作**: 前端/后端逻辑分工明确
+
+### 🎯 关键要点
+
+1. **Domain 层**: 纯 TypeScript，无 JSX，专注业务逻辑
+2. **UI 层**: 继承 Widget，组合 Domain，专注界面交互
+3. **事件处理**: 类组件用 `on:event`，函数组件保持简单
+4. **内存管理**: 类组件在 `onUnmounting` 中清理，函数组件避免复杂状态
+5. **文件组织**: 使用 VSCode 嵌套显示，提升开发体验
+
+对于复杂组件（> 100 行代码），强烈推荐采用这种分层架构模式。

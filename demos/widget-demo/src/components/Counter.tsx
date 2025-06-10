@@ -14,55 +14,40 @@ export class Counter extends Widget<CounterProps> {
 
   private increment = () => {
     this.count++;
-    this.updateDisplay();
+    // 直接更新 DOM 显示
+    const display = this.$('.count-display');
+    if (display) {
+      display.set('textContent', this.count.toString());
+    }
   };
 
   private decrement = () => {
     this.count--;
-    this.updateDisplay();
-  };
-
-  private updateDisplay() {
+    // 直接更新 DOM 显示
     const display = this.$('.count-display');
-    if (display && display.element) {
-      display.element.textContent = this.count.toString();
+    if (display) {
+      display.set('textContent', this.count.toString());
     }
-  }
-
-  protected onMounted(): void {
-    const incrementBtn = this.$('.increment-btn');
-    const decrementBtn = this.$('.decrement-btn');
-
-    if (incrementBtn && incrementBtn.element) {
-      incrementBtn.element.addEventListener('click', this.increment);
-    }
-
-    if (decrementBtn && decrementBtn.element) {
-      decrementBtn.element.addEventListener('click', this.decrement);
-    }
-  }
-
-  protected onUnmounting(): void {
-    const incrementBtn = this.$('.increment-btn');
-    const decrementBtn = this.$('.decrement-btn');
-
-    if (incrementBtn && incrementBtn.element) {
-      incrementBtn.element.removeEventListener('click', this.increment);
-    }
-
-    if (decrementBtn && decrementBtn.element) {
-      decrementBtn.element.removeEventListener('click', this.decrement);
-    }
-  }
+  };
 
   render() {
     return (
       <div className="counter-widget">
         <h3>🔢 计数器组件</h3>
         <div className="counter-controls">
-          <button className="decrement-btn">-</button>
+          <button 
+            className="decrement-btn"
+            on:click={this.decrement}
+          >
+            -
+          </button>
           <span className="count-display">{this.count}</span>
-          <button className="increment-btn">+</button>
+          <button 
+            className="increment-btn"
+            on:click={this.increment}
+          >
+            +
+          </button>
         </div>
         <style>{`
           .counter-widget {

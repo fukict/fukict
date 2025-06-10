@@ -1,6 +1,6 @@
 import { Counter } from './components/Counter';
-import { TodoListUI as TodoList } from './components/TodoList';
-import type { TodoItem, TodoListProps } from './components/TodoList';
+import { TodoList } from './components/TodoList';
+import { FormWidget } from './components/FormWidget';
 import { createWidget } from '@vanilla-dom/widget';
 
 // 演示应用组件
@@ -24,35 +24,16 @@ export const App = createWidget(_ => {
     }
   };
 
-  // 初始 TodoList 数据
-  const initialTodos: TodoItem[] = [
-    {
-      id: '1',
-      text: '学习 Vanilla DOM 组件架构',
-      completed: false,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: '2',
-      text: '理解业务逻辑与 UI 分离',
-      completed: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  ];
-
-  const todoListProps: TodoListProps = {
-    maxItems: 20,
-    autoSave: false,
-    initialTodos,
+  // 测试 FormWidget 组件
+  const handleFormMessage = () => {
+    console.log('Form widget 演示事件处理');
   };
 
   return (
     <div className="demo-app">
       <header className="demo-header">
         <h1>🚀 Vanilla DOM Widget 演示</h1>
-        <p>展示 JSX 组件挂载和 onMount 回调获取实例</p>
+        <p>展示正确的 Widget 编码范式 - 事件直接在 JSX 上绑定</p>
       </header>
 
       <div className="demo-section">
@@ -67,13 +48,22 @@ export const App = createWidget(_ => {
       </div>
 
       <div className="demo-section">
-        <h2>📝 分层架构组件 + 生命周期测试</h2>
+        <h2>📝 简化版待办列表 - Widget 编码范式</h2>
         <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px; background: white; margin-bottom: 10px;">
-          <TodoList {...todoListProps} />
+          <TodoList title="📝 正确的 Widget 事件处理" />
         </div>
         <p style="color: #666; font-size: 0.9rem;">
-          ✅ TodoList 采用 Domain + UI 分层架构，测试 onMounted
-          生命周期和实例访问
+          ✅ 使用 on:event 直接在 JSX 上绑定事件，自动跟随 DOM 销毁而清理
+        </p>
+      </div>
+
+      <div className="demo-section">
+        <h2>📋 表单组件 - 事件处理演示</h2>
+        <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px; background: white; margin-bottom: 10px;">
+          <FormWidget title="📋 Widget 事件绑定演示" />
+        </div>
+        <p style="color: #666; font-size: 0.9rem;">
+          ✅ 展示正确的 Widget 事件处理和 DOM 操作方式
         </p>
       </div>
 
@@ -91,13 +81,13 @@ export const App = createWidget(_ => {
           </pre>
         </div>
         <div style="margin-top: 15px; padding: 15px; background: #e8f5e8; border-radius: 6px;">
-          <h4 style="margin: 0 0 10px 0; color: #2d7d32;">🎯 测试要点:</h4>
+          <h4 style="margin: 0 0 10px 0; color: #2d7d32;">🎯 Widget 编码范式要点:</h4>
           <ul style="margin: 0; padding-left: 20px; color: #2d7d32;">
-            <li>JSX 组件自动挂载和渲染</li>
-            <li>onMounted 回调正确获取组件实例</li>
-            <li>组件生命周期 onMounted 正常执行</li>
-            <li>实例方法和属性可以正常访问</li>
-            <li>babel-plugin 自动识别注册组件</li>
+            <li>✅ 事件监听直接在 JSX 上使用 on:event_name 绑定</li>
+            <li>✅ 事件会跟随 DOM 销毁自动清理，无需手动管理</li>
+            <li>✅ Class 组件在 onUnmounting 中清理内存泄漏风险变量</li>
+            <li>✅ Function 组件避免定义复杂状态，专注简单展示</li>
+            <li>✅ 使用 Widget DOM 查询 API ($ 和 $$) 精确操作</li>
           </ul>
         </div>
       </div>

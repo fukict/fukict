@@ -49,20 +49,6 @@ const domToVNodeMap = new WeakMap<Node, VNode>();
  * - ref 回调支持
  *
  * @performance 使用 WeakMap 存储映射关系，自动垃圾回收
- *
- * @example
- * ```typescript
- * const vnode: VNode = {
- *   type: 'div',
- *   props: { className: 'container', id: 'main' },
- *   events: { click: handleClick },
- *   children: [
- *     { type: 'span', props: null, events: null, children: ['Hello World'] }
- *   ]
- * };
- *
- * const domNode = createDOMFromTree(vnode);
- * document.body.appendChild(domNode);
  * ```
  */
 export function createDOMFromTree(vnode: VNode): Node {
@@ -136,29 +122,6 @@ export function createDOMFromTree(vnode: VNode): Node {
  * 5. 错误边界处理和恢复
  *
  * @error_handling 组件渲染失败时显示错误信息而不是崩溃
- *
- * @example
- * ```typescript
- * // 函数组件
- * const MyComponent = ({ title, children }) => ({
- *   type: 'div',
- *   props: { className: 'my-component' },
- *   events: null,
- *   children: [
- *     { type: 'h1', props: null, events: null, children: [title] },
- *     ...children
- *   ]
- * });
- *
- * const vnode = {
- *   type: MyComponent,
- *   props: { title: 'Hello' },
- *   events: null,
- *   children: [{ type: 'p', props: null, events: null, children: ['Content'] }]
- * };
- *
- * const dom = createDOMFromComponent(vnode);
- * ```
  */
 function createDOMFromComponent(vnode: VNode): Node {
   const component = vnode.type as ComponentFunction;
@@ -243,16 +206,6 @@ function createDOMFromComponent(vnode: VNode): Node {
  * - null/undefined/false 的过滤处理
  * - 字符串和数字的文本节点创建
  * - VNode 的递归渲染
- *
- * @example
- * ```typescript
- * // 各种类型的子节点处理
- * createDOMFromChild('Hello');     // Text node: "Hello"
- * createDOMFromChild(42);          // Text node: "42"
- * createDOMFromChild(true);        // null (filtered out)
- * createDOMFromChild(null);        // null (filtered out)
- * createDOMFromChild(vnodeObj);    // Recursive DOM creation
- * ```
  */
 function createDOMFromChild(child: VNodeChild): Node | null {
   // 过滤掉无效值（React 兼容行为）
@@ -287,30 +240,6 @@ function createDOMFromChild(child: VNodeChild): Node | null {
  * - 完整的渲染管道
  *
  * @throws {Error} 当容器无效时抛出错误
- *
- * @example
- * ```typescript
- * const app = {
- *   type: 'div',
- *   props: { id: 'app' },
- *   events: null,
- *   children: [
- *     { type: 'h1', props: null, events: null, children: ['My App'] }
- *   ]
- * };
- *
- * // 替换容器内容
- * render(app, {
- *   container: document.getElementById('root'),
- *   replace: true
- * });
- *
- * // 追加到容器
- * render(app, {
- *   container: document.body,
- *   replace: false
- * });
- * ```
  */
 export function render(vnode: VNode, options: RenderOptions): void {
   if (!vnode) {
@@ -364,16 +293,6 @@ export function render(vnode: VNode, options: RenderOptions): void {
  * - 避免不必要的 DOM 操作
  * - 智能的属性和事件差异算法
  * - 高效的子节点更新策略
- *
- * @example
- * ```typescript
- * const oldVNode = { type: 'div', props: { className: 'old' }, ... };
- * const newVNode = { type: 'div', props: { className: 'new' }, ... };
- * const domElement = document.querySelector('.old');
- *
- * // 只会更新 className，不会重建整个元素
- * updateDOM(oldVNode, newVNode, domElement);
- * ```
  */
 export function updateDOM(
   oldVNode: VNode,
@@ -563,16 +482,6 @@ function updateChildren(
  * - 属性和事件的客户端激活
  * - 不匹配时的错误处理
  * - 性能优化的选择性水合
- *
- * @example
- * ```typescript
- * // 服务端渲染的 HTML 已存在
- * const existingElement = document.getElementById('ssr-root');
- * const vnode = { type: 'div', props: { id: 'ssr-root' }, ... };
- *
- * // 建立 VNode 与现有 DOM 的关联
- * hydrate(vnode, existingElement);
- * ```
  */
 export function hydrate(vnode: VNode, existingDOM: Element): void {
   if (!vnode || !existingDOM) {
