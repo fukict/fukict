@@ -24,11 +24,6 @@ export const App = createWidget(_ => {
     }
   };
 
-  // 测试 FormWidget 组件
-  const handleFormMessage = () => {
-    console.log('Form widget 演示事件处理');
-  };
-
   return (
     <div className="demo-app">
       <header className="demo-header">

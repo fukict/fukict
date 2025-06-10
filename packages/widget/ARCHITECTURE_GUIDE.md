@@ -31,7 +31,8 @@ components/
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.expand": false,
   "explorer.fileNesting.patterns": {
-    "*.ts": "${capture}.domain.ts,${capture}.ui.tsx,${capture}.test.ts"
+    "*.ts": "${capture}.domain.ts,${capture}.ui.tsx,${capture}.css,.${capture}.less,.${capture}.scss",
+    "*.tsx": "${capture}.css,${capture}.less,${capture}.scss"
   }
 }
 ```

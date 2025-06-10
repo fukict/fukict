@@ -55,7 +55,7 @@ export type ComponentMountCallback<
  * 简易函数组件实例类型
  * 继承 VNode 以支持 JSX 使用
  */
-export interface SimpleWidgetInstance extends ComponentInstance, VNode {
+export interface WidgeFuncInstance extends ComponentInstance, VNode {
   /**
    * 更新 props 并重新渲染
    */
@@ -70,14 +70,14 @@ export interface SimpleWidgetInstance extends ComponentInstance, VNode {
 /**
  * 简易函数组件类型
  */
-export type SimpleWidgetRender<T extends WidgetProps> = (props: T) => VNode;
+export type WidgetFuncRender<T extends WidgetProps> = (props: T) => VNode;
 
 /**
- * 简易函数组件工厂类型
+ * 简易函数组件工厂类型 - 泛型函数
  */
-export type SimpleWidgetFactory<T extends WidgetProps> = (
-  renderFn: SimpleWidgetRender<T>,
-) => (props?: T) => SimpleWidgetInstance;
+export type WidgetFuncFactory = <T extends WidgetProps>(
+  renderFn: WidgetFuncRender<T>,
+) => (props?: T) => WidgeFuncInstance;
 
 /**
  * DOM 元素单个查询结果

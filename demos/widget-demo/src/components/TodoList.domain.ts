@@ -1,7 +1,8 @@
+import { Widget } from '@vanilla-dom/widget';
+
 /**
  * TodoList 业务逻辑层
- * 负责数据管理、状态变更、业务规则等
- * 与 UI 无关的纯逻辑代码
+ * 继承 Widget，提供业务逻辑和基础的生命周期管理
  */
 
 export interface TodoItem {
@@ -25,21 +26,16 @@ export interface TodoListStats {
 
 /**
  * TodoList 业务逻辑核心类
- * 专注于数据管理和业务规则，不涉及 UI 渲染
+ * 继承 Widget，专注于数据管理和业务规则
  */
-export class TodoListDomain {
+export class TodoListDomain extends Widget<TodoListProps> {
   protected todos: TodoItem[] = [];
   protected nextId = 1;
-
-  // 业务配置
   protected maxItems: number;
-
-  // 事件回调
-  protected onTodosChange?: (todos: TodoItem[]) => void;
-  protected onStatsChange?: (stats: TodoListStats) => void;
-  protected onError?: (error: string) => void;
+  protected currentError?: string;
 
   constructor(props: TodoListProps) {
+    super(props);
     this.maxItems = props.maxItems || 50;
 
     // 初始化数据
@@ -59,17 +55,17 @@ export class TodoListDomain {
 
     // 业务规则验证
     if (!trimmedText) {
-      this.notifyError('待办事项不能为空');
+      this.setError('待办事项不能为空');
       return false;
     }
 
     if (this.todos.length >= this.maxItems) {
-      this.notifyError(`最多只能添加 ${this.maxItems} 个待办事项`);
+      this.setError(`最多只能添加 ${this.maxItems} 个待办事项`);
       return false;
     }
 
     if (this.todos.some(todo => todo.text === trimmedText)) {
-      this.notifyError('该待办事项已存在');
+      this.setError('该待办事项已存在');
       return false;
     }
 
@@ -83,7 +79,8 @@ export class TodoListDomain {
     this.todos.push(newTodo);
     this.nextId++;
 
-    this.notifyDataChange();
+    this.clearError();
+    this.onDataChanged();
     return true;
   }
 
@@ -93,12 +90,13 @@ export class TodoListDomain {
   removeTodo(id: string): boolean {
     const index = this.todos.findIndex(todo => todo.id === id);
     if (index === -1) {
-      this.notifyError('待办事项不存在');
+      this.setError('待办事项不存在');
       return false;
     }
 
     this.todos.splice(index, 1);
-    this.notifyDataChange();
+    this.clearError();
+    this.onDataChanged();
     return true;
   }
 
@@ -108,14 +106,27 @@ export class TodoListDomain {
   toggleTodo(id: string): boolean {
     const todo = this.todos.find(todo => todo.id === id);
     if (!todo) {
-      this.notifyError('待办事项不存在');
+      this.setError('待办事项不存在');
       return false;
     }
 
     todo.completed = !todo.completed;
-    this.notifyDataChange();
+    this.clearError();
+    this.onDataChanged();
     return true;
   }
+
+  /**
+   * 清除错误信息
+   */
+  clearError(): void {
+    if (this.currentError) {
+      this.currentError = undefined;
+      this.onErrorChanged();
+    }
+  }
+
+  // === 数据获取方法 ===
 
   /**
    * 获取所有待办事项
@@ -141,28 +152,33 @@ export class TodoListDomain {
     };
   }
 
-  // === 事件处理方法设置器 ===
-
-  setTodosChangeHandler(handler: (todos: TodoItem[]) => void): void {
-    this.onTodosChange = handler;
+  /**
+   * 获取当前错误
+   */
+  getError(): string | undefined {
+    return this.currentError;
   }
 
-  setStatsChangeHandler(handler: (stats: TodoListStats) => void): void {
-    this.onStatsChange = handler;
+  // === 生命周期钩子（供子类覆盖） ===
+
+  /**
+   * 数据变化时调用，子类可覆盖此方法来更新 UI
+   */
+  protected onDataChanged(): void {
+    // 默认为空，UI 层可以覆盖
   }
 
-  setErrorHandler(handler: (error: string) => void): void {
-    this.onError = handler;
+  /**
+   * 错误状态变化时调用，子类可覆盖此方法来更新 UI
+   */
+  protected onErrorChanged(): void {
+    // 默认为空，UI 层可以覆盖
   }
 
-  // === 私有通知方法 ===
+  // === 私有方法 ===
 
-  private notifyDataChange(): void {
-    this.onTodosChange?.(this.getTodos());
-    this.onStatsChange?.(this.getStats());
-  }
-
-  private notifyError(message: string): void {
-    this.onError?.(message);
+  private setError(message: string): void {
+    this.currentError = message;
+    this.onErrorChanged();
   }
 } 

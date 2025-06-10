@@ -1,8 +1,8 @@
 import { immediateRender, scheduleRender } from './scheduler';
 import type {
-  SimpleWidgetFactory,
-  SimpleWidgetInstance,
-  SimpleWidgetRender,
+  WidgetFuncFactory,
+  WidgeFuncInstance,
+  WidgetFuncRender,
   WidgetProps,
 } from './types';
 import type { VNode } from '@vanilla-dom/core';
@@ -25,10 +25,10 @@ import { render, updateDOM } from '@vanilla-dom/core';
  * ));
  * ```
  */
-export const createWidget: SimpleWidgetFactory<any> = <T extends WidgetProps>(
-  renderFn: SimpleWidgetRender<T>,
+export const createWidget: WidgetFuncFactory = <T extends WidgetProps>(
+  renderFn: WidgetFuncRender<T>,
 ) => {
-  const factory = (props: T = {} as T): SimpleWidgetInstance => {
+  const factory = (props: T = {} as T): WidgeFuncInstance => {
     let currentElement: Element | null = null;
     let currentVNode: VNode | null = null;
     let currentProps: T = deepClone(props);
@@ -80,7 +80,7 @@ export const createWidget: SimpleWidgetFactory<any> = <T extends WidgetProps>(
     // 挂载状态管理
     let isMounted = false;
 
-    const instance: SimpleWidgetInstance = {
+    const instance: WidgeFuncInstance = {
       // VNode 属性
       type: renderFn,
       props: currentProps,

@@ -13,7 +13,7 @@ import { render } from '@vanilla-dom/core';
  * - 手动控制渲染时机
  * - 自动支持组件注册机制
  */
-export abstract class Widget<TProps extends WidgetProps = WidgetProps> {
+export class Widget<TProps extends WidgetProps = WidgetProps> {
   /**
    * 组件类型标志 - 用于 babel-plugin 自动识别
    * 所有继承自 Widget 的类都会自动获得此标志
@@ -45,16 +45,24 @@ export abstract class Widget<TProps extends WidgetProps = WidgetProps> {
   }
 
   /**
-   * 抽象渲染方法，必须由子类实现
+   * 渲染方法，子类可选择性实现
+   * 默认返回 null（不渲染任何内容）
    */
-  abstract render(): VNode;
+  render(): VNode | null {
+    return null;
+  }
 
   /**
    * 带生命周期处理的渲染方法
    * 自动处理 onMounted 回调
    */
-  protected renderWithLifecycle(): VNode {
+  protected renderWithLifecycle(): VNode | null {
     const vnode = this.render();
+
+    // 如果 render 返回 null，直接返回
+    if (!vnode) {
+      return null;
+    }
 
     // 添加 ref 回调来处理 onMounted
     const originalRef = vnode.ref;
@@ -106,8 +114,14 @@ export abstract class Widget<TProps extends WidgetProps = WidgetProps> {
         const vnode = this.renderWithLifecycle();
         this.vnode = vnode;
 
-        // 渲染到容器
+        // 如果 vnode 不为 null，才进行渲染
+        if (vnode) {
         render(vnode, { container });
+        } else {
+          // 如果没有渲染内容，直接标记为已挂载并调用 onMounted
+          this._isMounted = true;
+          this.onMounted();
+        }
       } catch (error) {
         console.error(
           '[@vanilla-dom/widget] Error during widget mount:',

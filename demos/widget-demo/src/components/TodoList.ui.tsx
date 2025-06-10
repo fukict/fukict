@@ -3,354 +3,319 @@
  * 负责渲染界面、用户交互、事件处理
  * 组合使用 TodoListDomain 业务逻辑层
  */
+import type { WidgeFuncInstance } from '@vanilla-dom/widget';
+
+import { createWidget } from '@vanilla-dom/widget';
+
 import {
   TodoItem,
   TodoListDomain,
   TodoListProps,
   TodoListStats,
 } from './TodoList.domain';
-import { Widget } from '@vanilla-dom/widget';
+
+import './TodoList.css';
 
 /**
  * TodoList UI 组件
- * 继承自 Widget，组合使用 Domain 业务逻辑层
+ * 继承 domain 层，专注于界面渲染和用户交互
  */
-export class TodoListUI extends Widget<TodoListProps> {
-  private domain: TodoListDomain;
-  private errorMessage: string = '';
-  private currentStats: TodoListStats = {
-    total: 0,
-    completed: 0,
-    pending: 0,
-    completionRate: 0,
-  };
+export class TodoListUI extends TodoListDomain {
+  // 子组件实例
+  private todosWidget?: WidgeFuncInstance;
+  private statsWidget?: WidgeFuncInstance;
+  private errorWidget?: WidgeFuncInstance;
+
+  // DOM 容器
+  private todoListContainer?: HTMLElement;
+  private statsContainer?: HTMLElement;
+  private errorContainer?: HTMLElement;
+
+  // 状态比较缓存
+  private prevTodos?: TodoItem[];
+  private prevStats?: ReturnType<typeof this.getStats>;
+  private prevError?: string;
 
   constructor(props: TodoListProps) {
     super(props);
-
-    // 创建业务逻辑层实例（组合，而不是继承）
-    this.domain = new TodoListDomain(props);
-
-    // 注册业务逻辑层的事件回调
-    this.domain.setTodosChangeHandler(this.handleTodosChange.bind(this));
-    this.domain.setStatsChangeHandler(this.handleStatsChange.bind(this));
-    this.domain.setErrorHandler(this.handleError.bind(this));
-
-    // 初始化统计信息
-    this.currentStats = this.domain.getStats();
   }
 
-  // === UI 事件处理方法 ===
+  onMounted(): void {
+    // 获取 DOM 容器
+    this.todoListContainer = this.$('[data-todo-list]')?.element as HTMLElement;
+    this.statsContainer = this.$('[data-stats]')?.element as HTMLElement;
+    this.errorContainer = this.$('[data-error]')?.element as HTMLElement;
 
-  private handleTodosChange(_todos: TodoItem[]): void {
-    // 当数据变化时，更新待办事项列表显示
-    this.updateTodoList();
+    // 创建子组件
+    this.createSubWidgets();
+
+    // 初始渲染
+    this.renderTodos();
+    this.renderStats();
+    this.renderError();
   }
 
-  private handleStatsChange(stats: TodoListStats): void {
-    this.currentStats = stats;
-    // 更新统计信息显示
-    this.updateStatsDisplay();
+  onUnmounting(): void {
+    // 清理子组件
+    this.todosWidget?.destroy();
+    this.statsWidget?.destroy();
+    this.errorWidget?.destroy();
   }
 
-  private handleError(error: string): void {
-    this.errorMessage = error;
-    this.showErrorMessage();
-    
-    // 3秒后清除错误信息
-    setTimeout(() => {
-      this.errorMessage = '';
-      this.hideErrorMessage();
-    }, 3000);
-  }
+  // === 创建子组件 ===
 
-  // === 用户交互方法 ===
+  private createSubWidgets(): void {
+    // 创建待办列表组件
+    const TodosWidget = createWidget(
+      (props: {
+        todos: TodoItem[];
+        onToggle: (id: string) => void;
+        onDelete: (id: string) => void;
+      }) => {
+        if (props.todos.length === 0) {
+          return <div class="empty-state">暂无待办事项</div>;
+        }
 
-  private handleAddTodo = (e: Event): void => {
-    e.preventDefault();
-    const input = this.$('.todo-input');
-    if (input && input.element) {
-      const text = (input.element as HTMLInputElement).value;
-      if (this.domain.addTodo(text)) {
-        // 调用 domain 的方法成功后清空输入框
-        (input.element as HTMLInputElement).value = '';
-      }
-    }
-  };
+        return (
+          <div>
+            {props.todos.map((todo: TodoItem) => (
+              <div
+                key={todo.id}
+                class={`todo-item ${todo.completed ? 'completed' : ''}`}
+              >
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={todo.completed}
+                    data-todo-id={todo.id}
+                    on:change={() => props.onToggle(todo.id)}
+                  />
+                  <span class="todo-text">{todo.text}</span>
+                </label>
+                <button
+                  class="delete-btn"
+                  data-todo-id={todo.id}
+                  title="删除"
+                  on:click={() => props.onDelete(todo.id)}
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+        );
+      },
+    );
 
-  private handleToggleTodo = (id: string): void => {
-    this.domain.toggleTodo(id);
-  };
-
-  private handleRemoveTodo = (id: string): void => {
-    this.domain.removeTodo(id);
-  };
-
-  // === UI 更新方法 ===
-
-  private updateStatsDisplay(): void {
-    const statsElement = this.$('.todo-stats');
-    if (statsElement?.element) {
-      const { total, completed, pending } = this.currentStats;
-      statsElement.element.textContent = `总计: ${total} | 已完成: ${completed} | 待完成: ${pending}`;
-    }
-  }
-
-  private showErrorMessage(): void {
-    const errorElement = this.$('.error-message');
-    if (errorElement?.element) {
-      errorElement.element.textContent = this.errorMessage;
-      errorElement.set('style', 'display: block;');
-    }
-  }
-
-  private hideErrorMessage(): void {
-    const errorElement = this.$('.error-message');
-    if (errorElement?.element) {
-      errorElement.set('style', 'display: none;');
-    }
-  }
-
-  private updateTodoList(): void {
-    const container = this.$('.todo-items');
-    if (container?.element) {
-      const todos = this.domain.getTodos();
-      container.element.innerHTML = todos
-        .map(
-          todo => `
-          <li class="todo-item ${todo.completed ? 'completed' : ''}">
-            <label class="todo-label">
-              <input 
-                type="checkbox" 
-                ${todo.completed ? 'checked' : ''}
-                data-id="${todo.id}"
-              />
-              <span class="todo-text">${this.escapeHtml(todo.text)}</span>
-            </label>
-            <button 
-              class="remove-btn" 
-              data-id="${todo.id}"
-            >
-              ×
-            </button>
-          </li>
-        `,
-        )
-        .join('');
-
-      // 重新绑定事件
-      this.bindTodoEvents();
-    }
-  }
-
-  private bindTodoEvents(): void {
-    // 绑定复选框事件
-    const checkboxes = this.element?.querySelectorAll('.todo-item input[type="checkbox"]');
-    checkboxes?.forEach(checkbox => {
-      checkbox.addEventListener('change', (e) => {
-        const id = (e.target as HTMLElement).getAttribute('data-id');
-        if (id) this.handleToggleTodo(id);
-      });
-    });
-
-    // 绑定删除按钮事件
-    const removeBtns = this.element?.querySelectorAll('.remove-btn');
-    removeBtns?.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const id = (e.target as HTMLElement).getAttribute('data-id');
-        if (id) this.handleRemoveTodo(id);
-      });
-    });
-  }
-
-  private escapeHtml(text: string): string {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-  }
-
-  // === 生命周期方法 ===
-
-  protected onMounted(): void {
-    super.onMounted();
-    
-    // 初始化待办事项列表显示
-    this.updateTodoList();
-    this.updateStatsDisplay();
-  }
-
-  // === 渲染辅助方法 ===
-
-  // === Widget 渲染方法 ===
-
-  public render() {
-    const { total, completed, pending } = this.currentStats;
-    
-    return (
-      <div className="simple-todo-widget">
-        <div className="error-message" style="display: none;">
+    // 创建统计信息组件
+    const StatsWidget = createWidget((props: { stats: TodoListStats }) => (
+      <div>
+        <div class="stats-item">
+          <span class="stats-label">总计:</span>
+          <span class="stats-value">{props.stats.total}</span>
         </div>
+        <div class="stats-item">
+          <span class="stats-label">已完成:</span>
+          <span class="stats-value">{props.stats.completed}</span>
+        </div>
+        <div class="stats-item">
+          <span class="stats-label">待完成:</span>
+          <span class="stats-value">{props.stats.pending}</span>
+        </div>
+        <div class="stats-item">
+          <span class="stats-label">完成率:</span>
+          <span class="stats-value">
+            {props.stats.completionRate.toFixed(1)}%
+          </span>
+        </div>
+      </div>
+    ));
 
-        <h3>{this.props.title || '📝 简化版待办列表'}</h3>
+    // 创建错误提示组件
+    const ErrorWidget = createWidget<{ error?: string; onClear: () => void }>(
+      props => {
+        if (!props.error) {
+          return <div style="display: none;"></div>;
+        }
 
-        <form className="todo-form" on:submit={this.handleAddTodo}>
+        // 3秒后自动清除错误
+        setTimeout(() => {
+          props.onClear();
+        }, 3000);
+
+        return (
+          <div class="error-message" style="display: block;">
+            {props.error}
+          </div>
+        );
+      },
+    );
+
+    // 创建组件实例
+    this.todosWidget = TodosWidget({
+      todos: this.getTodos(),
+      onToggle: (id: string) => this.toggleTodo(id),
+      onDelete: (id: string) => this.removeTodo(id),
+    });
+
+    this.statsWidget = StatsWidget({
+      stats: this.getStats(),
+    });
+
+    this.errorWidget = ErrorWidget({
+      error: this.getError(),
+      onClear: () => this.clearError(),
+    });
+  }
+
+  // === 重写 domain 层钩子，实现优化的 UI 更新 ===
+
+  protected onDataChanged(): void {
+    const todos = this.getTodos();
+    const stats = this.getStats();
+
+    // 只有数据真正变化时才重渲染
+    if (!this.isEqual(todos, this.prevTodos)) {
+      this.renderTodos();
+      this.prevTodos = [...todos];
+    }
+
+    if (!this.isEqual(stats, this.prevStats)) {
+      this.renderStats();
+      this.prevStats = { ...stats };
+    }
+  }
+
+  protected onErrorChanged(): void {
+    const error = this.getError();
+
+    // 只有错误状态变化时才重渲染
+    if (error !== this.prevError) {
+      this.renderError();
+      this.prevError = error;
+    }
+  }
+
+  // === 工具方法 ===
+
+  private isEqual(a: any, b: any): boolean {
+    if (a === b) return true;
+    if (a == null || b == null) return false;
+    if (typeof a !== typeof b) return false;
+
+    // 数组比较
+    if (Array.isArray(a) && Array.isArray(b)) {
+      if (a.length !== b.length) return false;
+      return a.every((item, index) => this.isEqual(item, b[index]));
+    }
+
+    // 对象比较
+    if (typeof a === 'object') {
+      const keysA = Object.keys(a);
+      const keysB = Object.keys(b);
+      if (keysA.length !== keysB.length) return false;
+      return keysA.every(key => this.isEqual(a[key], b[key]));
+    }
+
+    return false;
+  }
+
+  // === UI 渲染方法 ===
+
+  private async renderTodos(): Promise<void> {
+    if (!this.todosWidget || !this.todoListContainer) return;
+
+    // 挂载组件（如果尚未挂载）
+    if (!this.todosWidget.element) {
+      await this.todosWidget.mount(this.todoListContainer, true);
+    } else {
+      // 更新组件 props
+      this.todosWidget.update({
+        todos: this.getTodos(),
+        onToggle: (id: string) => this.toggleTodo(id),
+        onDelete: (id: string) => this.removeTodo(id),
+      });
+    }
+  }
+
+  private async renderStats(): Promise<void> {
+    if (!this.statsWidget || !this.statsContainer) return;
+
+    // 挂载组件（如果尚未挂载）
+    if (!this.statsWidget.element) {
+      await this.statsWidget.mount(this.statsContainer, true);
+    } else {
+      // 更新组件 props
+      this.statsWidget.update({
+        stats: this.getStats(),
+      });
+    }
+  }
+
+  private async renderError(): Promise<void> {
+    if (!this.errorWidget || !this.errorContainer) return;
+
+    // 挂载组件（如果尚未挂载）
+    if (!this.errorWidget.element) {
+      await this.errorWidget.mount(this.errorContainer, true);
+    } else {
+      // 更新组件 props
+      this.errorWidget.update({
+        error: this.getError(),
+        onClear: () => this.clearError(),
+      });
+    }
+  }
+
+  private clearInput(): void {
+    const input = this.$('input[data-todo-input]')?.element as HTMLInputElement;
+    if (input) {
+      input.value = '';
+      input.focus();
+    }
+  }
+
+  render() {
+    const { title = 'Todo List' } = this.props;
+
+    return (
+      <div class="todo-container">
+        <h2>{title}</h2>
+
+        {/* 错误提示 */}
+        <div class="error-message" data-error style="display: none;"></div>
+
+        {/* 添加新项目 */}
+        <form
+          class="add-todo-form"
+          on:submit={(e: Event) => {
+            e.preventDefault();
+            const form = e.target as HTMLFormElement;
+            const input = form.querySelector(
+              'input[data-todo-input]',
+            ) as HTMLInputElement;
+            if (this.addTodo(input.value)) {
+              this.clearInput();
+            }
+          }}
+        >
           <input
             type="text"
-            className="todo-input"
-            placeholder="输入待办事项..."
-            required
+            placeholder="输入新的待办事项..."
+            data-todo-input
+            class="todo-input"
           />
-          <button type="submit" className="add-btn">
+          <button type="submit" class="add-btn">
             添加
           </button>
         </form>
 
-        <ul className="todo-items">
-        </ul>
+        {/* 待办事项列表 */}
+        <div class="todo-list" data-todo-list></div>
 
-        <div className="todo-stats">
-          总计: {total} | 已完成: {completed} | 待完成: {pending}
-        </div>
-
-        <style>{`
-          .simple-todo-widget {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #dee2e6;
-            max-width: 500px;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-          }
-
-          .error-message {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 15px;
-            border: 1px solid #f5c6cb;
-          }
-
-          .simple-todo-widget h3 {
-            margin: 0 0 20px 0;
-            color: #495057;
-            font-size: 18px;
-          }
-
-          .todo-form {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-          }
-
-          .todo-input {
-            flex: 1;
-            padding: 8px 12px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            font-size: 14px;
-            outline: none;
-            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-          }
-
-          .todo-input:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-          }
-
-          .add-btn {
-            padding: 8px 16px;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.15s ease-in-out;
-          }
-
-          .add-btn:hover {
-            background: #0056b3;
-          }
-
-          .add-btn:active {
-            background: #004085;
-          }
-
-          .todo-items {
-            list-style: none;
-            padding: 0;
-            margin: 0 0 20px 0;
-          }
-
-          .todo-item {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            transition: background-color 0.15s ease-in-out;
-          }
-
-          .todo-item:hover {
-            background-color: #f1f3f4;
-          }
-
-          .todo-item.completed .todo-text {
-            text-decoration: line-through;
-            opacity: 0.6;
-          }
-
-          .todo-label {
-            display: flex;
-            align-items: center;
-            flex: 1;
-            cursor: pointer;
-          }
-
-          .todo-label input {
-            margin-right: 10px;
-            cursor: pointer;
-          }
-
-          .todo-text {
-            font-size: 14px;
-            line-height: 1.5;
-          }
-
-          .remove-btn {
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            cursor: pointer;
-            font-size: 16px;
-            line-height: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.15s ease-in-out;
-          }
-
-          .remove-btn:hover {
-            background: #c82333;
-          }
-
-          .remove-btn:active {
-            background: #bd2130;
-          }
-
-          .todo-stats {
-            font-size: 14px;
-            color: #6c757d;
-            text-align: center;
-            padding: 10px;
-            background: #e9ecef;
-            border-radius: 4px;
-          }
-        `}</style>
+        {/* 统计信息 */}
+        <div class="stats-container" data-stats></div>
       </div>
     );
   }
-} 
+}

@@ -7,13 +7,7 @@ export { Widget } from './class-widget';
 
 export { createWidget } from './functional-widget';
 
-export {
-  widgetToComponent,
-  createComponent,
-  embedWidget,
-  createComponentFactory,
-  is,
-} from './adapters';
+export { isFunctionWidget, isClassWidget } from './adapters';
 
 // 导出调度器配置
 export {
@@ -26,9 +20,9 @@ export {
 
 export type {
   WidgetProps,
-  SimpleWidgetInstance,
-  SimpleWidgetRender,
-  SimpleWidgetFactory,
+  WidgeFuncInstance,
+  WidgetFuncRender,
+  WidgetFuncFactory,
   DOMQuery,
   DOMBatchQuery,
   ComponentType,

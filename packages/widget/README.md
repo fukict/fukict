@@ -377,7 +377,7 @@ class Widget<T = any> {
 ### createWidget 函数
 
 ```typescript
-function createWidget<T>(render: (props: T) => VNode): SimpleWidgetFactory<T>;
+function createWidget<T>(render: (props: T) => VNode): WidgetFuncFactory<T>;
 ```
 
 ### 类型定义
@@ -391,7 +391,7 @@ interface ComponentMountCallback<T> {
   (instance: T): void;
 }
 
-interface SimpleWidgetInstance {
+interface WidgeFuncInstance {
   mount(container: Element): void;
   destroy(): void;
   element: Element | null;
