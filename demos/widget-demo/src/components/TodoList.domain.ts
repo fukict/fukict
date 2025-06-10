@@ -33,6 +33,7 @@ export class TodoListDomain extends Widget<TodoListProps> {
   protected nextId = 1;
   protected maxItems: number;
   protected currentError?: string;
+  private errorTimer?: number;
 
   constructor(props: TodoListProps) {
     super(props);
@@ -43,6 +44,15 @@ export class TodoListDomain extends Widget<TodoListProps> {
       this.todos = [...props.initialTodos];
       this.nextId = Math.max(...this.todos.map(t => parseInt(t.id))) + 1;
     }
+  }
+
+  onUnmounting(): void {
+    // 清理定时器，防止内存泄漏
+    if (this.errorTimer) {
+      clearTimeout(this.errorTimer);
+      this.errorTimer = undefined;
+    }
+    super.onUnmounting();
   }
 
   // === 核心业务方法 ===
@@ -124,6 +134,12 @@ export class TodoListDomain extends Widget<TodoListProps> {
       this.currentError = undefined;
       this.onErrorChanged();
     }
+    
+    // 清理定时器
+    if (this.errorTimer) {
+      clearTimeout(this.errorTimer);
+      this.errorTimer = undefined;
+    }
   }
 
   // === 数据获取方法 ===
@@ -178,7 +194,19 @@ export class TodoListDomain extends Widget<TodoListProps> {
   // === 私有方法 ===
 
   private setError(message: string): void {
+    // 先清理之前的定时器
+    if (this.errorTimer) {
+      clearTimeout(this.errorTimer);
+    }
+    
     this.currentError = message;
     this.onErrorChanged();
+    
+    // 设置新的定时器，3秒后自动清除错误
+    this.errorTimer = setTimeout(() => {
+      if (this.currentError === message) {
+        this.clearError();
+      }
+    }, 3000) as unknown as number;
   }
 } 

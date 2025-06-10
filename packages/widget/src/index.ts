@@ -7,7 +7,7 @@ export { Widget } from './class-widget';
 
 export { createWidget } from './functional-widget';
 
-export { isFunctionWidget, isClassWidget } from './adapters';
+export { deepClone, deepEqual, isFunctionWidget, isClassWidget } from './helpers';
 
 // 导出调度器配置
 export {

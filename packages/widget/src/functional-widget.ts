@@ -1,4 +1,5 @@
 import { immediateRender, scheduleRender } from './scheduler';
+import { deepClone, deepEqual } from './helpers';
 import type {
   WidgetFuncFactory,
   WidgeFuncInstance,
@@ -177,72 +178,4 @@ export const createWidget: WidgetFuncFactory = <T extends WidgetProps>(
   return factory;
 };
 
-/**
- * 深度克隆对象
- */
-function deepClone<T>(obj: T): T {
-  if (obj === null || typeof obj !== 'object') {
-    return obj;
-  }
 
-  if (obj instanceof Date) {
-    return new Date(obj.getTime()) as T;
-  }
-
-  if (obj instanceof Array) {
-    return obj.map(item => deepClone(item)) as T;
-  }
-
-  if (typeof obj === 'object') {
-    const cloned = {} as T;
-    for (const key in obj) {
-      if (Object.prototype.hasOwnProperty.call(obj, key)) {
-        cloned[key] = deepClone(obj[key]);
-      }
-    }
-    return cloned;
-  }
-
-  return obj;
-}
-
-/**
- * 深度比较两个对象
- */
-function deepEqual<T>(obj1: T, obj2: T): boolean {
-  if (obj1 === obj2) {
-    return true;
-  }
-
-  if (obj1 === null || obj2 === null) {
-    return obj1 === obj2;
-  }
-
-  if (typeof obj1 !== 'object' || typeof obj2 !== 'object') {
-    return obj1 === obj2;
-  }
-
-  if (obj1 instanceof Date && obj2 instanceof Date) {
-    return obj1.getTime() === obj2.getTime();
-  }
-
-  if (obj1 instanceof Array && obj2 instanceof Array) {
-    if (obj1.length !== obj2.length) {
-      return false;
-    }
-    return obj1.every((item, index) => deepEqual(item, obj2[index]));
-  }
-
-  const keys1 = Object.keys(obj1);
-  const keys2 = Object.keys(obj2);
-
-  if (keys1.length !== keys2.length) {
-    return false;
-  }
-
-  return keys1.every(key => {
-    return (
-      keys2.includes(key) && deepEqual((obj1 as any)[key], (obj2 as any)[key])
-    );
-  });
-}

@@ -7,12 +7,10 @@ import type { WidgeFuncInstance } from '@vanilla-dom/widget';
 
 import { createWidget } from '@vanilla-dom/widget';
 
-import {
-  TodoItem,
-  TodoListDomain,
-  TodoListProps,
-  TodoListStats,
-} from './TodoList.domain';
+import { TodoListDomain, TodoListProps } from './TodoList.domain';
+import { ErrorComponent } from './TodoList.ui.error';
+import { StatsComponent } from './TodoList.ui.stats';
+import { TodosComponent } from './TodoList.ui.todos';
 
 import './TodoList.css';
 
@@ -31,11 +29,6 @@ export class TodoListUI extends TodoListDomain {
   private statsContainer?: HTMLElement;
   private errorContainer?: HTMLElement;
 
-  // 状态比较缓存
-  private prevTodos?: TodoItem[];
-  private prevStats?: ReturnType<typeof this.getStats>;
-  private prevError?: string;
-
   constructor(props: TodoListProps) {
     super(props);
   }
@@ -45,6 +38,8 @@ export class TodoListUI extends TodoListDomain {
     this.todoListContainer = this.$('[data-todo-list]')?.element as HTMLElement;
     this.statsContainer = this.$('[data-stats]')?.element as HTMLElement;
     this.errorContainer = this.$('[data-error]')?.element as HTMLElement;
+
+
 
     // 创建子组件
     this.createSubWidgets();
@@ -65,91 +60,9 @@ export class TodoListUI extends TodoListDomain {
   // === 创建子组件 ===
 
   private createSubWidgets(): void {
-    // 创建待办列表组件
-    const TodosWidget = createWidget(
-      (props: {
-        todos: TodoItem[];
-        onToggle: (id: string) => void;
-        onDelete: (id: string) => void;
-      }) => {
-        if (props.todos.length === 0) {
-          return <div class="empty-state">暂无待办事项</div>;
-        }
-
-        return (
-          <div>
-            {props.todos.map((todo: TodoItem) => (
-              <div
-                key={todo.id}
-                class={`todo-item ${todo.completed ? 'completed' : ''}`}
-              >
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={todo.completed}
-                    data-todo-id={todo.id}
-                    on:change={() => props.onToggle(todo.id)}
-                  />
-                  <span class="todo-text">{todo.text}</span>
-                </label>
-                <button
-                  class="delete-btn"
-                  data-todo-id={todo.id}
-                  title="删除"
-                  on:click={() => props.onDelete(todo.id)}
-                >
-                  ✕
-                </button>
-              </div>
-            ))}
-          </div>
-        );
-      },
-    );
-
-    // 创建统计信息组件
-    const StatsWidget = createWidget((props: { stats: TodoListStats }) => (
-      <div>
-        <div class="stats-item">
-          <span class="stats-label">总计:</span>
-          <span class="stats-value">{props.stats.total}</span>
-        </div>
-        <div class="stats-item">
-          <span class="stats-label">已完成:</span>
-          <span class="stats-value">{props.stats.completed}</span>
-        </div>
-        <div class="stats-item">
-          <span class="stats-label">待完成:</span>
-          <span class="stats-value">{props.stats.pending}</span>
-        </div>
-        <div class="stats-item">
-          <span class="stats-label">完成率:</span>
-          <span class="stats-value">
-            {props.stats.completionRate.toFixed(1)}%
-          </span>
-        </div>
-      </div>
-    ));
-
-    // 创建错误提示组件
-    const ErrorWidget = createWidget<{ error?: string; onClear: () => void }>(
-      props => {
-        if (!props.error) {
-          return <div style="display: none;"></div>;
-        }
-
-        // 3秒后自动清除错误
-        setTimeout(() => {
-          props.onClear();
-        }, 3000);
-
-        return (
-          <div class="error-message" style="display: block;">
-            {props.error}
-          </div>
-        );
-      },
-    );
+    const TodosWidget = this.createTodosWidget();
+    const StatsWidget = this.createStatsWidget();
+    const ErrorWidget = this.createErrorWidget();
 
     // 创建组件实例
     this.todosWidget = TodosWidget({
@@ -168,56 +81,27 @@ export class TodoListUI extends TodoListDomain {
     });
   }
 
-  // === 重写 domain 层钩子，实现优化的 UI 更新 ===
+  private createTodosWidget() {
+    return createWidget(TodosComponent);
+  }
+
+  private createStatsWidget() {
+    return createWidget(StatsComponent);
+  }
+
+  private createErrorWidget() {
+    return createWidget(ErrorComponent);
+  }
+
+  // === 重写 domain 层钩子，直接更新子组件 ===
 
   protected onDataChanged(): void {
-    const todos = this.getTodos();
-    const stats = this.getStats();
-
-    // 只有数据真正变化时才重渲染
-    if (!this.isEqual(todos, this.prevTodos)) {
-      this.renderTodos();
-      this.prevTodos = [...todos];
-    }
-
-    if (!this.isEqual(stats, this.prevStats)) {
-      this.renderStats();
-      this.prevStats = { ...stats };
-    }
+    this.renderTodos();
+    this.renderStats();
   }
 
   protected onErrorChanged(): void {
-    const error = this.getError();
-
-    // 只有错误状态变化时才重渲染
-    if (error !== this.prevError) {
-      this.renderError();
-      this.prevError = error;
-    }
-  }
-
-  // === 工具方法 ===
-
-  private isEqual(a: any, b: any): boolean {
-    if (a === b) return true;
-    if (a == null || b == null) return false;
-    if (typeof a !== typeof b) return false;
-
-    // 数组比较
-    if (Array.isArray(a) && Array.isArray(b)) {
-      if (a.length !== b.length) return false;
-      return a.every((item, index) => this.isEqual(item, b[index]));
-    }
-
-    // 对象比较
-    if (typeof a === 'object') {
-      const keysA = Object.keys(a);
-      const keysB = Object.keys(b);
-      if (keysA.length !== keysB.length) return false;
-      return keysA.every(key => this.isEqual(a[key], b[key]));
-    }
-
-    return false;
+    this.renderError();
   }
 
   // === UI 渲染方法 ===
@@ -282,8 +166,8 @@ export class TodoListUI extends TodoListDomain {
       <div class="todo-container">
         <h2>{title}</h2>
 
-        {/* 错误提示 */}
-        <div class="error-message" data-error style="display: none;"></div>
+        {/* 错误提示容器 */}
+        <div data-error></div>
 
         {/* 添加新项目 */}
         <form

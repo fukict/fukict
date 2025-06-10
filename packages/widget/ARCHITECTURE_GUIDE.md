@@ -19,6 +19,7 @@ components/
 └── ComplexComponent/            # 复杂组件，分层架构
     ├── ComplexComponent.domain.ts    # 业务逻辑层
     ├── ComplexComponent.ui.tsx       # UI 层
+    ├── ComplexComponent.ui.sub.tsx   # UI 层子模块
     └── ComplexComponent.ts           # 统一导出
 ```
 
@@ -32,7 +33,8 @@ components/
   "explorer.fileNesting.expand": false,
   "explorer.fileNesting.patterns": {
     "*.ts": "${capture}.domain.ts,${capture}.ui.tsx,${capture}.css,.${capture}.less,.${capture}.scss",
-    "*.tsx": "${capture}.css,${capture}.less,${capture}.scss"
+    "*.tsx": "${capture}.css,${capture}.less,${capture}.scss",
+    "*.ui.tsx": "${capture}.ui.*.tsx"
   }
 }
 ```

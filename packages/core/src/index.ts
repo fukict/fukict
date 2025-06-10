@@ -11,6 +11,7 @@ export type {
   VNodeChild,
   ComponentFunction,
   DOMProps,
+  DOMEventProps,
   RenderOptions,
   UpdateContext,
   RefCallback,

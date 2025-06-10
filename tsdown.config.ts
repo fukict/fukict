@@ -32,7 +32,8 @@ try {
 }
 
 // 获取构建模式
-const isWatchMode = process.env.npm_lifecycle_event === 'dev' || process.argv.includes('--watch');
+const isWatchMode =
+  process.env.npm_lifecycle_event === 'dev' || process.argv.includes('--watch');
 const isDev = process.env.NODE_ENV === 'development' || isWatchMode;
 
 // 根据不同包的特点配置构建选项
@@ -53,39 +54,21 @@ const getPackageConfig = () => {
       return false;
     },
     // 构建完成回调
-    onSuccess: isWatchMode ? undefined : () => {
-      console.log(`✅ ${packageName} 构建完成`);
-    },
+    onSuccess: isWatchMode
+      ? undefined
+      : () => {
+          console.log(`✅ ${packageName} 构建完成`);
+        },
   };
 
   switch (packageName) {
     case 'core':
-      return {
-        ...baseConfig,
-        entry: [
-          'src/index.ts',
-          'src/jsx-runtime.ts',
-          'src/pattern-registry.ts',
-          'src/renderer.ts',
-          'src/dom-utils.ts',
-        ],
-        format: 'esm',
-      };
-
     case 'widget':
       return {
         ...baseConfig,
-        entry: [
-          'src/index.ts',
-          'src/jsx-runtime.ts',
-          'src/class-widget.ts',
-          'src/functional-widget.ts',
-          'src/adapters.ts',
-          'src/types.ts',
-        ],
+        entry: ['src/index.ts'],
         format: 'esm',
       };
-
     case 'babel-plugin':
     case 'babel-preset-widget':
       return {
