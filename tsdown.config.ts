@@ -31,19 +31,30 @@ try {
   throw new Error(`Failed to read package.json: ${(error as Error).message}`);
 }
 
+// 获取构建模式
+const isWatchMode = process.env.npm_lifecycle_event === 'dev' || process.argv.includes('--watch');
+const isDev = process.env.NODE_ENV === 'development' || isWatchMode;
+
 // 根据不同包的特点配置构建选项
 const getPackageConfig = () => {
   const baseConfig = {
     outDir: 'dist',
     dts: true,
-    clean: true,
+    clean: !isWatchMode, // watch 模式下不清理，避免频繁删除
     unbundle: true,
+    sourcemap: isDev, // 开发模式生成 sourcemap
+    minify: !isDev, // 生产模式压缩
+    splitting: false, // 禁用代码分割
     external: (id: string) => {
       // 外部化以下类型的依赖
       if (id.startsWith('../types/')) return true;
       if (id.startsWith('@vanilla-dom/')) return true;
       if (id.startsWith('@babel/')) return true;
       return false;
+    },
+    // 构建完成回调
+    onSuccess: isWatchMode ? undefined : () => {
+      console.log(`✅ ${packageName} 构建完成`);
     },
   };
 

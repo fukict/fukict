@@ -1,5 +1,5 @@
 ---
-description: 
+description: 关键错误预防 - agent 模式需要注意的操作
 globs: 
 alwaysApply: true
 ---
@@ -23,7 +23,6 @@ alwaysApply: true
 ## 🔄 依赖管理
 - **强制使用 pnpm**
 - 类型导入：`import type` vs `import`
-- tsup 必需：`format: ['cjs', 'esm'], dts: true`
 
 ## ✅ 操作前检查
 - [ ] `pwd` 确认目录

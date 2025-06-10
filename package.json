@@ -23,10 +23,10 @@
   "author": "xiaoyown <xiaoyown@example.com>",
   "type": "module",
   "scripts": {
-    "build": "pnpm build:pkg && pnpm build:demos",
+    "build": "pnpm clean && pnpm build:pkg && pnpm build:demos",
     "build:demos": "pnpm --filter './demos/*' build",
-    "build:pkg": "./scripts/build-package.sh core babel-plugin widget babel-preset-widget",
-    "build:pkg:watch": "./scripts/build-package.sh core widget babel-plugin babel-preset-widget watch",
+    "build:pkg": "./scripts/build-package.sh --all",
+    "build:pkg:watch": "./scripts/build-package.sh --all --watch",
     "changeset": "changeset",
     "changeset:alpha": "changeset version --snapshot alpha",
     "changeset:beta": "changeset version --snapshot beta",

@@ -1,6 +1,6 @@
 ---
-description: Token 优化 - 精简输出、并行调用、避免冗余
-globs: ["**/*"]
+description: 精简对话内容, 减少 token 消耗
+globs: 
 alwaysApply: false
 ---
 # 🎯 Token 优化核心策略

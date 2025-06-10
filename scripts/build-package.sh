@@ -8,47 +8,132 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
+CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
 # 帮助信息
 show_help() {
-    echo -e "${BLUE}Usage: $0 <package1> [package2] [...] [mode]${NC}"
+    echo -e "${BLUE}Usage: $0 [options]${NC}"
     echo ""
-    echo "Parameters:"
-    echo "  package    One or more package names to build (${AVAILABLE_PACKAGES[*]})"
-    echo "  mode       Build mode: 'build' (default) or 'watch' (must be last argument)"
+    echo "Options:"
+    echo "  --all                  Build all packages"
+    echo "  --pkg-name <packages>  Specify package names (${AVAILABLE_PACKAGES[*]})"
+    echo "  --watch               Use watch mode"
+    echo "  --no-watch            Disable watch mode (skip interactive)"
+    echo "  --help                Show this help message"
     echo ""
     echo "Examples:"
-    echo "  $0 core                        # Build single package"
-    echo "  $0 core widget                 # Build multiple packages"
-    echo "  $0 core widget babel-plugin    # Build multiple packages"
-    echo "  $0 widget watch                # Watch single package"
-    echo "  $0 core widget watch           # Watch multiple packages (parallel)"
+    echo "  $0                                    # Interactive mode"
+    echo "  $0 --all                              # Build all packages (may ask about watch)"
+    echo "  $0 --all --no-watch                   # Build all packages (no interaction)"
+    echo "  $0 --pkg-name core                    # Build single package (may ask about watch)"
+    echo "  $0 --pkg-name core --no-watch         # Build single package (no interaction)"
+    echo "  $0 --all --watch                      # Watch all packages"
+    echo "  $0 --pkg-name core widget --watch     # Watch multiple packages"
     echo ""
     exit 1
 }
 
-# 检查参数
-if [ $# -eq 0 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
-    show_help
-fi
 
-# 解析参数：最后一个参数如果是 watch 则为模式，否则默认为 build
-ARGS=("$@")
-LAST_ARG="${!#}"
-if [ "$LAST_ARG" = "watch" ]; then
-    MODE="watch"
-    PACKAGES=("${ARGS[@]:0:$#-1}")  # 除了最后一个参数
-else
-    MODE="build"
-    PACKAGES=("${ARGS[@]}")  # 所有参数
-fi
 
-# 检查是否有包参数
-if [ ${#PACKAGES[@]} -eq 0 ]; then
-    echo -e "${RED}❌ No packages specified${NC}"
-    show_help
-fi
+# 确认构建
+confirm_build() {
+    echo -e "${CYAN}📋 构建确认:${NC}"
+    echo -e "${YELLOW}包: ${PACKAGES[*]}${NC}"
+    echo -e "${YELLOW}模式: $MODE${NC}"
+    echo ""
+    
+    echo -e "${BLUE}确认开始构建? (y/N): ${NC}"
+    read -r confirm
+    
+    case "$confirm" in
+        [yY]|[yY][eE][sS])
+            echo -e "${GREEN}✅ 开始构建...${NC}"
+            echo ""
+            return 0
+            ;;
+        *)
+            echo -e "${YELLOW}❌ 构建已取消${NC}"
+            return 1
+            ;;
+    esac
+}
+
+# 交互选择包（当没有指定 --all 或 --pkg-name 时）
+interactive_select_packages() {
+    echo -e "${CYAN}📦 选择要构建的包:${NC}"
+    echo ""
+    
+    local selected_packages=()
+    
+    # 显示包选项（默认全选）
+    for i in "${!AVAILABLE_PACKAGES[@]}"; do
+        echo -e "${YELLOW}[$((i+1))] ${AVAILABLE_PACKAGES[i]} ${GREEN}[✓]${NC}"
+    done
+    echo -e "${YELLOW}[0] 取消全选${NC}"
+    echo ""
+    
+    # 读取用户输入
+    echo -e "${BLUE}输入包编号 (用空格分隔，直接回车=全选): ${NC}"
+    read -r user_input
+    
+    # 如果用户直接回车，选择所有包
+    if [ -z "$user_input" ]; then
+        selected_packages=("${AVAILABLE_PACKAGES[@]}")
+        echo -e "${GREEN}✅ 已选择所有包: ${selected_packages[*]}${NC}"
+    else
+        # 解析用户输入
+        for num in $user_input; do
+            if [[ "$num" =~ ^[0-9]+$ ]]; then
+                if [ "$num" -eq 0 ]; then
+                    # 取消全选
+                    selected_packages=()
+                    break
+                elif [ "$num" -ge 1 ] && [ "$num" -le ${#AVAILABLE_PACKAGES[@]} ]; then
+                    local package_name="${AVAILABLE_PACKAGES[$((num-1))]}"
+                    # 检查是否已选择
+                    if [[ ! " ${selected_packages[*]} " =~ " ${package_name} " ]]; then
+                        selected_packages+=("$package_name")
+                    fi
+                fi
+            fi
+        done
+        
+        if [ ${#selected_packages[@]} -eq 0 ]; then
+            echo -e "${YELLOW}⚠️  未选择任何包${NC}"
+            return 1
+        else
+            echo -e "${GREEN}✅ 已选择包: ${selected_packages[*]}${NC}"
+        fi
+    fi
+    
+    echo ""
+    PACKAGES=("${selected_packages[@]}")
+    return 0
+}
+
+# 交互选择是否监听（当没有指定 --watch 时）
+interactive_select_watch() {
+    echo -e "${CYAN}🔧 是否需要监听模式:${NC}"
+    echo -e "${YELLOW}[y] 是 - 监听文件变化${NC}"
+    echo -e "${YELLOW}[n] 否 - 单次构建 ${GREEN}[默认]${NC}"
+    echo ""
+    
+    echo -e "${BLUE}是否启用监听模式? (y/N): ${NC}"
+    read -r watch_choice
+    
+    case "$watch_choice" in
+        [yY]|[yY][eE][sS])
+            USE_WATCH=true
+            echo -e "${GREEN}✅ 启用监听模式${NC}"
+            ;;
+        *)
+            USE_WATCH=false
+            echo -e "${GREEN}✅ 使用单次构建${NC}"
+            ;;
+    esac
+    echo ""
+}
 
 # 验证包名
 is_valid_package() {
@@ -60,6 +145,124 @@ is_valid_package() {
     done
     return 1
 }
+
+# 解析命令行选项
+parse_arguments() {
+    local use_all=false
+    local use_watch=""
+    local pkg_names=()
+    
+    # 解析选项
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --all)
+                use_all=true
+                shift
+                ;;
+            --watch)
+                use_watch="true"
+                shift
+                ;;
+            --no-watch)
+                use_watch="false"
+                shift
+                ;;
+            --pkg-name)
+                shift
+                # 收集包名直到遇到下一个选项或结束
+                while [[ $# -gt 0 && ! "$1" =~ ^-- ]]; do
+                    pkg_names+=("$1")
+                    shift
+                done
+                ;;
+            --help|-h)
+                show_help
+                ;;
+            -*)
+                echo -e "${RED}❌ 未知选项: $1${NC}"
+                show_help
+                ;;
+            *)
+                echo -e "${RED}❌ 位置参数无效: $1${NC}"
+                echo -e "${YELLOW}请使用 --pkg-name 指定包名${NC}"
+                show_help
+                ;;
+        esac
+    done
+    
+    # 设置包列表
+    if [ "$use_all" = true ]; then
+        PACKAGES=("${AVAILABLE_PACKAGES[@]}")
+        echo -e "${GREEN}🚀 使用 --all 参数，构建所有包${NC}"
+        if [ ${#pkg_names[@]} -gt 0 ]; then
+            echo -e "${YELLOW}⚠️  --all 参数存在，--pkg-name 参数被忽略${NC}"
+        fi
+    elif [ ${#pkg_names[@]} -gt 0 ]; then
+        # 验证指定的包名
+        local invalid_packages=()
+        for package in "${pkg_names[@]}"; do
+            if ! is_valid_package "$package"; then
+                invalid_packages+=("$package")
+            fi
+        done
+        
+        if [ ${#invalid_packages[@]} -gt 0 ]; then
+            echo -e "${RED}❌ 未知包: ${invalid_packages[*]}${NC}"
+            echo -e "${YELLOW}可用包: ${AVAILABLE_PACKAGES[*]}${NC}"
+            exit 1
+        fi
+        
+        PACKAGES=("${pkg_names[@]}")
+        echo -e "${GREEN}🚀 指定包: ${PACKAGES[*]}${NC}"
+    else
+        # 没有指定包，进入交互选择
+        echo -e "${BLUE}🚀 Vanilla DOM 包构建工具 - 交互模式${NC}"
+        echo ""
+        
+        if ! interactive_select_packages; then
+            echo -e "${RED}❌ 包选择已取消${NC}"
+            exit 1
+        fi
+    fi
+    
+    # 设置监听模式
+    if [ "$use_watch" = "true" ]; then
+        USE_WATCH=true
+        echo -e "${BLUE}📺 监听模式: ${PACKAGES[*]}${NC}"
+    elif [ "$use_watch" = "false" ]; then
+        USE_WATCH=false
+        echo -e "${BLUE}🔨 构建模式: ${PACKAGES[*]}${NC}"
+    else
+        # 没有指定 --watch 或 --no-watch，且是交互模式时，询问是否需要监听
+        if [ ${#pkg_names[@]} -eq 0 ] && [ "$use_all" = false ]; then
+            interactive_select_watch
+        else
+            # 命令行模式但没有指定 watch 选项，默认 build
+            USE_WATCH=false
+            echo -e "${BLUE}🔨 构建模式: ${PACKAGES[*]}${NC}"
+        fi
+    fi
+    echo ""
+    
+    return 0
+}
+
+# 解析参数并执行
+parse_arguments "$@"
+
+# 确认构建（仅在交互模式下）
+if [ ${#PACKAGES[@]} -gt 0 ]; then
+    if [[ "$*" == *"--"* ]]; then
+        # 命令行模式，直接执行
+        echo -e "${GREEN}✅ 开始构建...${NC}"
+        echo ""
+    else
+        # 交互模式，需要确认
+        if ! confirm_build; then
+            exit 1
+        fi
+    fi
+fi
 
 # 验证所有包名
 INVALID_PACKAGES=()
@@ -75,12 +278,7 @@ if [ ${#INVALID_PACKAGES[@]} -gt 0 ]; then
     exit 1
 fi
 
-# 验证模式
-if [ "$MODE" != "build" ] && [ "$MODE" != "watch" ]; then
-    echo -e "${RED}❌ Unknown mode: $MODE${NC}"
-    echo -e "${YELLOW}Available modes: build, watch${NC}"
-    exit 1
-fi
+
 
 # 构建函数
 build_package() {
@@ -108,18 +306,20 @@ build_package() {
 
     # 构建 tsdown 参数
     local tsdown_args="--config ../../tsdown.config.ts"
-    if [ "$MODE" = "watch" ]; then
+    if [ "$USE_WATCH" = true ]; then
         tsdown_args="$tsdown_args --watch"
     fi
 
     # 输出信息
-    if [ "$MODE" = "watch" ]; then
+    if [ "$USE_WATCH" = true ]; then
         echo -e "${BLUE}🚀 Watching package: $package_name${NC}"
+        echo -e "${CYAN}👀 Press Ctrl+C to stop watching${NC}"
     else
         echo -e "${BLUE}🚀 Building package: $package_name${NC}"
     fi
     echo -e "${YELLOW}📦 Package: $package_info${NC}"
     echo -e "${YELLOW}📁 Working directory: $package_path${NC}"
+    echo -e "${YELLOW}🔧 Mode: $([ "$USE_WATCH" = true ] && echo "watch" || echo "build")${NC}"
     echo ""
 
     # 进入包目录并执行构建
@@ -128,23 +328,29 @@ build_package() {
         
         # 设置环境变量并运行 tsdown
         export PACKAGE_NAME="$package_name"
+        if [ "$USE_WATCH" = true ]; then
+            export NODE_ENV="development"
+        else
+            export NODE_ENV="production"
+        fi
         
         if npx tsdown $tsdown_args; then
-            if [ "$MODE" = "watch" ]; then
+            if [ "$USE_WATCH" = true ]; then
                 echo -e "${GREEN}✅ Successfully started watching $package_name${NC}"
             else
                 echo -e "${GREEN}✅ Successfully built $package_name${NC}"
             fi
             return 0
         else
-            echo -e "${RED}❌ Failed to $MODE $package_name${NC}"
+            local mode_name=$([ "$USE_WATCH" = true ] && echo "watch" || echo "build")
+            echo -e "${RED}❌ Failed to $mode_name $package_name${NC}"
             return 1
         fi
     )
 }
 
 # 如果是 watch 模式且有多个包，并行启动监听
-if [ "$MODE" = "watch" ] && [ ${#PACKAGES[@]} -gt 1 ]; then
+if [ "$USE_WATCH" = true ] && [ ${#PACKAGES[@]} -gt 1 ]; then
     echo -e "${BLUE}🔄 Starting parallel watch mode for packages: ${PACKAGES[*]}${NC}"
     echo -e "${YELLOW}💡 Press Ctrl+C to stop all watchers${NC}"
     echo ""
@@ -160,6 +366,7 @@ if [ "$MODE" = "watch" ] && [ ${#PACKAGES[@]} -gt 1 ]; then
         (
             cd "packages/$package" || exit 1
             export PACKAGE_NAME="$package"
+            export NODE_ENV="development"
             npx tsdown --config ../../tsdown.config.ts --watch
         ) &
         
@@ -193,7 +400,7 @@ if [ "$MODE" = "watch" ] && [ ${#PACKAGES[@]} -gt 1 ]; then
     # 等待所有后台进程
     wait
     
-elif [ "$MODE" = "watch" ]; then
+elif [ "$USE_WATCH" = true ]; then
     # 单包 watch 模式
     build_package "${PACKAGES[0]}"
 else

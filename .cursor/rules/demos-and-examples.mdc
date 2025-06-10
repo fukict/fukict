@@ -1,11 +1,7 @@
 ---
-description: 
-globs: 
-alwaysApply: true
----
----
 description: 演示项目开发指南 - 多工具链集成示例
 globs: ['demos/**/*']
+alwaysApply: false
 ---
 
 # 演示项目指南

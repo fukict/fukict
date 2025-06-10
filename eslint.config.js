@@ -104,7 +104,6 @@ export default [
       '**/.babelrc.js',
       '**/webpack.config.js',
       '**/vite.config.ts',
-      '**/tsup.config.ts',
       '**/*.cjs',
       'test-detector.js',
     ],
