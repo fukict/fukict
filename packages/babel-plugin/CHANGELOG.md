@@ -1,4 +1,4 @@
-# @vanilla-dom/babel-plugin
+# @fukict/babel-plugin
 
 ## 0.0.0-alpha-20250608081318
 

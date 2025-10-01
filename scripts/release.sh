@@ -85,7 +85,7 @@ confirm() {
 
 # 显示菜单
 show_menu() {
-    log_title "🚀 Vanilla DOM 发布工具"
+    log_title "🚀 Fukict 发布工具"
     
     echo "请选择发布类型:"
     echo ""
@@ -209,7 +209,7 @@ handle_pre_release() {
        run_command "pnpm build" "构建所有包" && \
        run_command "pnpm version:$type" "发布 $name 版本"; then
         log_success "🎉 $name 版本发布成功！"
-        log_info "可以通过 npm install @vanilla-dom/core@$type 来安装"
+        log_info "可以通过 npm install @fukict/core@$type 来安装"
     else
         log_error "发布流程中断"
     fi
@@ -292,21 +292,21 @@ check_npm_access() {
     local npm_user=$(npm whoami)
     log_success "当前 npm 用户: $npm_user"
     
-    # 检查 @vanilla-dom 组织是否存在
-    log_info "检查 @vanilla-dom 组织权限..."
-    if npm access list packages @vanilla-dom >/dev/null 2>&1; then
-        log_success "@vanilla-dom 组织存在且有访问权限"
+    # 检查 @fukict 组织是否存在
+    log_info "检查 @fukict 组织权限..."
+    if npm access list packages @fukict >/dev/null 2>&1; then
+        log_success "@fukict 组织存在且有访问权限"
     else
-        log_error "@vanilla-dom 组织不存在或无访问权限"
+        log_error "@fukict 组织不存在或无访问权限"
         echo ""
         echo "解决方案："
-        echo "1. 在 npm 上创建 @vanilla-dom 组织:"
+        echo "1. 在 npm 上创建 @fukict 组织:"
         echo "   https://www.npmjs.com/org/create"
         echo ""
         echo "2. 或者修改包名，不使用 scoped package:"
-        echo "   例如: vanilla-dom-core 而不是 @vanilla-dom/core"
+        echo "   例如: fukict-core 而不是 @fukict/core"
         echo ""
-        echo "3. 或者联系 @vanilla-dom 组织管理员添加发布权限"
+        echo "3. 或者联系 @fukict 组织管理员添加发布权限"
         return 1
     fi
     
@@ -321,7 +321,7 @@ handle_status() {
 
 # 显示帮助信息
 show_help() {
-    echo "Vanilla DOM 发布工具"
+    echo "Fukict 发布工具"
     echo ""
     echo "用法: $0 [选项]"
     echo ""
@@ -334,7 +334,7 @@ show_help() {
 
 # 显示版本信息
 show_version() {
-    echo "Vanilla DOM 发布工具 v1.0.0"
+    echo "Fukict 发布工具 v1.0.0"
 }
 
 # 主函数

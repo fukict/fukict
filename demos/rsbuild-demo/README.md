@@ -1,6 +1,6 @@
-# 🚀 Vanilla DOM + Rsbuild Demo
+# 🚀 Fukict + Rsbuild Demo
 
-这是一个使用 **Rsbuild** 构建工具的 Vanilla DOM 演示项目，展示了如何通过 Babel 插件实现 JSX 到 `hyperscript` 的编译时转换。
+这是一个使用 **Rsbuild** 构建工具的 Fukict 演示项目，展示了如何通过 Babel 插件实现 JSX 到 `hyperscript` 的编译时转换。
 
 ## ✨ 特性
 
@@ -23,7 +23,7 @@ export default defineConfig({
     pluginBabel({
       include: /\.(jsx?|tsx?)$/,
       babelLoaderOptions: {
-        plugins: ['@babel/plugin-syntax-jsx', '@vanilla-dom/babel-plugin'],
+        plugins: ['@babel/plugin-syntax-jsx', '@fukict/babel-plugin'],
       },
     }),
   ],
@@ -36,7 +36,7 @@ export default defineConfig({
 {
   "compilerOptions": {
     "jsx": "preserve",
-    "jsxImportSource": "@vanilla-dom/core"
+    "jsxImportSource": "@fukict/core"
   }
 }
 ```
@@ -116,13 +116,13 @@ demos/rsbuild-demo/
 
 ### 生产依赖
 
-- `@vanilla-dom/core`: 核心运行时库
+- `@fukict/core`: 核心运行时库
 
 ### 开发依赖
 
 - `@rsbuild/core`: Rsbuild 核心
 - `@rsbuild/plugin-babel`: Babel 插件支持
-- `@vanilla-dom/babel-plugin`: JSX 转换插件
+- `@fukict/babel-plugin`: JSX 转换插件
 - `@babel/plugin-syntax-jsx`: JSX 语法支持
 
 ## 🎨 组件演示
@@ -152,7 +152,7 @@ pnpm run build
 ## 🔗 相关链接
 
 - [Rsbuild 官方文档](https://rsbuild.dev/)
-- [Vanilla DOM 核心库](../../packages/core/)
+- [Fukict 核心库](../../packages/core/)
 - [Babel 插件源码](../../packages/babel-plugin/)
 
 ## 许可证

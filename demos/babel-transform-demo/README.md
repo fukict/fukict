@@ -1,6 +1,6 @@
 # 🔧 Babel Transform Demo
 
-这个demo用于测试和验证 `@vanilla-dom/babel-plugin` 的 JSX 转换效果，确保 JSX 语法能正确转换为 `hyperscript` 函数调用。
+这个demo用于测试和验证 `@fukict/babel-plugin` 的 JSX 转换效果，确保 JSX 语法能正确转换为 `hyperscript` 函数调用。
 
 ## ✨ 功能
 
@@ -162,7 +162,7 @@ hyperscript(Counter, { count: 5, onIncrement: handleIncrement });
 转换后的文件顶部应自动添加：
 
 ```js
-import { Fragment, hyperscript } from '@vanilla-dom/core';
+import { Fragment, hyperscript } from '@fukict/core';
 ```
 
 ## 📊 验证要点
@@ -200,7 +200,7 @@ babel-transform-demo/
 ```js
 // babel.config.js
 module.exports = {
-  plugins: ['@babel/plugin-syntax-jsx', '@vanilla-dom/babel-plugin'],
+  plugins: ['@babel/plugin-syntax-jsx', '@fukict/babel-plugin'],
 };
 ```
 
@@ -241,7 +241,7 @@ node -c dist/test.js
 
 - [Babel 插件开发文档](https://babeljs.io/docs/en/plugins)
 - [AST Explorer](https://astexplorer.net/) - 在线 AST 查看器
-- [Vanilla DOM 核心库](../../packages/core/)
+- [Fukict 核心库](../../packages/core/)
 - [Babel 插件源码](../../packages/babel-plugin/)
 
 ## �� 许可证

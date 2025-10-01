@@ -27,4 +27,4 @@ export function StatsComponent(props: StatsProps) {
       </div>
     </div>
   );
-} 
+}

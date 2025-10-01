@@ -1,4 +1,4 @@
-# @vanilla-dom/babel-preset-widget
+# @fukict/babel-preset-widget
 
 ## 0.0.0-alpha-20250608081318
 
@@ -9,4 +9,4 @@
 ### Patch Changes
 
 - Updated dependencies
-  - @vanilla-dom/babel-plugin@0.0.0-alpha-20250608081318
+  - @fukict/babel-plugin@0.0.0-alpha-20250608081318

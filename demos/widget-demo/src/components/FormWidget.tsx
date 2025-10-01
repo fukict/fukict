@@ -1,4 +1,4 @@
-import { Widget } from '@vanilla-dom/widget';
+import { Widget } from '@fukict/widget';
 
 import './FormWidget.css';
 

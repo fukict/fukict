@@ -100,7 +100,7 @@ export interface DOMProps extends DOMEventProps, Record<string, any> {
   children?: VNodeChild | VNodeChild[];
   key?: string | number;
   ref?: RefCallback;
-  
+
   // 通用 HTML 属性
   id?: string;
   className?: string;
@@ -117,10 +117,10 @@ export interface DOMProps extends DOMEventProps, Record<string, any> {
   spellCheck?: boolean;
   translate?: 'yes' | 'no';
   role?: string;
-  
+
   // Data 属性
   [dataAttribute: `data-${string}`]: string | number | boolean;
-  
+
   // Aria 属性
   [ariaAttribute: `aria-${string}`]: string | number | boolean;
 }

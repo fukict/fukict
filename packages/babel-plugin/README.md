@@ -1,15 +1,15 @@
-# @vanilla-dom/babel-plugin
+# @fukict/babel-plugin
 
-Babel 插件，将 JSX 语法编译为优化的 @vanilla-dom/core VNode 调用，支持编译时优化和组件自动注册。
+Babel 插件，将 JSX 语法编译为优化的 @fukict/core VNode 调用，支持编译时优化和组件自动注册。
 
 ## Installation
 
 ```bash
-pnpm install --save-dev @vanilla-dom/babel-plugin
+pnpm install --save-dev @fukict/babel-plugin
 # 推荐使用 pnpm
-pnpm add -D @vanilla-dom/babel-plugin
+pnpm add -D @fukict/babel-plugin
 # 或
-yarn add -D @vanilla-dom/babel-plugin
+yarn add -D @fukict/babel-plugin
 ```
 
 ## Usage
@@ -20,7 +20,7 @@ Add the plugin to your Babel configuration:
 
 ```json
 {
-  "plugins": ["@vanilla-dom/babel-plugin"]
+  "plugins": ["@fukict/babel-plugin"]
 }
 ```
 
@@ -30,9 +30,9 @@ Add the plugin to your Babel configuration:
 {
   "plugins": [
     [
-      "@vanilla-dom/babel-plugin",
+      "@fukict/babel-plugin",
       {
-        "importSource": "@vanilla-dom/core",
+        "importSource": "@fukict/core",
         "development": false
       }
     ]
@@ -42,7 +42,7 @@ Add the plugin to your Babel configuration:
 
 ## Options
 
-- **`importSource`** (string, default: `"@vanilla-dom/core"`): The module to import hyperscript and Fragment from
+- **`importSource`** (string, default: `"@fukict/core"`): The module to import hyperscript and Fragment from
 - **`development`** (boolean, default: `false`): Enable development mode features (reserved for future use)
 
 ## Transformation Examples
@@ -58,7 +58,7 @@ Add the plugin to your Babel configuration:
 **Output:**
 
 ```javascript
-import { Fragment, hyperscript } from '@vanilla-dom/core';
+import { Fragment, hyperscript } from '@fukict/core';
 
 hyperscript('div', { className: 'container' }, null, 'Hello World');
 ```
@@ -76,7 +76,7 @@ hyperscript('div', { className: 'container' }, null, 'Hello World');
 **Output:**
 
 ```javascript
-import { Fragment, hyperscript } from '@vanilla-dom/core';
+import { Fragment, hyperscript } from '@fukict/core';
 
 hyperscript(
   MyComponent,
@@ -100,7 +100,7 @@ hyperscript(
 **Output:**
 
 ```javascript
-import { Fragment, hyperscript } from '@vanilla-dom/core';
+import { Fragment, hyperscript } from '@fukict/core';
 
 hyperscript(
   Fragment,
@@ -124,7 +124,7 @@ hyperscript(
 **Output:**
 
 ```javascript
-import { Fragment, hyperscript } from '@vanilla-dom/core';
+import { Fragment, hyperscript } from '@fukict/core';
 
 hyperscript(
   'button',
@@ -150,7 +150,7 @@ hyperscript(
 **Output:**
 
 ```javascript
-import { Fragment, hyperscript } from '@vanilla-dom/core';
+import { Fragment, hyperscript } from '@fukict/core';
 
 hyperscript('button', { className: 'btn' }, { click: handleClick }, 'Click me');
 ```
@@ -168,7 +168,7 @@ hyperscript('button', { className: 'btn' }, { click: handleClick }, 'Click me');
 **Output:**
 
 ```javascript
-import { Fragment, hyperscript } from '@vanilla-dom/core';
+import { Fragment, hyperscript } from '@fukict/core';
 
 hyperscript('div', { ...props, className: 'extra' }, null, 'Content');
 ```
@@ -190,7 +190,7 @@ export default defineConfig({
     // ... other plugins
   ],
   babel: {
-    plugins: ['@vanilla-dom/babel-plugin'],
+    plugins: ['@fukict/babel-plugin'],
   },
 });
 ```
@@ -207,7 +207,7 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            plugins: ['@vanilla-dom/babel-plugin'],
+            plugins: ['@fukict/babel-plugin'],
           },
         },
       },
@@ -225,7 +225,7 @@ import babel from '@rollup/plugin-babel';
 export default {
   plugins: [
     babel({
-      plugins: ['@vanilla-dom/babel-plugin'],
+      plugins: ['@fukict/babel-plugin'],
       extensions: ['.js', '.jsx', '.ts', '.tsx'],
     }),
   ],
@@ -282,10 +282,10 @@ hyperscript(
 module.exports = {
   plugins: [
     [
-      '@vanilla-dom/babel-plugin',
+      '@fukict/babel-plugin',
       {
         // 自定义导入源
-        importSource: '@vanilla-dom/core',
+        importSource: '@fukict/core',
         // 开发模式调试
         development: process.env.NODE_ENV === 'development',
       },

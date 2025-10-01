@@ -13,7 +13,7 @@
 
     /* JSX */
     "jsx": "preserve",
-    "jsxImportSource": "@vanilla-dom/widget",
+    "jsxImportSource": "@fukict/widget",
 
     /* Linting */
     "strict": true,

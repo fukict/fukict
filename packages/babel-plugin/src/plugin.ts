@@ -1,3 +1,5 @@
+import type { PluginObj } from '@babel/core';
+
 import type { BabelPluginState } from './types.js';
 import {
   convertJSXAttributes,
@@ -6,12 +8,11 @@ import {
   getJSXElementName,
   isBuiltinElement,
 } from './utils.js';
-import type { PluginObj } from '@babel/core';
 
 /**
- * @vanilla-dom/babel-plugin
+ * @fukict/babel-plugin
  *
- * 将 JSX 转换为 @vanilla-dom/core 的节点树结构调用
+ * 将 JSX 转换为 @fukict/core 的节点树结构调用
  * 组件注册交由运行时处理
  *
  * 转换规则：
@@ -25,13 +26,13 @@ import type { PluginObj } from '@babel/core';
  * ↓
  * hyperscript(MyComponent, { prop: value }, null, hyperscript("span", null, null, "child"))
  */
-export default function vanillaDomPlugin({
+export default function fukictBabelPlugin({
   types,
 }: {
   types: any;
 }): PluginObj<BabelPluginState> {
   return {
-    name: '@vanilla-dom/babel-plugin',
+    name: '@fukict/babel-plugin',
 
     visitor: {
       Program: {
@@ -44,7 +45,7 @@ export default function vanillaDomPlugin({
         exit(path: any, state: BabelPluginState) {
           // 如果使用了 JSX 但没有导入运行时，则自动添加导入
           if (state.runtimeImportAdded) {
-            const importSource = state.opts.importSource || '@vanilla-dom/core';
+            const importSource = state.opts.importSource || '@fukict/core';
             const importNode = createRuntimeImport(importSource, types);
             path.node.body.unshift(importNode);
           }

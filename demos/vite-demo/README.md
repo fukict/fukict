@@ -1,6 +1,6 @@
-# 🚀 Vanilla DOM + Vite Demo
+# 🚀 Fukict + Vite Demo
 
-这是一个使用 **Vite** 构建工具的 Vanilla DOM 演示项目，展示了如何通过 Babel 插件实现 JSX 到 `hyperscript` 的编译时转换。
+这是一个使用 **Vite** 构建工具的 Fukict 演示项目，展示了如何通过 Babel 插件实现 JSX 到 `hyperscript` 的编译时转换。
 
 ## ✨ 特性
 
@@ -21,16 +21,16 @@ export default defineConfig({
   esbuild: {
     jsxFactory: 'hyperscript',
     jsxFragment: 'Fragment',
-    jsxInject: `import { hyperscript, Fragment } from '@vanilla-dom/core'`,
+    jsxInject: `import { hyperscript, Fragment } from '@fukict/core'`,
   },
   plugins: [
     // 自定义 JSX 转换插件
     {
-      name: 'vanilla-dom-jsx',
+      name: 'fukict-jsx',
       transform(code, id) {
         if (/\.(jsx|tsx)$/.test(id)) {
           return babel.transformSync(code, {
-            plugins: ['@babel/plugin-syntax-jsx', '@vanilla-dom/babel-plugin'],
+            plugins: ['@babel/plugin-syntax-jsx', '@fukict/babel-plugin'],
           })?.code;
         }
       },
@@ -45,7 +45,7 @@ export default defineConfig({
 {
   "compilerOptions": {
     "jsx": "preserve",
-    "jsxImportSource": "@vanilla-dom/core"
+    "jsxImportSource": "@fukict/core"
   }
 }
 ```
@@ -128,12 +128,12 @@ demos/vite-demo/
 
 ### 生产依赖
 
-- `@vanilla-dom/core`: 核心运行时库
+- `@fukict/core`: 核心运行时库
 
 ### 开发依赖
 
 - `vite`: 构建工具
-- `@vanilla-dom/babel-plugin`: JSX 转换插件
+- `@fukict/babel-plugin`: JSX 转换插件
 - `@babel/core`: Babel 核心
 - `@babel/plugin-syntax-jsx`: JSX 语法支持
 
@@ -174,7 +174,7 @@ pnpm run build
 ## 🔗 相关链接
 
 - [Vite 官方文档](https://vitejs.dev/)
-- [Vanilla DOM 核心库](../../packages/core/)
+- [Fukict 核心库](../../packages/core/)
 - [Babel 插件源码](../../packages/babel-plugin/)
 
 ## �� 许可证

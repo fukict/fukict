@@ -17,4 +17,4 @@ export interface BabelPluginState {
   filename?: string;
 }
 
-export type VanillaDomPlugin = PluginObj<BabelPluginState>;
+export type fukictBabelPlugin = PluginObj<BabelPluginState>;

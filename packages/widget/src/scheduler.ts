@@ -92,7 +92,7 @@ function scheduleWork(): void {
               result.catch(console.error);
             }
           } catch (error) {
-            console.error('[@vanilla-dom/widget] Scheduled task error:', error);
+            console.error('[@fukict/widget] Scheduled task error:', error);
           }
         }
       }

@@ -1,5 +1,5 @@
 /**
- * @vanilla-dom/babel-plugin - 组件检测模块
+ * @fukict/babel-plugin - 组件检测模块
  *
  * 编译时的组件标志识别逻辑 - 通用检测工具函数
  */

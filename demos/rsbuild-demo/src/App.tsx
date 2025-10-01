@@ -7,7 +7,7 @@ export function App() {
       {/* Header */}
       <div className="header">
         <div className="logo">🚀</div>
-        <h1 className="title">Vanilla DOM</h1>
+        <h1 className="title">Fukict</h1>
         <p className="subtitle">使用 Rsbuild + Babel 插件的超快速构建演示</p>
       </div>
 
@@ -29,7 +29,7 @@ export function App() {
         <p>
           本演示使用了 <strong>Rsbuild</strong> 作为构建工具， 通过{' '}
           <code>@rsbuild/plugin-babel</code> 集成{' '}
-          <code>@vanilla-dom/babel-plugin</code>， 实现极速的 JSX 到 hyperscript
+          <code>@fukict/babel-plugin</code>， 实现极速的 JSX 到 hyperscript
           转换。
         </p>
 
@@ -44,7 +44,7 @@ export default defineConfig({
       babelLoaderOptions: {
         plugins: [
           '@babel/plugin-syntax-jsx',
-          '@vanilla-dom/babel-plugin'
+          '@fukict/babel-plugin'
         ]
       }
     })
@@ -57,7 +57,7 @@ export default defineConfig({
 {
   "compilerOptions": {
     "jsx": "preserve",
-    "jsxImportSource": "@vanilla-dom/core"
+    "jsxImportSource": "@fukict/core"
   }
 }`}
         </div>

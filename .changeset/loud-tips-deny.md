@@ -1,6 +1,6 @@
 ---
-'@vanilla-dom/widget': patch
-'@vanilla-dom/core': patch
+'@fukict/widget': patch
+'@fukict/core': patch
 ---
 
 Fix JSX type export

@@ -2,12 +2,7 @@
   "arrowParens": "avoid",
   "bracketSpacing": true,
   "endOfLine": "lf",
-  "importOrder": [
-    "^@",
-    "^\\w(.*)$",
-    "^\\.(?!.*\\.css$).*",
-    "(.css)$"
-  ],
+  "importOrder": ["^@", "^\\w(.*)$", "^\\.(?!.*\\.css$).*", "(.css)$"],
   "importOrderParserPlugins": [
     "typescript",
     "jsx",

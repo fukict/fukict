@@ -1,11 +1,11 @@
 {
-  "name": "@vanilla-dom/babel-preset-widget",
+  "name": "@fukict/babel-preset-widget",
   "version": "0.0.0-alpha-20250608081318",
-  "description": "Babel preset for @vanilla-dom/widget - provides optimized JSX transformation for Widget components",
+  "description": "Babel preset for @fukict/widget - provides optimized JSX transformation for Widget components",
   "keywords": [
     "babel",
     "preset",
-    "vanilla-dom",
+    "fukict",
     "widget",
     "jsx",
     "typescript",
@@ -13,7 +13,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/vanilla-dom/vanilla-dom.git",
+    "url": "https://github.com/fukict/fukict.git",
     "directory": "packages/babel-preset-widget"
   },
   "license": "MIT",
@@ -39,7 +39,7 @@
     "test": "echo \"No tests for preset\" && exit 0"
   },
   "dependencies": {
-    "@vanilla-dom/babel-plugin": "workspace:*"
+    "@fukict/babel-plugin": "workspace:*"
   },
   "devDependencies": {
     "@babel/core": "^7.25.8",

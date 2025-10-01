@@ -49,7 +49,7 @@ const getPackageConfig = () => {
     external: (id: string) => {
       // 外部化以下类型的依赖
       if (id.startsWith('../types/')) return true;
-      if (id.startsWith('@vanilla-dom/')) return true;
+      if (id.startsWith('@fukict/')) return true;
       if (id.startsWith('@babel/')) return true;
       return false;
     },

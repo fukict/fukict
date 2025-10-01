@@ -1,4 +1,4 @@
-import { Widget } from '@vanilla-dom/widget';
+import { Widget } from '@fukict/widget';
 
 interface CounterProps {
   initialCount?: number;
@@ -35,17 +35,11 @@ export class Counter extends Widget<CounterProps> {
       <div className="counter-widget">
         <h3>🔢 计数器组件</h3>
         <div className="counter-controls">
-          <button 
-            className="decrement-btn"
-            on:click={this.decrement}
-          >
+          <button className="decrement-btn" on:click={this.decrement}>
             -
           </button>
           <span className="count-display">{this.count}</span>
-          <button 
-            className="increment-btn"
-            on:click={this.increment}
-          >
+          <button className="increment-btn" on:click={this.increment}>
             +
           </button>
         </div>

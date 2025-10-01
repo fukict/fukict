@@ -1,10 +1,10 @@
-# @vanilla-dom/preset-widget
+# @fukict/preset-widget
 
-专为 @vanilla-dom/widget 设计的零配置 Babel 预设，提供开箱即用的组件开发环境。
+专为 @fukict/widget 设计的零配置 Babel 预设，提供开箱即用的组件开发环境。
 
 ## 🎯 设计目标
 
-`@vanilla-dom/babel-preset-widget` 是一个用 **TypeScript 编写**的 Babel preset，为基于 Widget 编码范式的项目提供完整的构建配置。使用此 preset，您可以获得：
+`@fukict/babel-preset-widget` 是一个用 **TypeScript 编写**的 Babel preset，为基于 Widget 编码范式的项目提供完整的构建配置。使用此 preset，您可以获得：
 
 - **零配置体验**：开箱即用的完整开发环境
 - **自动组件注册**：Widget 类和 createWidget 函数自动识别
@@ -22,12 +22,12 @@
 ## 安装
 
 ```bash
-pnpm install @vanilla-dom/babel-preset-widget @vanilla-dom/widget
+pnpm install @fukict/babel-preset-widget @fukict/widget
 # 推荐使用 pnpm
-pnpm add @vanilla-dom/babel-preset-widget @vanilla-dom/widget
+pnpm add @fukict/babel-preset-widget @fukict/widget
 ```
 
-> **注意**：安装 preset 时会自动安装 `@vanilla-dom/babel-plugin` 作为依赖，无需手动安装。
+> **注意**：安装 preset 时会自动安装 `@fukict/babel-plugin` 作为依赖，无需手动安装。
 
 ## 使用方法
 
@@ -37,14 +37,14 @@ pnpm add @vanilla-dom/babel-preset-widget @vanilla-dom/widget
 
 ```javascript
 module.exports = {
-  presets: ['@vanilla-dom/babel-preset-widget'],
+  presets: ['@fukict/babel-preset-widget'],
 };
 ```
 
 就这么简单！现在您可以直接使用 Widget 组件：
 
 ```tsx
-import { Widget, createWidget, render } from '@vanilla-dom/widget';
+import { Widget, createWidget, render } from '@fukict/widget';
 
 // Widget 类 - 自动获得 WIDGET_CLASS 标志
 class TodoList extends Widget {
@@ -77,10 +77,10 @@ render(<App />, { container: document.getElementById('root')! });
 module.exports = {
   presets: [
     [
-      '@vanilla-dom/preset-widget',
+      '@fukict/preset-widget',
       {
         // 自定义 JSX 运行时导入路径
-        importSource: '@vanilla-dom/core',
+        importSource: '@fukict/core',
 
         // 开发模式调试（默认：跟随 NODE_ENV）
         development: process.env.NODE_ENV === 'development',
@@ -103,7 +103,7 @@ interface PresetOptions {
 }
 ```
 
-虽然 preset 本身不导出类型定义文件，但您在使用 `@vanilla-dom/widget` 时会获得完整的 TypeScript 支持。
+虽然 preset 本身不导出类型定义文件，但您在使用 `@fukict/widget` 时会获得完整的 TypeScript 支持。
 
 ## 功能特性
 
@@ -137,12 +137,12 @@ hyperscript(
 );
 ```
 
-组件的识别和实例化逻辑交由 @vanilla-dom/core 的编码范式注册机制处理，babel 插件只负责 JSX 到 hyperscript 的转换。
+组件的识别和实例化逻辑交由 @fukict/core 的编码范式注册机制处理，babel 插件只负责 JSX 到 hyperscript 的转换。
 
 ## 使用示例
 
 ```jsx
-import { Widget, createWidget } from '@vanilla-dom/widget';
+import { Widget, createWidget } from '@fukict/widget';
 
 // Widget 类组件
 class TodoList extends Widget {
@@ -184,14 +184,14 @@ import * as babel from '@babel/core';
 export default {
   plugins: [
     {
-      name: 'vanilla-dom-babel',
+      name: 'fukict-babel',
       async transform(code, id) {
         if (!/\.(tsx?|jsx?)$/.test(id)) return;
         if (!/<[A-Za-z]/.test(code)) return;
 
         const result = await babel.transformAsync(code, {
           filename: id,
-          presets: ['@vanilla-dom/preset-widget'],
+          presets: ['@fukict/preset-widget'],
           plugins: ['@babel/plugin-syntax-jsx'],
           sourceMaps: true,
         });
@@ -219,7 +219,7 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@vanilla-dom/preset-widget'],
+            presets: ['@fukict/preset-widget'],
           },
         },
       },
@@ -235,7 +235,7 @@ module.exports = {
 如果看到警告：`babel-plugin not found`，请确保已安装：
 
 ```bash
-pnpm install @vanilla-dom/babel-plugin
+pnpm install @fukict/babel-plugin
 ```
 
 ### TypeScript 配置
@@ -246,16 +246,16 @@ pnpm install @vanilla-dom/babel-plugin
 {
   "compilerOptions": {
     "jsx": "preserve",
-    "jsxImportSource": "@vanilla-dom/core"
+    "jsxImportSource": "@fukict/core"
   }
 }
 ```
 
 ## 相关包
 
-- [@vanilla-dom/widget](../widget) - Widget 基类和组件工厂
-- [@vanilla-dom/babel-plugin](../babel-plugin) - 底层 Babel 插件
-- [@vanilla-dom/core](../core) - 核心渲染引擎
+- [@fukict/widget](../widget) - Widget 基类和组件工厂
+- [@fukict/babel-plugin](../babel-plugin) - 底层 Babel 插件
+- [@fukict/core](../core) - 核心渲染引擎
 
 ## 许可证
 

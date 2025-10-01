@@ -1,5 +1,6 @@
+import { render } from '@fukict/core';
+
 import { Counter } from './Counter';
-import { render } from '@vanilla-dom/core';
 
 // 简单的未注册函数组件，用于测试新的处理逻辑
 function SimpleGreeting({ name }: { name: string }) {
@@ -67,9 +68,9 @@ function App() {
     <div className="app">
       <div className="header">
         <div className="logo">🚀</div>
-        <h1 className="title">Vanilla DOM + Webpack</h1>
+        <h1 className="title">Fukict + Webpack</h1>
         <p className="subtitle">
-          使用 @vanilla-dom/babel-plugin + @vanilla-dom/core 构建
+          使用 @fukict/babel-plugin + @fukict/core 构建
         </p>
       </div>
 
@@ -86,15 +87,12 @@ function App() {
           <li>未注册函数组件支持 ✅</li>
           <li>Ref 功能支持 ✅</li>
         </ul>
-        <button
-          className="btn"
-          on:click={() => alert('Hello from Vanilla DOM!')}
-        >
+        <button className="btn" on:click={() => alert('Hello from Fukict!')}>
           测试事件处理
         </button>
 
         {/* 测试未注册的函数组件 */}
-        <SimpleGreeting name="vanilla-dom 用户" />
+        <SimpleGreeting name="fukict 用户" />
       </div>
 
       {/* 新增：Ref 功能演示 */}
@@ -119,7 +117,7 @@ module: {
             "@babel/preset-typescript"
           ],
           plugins: [
-            "@vanilla-dom/babel-plugin"
+            "@fukict/babel-plugin"
           ]
         }
       }

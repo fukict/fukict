@@ -1,6 +1,6 @@
 # Widget Demo - 正确的 Widget 编码范式
 
-这是 `@vanilla-dom/widget` 包的官方演示项目，展示了 **正确的** Widget 编码范式和最佳实践。
+这是 `@fukict/widget` 包的官方演示项目，展示了 **正确的** Widget 编码范式和最佳实践。
 
 ## 🎯 项目特色
 
@@ -22,7 +22,7 @@
 ### 现代化开发配置
 
 - **Vite** - 快速的开发服务器和构建工具
-- **Babel** - 使用 `@vanilla-dom/babel-plugin` 处理 JSX 和组件注册
+- **Babel** - 使用 `@fukict/babel-plugin` 处理 JSX 和组件注册
 - **TypeScript** - 完整的类型支持
 
 ## 🚀 快速开始
@@ -163,7 +163,7 @@ const SimpleWidget = createWidget((props: { message: string }) => {
 项目使用内联 Babel 配置（在 `vite.config.ts` 中），包含：
 
 - `@babel/plugin-syntax-jsx` - JSX 语法支持
-- `@vanilla-dom/babel-plugin` - 组件注册和转换
+- `@fukict/babel-plugin` - 组件注册和转换
 - `@babel/preset-typescript` - TypeScript 支持
 
 ### Vite 配置特点
@@ -208,11 +208,11 @@ const SimpleWidget = createWidget((props: { message: string }) => {
 
 ## 🔗 相关链接
 
-- [Vanilla DOM 项目主页](../../README.md)
+- [Fukict 项目主页](../../README.md)
 - [Core 包文档](../../packages/core/README.md)
 - [Babel Plugin 文档](../../packages/babel-plugin/README.md)
 - [更多演示项目](../)
 
 ---
 
-**🎉 享受 Vanilla DOM 的组件化开发体验！**
+**🎉 享受 Fukict 的组件化开发体验！**

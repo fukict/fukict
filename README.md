@@ -1,4 +1,4 @@
-# Vanilla DOM
+# Fukict
 
 一个专注于性能场景的轻量级 DOM 渲染库。
 
@@ -15,20 +15,20 @@
 ### 安装
 
 ```bash
-npm install @vanilla-dom/core @vanilla-dom/babel-plugin
+npm install @fukict/core @fukict/babel-plugin
 # 或
-pnpm add @vanilla-dom/core @vanilla-dom/babel-plugin
+pnpm add @fukict/core @fukict/babel-plugin
 ```
 
 ### 基础用法
 
 ```jsx
-import { render } from '@vanilla-dom/core';
+import { render } from '@fukict/core';
 
 function App() {
   return (
     <div class="container">
-      <h1>Hello Vanilla DOM</h1>
+      <h1>Hello Fukict</h1>
       <button onClick={() => console.log('clicked')}>点击我</button>
     </div>
   );
@@ -53,7 +53,7 @@ export default defineConfig({
   },
   plugins: [
     {
-      name: 'vanilla-dom-babel',
+      name: 'fukict-babel',
       async transform(code, id) {
         if (!/\.(tsx?|jsx?)$/.test(id)) return;
         if (id.includes('node_modules')) return;
@@ -61,7 +61,7 @@ export default defineConfig({
 
         const result = await babel.transformAsync(code, {
           filename: id,
-          plugins: ['@babel/plugin-syntax-jsx', '@vanilla-dom/babel-plugin'],
+          plugins: ['@babel/plugin-syntax-jsx', '@fukict/babel-plugin'],
           sourceMaps: true,
         });
 
@@ -80,7 +80,7 @@ export default defineConfig({
 ```js
 // .babelrc.js
 module.exports = {
-  plugins: ['@babel/plugin-syntax-jsx', '@vanilla-dom/babel-plugin'],
+  plugins: ['@babel/plugin-syntax-jsx', '@fukict/babel-plugin'],
   presets: [
     '@babel/preset-env',
     [
@@ -98,12 +98,12 @@ module.exports = {
 **使用 Widget 组件**：
 
 ```bash
-npm install @vanilla-dom/widget @vanilla-dom/babel-preset-widget
+npm install @fukict/widget @fukict/babel-preset-widget
 ```
 
 ```js
 // vite.config.js (使用 preset)
-presets: [['@vanilla-dom/babel-preset-widget']];
+presets: [['@fukict/babel-preset-widget']];
 ```
 
 ## 适用场景
@@ -115,9 +115,9 @@ presets: [['@vanilla-dom/babel-preset-widget']];
 
 ## 架构
 
-- `@vanilla-dom/core` - 核心渲染引擎
-- `@vanilla-dom/babel-plugin` - JSX 编译插件
-- `@vanilla-dom/widget` - 组件抽象（可选）
+- `@fukict/core` - 核心渲染引擎
+- `@fukict/babel-plugin` - JSX 编译插件
+- `@fukict/widget` - 组件抽象（可选）
 
 ## 示例
 

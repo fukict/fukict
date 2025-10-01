@@ -1,6 +1,6 @@
-# @vanilla-dom/widget
+# @fukict/widget
 
-基于 @vanilla-dom/core 的组件开发编码范式，属于增强层，为复杂应用提供结构化的组件开发模式和更好的开发体验。
+基于 @fukict/core 的组件开发编码范式，属于增强层，为复杂应用提供结构化的组件开发模式和更好的开发体验。
 
 ## 🚀 特性
 
@@ -91,13 +91,13 @@ graph LR
 ## 📦 安装
 
 ```bash
-npm install @vanilla-dom/widget @vanilla-dom/babel-plugin
+npm install @fukict/widget @fukict/babel-plugin
 # 推荐使用 pnpm（更快的包管理）
-pnpm add @vanilla-dom/widget @vanilla-dom/babel-plugin
+pnpm add @fukict/widget @fukict/babel-plugin
 
 # 或者使用预设，更加简单
-npm install @vanilla-dom/widget @vanilla-dom/babel-preset-widget
-pnpm add @vanilla-dom/widget @vanilla-dom/babel-preset-widget
+npm install @fukict/widget @fukict/babel-preset-widget
+pnpm add @fukict/widget @fukict/babel-preset-widget
 ```
 
 ## 🎯 快速开始
@@ -105,7 +105,7 @@ pnpm add @vanilla-dom/widget @vanilla-dom/babel-preset-widget
 ### 1. 简单组件（Widget 类）
 
 ```typescript
-import { Widget } from '@vanilla-dom/widget';
+import { Widget } from '@fukict/widget';
 
 interface CounterProps {
   initialCount?: number;
@@ -145,7 +145,7 @@ export class Counter extends Widget<CounterProps> {
 ### 2. 函数组件（createWidget）
 
 ```typescript
-import { createWidget } from '@vanilla-dom/widget';
+import { createWidget } from '@fukict/widget';
 
 interface GreetingProps {
   name: string;
@@ -200,7 +200,7 @@ export class TodoListDomain {
 
 ```typescript
 // TodoListUI.tsx - UI 层
-import { Widget } from '@vanilla-dom/widget';
+import { Widget } from '@fukict/widget';
 import { TodoListDomain } from './TodoListDomain';
 
 export class TodoListUI extends Widget<TodoListProps> {
@@ -251,7 +251,7 @@ function App() {
   return (
     <div>
       <Counter initialCount={0} />
-      <Greeting name="World" message="欢迎使用 Vanilla DOM!" />
+      <Greeting name="World" message="欢迎使用 Fukict!" />
       <TodoListUI maxItems={20} />
   </div>
 );
@@ -282,7 +282,7 @@ greeting.destroy();
 
 ```javascript
 module.exports = {
-  plugins: ['@babel/plugin-syntax-jsx', '@vanilla-dom/babel-plugin'],
+  plugins: ['@babel/plugin-syntax-jsx', '@fukict/babel-plugin'],
   presets: [
     '@babel/preset-env',
     [
@@ -310,7 +310,7 @@ export default defineConfig({
   },
   plugins: [
     {
-      name: 'vanilla-dom-babel',
+      name: 'fukict-babel',
       async transform(code, id) {
         if (!/\.(tsx?|jsx?)$/.test(id)) return;
         if (id.includes('node_modules')) return;
@@ -318,7 +318,7 @@ export default defineConfig({
 
         const result = await babel.transformAsync(code, {
           filename: id,
-          plugins: ['@babel/plugin-syntax-jsx', '@vanilla-dom/babel-plugin'],
+          plugins: ['@babel/plugin-syntax-jsx', '@fukict/babel-plugin'],
           presets: [
             [
               '@babel/preset-typescript',
@@ -400,12 +400,12 @@ interface WidgeFuncInstance {
 
 ## 🔗 相关包
 
-- [@vanilla-dom/core](../core) - 核心渲染引擎
-- [@vanilla-dom/babel-plugin](../babel-plugin) - JSX 编译插件
+- [@fukict/core](../core) - 核心渲染引擎
+- [@fukict/babel-plugin](../babel-plugin) - JSX 编译插件
 
 ---
 
-**注意**: `@vanilla-dom/widget` 不是一个框架，而是一套组件开发编码范式。它提供了基于 `@vanilla-dom/core` 的结构化组件开发方式，包括 Widget 基类、createWidget 工厂函数和分层架构模式，帮助开发者以一致的方式构建可维护的组件。
+**注意**: `@fukict/widget` 不是一个框架，而是一套组件开发编码范式。它提供了基于 `@fukict/core` 的结构化组件开发方式，包括 Widget 基类、createWidget 工厂函数和分层架构模式，帮助开发者以一致的方式构建可维护的组件。
 
 ## �� 许可证
 

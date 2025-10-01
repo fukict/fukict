@@ -6,7 +6,7 @@ export default defineConfig({
     pluginBabel({
       include: /\.(jsx?|tsx?)$/,
       babelLoaderOptions: {
-        plugins: ['@babel/plugin-syntax-jsx', '@vanilla-dom/babel-plugin'],
+        plugins: ['@babel/plugin-syntax-jsx', '@fukict/babel-plugin'],
       },
     }),
   ],

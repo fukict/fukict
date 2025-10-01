@@ -1,5 +1,5 @@
 {
-  "name": "vanilla-dom-rsbuild-demo",
+  "name": "fukict-rsbuild-demo",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -9,14 +9,14 @@
     "preview": "rsbuild preview"
   },
   "dependencies": {
-    "@vanilla-dom/core": "workspace:*"
+    "@fukict/core": "workspace:*"
   },
   "devDependencies": {
     "@babel/core": "^7.23.0",
     "@babel/plugin-syntax-jsx": "^7.27.1",
+    "@fukict/babel-plugin": "workspace:*",
     "@rsbuild/core": "^1.0.0",
     "@rsbuild/plugin-babel": "^1.0.0",
-    "@vanilla-dom/babel-plugin": "workspace:*",
     "typescript": "^5.0.0"
   }
 }

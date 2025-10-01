@@ -3,13 +3,13 @@ description: package 开发概览
 globs: ['packages/**/*']
 alwaysApply: false
 ---
-# 🏗️ Vanilla DOM 包开发指南
+# 🏗️ Fukict 包开发指南
 
 ## 📦 包结构 & 构建
-- `@vanilla-dom/core` - 渲染引擎 < 10KB
-- `@vanilla-dom/babel-plugin` - JSX 编译优化
-- `@vanilla-dom/widget` - 组件范式  
-- `@vanilla-dom/babel-preset-widget` - 零配置
+- `@fukict/core` - 渲染引擎 < 10KB
+- `@fukict/babel-plugin` - JSX 编译优化
+- `@fukict/widget` - 组件范式  
+- `@fukict/babel-preset-widget` - 零配置
 
 ## 🚀 构建命令
 ```bash

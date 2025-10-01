@@ -1,5 +1,5 @@
 {
-  "name": "vanilla-dom-vite-demo",
+  "name": "fukict-vite-demo",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -9,12 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@vanilla-dom/core": "workspace:*"
+    "@fukict/core": "workspace:*"
   },
   "devDependencies": {
     "@babel/core": "^7.23.0",
     "@babel/plugin-syntax-jsx": "^7.27.1",
-    "@vanilla-dom/babel-plugin": "workspace:*",
+    "@fukict/babel-plugin": "workspace:*",
     "typescript": "^5.0.0",
     "vite": "^5.0.0"
   }

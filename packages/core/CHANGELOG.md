@@ -1,4 +1,4 @@
-# @vanilla-dom/core
+# @fukict/core
 
 ## 0.0.0-alpha-20250608081318
 

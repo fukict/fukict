@@ -1,7 +1,7 @@
-import vanillaDomPlugin from './plugin.js';
+import fukictBabelPlugin from './plugin.js';
 
 // 主导出：babel 插件函数
-export default vanillaDomPlugin;
+export default fukictBabelPlugin;
 
 // 命名导出：类型定义
 export type { PluginOptions, BabelPluginState } from './types.js';

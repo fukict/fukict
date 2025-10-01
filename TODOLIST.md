@@ -1,6 +1,6 @@
-# 📋 Vanilla DOM 发展路线
+# 📋 Fukict 发展路线
 
-本文档记录了 Vanilla DOM 项目的未来发展计划和待实现的功能模块。
+本文档记录了 Fukict 项目的未来发展计划和待实现的功能模块。
 
 ## 🎯 核心生态扩展
 
@@ -8,7 +8,7 @@
 
 **目标**: 提供轻量级的客户端路由解决方案
 
-- **包名**: `@vanilla-dom/router`
+- **包名**: `@fukict/router`
 - **核心功能**:
   - 基于 History API 的路由管理
   - 嵌套路由支持
@@ -25,7 +25,7 @@
 
 **目标**: 提供细粒度的响应式状态管理
 
-- **包名**: `@vanilla-dom/reactive`
+- **包名**: `@fukict/reactive`
 - **核心功能**:
   - Signal-based 响应式原语
   - 计算属性 (Computed)
@@ -42,7 +42,7 @@
 
 **目标**: 为复杂应用提供可预测的状态管理
 
-- **包名**: `@vanilla-dom/flux`
+- **包名**: `@fukict/flux`
 - **核心功能**:
   - 单向数据流架构
   - Action/Reducer 模式
@@ -59,7 +59,7 @@
 
 **目标**: 提供轻量级的事件通信机制
 
-- **包名**: `@vanilla-dom/emitter`
+- **包名**: `@fukict/emitter`
 - **核心功能**:
   - 事件订阅/发布模式
   - 命名空间事件管理
@@ -76,7 +76,7 @@
 
 **目标**: 为现有核心包提供更强大的 TypeScript 类型支持
 
-- **受影响包**: `@vanilla-dom/core`, `@vanilla-dom/widget`
+- **受影响包**: `@fukict/core`, `@fukict/widget`
 - **核心功能**:
   - JSX 类型安全增强和智能推导
   - Widget Props 类型约束和验证
@@ -100,7 +100,7 @@
 
 **目标**: 提升开发体验的工具集
 
-- **包名**: `@vanilla-dom/devtools`
+- **包名**: `@fukict/devtools`
 - **功能**:
   - 组件树检查器
   - 状态变化追踪
@@ -113,7 +113,7 @@
 
 **目标**: 项目脚手架和开发辅助
 
-- **包名**: `create-vanilla-dom-app`
+- **包名**: `create-fukict-app`
 - **功能**:
   - 项目模板生成
   - 构建配置优化

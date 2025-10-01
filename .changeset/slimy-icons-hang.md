@@ -1,5 +1,5 @@
 ---
-'@vanilla-dom/widget': patch
+'@fukict/widget': patch
 ---
 
 fix createWidget generic function type definition

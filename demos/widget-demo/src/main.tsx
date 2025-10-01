@@ -1,7 +1,8 @@
-import { App } from './App';
-import { render } from '@vanilla-dom/core';
+import { render } from '@fukict/core';
 
-// import type { WidgeFuncInstance } from '@vanilla-dom/widget';
+import { App } from './App';
+
+// import type { WidgeFuncInstance } from '@fukict/widget';
 
 // 渲染主应用
 const container = document.getElementById('app')!;

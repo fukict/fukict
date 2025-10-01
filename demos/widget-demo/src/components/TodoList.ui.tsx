@@ -3,9 +3,8 @@
  * 负责渲染界面、用户交互、事件处理
  * 组合使用 TodoListDomain 业务逻辑层
  */
-import type { WidgeFuncInstance } from '@vanilla-dom/widget';
-
-import { createWidget } from '@vanilla-dom/widget';
+import type { WidgeFuncInstance } from '@fukict/widget';
+import { createWidget } from '@fukict/widget';
 
 import { TodoListDomain, TodoListProps } from './TodoList.domain';
 import { ErrorComponent } from './TodoList.ui.error';
@@ -38,8 +37,6 @@ export class TodoListUI extends TodoListDomain {
     this.todoListContainer = this.$('[data-todo-list]')?.element as HTMLElement;
     this.statsContainer = this.$('[data-stats]')?.element as HTMLElement;
     this.errorContainer = this.$('[data-error]')?.element as HTMLElement;
-
-
 
     // 创建子组件
     this.createSubWidgets();

@@ -7,9 +7,9 @@
   "fixed": [],
   "ignore": [
     "babel-transform-demo",
-    "vanilla-dom-rsbuild-demo",
-    "vanilla-dom-vite-demo",
-    "vanilla-dom-webpack-demo",
+    "fukict-rsbuild-demo",
+    "fukict-vite-demo",
+    "fukict-webpack-demo",
     "widget-demo"
   ],
   "linked": [],

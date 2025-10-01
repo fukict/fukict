@@ -1,4 +1,4 @@
-# @vanilla-dom/widget
+# @fukict/widget
 
 ## 0.0.0-alpha-20250608081318
 
@@ -9,4 +9,4 @@
 ### Patch Changes
 
 - Updated dependencies
-  - @vanilla-dom/core@0.0.0-alpha-20250608081318
+  - @fukict/core@0.0.0-alpha-20250608081318

@@ -7,7 +7,7 @@ export function App() {
       {/* Header */}
       <div className="header">
         <div className="logo">🌟</div>
-        <h1 className="title">Vanilla DOM</h1>
+        <h1 className="title">Fukict</h1>
         <p className="subtitle">使用 Hyperscript + Babel 插件的演示</p>
       </div>
 
@@ -28,28 +28,42 @@ export function App() {
         <h3 className="config-title">⚙️ 配置信息</h3>
         <p>
           本演示使用了 <strong>hyperscript</strong> 函数， 通过{' '}
-          <code>@vanilla-dom/babel-plugin</code> 将 JSX 转换为 hyperscript
-          调用。
+          <code>@fukict/babel-plugin</code> 将 JSX 转换为 hyperscript 调用。
         </p>
 
         <div className="config-code">
-          {`// tsconfig.json
-{
-  "compilerOptions": {
-    "jsx": "preserve",
-    "jsxImportSource": "@vanilla-dom/core"
-  }
-}`}
-        </div>
+          {`import * as babel from '@babel/core';
 
-        <div className="config-code">
-          {`// vite.config.ts
+import { defineConfig } from 'vite';
+
 export default defineConfig({
+  esbuild: {
+    jsx: 'preserve',
+  },
   plugins: [
-    // Babel 插件处理 JSX → hyperscript 转换
-    vanillaDomBabelPlugin()
-  ]
-})`}
+    {
+      name: 'fukict-babel',
+      async transform(code, id) {
+        if (!/.(tsx?|jsx?)$/.test(id)) return;
+        if (id.includes('node_modules')) return;
+
+        if (!/<[A-Za-z]/.test(code)) return;
+
+        const result = await babel.transformAsync(code, {
+          filename: id,
+          plugins: ['@babel/plugin-syntax-jsx', '@fukict/babel-plugin'],
+          sourceMaps: true,
+        });
+
+        return {
+          code: result?.code || code,
+          map: result?.map,
+        };
+      },
+    },
+  ],
+});
+`}
         </div>
       </div>
     </div>

@@ -15,7 +15,7 @@ export default defineConfig({
   },
   plugins: [
     {
-      name: 'vanilla-dom-babel',
+      name: 'fukict-babel',
       async transform(code, id) {
         if (!/\.(tsx?|jsx?)$/.test(id)) return;
         if (id.includes('node_modules')) return;
@@ -24,7 +24,7 @@ export default defineConfig({
 
         const result = await babel.transformAsync(code, {
           filename: id,
-          presets: [['@vanilla-dom/babel-preset-widget']],
+          presets: [['@fukict/babel-preset-widget']],
           sourceMaps: true,
         });
 

@@ -17,7 +17,7 @@ alwaysApply: true
 
 ## 📝 重复创建避免
 - **创建前检查 `demos/` 目录**
-- 包名格式：`@vanilla-dom/{name}`
+- 包名格式：`@fukict/{name}`
 - 测试位置：`packages/{name}/tests/`
 
 ## 🔄 依赖管理

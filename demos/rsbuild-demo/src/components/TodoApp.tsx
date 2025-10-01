@@ -6,7 +6,7 @@ interface Todo {
 
 export function TodoApp() {
   let todos: Todo[] = [
-    { id: 1, text: '学习 Vanilla DOM', completed: false },
+    { id: 1, text: '学习 Fukict', completed: false },
     { id: 2, text: '构建 JSX 应用', completed: true },
     { id: 3, text: '部署项目', completed: false },
   ];

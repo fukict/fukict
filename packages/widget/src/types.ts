@@ -1,4 +1,4 @@
-import type { VNode } from '@vanilla-dom/core';
+import type { VNode } from '@fukict/core';
 
 /**
  * Widget 属性类型

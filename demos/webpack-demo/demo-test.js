@@ -36,7 +36,7 @@ try {
     console.log('✅ Fragment 支持成功');
   }
 
-  if (bundleContent.includes('Hello from Vanilla DOM')) {
+  if (bundleContent.includes('Hello from Fukict')) {
     console.log('✅ 演示内容包含成功');
   }
 

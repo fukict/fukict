@@ -89,10 +89,10 @@ pnpm release  # 选择 7) 检查权限
 
 ### 组织不存在
 
-如遇到 `@vanilla-dom` 组织不存在错误：
+如遇到 `@fukict` 组织不存在错误：
 
 1. 在 [npm](https://www.npmjs.com/org/create) 创建组织
-2. 或修改包名去掉 `@vanilla-dom/` 前缀
+2. 或修改包名去掉 `@fukict/` 前缀
 
 ### 未提交的更改
 

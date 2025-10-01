@@ -1,6 +1,6 @@
-# 🚀 Vanilla DOM + Webpack Demo
+# 🚀 Fukict + Webpack Demo
 
-这是一个使用 **Webpack** 构建工具的 Vanilla DOM 演示项目，展示了如何通过 Babel 插件实现 JSX 到 `hyperscript` 的编译时转换。
+这是一个使用 **Webpack** 构建工具的 Fukict 演示项目，展示了如何通过 Babel 插件实现 JSX 到 `hyperscript` 的编译时转换。
 
 ## ✨ 特性
 
@@ -40,7 +40,7 @@ module.exports = {
           options: {
             presets: ['@babel/preset-env', '@babel/preset-typescript'],
             plugins: [
-              '@vanilla-dom/babel-plugin', // JSX 转换插件
+              '@fukict/babel-plugin', // JSX 转换插件
             ],
           },
         },
@@ -56,7 +56,7 @@ module.exports = {
 {
   "compilerOptions": {
     "jsx": "preserve", // 保持 JSX 不被 TypeScript 转换
-    "jsxImportSource": "@vanilla-dom/core" // 指定 JSX 运行时导入源
+    "jsxImportSource": "@fukict/core" // 指定 JSX 运行时导入源
   }
 }
 ```
@@ -66,10 +66,10 @@ module.exports = {
 ```json
 {
   "dependencies": {
-    "@vanilla-dom/core": "workspace:*"
+    "@fukict/core": "workspace:*"
   },
   "devDependencies": {
-    "@vanilla-dom/babel-plugin": "workspace:*",
+    "@fukict/babel-plugin": "workspace:*",
     "webpack": "^5.0.0",
     "babel-loader": "^9.0.0"
   }
@@ -96,7 +96,7 @@ function App() {
 ### 输出 JavaScript
 
 ```javascript
-import { Fragment, hyperscript } from '@vanilla-dom/core';
+import { Fragment, hyperscript } from '@fukict/core';
 
 function App() {
   const handleClick = () => alert('clicked');
@@ -150,16 +150,16 @@ pnpm run build
 - **构建工具**: Webpack 5
 - **编译器**: Babel 7
 - **语言**: TypeScript 5
-- **JSX 运行时**: @vanilla-dom/core
-- **JSX 编译**: @vanilla-dom/babel-plugin
+- **JSX 运行时**: @fukict/core
+- **JSX 编译**: @fukict/babel-plugin
 
 ## ⚙️ 工作原理
 
 1. **TypeScript 处理**: 保留 JSX 语法（`jsx: "preserve"`）
-2. **Babel 转换**: @vanilla-dom/babel-plugin 将 JSX 转换为 `hyperscript()` 调用
-3. **运行时注入**: 自动导入 `hyperscript` 和 `Fragment` 从 @vanilla-dom/core
+2. **Babel 转换**: @fukict/babel-plugin 将 JSX 转换为 `hyperscript()` 调用
+3. **运行时注入**: 自动导入 `hyperscript` 和 `Fragment` 从 @fukict/core
 4. **事件分离**: `on:event` 语法自动转换为第三个参数的事件对象
-5. **DOM 渲染**: @vanilla-dom/core 创建真实 DOM 元素并渲染到页面
+5. **DOM 渲染**: @fukict/core 创建真实 DOM 元素并渲染到页面
 
 ## 🔄 与其他工具对比
 
@@ -185,7 +185,7 @@ pnpm run build
 ## 🔗 相关链接
 
 - [Webpack 官方文档](https://webpack.js.org/)
-- [Vanilla DOM 核心库](../../packages/core/)
+- [Fukict 核心库](../../packages/core/)
 - [Babel 插件源码](../../packages/babel-plugin/)
 
 ## �� 许可证

@@ -3,13 +3,13 @@ description: 整体项目开发概览
 globs: 
 alwaysApply: true
 ---
-# Vanilla DOM 开发指南
+# Fukict 开发指南
 
 ## 📦 核心架构
-- `@vanilla-dom/core` - 渲染引擎 < 10KB
-- `@vanilla-dom/babel-plugin` - JSX 编译优化  
-- `@vanilla-dom/widget` - 组件编码范式
-- `@vanilla-dom/babel-preset-widget` - 零配置
+- `@fukict/core` - 渲染引擎 < 10KB
+- `@fukict/babel-plugin` - JSX 编译优化  
+- `@fukict/widget` - 组件编码范式
+- `@fukict/babel-preset-widget` - 零配置
 
 ## 🏗️ Monorepo 结构
 ```
@@ -30,7 +30,7 @@ demos/{name}/
 ### package.json 核心字段
 ```json
 {
-  "name": "@vanilla-dom/{name}",
+  "name": "@fukict/{name}",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs", 
   "types": "./dist/index.d.ts",

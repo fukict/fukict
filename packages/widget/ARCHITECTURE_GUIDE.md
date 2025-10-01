@@ -1,8 +1,8 @@
-# 🏗️ Vanilla DOM 组件架构指南
+# 🏗️ Fukict 组件架构指南
 
 ## 概述
 
-本指南介绍 Vanilla DOM 生态系统中的组件开发最佳实践，特别是复杂组件的分层架构模式。
+本指南介绍 Fukict 生态系统中的组件开发最佳实践，特别是复杂组件的分层架构模式。
 
 ## 📂 分层架构
 
@@ -40,6 +40,7 @@ components/
 ```
 
 配置后效果：
+
 ```
 📁 components/
   📄 TodoList.ts
@@ -48,9 +49,10 @@ components/
   📄 Counter.tsx
 ```
 
-**配置方法**: 
+**配置方法**:
+
 1. 打开 VSCode 设置 (`Cmd/Ctrl + ,`)
-2. 搜索 "file nesting" 
+2. 搜索 "file nesting"
 3. 启用相关选项并编辑 patterns
 
 ## 🎯 分层架构详解
@@ -71,7 +73,11 @@ export class TodoListDomain {
     }
 
     // 数据操作
-    const newTodo = { id: Date.now().toString(), text: text.trim(), completed: false };
+    const newTodo = {
+      id: Date.now().toString(),
+      text: text.trim(),
+      completed: false,
+    };
     this.todos.push(newTodo);
     this.notifyDataChange();
     return true;
@@ -130,7 +136,7 @@ export class TodoListUI extends Widget<TodoListProps> {
 // 导出业务逻辑层
 export { TodoListDomain } from './TodoList.domain';
 
-// 导出 UI 层  
+// 导出 UI 层
 export { TodoListUI } from './TodoList.ui';
 
 // 导出类型定义
@@ -151,14 +157,14 @@ export { TodoListUI as TodoList } from './TodoList.ui';
 ### 命名约定
 
 - Domain 文件: `ComponentName.domain.ts`
-- UI 文件: `ComponentName.ui.tsx`  
+- UI 文件: `ComponentName.ui.tsx`
 - 导出文件: `ComponentName.ts`
 
 ### 使用场景
 
 ```jsx
 // 静态组件 → JSX 渲染
-<TodoList maxItems={20} />
+<TodoList maxItems={20} />;
 
 // 动态组件 → 直接实例化
 const modal = new ModalWidget({ title: '确认' });
@@ -169,23 +175,28 @@ modal.unmount(); // 使用完毕后销毁
 ### 最佳实践
 
 #### 1. 错误处理
+
 - **Domain 层**：统一错误处理和用户通知
 - **UI 层**：通过回调响应错误状态，更新界面提示
 
 #### 2. 状态管理
+
 - **所有状态变更**：通过 Domain 层方法，保证数据一致性
 - **状态同步**：使用事件回调通知 UI 层更新
 
 #### 3. 事件通信
+
 - **UI → Domain**：直接调用 Domain 方法
 - **Domain → UI**：使用回调函数，避免直接 DOM 操作
 - **用户交互**：在 JSX 中使用 `on:event` 绑定
 
 #### 4. 样式管理
+
 - **CSS 定义**：在 UI 层的 `<style>` 标签中
 - **动态样式**：通过 className 切换，避免直接修改 style
 
 #### 5. 类型安全
+
 - **严格接口**：定义完整的 Props、State 类型
 - **泛型支持**：Widget<Props> 确保类型正确传递
 
@@ -224,16 +235,16 @@ modal.unmount(); // 使用完毕后销毁
       clearInterval(this.timer);
       this.timer = null;
     }
-    
+
     // 清理事件监听器
     if (this.eventListeners) {
       this.eventListeners.forEach(cleanup => cleanup());
       this.eventListeners = [];
     }
-    
+
     // 清理大对象引用
     this.heavyData = null;
-    
+
     // 清理 Domain 层引用
     this.domain.destroy?.();
     this.domain = null as any;
@@ -269,8 +280,8 @@ const SimpleButton = createWidget<{ label: string; onClick: () => void }>(
 const TodoItem = createWidget<{ todo: TodoItem; onToggle: (id: string) => void }>(
   ({ todo, onToggle }) => (
     <li className={todo.completed ? 'completed' : ''}>
-      <input 
-        type="checkbox" 
+      <input
+        type="checkbox"
         checked={todo.completed}
         on:change={() => onToggle(todo.id)}
       />
@@ -284,12 +295,13 @@ const ComplexWidget = createWidget<Props>(props => {
   const timer = setInterval(() => {}, 1000); // ❌ 无法清理，会内存泄漏
   const heavyData = new Map(); // ❌ 可能泄漏
   const listeners = []; // ❌ 无法清理事件监听器
-  
+
   return <div>...</div>;
 });
 ```
 
 **Function 组件核心原则**：
+
 - ✅ 纯展示逻辑，无状态管理
 - ✅ 事件处理通过 props 传入
 - ✅ 事件绑定直接在 JSX 上，自动清理
@@ -323,7 +335,7 @@ export class TodoListDomain {
   addTodo(text: string): boolean {
     // ✅ 纯业务逻辑，数据验证
     if (!text.trim()) return false;
-    
+
     this.todos.push({ id: Date.now(), text, completed: false });
     this.notifyDataChange(); // 通知 UI 层
     return true;
@@ -355,7 +367,7 @@ export class TodoListUI extends Widget<TodoListProps> {
 ### ✅ 优势
 
 - **可维护性**: 职责分离，代码清晰
-- **可测试性**: 业务逻辑独立测试  
+- **可测试性**: 业务逻辑独立测试
 - **可复用性**: Domain 层可在不同 UI 间复用
 - **团队协作**: 前端/后端逻辑分工明确
 

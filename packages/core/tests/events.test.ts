@@ -1,8 +1,8 @@
+import { describe, expect, it, vi } from 'vitest';
+
 import { removeEvents, setEvents, updateEvents } from '../src/dom-utils.js';
 import { jsx } from '../src/jsx-runtime.js';
 import { createDOMFromTree } from '../src/renderer.js';
-
-import { describe, expect, it, vi } from 'vitest';
 
 // Mock DOM environment
 const mockElement = () => ({

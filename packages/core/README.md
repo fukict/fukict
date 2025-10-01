@@ -1,4 +1,4 @@
-# @vanilla-dom/core
+# @fukict/core
 
 专注于 Web 客户端渲染的高性能 DOM 库核心包，采用编译时优化 + 运行时渲染的分离架构。
 
@@ -38,7 +38,7 @@ graph LR
 ## 安装
 
 ```bash
-pnpm add @vanilla-dom/core
+pnpm add @fukict/core
 ```
 
 ## 快速开始
@@ -46,13 +46,13 @@ pnpm add @vanilla-dom/core
 ### 基础使用
 
 ```typescript
-import { h, render } from '@vanilla-dom/core';
+import { h, render } from '@fukict/core';
 
 // 使用 h 函数创建 VNode
 const app = h(
   'div',
   { class: 'app' },
-  h('h1', null, 'Hello Vanilla DOM!'),
+  h('h1', null, 'Hello Fukict!'),
   h('p', null, 'High-performance client-side rendering'),
 );
 
@@ -71,7 +71,7 @@ render(app, {
 function App() {
   return (
     <div className="app">
-      <h1>Hello Vanilla DOM!</h1>
+      <h1>Hello Fukict!</h1>
       <p>High-performance client-side rendering</p>
     </div>
   );
@@ -89,7 +89,7 @@ render(<App />, { container: document.getElementById('root')! });
 将 VNode 渲染到指定容器。
 
 ```typescript
-import { render } from '@vanilla-dom/core';
+import { render } from '@fukict/core';
 
 render(vnode, {
   container: document.getElementById('root')!,
@@ -102,7 +102,7 @@ render(vnode, {
 将 VNode 树转换为 DOM 元素。
 
 ```typescript
-import { createDOMFromTree, h } from '@vanilla-dom/core';
+import { createDOMFromTree, h } from '@fukict/core';
 
 const vnode = h('div', { id: 'test' }, 'Hello');
 const domElement = createDOMFromTree(vnode);
@@ -113,7 +113,7 @@ const domElement = createDOMFromTree(vnode);
 基于新旧 VNode 的差异更新 DOM。
 
 ```typescript
-import { updateDOM } from '@vanilla-dom/core';
+import { updateDOM } from '@fukict/core';
 
 updateDOM(oldVNode, newVNode, existingDOMNode);
 ```
@@ -128,7 +128,7 @@ import {
   createTextNode,
   removeNode,
   setProperty,
-} from '@vanilla-dom/core';
+} from '@fukict/core';
 
 // 创建元素
 const div = createElement('div');
@@ -147,7 +147,7 @@ batchUpdate(() => {
 创建 VNode 的辅助函数。
 
 ```typescript
-import { h } from '@vanilla-dom/core';
+import { h } from '@fukict/core';
 
 const vnode = h(
   'div',
@@ -165,9 +165,9 @@ const vnode = h(
 注册组件编码范式处理器。
 
 ```typescript
-import { registerComponentPattern } from '@vanilla-dom/core';
-import type { ComponentPatternHandler } from '@vanilla-dom/core';
-import { h } from '@vanilla-dom/core';
+import { registerComponentPattern } from '@fukict/core';
+import type { ComponentPatternHandler } from '@fukict/core';
+import { h } from '@fukict/core';
 
 const handler: ComponentPatternHandler = {
   // 检测组件是否属于此编码范式
@@ -191,7 +191,7 @@ registerComponentPattern('MY_PATTERN', handler);
 检查组件是否属于已注册的编码范式。
 
 ```typescript
-import { isRegisteredComponent } from '@vanilla-dom/core';
+import { isRegisteredComponent } from '@fukict/core';
 
 const isRegistered = isRegisteredComponent(MyComponent);
 console.log(isRegistered); // true 或 false
@@ -202,7 +202,7 @@ console.log(isRegistered); // true 或 false
 获取组件所属的编码范式名称。
 
 ```typescript
-import { getComponentPattern } from '@vanilla-dom/core';
+import { getComponentPattern } from '@fukict/core';
 
 const pattern = getComponentPattern(MyComponent);
 console.log(pattern); // 'MY_PATTERN' 或 null
@@ -213,7 +213,7 @@ console.log(pattern); // 'MY_PATTERN' 或 null
 渲染已注册编码范式的组件。
 
 ```typescript
-import { renderRegisteredComponent } from '@vanilla-dom/core';
+import { renderRegisteredComponent } from '@fukict/core';
 
 const vnode = renderRegisteredComponent(MyComponent, { prop: 'value' }, []);
 // 返回渲染后的 VNode 或 null
@@ -222,8 +222,8 @@ const vnode = renderRegisteredComponent(MyComponent, { prop: 'value' }, []);
 ### 组件支持
 
 ```typescript
-import type { ComponentFunction } from '@vanilla-dom/core';
-import { h } from '@vanilla-dom/core';
+import type { ComponentFunction } from '@fukict/core';
+import { h } from '@fukict/core';
 
 const Button: ComponentFunction = props => {
   return h(
@@ -249,13 +249,13 @@ const app = h(
 
 ### 组件编码范式注册
 
-@vanilla-dom/core 提供了组件编码范式注册机制，支持第三方组件库通过运行时注册实现自定义的组件编码模式。core 包专注于 VNode 到 DOM 的渲染，通过范式注册实现组件的抽象。
+@fukict/core 提供了组件编码范式注册机制，支持第三方组件库通过运行时注册实现自定义的组件编码模式。core 包专注于 VNode 到 DOM 的渲染，通过范式注册实现组件的抽象。
 
 #### 注册编码范式处理器
 
 ```typescript
-import { h, registerComponentPattern } from '@vanilla-dom/core';
-import type { ComponentPatternHandler } from '@vanilla-dom/core';
+import { h, registerComponentPattern } from '@fukict/core';
+import type { ComponentPatternHandler } from '@fukict/core';
 
 // 注册自定义组件编码范式
 const handler: ComponentPatternHandler = {
@@ -278,8 +278,8 @@ registerComponentPattern('CUSTOM_PATTERN', handler);
 #### 使用示例：Class 组件编码范式
 
 ```typescript
-import { registerComponentPattern, h, render } from '@vanilla-dom/core';
-import type { VNode } from '@vanilla-dom/core';
+import { registerComponentPattern, h, render } from '@fukict/core';
+import type { VNode } from '@fukict/core';
 
 // 1. 定义组件基类
 class Component {
@@ -316,7 +316,7 @@ class TodoList extends Component {
 // 4. 使用组件
 const app = h(TodoList, {
   items: [
-    { id: 1, text: 'Learn Vanilla DOM' },
+    { id: 1, text: 'Learn Fukict' },
     { id: 2, text: 'Build awesome apps' }
   ]
 });
@@ -326,7 +326,7 @@ render(app, { container: document.getElementById('root')! });
 
 #### 内置编码范式
 
-@vanilla-dom/core 内置支持以下组件编码范式：
+@fukict/core 内置支持以下组件编码范式：
 
 - **函数组件**：`ComponentFunction` 类型的函数
 - **HTML 元素**：原生 HTML 标签字符串
@@ -334,7 +334,7 @@ render(app, { container: document.getElementById('root')! });
 第三方库可以扩展更多编码范式：
 
 ```typescript
-// Widget 编码范式（由 @vanilla-dom/widget 提供）
+// Widget 编码范式（由 @fukict/widget 提供）
 registerComponentPattern('WIDGET_CLASS', {
   detect: (component: any) =>
     component.prototype && component.__COMPONENT_TYPE__ === 'WIDGET_CLASS',
@@ -392,7 +392,7 @@ interface ComponentPatternHandler {
 {
   "compilerOptions": {
     "jsx": "preserve",
-    "jsxImportSource": "@vanilla-dom/core",
+    "jsxImportSource": "@fukict/core",
     "lib": ["DOM", "ES2020"],
     "module": "ESNext",
     "moduleResolution": "bundler"
@@ -406,8 +406,8 @@ interface ComponentPatternHandler {
 module.exports = {
   presets: [['@babel/preset-typescript']],
   plugins: [
-    // 需要配合 @vanilla-dom/babel-plugin 使用
-    ['@vanilla-dom/babel-plugin'],
+    // 需要配合 @fukict/babel-plugin 使用
+    ['@fukict/babel-plugin'],
   ],
 };
 ```
@@ -473,13 +473,13 @@ const Button = props => h('button', props, props.children);
 
 ## 🔗 相关包
 
-- [`@vanilla-dom/babel-plugin`](../babel-plugin) - JSX 编译插件，将 JSX 转换为优化的 VNode 调用
-- [`@vanilla-dom/widget`](../widget) - 组件开发编码范式，提供 Widget 类和 createWidget 函数
-- [`@vanilla-dom/babel-preset-widget`](../babel-preset-widget) - Widget 开发预设，开箱即用的 Babel 配置
+- [`@fukict/babel-plugin`](../babel-plugin) - JSX 编译插件，将 JSX 转换为优化的 VNode 调用
+- [`@fukict/widget`](../widget) - 组件开发编码范式，提供 Widget 类和 createWidget 函数
+- [`@fukict/babel-preset-widget`](../babel-preset-widget) - Widget 开发预设，开箱即用的 Babel 配置
 
 ## 🏗️ 架构说明
 
-`@vanilla-dom/core` 是整个生态系统的基础设施：
+`@fukict/core` 是整个生态系统的基础设施：
 
 - **底层渲染引擎**：处理 VNode 到真实 DOM 的转换
 - **DOM 工具集**：提供高性能的 DOM 操作函数
@@ -490,10 +490,10 @@ const Button = props => h('button', props, props.children);
 
 ### 基础层独立使用
 
-`@vanilla-dom/core` 可以与 `@vanilla-dom/babel-plugin` 配合，提供完整的基础 JSX 支持：
+`@fukict/core` 可以与 `@fukict/babel-plugin` 配合，提供完整的基础 JSX 支持：
 
 ```bash
-pnpm add @vanilla-dom/core @vanilla-dom/babel-plugin
+pnpm add @fukict/core @fukict/babel-plugin
 ```
 
 **适合场景**：
@@ -504,10 +504,10 @@ pnpm add @vanilla-dom/core @vanilla-dom/babel-plugin
 
 ### 与增强层配合使用
 
-也可以与 `@vanilla-dom/widget` 配合，获得更好的开发体验：
+也可以与 `@fukict/widget` 配合，获得更好的开发体验：
 
 ```bash
-pnpm add @vanilla-dom/widget @vanilla-dom/babel-preset-widget
+pnpm add @fukict/widget @fukict/babel-preset-widget
 ```
 
 **适合场景**：复杂应用、团队开发、需要结构化组件模式

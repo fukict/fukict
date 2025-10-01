@@ -8,7 +8,7 @@ export default defineConfig({
   },
   plugins: [
     {
-      name: 'vanilla-dom-babel',
+      name: 'fukict-babel',
       async transform(code, id) {
         if (!/\.(tsx?|jsx?)$/.test(id)) return;
         if (id.includes('node_modules')) return;
@@ -17,7 +17,7 @@ export default defineConfig({
 
         const result = await babel.transformAsync(code, {
           filename: id,
-          plugins: ['@babel/plugin-syntax-jsx', '@vanilla-dom/babel-plugin'],
+          plugins: ['@babel/plugin-syntax-jsx', '@fukict/babel-plugin'],
           sourceMaps: true,
         });
 

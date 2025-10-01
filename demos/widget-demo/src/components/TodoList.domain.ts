@@ -1,4 +1,4 @@
-import { Widget } from '@vanilla-dom/widget';
+import { Widget } from '@fukict/widget';
 
 /**
  * TodoList 业务逻辑层
@@ -134,7 +134,7 @@ export class TodoListDomain extends Widget<TodoListProps> {
       this.currentError = undefined;
       this.onErrorChanged();
     }
-    
+
     // 清理定时器
     if (this.errorTimer) {
       clearTimeout(this.errorTimer);
@@ -198,10 +198,10 @@ export class TodoListDomain extends Widget<TodoListProps> {
     if (this.errorTimer) {
       clearTimeout(this.errorTimer);
     }
-    
+
     this.currentError = message;
     this.onErrorChanged();
-    
+
     // 设置新的定时器，3秒后自动清除错误
     this.errorTimer = setTimeout(() => {
       if (this.currentError === message) {
@@ -209,4 +209,4 @@ export class TodoListDomain extends Widget<TodoListProps> {
       }
     }, 3000) as unknown as number;
   }
-} 
+}

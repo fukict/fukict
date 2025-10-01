@@ -1,7 +1,8 @@
+import type { VNode } from '@fukict/core';
+import { render } from '@fukict/core';
+
 import { immediateRender, scheduleRender } from './scheduler';
 import type { DOMBatchQuery, DOMQuery, WidgetProps } from './types';
-import type { VNode } from '@vanilla-dom/core';
-import { render } from '@vanilla-dom/core';
 
 /**
  * 高阶 Widget 基类
@@ -104,7 +105,7 @@ export class Widget<TProps extends WidgetProps = WidgetProps> {
    */
   async mount(container: Element, immediate = false): Promise<void> {
     if (this._isMounted) {
-      console.warn('[@vanilla-dom/widget] Widget is already mounted');
+      console.warn('[@fukict/widget] Widget is already mounted');
       return;
     }
 
@@ -116,17 +117,14 @@ export class Widget<TProps extends WidgetProps = WidgetProps> {
 
         // 如果 vnode 不为 null，才进行渲染
         if (vnode) {
-        render(vnode, { container });
+          render(vnode, { container });
         } else {
           // 如果没有渲染内容，直接标记为已挂载并调用 onMounted
           this._isMounted = true;
           this.onMounted();
         }
       } catch (error) {
-        console.error(
-          '[@vanilla-dom/widget] Error during widget mount:',
-          error,
-        );
+        console.error('[@fukict/widget] Error during widget mount:', error);
         throw error;
       }
     };
@@ -153,7 +151,7 @@ export class Widget<TProps extends WidgetProps = WidgetProps> {
    */
   unmount(): void {
     if (!this._isMounted) {
-      console.warn('[@vanilla-dom/widget] Widget is not mounted');
+      console.warn('[@fukict/widget] Widget is not mounted');
       return;
     }
 
@@ -171,10 +169,7 @@ export class Widget<TProps extends WidgetProps = WidgetProps> {
       this.vnode = null;
       this._isMounted = false;
     } catch (error) {
-      console.error(
-        '[@vanilla-dom/widget] Error during widget unmount:',
-        error,
-      );
+      console.error('[@fukict/widget] Error during widget unmount:', error);
       throw error;
     }
   }

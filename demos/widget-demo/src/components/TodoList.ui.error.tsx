@@ -20,4 +20,4 @@ export function ErrorComponent(props: ErrorProps) {
       </button>
     </div>
   );
-} 
+}

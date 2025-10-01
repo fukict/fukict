@@ -1,11 +1,12 @@
-import vanillaDomPlugin from '../src/index.js';
 import { transform } from '@babel/core';
 
 import { describe, expect, it } from 'vitest';
 
+import fukictBabelPlugin from '../src/index.js';
+
 function transformCode(code: string, options = {}) {
   const result = transform(code, {
-    plugins: [['@babel/plugin-syntax-jsx'], [vanillaDomPlugin, options]],
+    plugins: [['@babel/plugin-syntax-jsx'], [fukictBabelPlugin, options]],
     parserOpts: {
       plugins: ['jsx'],
     },
@@ -13,14 +14,14 @@ function transformCode(code: string, options = {}) {
   return result?.code || '';
 }
 
-describe('@vanilla-dom/babel-plugin', () => {
+describe('@fukict/babel-plugin', () => {
   it('should transform simple JSX element', () => {
     const input = '<div>Hello World</div>';
     const output = transformCode(input);
 
     expect(output).toContain('hyperscript("div", null, null, "Hello World")');
     expect(output).toContain(
-      'import { hyperscript, Fragment } from "@vanilla-dom/core"',
+      'import { hyperscript, Fragment } from "@fukict/core"',
     );
   });
 

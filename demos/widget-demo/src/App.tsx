@@ -1,7 +1,8 @@
+import { createWidget } from '@fukict/widget';
+
 import { Counter } from './components/Counter';
-import { TodoList } from './components/TodoList';
 import { FormWidget } from './components/FormWidget';
-import { createWidget } from '@vanilla-dom/widget';
+import { TodoList } from './components/TodoList';
 
 // 演示应用组件
 export const App = createWidget(_ => {
@@ -27,7 +28,7 @@ export const App = createWidget(_ => {
   return (
     <div className="demo-app">
       <header className="demo-header">
-        <h1>🚀 Vanilla DOM Widget 演示</h1>
+        <h1>🚀 Fukict Widget 演示</h1>
         <p>展示正确的 Widget 编码范式 - 事件直接在 JSX 上绑定</p>
       </header>
 
@@ -76,7 +77,9 @@ export const App = createWidget(_ => {
           </pre>
         </div>
         <div style="margin-top: 15px; padding: 15px; background: #e8f5e8; border-radius: 6px;">
-          <h4 style="margin: 0 0 10px 0; color: #2d7d32;">🎯 Widget 编码范式要点:</h4>
+          <h4 style="margin: 0 0 10px 0; color: #2d7d32;">
+            🎯 Widget 编码范式要点:
+          </h4>
           <ul style="margin: 0; padding-left: 20px; color: #2d7d32;">
             <li>✅ 事件监听直接在 JSX 上使用 on:event_name 绑定</li>
             <li>✅ 事件会跟随 DOM 销毁自动清理，无需手动管理</li>

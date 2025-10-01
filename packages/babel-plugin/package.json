@@ -1,16 +1,16 @@
 {
-  "name": "@vanilla-dom/babel-plugin",
+  "name": "@fukict/babel-plugin",
   "version": "0.0.0-alpha-20250608081318",
-  "description": "Babel plugin for @vanilla-dom JSX compilation",
+  "description": "Babel plugin for @fukict JSX compilation",
   "keywords": [
     "babel-plugin",
     "jsx",
-    "vanilla-dom",
+    "fukict",
     "compiler"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/vanilla-dom/vanilla-dom.git",
+    "url": "https://github.com/fukict/fukict.git",
     "directory": "packages/babel-plugin"
   },
   "license": "MIT",

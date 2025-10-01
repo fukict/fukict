@@ -1,6 +1,6 @@
 import fs from 'fs';
 
-console.log('=== @vanilla-dom/babel-plugin 转换测试 ===\n');
+console.log('=== @fukict/babel-plugin 转换测试 ===\n');
 
 // 读取转换后的代码
 const transformedCode = fs.readFileSync('./dist/test.js', 'utf8');

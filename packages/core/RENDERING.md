@@ -1,4 +1,4 @@
-# @vanilla-dom/core 渲染流程详解
+# @fukict/core 渲染流程详解
 
 ## 🔄 完整渲染流程
 

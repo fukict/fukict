@@ -1,7 +1,7 @@
 /**
- * @vanilla-dom/babel-preset-widget
+ * @fukict/babel-preset-widget
  *
- * 专为 @vanilla-dom/widget 优化的 Babel 预设
+ * 专为 @fukict/widget 优化的 Babel 预设
  * 提供零配置的 JSX 转换和组件注册支持
  */
 import type { ConfigAPI, PluginItem } from '@babel/core';
@@ -36,7 +36,7 @@ export default function presetWidget(
 } {
   const {
     development = api.env('development'),
-    importSource = '@vanilla-dom/core',
+    importSource = '@fukict/core',
     typescript = true,
   } = options;
 
@@ -63,9 +63,9 @@ export default function presetWidget(
   // 添加 JSX 语法解析支持
   plugins.push('@babel/plugin-syntax-jsx');
 
-  // 添加 vanilla-dom JSX 转换插件
+  // 添加 fukict JSX 转换插件
   plugins.push([
-    '@vanilla-dom/babel-plugin',
+    '@fukict/babel-plugin',
     {
       development,
       importSource,

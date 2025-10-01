@@ -1,6 +1,6 @@
-# 🚀 @vanilla-dom/core Basic Demo
+# 🚀 @fukict/core Basic Demo
 
-一个**无需编译**的基础演示，直接展示 `@vanilla-dom/core` 的核心功能。通过原生 ES 模块加载，无需任何构建工具。
+一个**无需编译**的基础演示，直接展示 `@fukict/core` 的核心功能。通过原生 ES 模块加载，无需任何构建工具。
 
 ## ✨ 演示特性
 
@@ -95,16 +95,16 @@ open demos/basic-demo/index.html
 
 ```javascript
 // 查看应用状态
-window.vanillaDomDemo.appState;
+window.fukictDemo.appState;
 
 // 手动更新状态
-window.vanillaDomDemo.updateState({ counter: 100 });
+window.fukictDemo.updateState({ counter: 100 });
 
 // 手动重新渲染
-window.vanillaDomDemo.renderApp();
+window.fukictDemo.renderApp();
 
 // 测试 hyperscript API
-const { hyperscript } = window.vanillaDomDemo;
+const { hyperscript } = window.fukictDemo;
 hyperscript('div', { style: 'color: red' }, null, 'Hello!');
 ```
 
@@ -130,7 +130,7 @@ hyperscript('div', { style: 'color: red' }, null, 'Hello!');
 
 ## 🔗 相关资源
 
-- [Vanilla DOM 核心库](../../packages/core/)
+- [Fukict 核心库](../../packages/core/)
 - [TypeScript 类型定义](../../packages/core/types/jsx.d.ts)
 - [更多构建工具示例](../)
 

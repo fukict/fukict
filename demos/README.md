@@ -1,6 +1,6 @@
-# 🎨 Vanilla DOM Demos
+# 🎨 Fukict Demos
 
-这里包含了多个演示项目，展示了 Vanilla DOM 在不同场景和构建工具下的使用方式。每个 demo 都有详细的文档和完整的示例代码。
+这里包含了多个演示项目，展示了 Fukict 在不同场景和构建工具下的使用方式。每个 demo 都有详细的文档和完整的示例代码。
 
 ## 📚 演示目录
 
@@ -67,7 +67,7 @@
 
 ```bash
 git clone <repository-url>
-cd vanilla-dom/demos
+cd fukict/demos
 ```
 
 ### 2. 安装依赖
@@ -172,14 +172,14 @@ hyperscript('button',
 
 ```javascript
 // 在浏览器控制台中调试
-window.vanillaDomDemo.appState; // 查看状态
-window.vanillaDomDemo.updateState(); // 更新状态
-window.vanillaDomDemo.hyperscript; // 使用 API
+window.fukictDemo.appState; // 查看状态
+window.fukictDemo.updateState(); // 更新状态
+window.fukictDemo.hyperscript; // 使用 API
 ```
 
 ## 🔗 相关资源
 
-- [Vanilla DOM 核心库](../packages/core/)
+- [Fukict 核心库](../packages/core/)
 - [Babel 插件](../packages/babel-plugin/)
 - [项目主文档](../README.md)
 

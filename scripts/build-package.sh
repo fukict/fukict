@@ -216,7 +216,7 @@ parse_arguments() {
         echo -e "${GREEN}🚀 指定包: ${PACKAGES[*]}${NC}"
     else
         # 没有指定包，进入交互选择
-        echo -e "${BLUE}🚀 Vanilla DOM 包构建工具 - 交互模式${NC}"
+        echo -e "${BLUE}🚀 Fukict 包构建工具 - 交互模式${NC}"
         echo ""
         
         if ! interactive_select_packages; then

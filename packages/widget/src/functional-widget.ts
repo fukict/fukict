@@ -1,13 +1,14 @@
-import { immediateRender, scheduleRender } from './scheduler';
+import type { VNode } from '@fukict/core';
+import { render, updateDOM } from '@fukict/core';
+
 import { deepClone, deepEqual } from './helpers';
+import { immediateRender, scheduleRender } from './scheduler';
 import type {
-  WidgetFuncFactory,
   WidgeFuncInstance,
+  WidgetFuncFactory,
   WidgetFuncRender,
   WidgetProps,
 } from './types';
-import type { VNode } from '@vanilla-dom/core';
-import { render, updateDOM } from '@vanilla-dom/core';
 
 /**
  * 创建简易函数组件
@@ -47,7 +48,7 @@ export const createWidget: WidgetFuncFactory = <T extends WidgetProps>(
     // 更新渲染 - 使用精确更新算法
     const updateRender = (newProps: T) => {
       if (!container || !currentVNode || !currentElement) {
-        console.warn('[@vanilla-dom/widget] Widget not mounted, cannot update');
+        console.warn('[@fukict/widget] Widget not mounted, cannot update');
         return;
       }
 
@@ -102,7 +103,7 @@ export const createWidget: WidgetFuncFactory = <T extends WidgetProps>(
         immediate = false,
       ): Promise<void> => {
         if (isMounted) {
-          console.warn('[@vanilla-dom/widget] Widget is already mounted');
+          console.warn('[@fukict/widget] Widget is already mounted');
           return;
         }
 
@@ -152,7 +153,7 @@ export const createWidget: WidgetFuncFactory = <T extends WidgetProps>(
         }
 
         if (isMounted) {
-          console.warn('[@vanilla-dom/widget] Widget is already mounted');
+          console.warn('[@fukict/widget] Widget is already mounted');
           return;
         }
 
@@ -177,5 +178,3 @@ export const createWidget: WidgetFuncFactory = <T extends WidgetProps>(
 
   return factory;
 };
-
-

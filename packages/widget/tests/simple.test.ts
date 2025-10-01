@@ -1,11 +1,12 @@
-import { createWidget } from '../src/functional-widget';
-import type { VNode } from '@vanilla-dom/core';
-import { render, updateDOM } from '@vanilla-dom/core';
+import type { VNode } from '@fukict/core';
+import { render, updateDOM } from '@fukict/core';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { createWidget } from '../src/functional-widget';
+
 // 先 mock 模块，然后再导入
-vi.mock('@vanilla-dom/core', () => ({
+vi.mock('@fukict/core', () => ({
   render: vi.fn((vnode: VNode, options: { container: Element }) => {
     // 简单的模拟实现
     const element = document.createElement('div');
@@ -160,7 +161,7 @@ describe('简易函数组件', () => {
     instance.update({ text: 'Updated' });
 
     expect(consoleSpy).toHaveBeenCalledWith(
-      '[@vanilla-dom/widget] Widget not mounted, cannot update',
+      '[@fukict/widget] Widget not mounted, cannot update',
     );
 
     consoleSpy.mockRestore();

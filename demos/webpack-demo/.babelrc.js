@@ -1,5 +1,5 @@
 module.exports = {
-  plugins: ['@babel/plugin-syntax-jsx', '@vanilla-dom/babel-plugin'],
+  plugins: ['@babel/plugin-syntax-jsx', '@fukict/babel-plugin'],
   presets: [
     '@babel/preset-env',
     [
