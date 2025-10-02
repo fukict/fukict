@@ -13,7 +13,9 @@
     "outDir": "dist",
     "rootDir": "src",
     "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "lib": ["ES2020"],
+    "types": ["node"]
   },
   "exclude": ["dist", "node_modules", "tests"],
   "include": ["src/**/*"]

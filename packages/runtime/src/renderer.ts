@@ -24,6 +24,7 @@ import {
   updateEvents,
   updateProperty,
 } from './dom-utils';
+import { assertBrowserEnvironment } from './env';
 import {
   isRegisteredComponent,
   renderRegisteredComponent,
@@ -242,6 +243,9 @@ function createDOMFromChild(child: VNodeChild): Node | null {
  * @throws {Error} 当容器无效时抛出错误
  */
 export function render(vnode: VNode, options: RenderOptions): void {
+  // 确保在浏览器环境中运行
+  assertBrowserEnvironment('render');
+
   if (!vnode) {
     throw new Error('Invalid VNode: cannot render null or undefined');
   }

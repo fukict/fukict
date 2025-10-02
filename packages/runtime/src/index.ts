@@ -49,5 +49,5 @@ export {
 // 导出 JSX 辅助函数
 export * from './jsx-runtime';
 
-// 版本信息
-export const version = '0.1.0';
+// 导出包元数据
+export { METADATA } from './metadata';

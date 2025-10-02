@@ -49,15 +49,18 @@ Fukict 采用 monorepo 架构，由以下核心包组成：
 
 ```bash
 # 构建所有包（推荐）
-pnpm build                              # 清理 + 构建包 + 构建 demos
-./scripts/build-package.sh --all --no-watch
+pnpm build                                    # 清理 + 提取 metadata + 构建包 + 构建 demos
+pnpm build:pkg                                # 仅构建包
 
 # 监听模式开发
-./scripts/build-package.sh --all --watch
-./scripts/build-package.sh --pkg-name runtime --watch
+pnpm build:pkg:watch                          # 监听所有包
+tsx scripts/build-package.ts --pkg-name runtime --watch  # 监听单个包
 
 # 仅构建特定包
-./scripts/build-package.sh --pkg-name runtime widget --no-watch
+tsx scripts/build-package.ts --pkg-name runtime widget --no-watch
+
+# 提取包 metadata
+pnpm extract-metadata                         # 提取 version + dependencies 到各包的 src/metadata.ts
 ```
 
 ### 测试
@@ -82,8 +85,11 @@ pnpm format         # Prettier 格式化
 ### 发布
 
 ```bash
-pnpm release        # 交互式发布（推荐）
+pnpm release        # 交互式发布工具（TypeScript 实现）
 pnpm changeset      # 手动创建 changeset
+
+# 或直接执行 TypeScript 脚本
+npx tsx scripts/release.ts
 ```
 
 ### Demo 开发
@@ -101,8 +107,10 @@ cd demos/rsbuild-demo && pnpm dev      # Rsbuild 快速构建
 1. 确认工作目录：使用 `pwd` 确认在正确的包目录下 (packages/{name}/)
 2. 修改源码：编辑 `src/` 下文件
 3. 运行测试：`pnpm test` (使用 Vitest + jsdom 环境)
-4. 构建：`./scripts/build-package.sh --pkg-name {name} --no-watch`
+4. 构建：`tsx scripts/build-package.ts --pkg-name {name} --no-watch`
 5. 在 demo 中验证：链接到 demos/ 项目测试
+
+**注意**：构建前会自动提取 metadata.ts (version + dependencies)
 
 ### 添加新包
 
@@ -114,6 +122,17 @@ packages/{name}/
 ├── tests/*.test.ts     # Vitest 测试用例
 ├── package.json        # 必须包含正确的 exports 字段
 └── vitest.config.ts    # 测试配置（可选）
+```
+
+**同时需要在 `tsdown.config.yml` 中添加包配置**：
+
+```yaml
+packages:
+  { name }:
+    platform: browser # 或 node
+    entry: 'src/index.ts'
+    format: esm # 或 ['esm', 'cjs']
+    description: '包描述'
 ```
 
 package.json 核心字段：
@@ -193,14 +212,14 @@ export default defineConfig({
 
 ## Release Process
 
-使用 changesets 管理版本：
+使用 changesets 管理版本（TypeScript 交互式工具）：
 
-1. **正式发布**: `pnpm release` → 选择 "正式发布"
+1. **正式发布**: `pnpm release` → 选择 "1) 正式发布"
 
    - 流程：格式化 → lint → 测试 → 构建 → 版本更新 → 发布 npm → git 标签
    - 需要先创建 changeset
 
-2. **预发布**: `pnpm release` → 选择 Alpha/Beta/RC
+2. **预发布**: `pnpm release` → 选择 "2/3/4) Alpha/Beta/RC"
 
    - 无需 changeset，基于当前更改直接生成快照版本
 
@@ -212,10 +231,19 @@ export default defineConfig({
    pnpm changeset:publish      # 发布
    ```
 
+**发布工具功能**：
+
+- 自动检查 git 状态和 npm 权限
+- 交互式菜单选择发布类型
+- 自动执行完整发布流程
+- 支持创建和推送 git 标签
+
 ## Toolchain
 
 - **包管理器**: pnpm (强制，engines 字段限定)
 - **构建工具**: tsdown (统一构建，支持 watch 模式)
+- **构建配置**: tsdown.config.yml (YAML 格式，易于扩展)
+- **脚本执行**: tsx (TypeScript 脚本直接执行)
 - **测试框架**: Vitest (jsdom 环境)
 - **类型检查**: TypeScript 5.6+
 - **代码规范**: ESLint 9 + Prettier
@@ -224,11 +252,12 @@ export default defineConfig({
 ## Important Constraints
 
 1. **目录路径**：编辑文件前必须 `pwd` 确认当前目录，避免在根目录编辑包文件
-2. **包名验证**：build-package.sh 会自动验证包名，仅允许 runtime|widget|babel-plugin|babel-preset-widget
+2. **包名验证**：构建脚本会自动验证包名，仅允许 runtime|widget|babel-plugin|babel-preset-widget
 3. **依赖管理**：禁止使用 npm/yarn，必须使用 pnpm
 4. **Node 版本**：>=16.0.0
 5. **TypeScript 覆盖**：所有包必须 100% TypeScript 编写
 6. **测试覆盖**：新功能必须包含测试用例
+7. **Metadata 文件**：src/metadata.ts 由脚本自动生成，不要手动编辑
 
 ## Widget 组件编码范式
 

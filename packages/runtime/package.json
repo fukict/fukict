@@ -26,12 +26,14 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "browser": "./dist/index.js",
+      "default": "./dist/index.js"
     },
     "./jsx-runtime": {
-      "import": "./dist/jsx-runtime.js",
-      "types": "./dist/jsx-runtime.d.ts"
+      "types": "./dist/jsx-runtime.d.ts",
+      "browser": "./dist/jsx-runtime.js",
+      "default": "./dist/jsx-runtime.js"
     },
     "./types": {
       "types": "./types/index.d.ts"
@@ -40,20 +42,24 @@
       "types": "./types/jsx.d.ts"
     },
     "./component-registry": {
-      "import": "./dist/pattern-registry.js",
-      "types": "./dist/pattern-registry.d.ts"
+      "types": "./dist/pattern-registry.d.ts",
+      "browser": "./dist/pattern-registry.js",
+      "default": "./dist/pattern-registry.js"
     },
     "./renderer": {
-      "import": "./dist/renderer.js",
-      "types": "./dist/renderer.d.ts"
+      "types": "./dist/renderer.d.ts",
+      "browser": "./dist/renderer.js",
+      "default": "./dist/renderer.js"
     },
     "./dom-utils": {
-      "import": "./dist/dom-utils.js",
-      "types": "./dist/dom-utils.d.ts"
+      "types": "./dist/dom-utils.d.ts",
+      "browser": "./dist/dom-utils.js",
+      "default": "./dist/dom-utils.js"
     }
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
+  "browser": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
     "dist",

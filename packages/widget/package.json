@@ -21,32 +21,39 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "browser": "./dist/index.js",
+      "default": "./dist/index.js"
     },
     "./jsx-runtime": {
-      "import": "./dist/jsx-runtime.js",
-      "types": "./dist/jsx-runtime.d.ts"
+      "types": "./dist/jsx-runtime.d.ts",
+      "browser": "./dist/jsx-runtime.js",
+      "default": "./dist/jsx-runtime.js"
     },
     "./class-widget": {
-      "import": "./dist/class-widget.js",
-      "types": "./dist/class-widget.d.ts"
+      "types": "./dist/class-widget.d.ts",
+      "browser": "./dist/class-widget.js",
+      "default": "./dist/class-widget.js"
     },
     "./functional-widget": {
-      "import": "./dist/functional-widget.js",
-      "types": "./dist/functional-widget.d.ts"
+      "types": "./dist/functional-widget.d.ts",
+      "browser": "./dist/functional-widget.js",
+      "default": "./dist/functional-widget.js"
     },
     "./adapters": {
-      "import": "./dist/adapters.js",
-      "types": "./dist/adapters.d.ts"
+      "types": "./dist/adapters.d.ts",
+      "browser": "./dist/adapters.js",
+      "default": "./dist/adapters.js"
     },
     "./types": {
-      "import": "./dist/types.js",
-      "types": "./dist/types.d.ts"
+      "types": "./dist/types.d.ts",
+      "browser": "./dist/types.js",
+      "default": "./dist/types.js"
     }
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
+  "browser": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
