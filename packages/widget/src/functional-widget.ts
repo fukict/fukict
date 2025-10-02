@@ -22,12 +22,12 @@ import type {
  *
  * @example
  * ```tsx
- * const Counter = createWidget<{ count: number }>(({ count }) => (
+ * const Counter = defineWidget<{ count: number }>(({ count }) => (
  *   <div>Count: {count}</div>
  * ));
  * ```
  */
-export const createWidget: WidgetFuncFactory = <T extends WidgetProps>(
+export const defineWidget: WidgetFuncFactory = <T extends WidgetProps>(
   renderFn: WidgetFuncRender<T>,
 ) => {
   const factory = (props: T = {} as T): WidgeFuncInstance => {

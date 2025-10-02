@@ -1,9 +1,11 @@
+import { defineWidget } from '@fukict/widget';
+
 export interface ErrorProps {
   error?: string;
   onClear: () => void;
 }
 
-export function ErrorComponent(props: ErrorProps) {
+export const ErrorComponent = defineWidget<ErrorProps>(props => {
   if (!props.error) {
     return <div class="error-message" style="display: none;"></div>;
   }
@@ -20,4 +22,4 @@ export function ErrorComponent(props: ErrorProps) {
       </button>
     </div>
   );
-}
+});

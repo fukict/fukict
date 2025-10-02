@@ -47,7 +47,7 @@ class MyWidget extends Widget<Props> {
 }
 
 // 函数组件  
-const MyWidget = createWidget<Props>(({ title }) => 
+const MyWidget = defineWidget<Props>(({ title }) => 
   <div>{title}</div>
 )
 ```

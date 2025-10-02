@@ -76,7 +76,7 @@ export function deepEqual<T>(obj1: T, obj2: T): boolean {
 }
 
 /**
- * 检查是否为函数组件（通过 createWidget 创建的组件）
+ * 检查是否为函数组件（通过 defineWidget 创建的组件）
  */
 export function isFunctionWidget(obj: any): boolean {
   return (

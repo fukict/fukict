@@ -1,10 +1,12 @@
+import { defineWidget } from '@fukict/widget';
+
 import type { TodoListStats } from './TodoList.domain';
 
 export interface StatsProps {
   stats: TodoListStats;
 }
 
-export function StatsComponent(props: StatsProps) {
+export const StatsComponent = defineWidget<StatsProps>(props => {
   return (
     <div>
       <div class="stats-item">
@@ -27,4 +29,4 @@ export function StatsComponent(props: StatsProps) {
       </div>
     </div>
   );
-}
+});

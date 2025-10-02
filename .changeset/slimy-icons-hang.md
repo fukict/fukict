@@ -2,4 +2,4 @@
 '@fukict/widget': patch
 ---
 
-fix createWidget generic function type definition
+fix defineWidget generic function type definition

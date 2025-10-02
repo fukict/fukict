@@ -5,7 +5,7 @@ registerWidgetPatterns();
 
 export { Widget } from './class-widget';
 
-export { createWidget } from './functional-widget';
+export { defineWidget } from './functional-widget';
 
 export {
   deepClone,

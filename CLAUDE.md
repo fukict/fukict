@@ -34,7 +34,7 @@ Fukict 采用 monorepo 架构，由以下核心包组成：
 - **职责**: 组件编码范式抽象层，提供类组件和函数组件支持
 - **核心功能**:
   - `class-widget.ts`: 类组件基类 Widget<Props>
-  - `functional-widget.ts`: createWidget<Props> 函数组件工厂
+  - `functional-widget.ts`: defineWidget<Props> 函数组件工厂
   - `scheduler.ts`: 渲染调度器配置
   - `pattern-handlers.ts`: 自动注册 Widget 编码范式到 runtime
 - **依赖**: 依赖 `@fukict/runtime` 的 pattern-registry 机制
@@ -198,7 +198,7 @@ export default defineConfig({
 使用 `@fukict/widget` 时：
 
 - 类组件：继承 `Widget<Props>` 并实现 `render()` 方法
-- 函数组件：使用 `createWidget<Props>` 工厂函数
+- 函数组件：使用 `defineWidget<Props>` 工厂函数
 - Babel 配置：使用 `@fukict/babel-preset-widget` 简化配置
 - Widget 自动注册到 runtime 的 pattern-registry，无需手动注册
 
@@ -272,7 +272,7 @@ class Counter extends Widget<{ initialCount: number }> {
 }
 
 // 函数组件
-const Counter = createWidget<{ initialCount: number }>(
+const Counter = defineWidget<{ initialCount: number }>(
   ({ initialCount }) => <div>{initialCount}</div>
 );
 ```

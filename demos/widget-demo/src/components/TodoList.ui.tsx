@@ -4,7 +4,6 @@
  * 组合使用 TodoListDomain 业务逻辑层
  */
 import type { WidgeFuncInstance } from '@fukict/widget';
-import { createWidget } from '@fukict/widget';
 
 import { TodoListDomain, TodoListProps } from './TodoList.domain';
 import { ErrorComponent } from './TodoList.ui.error';
@@ -57,37 +56,21 @@ export class TodoListUI extends TodoListDomain {
   // === 创建子组件 ===
 
   private createSubWidgets(): void {
-    const TodosWidget = this.createTodosWidget();
-    const StatsWidget = this.createStatsWidget();
-    const ErrorWidget = this.createErrorWidget();
-
     // 创建组件实例
-    this.todosWidget = TodosWidget({
+    this.todosWidget = TodosComponent({
       todos: this.getTodos(),
       onToggle: (id: string) => this.toggleTodo(id),
       onDelete: (id: string) => this.removeTodo(id),
     });
 
-    this.statsWidget = StatsWidget({
+    this.statsWidget = StatsComponent({
       stats: this.getStats(),
     });
 
-    this.errorWidget = ErrorWidget({
+    this.errorWidget = ErrorComponent({
       error: this.getError(),
       onClear: () => this.clearError(),
     });
-  }
-
-  private createTodosWidget() {
-    return createWidget(TodosComponent);
-  }
-
-  private createStatsWidget() {
-    return createWidget(StatsComponent);
-  }
-
-  private createErrorWidget() {
-    return createWidget(ErrorComponent);
   }
 
   // === 重写 domain 层钩子，直接更新子组件 ===
@@ -139,13 +122,13 @@ export class TodoListUI extends TodoListDomain {
     // 挂载组件（如果尚未挂载）
     if (!this.errorWidget.element) {
       await this.errorWidget.mount(this.errorContainer, true);
-    } else {
-      // 更新组件 props
-      this.errorWidget.update({
-        error: this.getError(),
-        onClear: () => this.clearError(),
-      });
     }
+
+    // 更新组件 props
+    this.errorWidget.update({
+      error: this.getError(),
+      onClear: () => this.clearError(),
+    });
   }
 
   private clearInput(): void {

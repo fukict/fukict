@@ -474,7 +474,7 @@ const Button = props => h('button', props, props.children);
 ## 🔗 相关包
 
 - [`@fukict/babel-plugin`](../babel-plugin) - JSX 编译插件，将 JSX 转换为优化的 VNode 调用
-- [`@fukict/widget`](../widget) - 组件开发编码范式，提供 Widget 类和 createWidget 函数
+- [`@fukict/widget`](../widget) - 组件开发编码范式，提供 Widget 类和 defineWidget 函数
 - [`@fukict/babel-preset-widget`](../babel-preset-widget) - Widget 开发预设，开箱即用的 Babel 配置
 
 ## 🏗️ 架构说明

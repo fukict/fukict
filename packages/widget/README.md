@@ -59,7 +59,7 @@ graph LR
     end
 
     subgraph "Function Component"
-    B1["createWidget((props) => VNode)"] --> B2["factory function"]
+    B1["defineWidget((props) => VNode)"] --> B2["factory function"]
     B2 --> B3["renderWithLifecycle"]
     B3 --> B4["onMounted callback"]
     B4 --> B5["instance methods"]
@@ -142,17 +142,17 @@ export class Counter extends Widget<CounterProps> {
 }
 ```
 
-### 2. 函数组件（createWidget）
+### 2. 函数组件（defineWidget）
 
 ```typescript
-import { createWidget } from '@fukict/widget';
+import { defineWidget } from '@fukict/widget';
 
 interface GreetingProps {
   name: string;
   message?: string;
   }
 
-export const Greeting = createWidget((props: GreetingProps) => {
+export const Greeting = defineWidget((props: GreetingProps) => {
   return (
     <div className="greeting">
       <h1>Hello, {props.name}!</h1>
@@ -374,10 +374,10 @@ class Widget<T = any> {
 }
 ```
 
-### createWidget 函数
+### defineWidget 函数
 
 ```typescript
-function createWidget<T>(render: (props: T) => VNode): WidgetFuncFactory<T>;
+function defineWidget<T>(render: (props: T) => VNode): WidgetFuncFactory<T>;
 ```
 
 ### 类型定义
@@ -405,7 +405,7 @@ interface WidgeFuncInstance {
 
 ---
 
-**注意**: `@fukict/widget` 不是一个框架，而是一套组件开发编码范式。它提供了基于 `@fukict/runtime` 的结构化组件开发方式，包括 Widget 基类、createWidget 工厂函数和分层架构模式，帮助开发者以一致的方式构建可维护的组件。
+**注意**: `@fukict/widget` 不是一个框架，而是一套组件开发编码范式。它提供了基于 `@fukict/runtime` 的结构化组件开发方式，包括 Widget 基类、defineWidget 工厂函数和分层架构模式，帮助开发者以一致的方式构建可维护的组件。
 
 ## �� 许可证
 

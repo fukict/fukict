@@ -10,7 +10,8 @@
       "Bash(npx tsx:*)",
       "Bash(pnpm build:pkg:*)",
       "Bash(npx tsc:*)",
-      "Bash(npx eslint:*)"
+      "Bash(npx eslint:*)",
+      "mcp__ide__getDiagnostics"
     ],
     "deny": [],
     "ask": []

@@ -3,7 +3,7 @@ import { render, updateDOM } from '@fukict/runtime';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { createWidget } from '../src/functional-widget';
+import { defineWidget } from '../src/functional-widget';
 
 // 先 mock 模块，然后再导入
 vi.mock('@fukict/runtime', () => ({
@@ -49,7 +49,7 @@ describe('简易函数组件', () => {
       children: [props.text],
     });
 
-    const componentFactory = createWidget(renderFn);
+    const componentFactory = defineWidget(renderFn);
     expect(typeof componentFactory).toBe('function');
 
     const instance = componentFactory({ text: 'Hello' });
@@ -66,7 +66,7 @@ describe('简易函数组件', () => {
       children: [props.text],
     });
 
-    const componentFactory = createWidget(renderFn);
+    const componentFactory = defineWidget(renderFn);
     const instance = componentFactory({ text: 'Hello World' });
 
     // 挂载组件（immediate = true 避免异步）
@@ -85,7 +85,7 @@ describe('简易函数组件', () => {
       children: [`${props.text}: ${props.count}`],
     });
 
-    const componentFactory = createWidget(renderFn);
+    const componentFactory = defineWidget(renderFn);
     const instance = componentFactory({ text: 'Count', count: 0 });
 
     // 挂载
@@ -105,7 +105,7 @@ describe('简易函数组件', () => {
       children: [props.text],
     });
 
-    const componentFactory = createWidget(renderFn);
+    const componentFactory = defineWidget(renderFn);
     const instance = componentFactory({ text: 'Hello' });
 
     // 挂载
@@ -128,7 +128,7 @@ describe('简易函数组件', () => {
       children: [`${props.data.name}: ${props.data.age}`],
     });
 
-    const componentFactory = createWidget(renderFn);
+    const componentFactory = defineWidget(renderFn);
     const instance = componentFactory({ data: { name: 'John', age: 30 } });
 
     // 挂载
@@ -154,7 +154,7 @@ describe('简易函数组件', () => {
       children: [props.text],
     });
 
-    const componentFactory = createWidget(renderFn);
+    const componentFactory = defineWidget(renderFn);
     const instance = componentFactory({ text: 'Hello' });
 
     // 在未挂载状态下更新

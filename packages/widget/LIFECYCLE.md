@@ -19,7 +19,7 @@ graph TD
     L --> M["instance.onMounted() 生命周期"]
     M --> N["外部 onMounted callback"]
 
-    D -->|"createWidget Function"| O["WIDGET_FUNCTION_HANDLER"]
+    D -->|"defineWidget Function"| O["WIDGET_FUNCTION_HANDLER"]
     O --> P["factory.__RENDER_WITH_LIFECYCLE__"]
     P --> Q["renderFn(props)"]
     Q --> R["VNode + ref callback"]
@@ -161,8 +161,8 @@ let isMounted = false;
 ### 2. 组件实例复用
 
 ```typescript
-// createWidget 返回的 factory 可以多次调用
-const Button = createWidget((props) => <button>{props.text}</button>);
+// defineWidget 返回的 factory 可以多次调用
+const Button = defineWidget((props) => <button>{props.text}</button>);
 
 // 每次调用都返回新的实例，但共享渲染逻辑
 const instance1 = Button({ text: "Click 1" });

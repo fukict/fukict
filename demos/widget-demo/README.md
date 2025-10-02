@@ -9,7 +9,7 @@
 - **SimpleGreeting** - 基础 Widget 类组件
 - **Counter** - 带状态管理的交互组件
 - **TodoList** - 复杂分层架构组件（Domain + UI）
-- **函数组件** - 使用 `createWidget` 创建的轻量组件
+- **函数组件** - 使用 `defineWidget` 创建的轻量组件
 
 ### 分层架构演示
 
@@ -146,7 +146,7 @@ export class TodoListUI extends Widget<TodoListProps> {
 ### 4. 函数组件
 
 ```typescript
-const SimpleWidget = createWidget((props: { message: string }) => {
+const SimpleWidget = defineWidget((props: { message: string }) => {
   return (
     <div className="simple-widget">
       <h3>🎯 函数组件演示</h3>

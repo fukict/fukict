@@ -268,7 +268,7 @@ Function 组件不提供销毁钩子，因此要避免创建需要手动清理�
 
 ```typescript
 // ✅ 推荐：轻量级，事件在 JSX 中处理
-const SimpleButton = createWidget<{ label: string; onClick: () => void }>(
+const SimpleButton = defineWidget<{ label: string; onClick: () => void }>(
   ({ label, onClick }) => (
     <button on:click={onClick}>
       {label}
@@ -277,7 +277,7 @@ const SimpleButton = createWidget<{ label: string; onClick: () => void }>(
 );
 
 // ✅ 推荐：接收外部状态，不内部维护
-const TodoItem = createWidget<{ todo: TodoItem; onToggle: (id: string) => void }>(
+const TodoItem = defineWidget<{ todo: TodoItem; onToggle: (id: string) => void }>(
   ({ todo, onToggle }) => (
     <li className={todo.completed ? 'completed' : ''}>
       <input
@@ -291,7 +291,7 @@ const TodoItem = createWidget<{ todo: TodoItem; onToggle: (id: string) => void }
 );
 
 // ❌ 避免：无法清理的复杂状态
-const ComplexWidget = createWidget<Props>(props => {
+const ComplexWidget = defineWidget<Props>(props => {
   const timer = setInterval(() => {}, 1000); // ❌ 无法清理，会内存泄漏
   const heavyData = new Map(); // ❌ 可能泄漏
   const listeners = []; // ❌ 无法清理事件监听器

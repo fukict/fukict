@@ -1,11 +1,11 @@
-import { createWidget } from '@fukict/widget';
+import { defineWidget } from '@fukict/widget';
 
 import { Counter } from './components/Counter';
 import { FormWidget } from './components/FormWidget';
 import { TodoList } from './components/TodoList';
 
 // 演示应用组件
-export const App = createWidget(_ => {
+export const App = defineWidget(_ => {
   // 组件实例引用
   let counterInstance: Counter | null = null;
 

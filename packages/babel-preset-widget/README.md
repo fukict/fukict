@@ -7,14 +7,14 @@
 `@fukict/babel-preset-widget` 是一个用 **TypeScript 编写**的 Babel preset，为基于 Widget 编码范式的项目提供完整的构建配置。使用此 preset，您可以获得：
 
 - **零配置体验**：开箱即用的完整开发环境
-- **自动组件注册**：Widget 类和 createWidget 函数自动识别
+- **自动组件注册**：Widget 类和 defineWidget 函数自动识别
 - **编译时优化**：JSX 静态分析和性能优化
 - **类型安全**：完整的 TypeScript 支持
 
 ## 特性
 
 - ✅ **TypeScript 编写** - 源码使用 TypeScript，确保类型安全
-- ✅ **自动组件识别** - 自动识别 Widget 类和 createWidget 函数
+- ✅ **自动组件识别** - 自动识别 Widget 类和 defineWidget 函数
 - ✅ **零配置** - 开箱即用，无需复杂配置
 - ✅ **调试支持** - 内置调试模式和错误处理
 - ✅ **向后兼容** - 与现有 babel 生态完全兼容
@@ -44,7 +44,7 @@ module.exports = {
 就这么简单！现在您可以直接使用 Widget 组件：
 
 ```tsx
-import { Widget, createWidget, render } from '@fukict/widget';
+import { Widget, defineWidget, render } from '@fukict/widget';
 
 // Widget 类 - 自动获得 WIDGET_CLASS 标志
 class TodoList extends Widget {
@@ -53,8 +53,8 @@ class TodoList extends Widget {
   }
 }
 
-// createWidget 函数 - 自动获得 WIDGET_FUNCTION 标志
-const Button = createWidget(props => {
+// defineWidget 函数 - 自动获得 WIDGET_FUNCTION 标志
+const Button = defineWidget(props => {
   return <button>{props.text}</button>;
 });
 
@@ -112,12 +112,12 @@ interface PresetOptions {
 此 preset 会自动识别以下组件类型：
 
 1. **Widget 基类**：所有继承自 `Widget` 的类
-2. **createWidget 函数**：通过 `createWidget` 创建的组件工厂
+2. **defineWidget 函数**：通过 `defineWidget` 创建的组件工厂
 
 ### 自动标志添加
 
 - Widget 类自动获得 `__COMPONENT_TYPE__ = 'WIDGET_CLASS'` 标志
-- createWidget 函数自动获得 `__COMPONENT_TYPE__ = 'WIDGET_FUNCTION'` 标志
+- defineWidget 函数自动获得 `__COMPONENT_TYPE__ = 'WIDGET_FUNCTION'` 标志
 
 ### JSX 转换
 
@@ -142,7 +142,7 @@ hyperscript(
 ## 使用示例
 
 ```jsx
-import { Widget, createWidget } from '@fukict/widget';
+import { Widget, defineWidget } from '@fukict/widget';
 
 // Widget 类组件
 class TodoList extends Widget {
@@ -151,8 +151,8 @@ class TodoList extends Widget {
   }
 }
 
-// createWidget 函数组件
-const SimpleButton = createWidget(props => {
+// defineWidget 函数组件
+const SimpleButton = defineWidget(props => {
   return <button>{props.text}</button>;
 });
 

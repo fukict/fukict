@@ -1,3 +1,5 @@
+import { defineWidget } from '@fukict/widget';
+
 import type { TodoItem } from './TodoList.domain';
 
 export interface TodosProps {
@@ -6,7 +8,7 @@ export interface TodosProps {
   onDelete: (id: string) => void;
 }
 
-export function TodosComponent(props: TodosProps) {
+export const TodosComponent = defineWidget<TodosProps>(props => {
   if (props.todos.length === 0) {
     return <div class="empty-state">暂无待办事项</div>;
   }
@@ -39,4 +41,4 @@ export function TodosComponent(props: TodosProps) {
       ))}
     </div>
   );
-}
+});

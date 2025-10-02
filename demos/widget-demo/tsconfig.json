@@ -15,6 +15,9 @@
     "jsx": "preserve",
     "jsxImportSource": "@fukict/widget",
 
+    /* Types */
+    "types": ["vite/client"],
+
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
