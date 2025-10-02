@@ -15,15 +15,15 @@
 ### 安装
 
 ```bash
-npm install @fukict/core @fukict/babel-plugin
+npm install @fukict/runtime @fukict/babel-plugin
 # 或
-pnpm add @fukict/core @fukict/babel-plugin
+pnpm add @fukict/runtime @fukict/babel-plugin
 ```
 
 ### 基础用法
 
 ```jsx
-import { render } from '@fukict/core';
+import { render } from '@fukict/runtime';
 
 function App() {
   return (
@@ -115,7 +115,7 @@ presets: [['@fukict/babel-preset-widget']];
 
 ## 架构
 
-- `@fukict/core` - 核心渲染引擎
+- `@fukict/runtime` - 核心渲染引擎
 - `@fukict/babel-plugin` - JSX 编译插件
 - `@fukict/widget` - 组件抽象（可选）
 

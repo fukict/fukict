@@ -209,7 +209,7 @@ handle_pre_release() {
        run_command "pnpm build" "构建所有包" && \
        run_command "pnpm version:$type" "发布 $name 版本"; then
         log_success "🎉 $name 版本发布成功！"
-        log_info "可以通过 npm install @fukict/core@$type 来安装"
+        log_info "可以通过 npm install @fukict/runtime@$type 来安装"
     else
         log_error "发布流程中断"
     fi
@@ -304,7 +304,7 @@ check_npm_access() {
         echo "   https://www.npmjs.com/org/create"
         echo ""
         echo "2. 或者修改包名，不使用 scoped package:"
-        echo "   例如: fukict-core 而不是 @fukict/core"
+        echo "   例如: fukict-runtime 而不是 @fukict/runtime"
         echo ""
         echo "3. 或者联系 @fukict 组织管理员添加发布权限"
         return 1

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🚀 启动 @fukict/core Basic Demo..."
+echo "🚀 启动 @fukict/runtime Basic Demo..."
 echo ""
 echo "📝 Demo 功能："
 echo "  • 计数器组件"

@@ -80,7 +80,7 @@ module.exports = {
       '@fukict/preset-widget',
       {
         // 自定义 JSX 运行时导入路径
-        importSource: '@fukict/core',
+        importSource: '@fukict/runtime',
 
         // 开发模式调试（默认：跟随 NODE_ENV）
         development: process.env.NODE_ENV === 'development',
@@ -137,7 +137,7 @@ hyperscript(
 );
 ```
 
-组件的识别和实例化逻辑交由 @fukict/core 的编码范式注册机制处理，babel 插件只负责 JSX 到 hyperscript 的转换。
+组件的识别和实例化逻辑交由 @fukict/runtime 的编码范式注册机制处理，babel 插件只负责 JSX 到 hyperscript 的转换。
 
 ## 使用示例
 
@@ -246,7 +246,7 @@ pnpm install @fukict/babel-plugin
 {
   "compilerOptions": {
     "jsx": "preserve",
-    "jsxImportSource": "@fukict/core"
+    "jsxImportSource": "@fukict/runtime"
   }
 }
 ```
@@ -255,7 +255,7 @@ pnpm install @fukict/babel-plugin
 
 - [@fukict/widget](../widget) - Widget 基类和组件工厂
 - [@fukict/babel-plugin](../babel-plugin) - 底层 Babel 插件
-- [@fukict/core](../core) - 核心渲染引擎
+- [@fukict/runtime](../runtime) - 核心渲染引擎
 
 ## 许可证
 

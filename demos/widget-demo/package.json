@@ -10,7 +10,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@fukict/core": "workspace:*",
+    "@fukict/runtime": "workspace:*",
     "@fukict/widget": "workspace:*"
   },
   "devDependencies": {

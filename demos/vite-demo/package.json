@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@fukict/core": "workspace:*"
+    "@fukict/runtime": "workspace:*"
   },
   "devDependencies": {
     "@babel/core": "^7.23.0",

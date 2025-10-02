@@ -1,12 +1,12 @@
-import type { VNode } from '@fukict/core';
-import { render, updateDOM } from '@fukict/core';
+import type { VNode } from '@fukict/runtime';
+import { render, updateDOM } from '@fukict/runtime';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createWidget } from '../src/functional-widget';
 
 // 先 mock 模块，然后再导入
-vi.mock('@fukict/core', () => ({
+vi.mock('@fukict/runtime', () => ({
   render: vi.fn((vnode: VNode, options: { container: Element }) => {
     // 简单的模拟实现
     const element = document.createElement('div');

@@ -1,6 +1,6 @@
 # @fukict/babel-plugin
 
-Babel 插件，将 JSX 语法编译为优化的 @fukict/core VNode 调用，支持编译时优化和组件自动注册。
+Babel 插件，将 JSX 语法编译为优化的 @fukict/runtime VNode 调用，支持编译时优化和组件自动注册。
 
 ## Installation
 
@@ -32,7 +32,7 @@ Add the plugin to your Babel configuration:
     [
       "@fukict/babel-plugin",
       {
-        "importSource": "@fukict/core",
+        "importSource": "@fukict/runtime",
         "development": false
       }
     ]
@@ -42,7 +42,7 @@ Add the plugin to your Babel configuration:
 
 ## Options
 
-- **`importSource`** (string, default: `"@fukict/core"`): The module to import hyperscript and Fragment from
+- **`importSource`** (string, default: `"@fukict/runtime"`): The module to import hyperscript and Fragment from
 - **`development`** (boolean, default: `false`): Enable development mode features (reserved for future use)
 
 ## Transformation Examples
@@ -58,7 +58,7 @@ Add the plugin to your Babel configuration:
 **Output:**
 
 ```javascript
-import { Fragment, hyperscript } from '@fukict/core';
+import { Fragment, hyperscript } from '@fukict/runtime';
 
 hyperscript('div', { className: 'container' }, null, 'Hello World');
 ```
@@ -76,7 +76,7 @@ hyperscript('div', { className: 'container' }, null, 'Hello World');
 **Output:**
 
 ```javascript
-import { Fragment, hyperscript } from '@fukict/core';
+import { Fragment, hyperscript } from '@fukict/runtime';
 
 hyperscript(
   MyComponent,
@@ -100,7 +100,7 @@ hyperscript(
 **Output:**
 
 ```javascript
-import { Fragment, hyperscript } from '@fukict/core';
+import { Fragment, hyperscript } from '@fukict/runtime';
 
 hyperscript(
   Fragment,
@@ -124,7 +124,7 @@ hyperscript(
 **Output:**
 
 ```javascript
-import { Fragment, hyperscript } from '@fukict/core';
+import { Fragment, hyperscript } from '@fukict/runtime';
 
 hyperscript(
   'button',
@@ -150,7 +150,7 @@ hyperscript(
 **Output:**
 
 ```javascript
-import { Fragment, hyperscript } from '@fukict/core';
+import { Fragment, hyperscript } from '@fukict/runtime';
 
 hyperscript('button', { className: 'btn' }, { click: handleClick }, 'Click me');
 ```
@@ -168,7 +168,7 @@ hyperscript('button', { className: 'btn' }, { click: handleClick }, 'Click me');
 **Output:**
 
 ```javascript
-import { Fragment, hyperscript } from '@fukict/core';
+import { Fragment, hyperscript } from '@fukict/runtime';
 
 hyperscript('div', { ...props, className: 'extra' }, null, 'Content');
 ```
@@ -285,7 +285,7 @@ module.exports = {
       '@fukict/babel-plugin',
       {
         // 自定义导入源
-        importSource: '@fukict/core',
+        importSource: '@fukict/runtime',
         // 开发模式调试
         development: process.env.NODE_ENV === 'development',
       },

@@ -4,4 +4,4 @@
 
 ### Minor Changes
 
-- pre-release refactoring - core architecture improvement and toolchain integration
+- pre-release refactoring - runtime architecture improvement and toolchain integration

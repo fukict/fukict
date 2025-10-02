@@ -1,4 +1,4 @@
-# @fukict/core 渲染流程详解
+# @fukict/runtime 渲染流程详解
 
 ## 🔄 完整渲染流程
 
@@ -36,7 +36,7 @@ graph TD
 
 **核心说明：**
 
-- **纯渲染引擎**：core 专注于 JSX → VNode → DOM 转换，无生命周期概念
+- **纯渲染引擎**：runtime 专注于 JSX → VNode → DOM 转换，无生命周期概念
 - **范式注册机制**：通过 `registerComponentPattern` 支持不同组件模式
 - **ref 回调**：DOM 创建完成后的通知机制
 - **性能优化**：直接 VNode 到 DOM 映射，无中间层开销

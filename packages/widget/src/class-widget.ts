@@ -1,5 +1,5 @@
-import type { VNode } from '@fukict/core';
-import { render } from '@fukict/core';
+import type { VNode } from '@fukict/runtime';
+import { render } from '@fukict/runtime';
 
 import { immediateRender, scheduleRender } from './scheduler';
 import type { DOMBatchQuery, DOMQuery, WidgetProps } from './types';

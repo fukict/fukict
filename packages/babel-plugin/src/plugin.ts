@@ -12,7 +12,7 @@ import {
 /**
  * @fukict/babel-plugin
  *
- * 将 JSX 转换为 @fukict/core 的节点树结构调用
+ * 将 JSX 转换为 @fukict/runtime 的节点树结构调用
  * 组件注册交由运行时处理
  *
  * 转换规则：
@@ -45,7 +45,7 @@ export default function fukictBabelPlugin({
         exit(path: any, state: BabelPluginState) {
           // 如果使用了 JSX 但没有导入运行时，则自动添加导入
           if (state.runtimeImportAdded) {
-            const importSource = state.opts.importSource || '@fukict/core';
+            const importSource = state.opts.importSource || '@fukict/runtime';
             const importNode = createRuntimeImport(importSource, types);
             path.node.body.unshift(importNode);
           }

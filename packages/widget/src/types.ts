@@ -1,4 +1,4 @@
-import type { VNode } from '@fukict/core';
+import type { VNode } from '@fukict/runtime';
 
 /**
  * Widget 属性类型

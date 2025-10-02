@@ -10,8 +10,8 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "jsx": "preserve",
-    "jsxImportSource": "@fukict/core",
-    "types": ["@fukict/core"]
+    "jsxImportSource": "@fukict/runtime",
+    "types": ["@fukict/runtime"]
   },
   "exclude": ["node_modules", "dist"],
   "include": ["src/**/*"]

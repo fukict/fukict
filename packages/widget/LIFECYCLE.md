@@ -13,7 +13,7 @@ graph TD
     F --> G["instance.renderWithLifecycle()"]
     G --> H["instance.render()"]
     H --> I["VNode + ref callback"]
-    I --> J["core: createDOMFromTree()"]
+    I --> J["runtime: createDOMFromTree()"]
     J --> K["DOM Element created"]
     K --> L["ref callback triggered"]
     L --> M["instance.onMounted() 生命周期"]
@@ -23,7 +23,7 @@ graph TD
     O --> P["factory.__RENDER_WITH_LIFECYCLE__"]
     P --> Q["renderFn(props)"]
     Q --> R["VNode + ref callback"]
-    R --> S["core: createDOMFromTree()"]
+    R --> S["runtime: createDOMFromTree()"]
     S --> T["DOM Element created"]
     T --> U["ref callback triggered"]
     U --> V["外部 onMounted 生命周期callback"]
@@ -72,7 +72,7 @@ WIDGET_FUNCTION_HANDLER.detect(factory) {
 2. 创建 Widget 实例: new WidgetClass(props)
 3. 合并生命周期: 外部 onMounted + 内部 onMounted
 4. 调用 renderWithLifecycle(): 添加 ref 回调
-5. 返回 VNode 给 core 包渲染
+5. 返回 VNode 给 runtime 包渲染
 ```
 
 ### 4. Function Component 渲染流程
@@ -82,7 +82,7 @@ WIDGET_FUNCTION_HANDLER.detect(factory) {
 2. 调用 factory.__RENDER_WITH_LIFECYCLE__
 3. 执行 renderFn(props) 获取 VNode
 4. 添加 ref 回调处理 onMounted
-5. 返回 VNode 给 core 包渲染
+5. 返回 VNode 给 runtime 包渲染
 ```
 
 ### 5. 生命周期状态管理
@@ -126,11 +126,11 @@ const renderWithLifecycle = (props, onMountedCallback) => {
 
 ## 🔧 两种渲染方式对比
 
-### JSX 渲染 (通过 core 的组件范式)
+### JSX 渲染 (通过 runtime 的组件范式)
 
 ```
 1. babel-plugin 转换 JSX
-2. core 调用 pattern-handlers
+2. runtime 调用 pattern-handlers
 3. pattern-handlers 调用 renderWithLifecycle
 4. ref 回调触发 onMounted
 ```

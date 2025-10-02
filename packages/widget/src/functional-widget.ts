@@ -1,5 +1,5 @@
-import type { VNode } from '@fukict/core';
-import { render, updateDOM } from '@fukict/core';
+import type { VNode } from '@fukict/runtime';
+import { render, updateDOM } from '@fukict/runtime';
 
 import { deepClone, deepEqual } from './helpers';
 import { immediateRender, scheduleRender } from './scheduler';
@@ -17,7 +17,7 @@ import type {
  * - 深度监听 props 变化
  * - props 变更必定触发更新
  * - 无配置选项，专注简单重复渲染
- * - 使用 core 包的精确更新算法
+ * - 使用 runtime 包的精确更新算法
  * - 自动支持组件注册机制
  *
  * @example
@@ -62,7 +62,7 @@ export const createWidget: WidgetFuncFactory = <T extends WidgetProps>(
       // 生成新的 VNode
       const newVNode = renderFn(currentProps);
 
-      // 使用 core 包的精确更新算法
+      // 使用 runtime 包的精确更新算法
       updateDOM(currentVNode, newVNode, currentElement);
 
       // 更新当前 VNode 引用

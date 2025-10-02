@@ -179,7 +179,7 @@ window.fukictDemo.hyperscript; // 使用 API
 
 ## 🔗 相关资源
 
-- [Fukict 核心库](../packages/core/)
+- [Fukict 核心库](../packages/runtime/)
 - [Babel 插件](../packages/babel-plugin/)
 - [项目主文档](../README.md)
 

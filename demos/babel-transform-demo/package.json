@@ -14,7 +14,7 @@
     "transform-webpack": "babel src/test.tsx --out-file dist/test-webpack.js --config-file ./babel-webpack.config.js"
   },
   "dependencies": {
-    "@fukict/core": "workspace:*"
+    "@fukict/runtime": "workspace:*"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0",

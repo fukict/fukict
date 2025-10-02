@@ -36,7 +36,7 @@ export default function presetWidget(
 } {
   const {
     development = api.env('development'),
-    importSource = '@fukict/core',
+    importSource = '@fukict/runtime',
     typescript = true,
   } = options;
 

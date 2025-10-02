@@ -21,7 +21,7 @@ export default defineConfig({
   esbuild: {
     jsxFactory: 'hyperscript',
     jsxFragment: 'Fragment',
-    jsxInject: `import { hyperscript, Fragment } from '@fukict/core'`,
+    jsxInject: `import { hyperscript, Fragment } from '@fukict/runtime'`,
   },
   plugins: [
     // 自定义 JSX 转换插件
@@ -45,7 +45,7 @@ export default defineConfig({
 {
   "compilerOptions": {
     "jsx": "preserve",
-    "jsxImportSource": "@fukict/core"
+    "jsxImportSource": "@fukict/runtime"
   }
 }
 ```
@@ -128,7 +128,7 @@ demos/vite-demo/
 
 ### 生产依赖
 
-- `@fukict/core`: 核心运行时库
+- `@fukict/runtime`: 核心运行时库
 
 ### 开发依赖
 
@@ -174,7 +174,7 @@ pnpm run build
 ## 🔗 相关链接
 
 - [Vite 官方文档](https://vitejs.dev/)
-- [Fukict 核心库](../../packages/core/)
+- [Fukict 核心库](../../packages/runtime/)
 - [Babel 插件源码](../../packages/babel-plugin/)
 
 ## �� 许可证

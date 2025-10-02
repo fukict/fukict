@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@fukict/core Basic Demo</title>
+    <title>@fukict/runtime Basic Demo</title>
     <style>
       body {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
@@ -113,7 +113,7 @@
   </head>
   <body>
     <div class="container">
-      <h1>🚀 @fukict/core Basic Demo</h1>
+      <h1>🚀 @fukict/runtime Basic Demo</h1>
       <p style="text-align: center; color: #718096">
         直接使用 ES 模块，无需编译的高性能客户端渲染演示
       </p>
@@ -140,7 +140,10 @@
     </div>
 
     <script type="module">
-      import { hyperscript, render } from '../../packages/core/dist/index.js';
+      import {
+        hyperscript,
+        render,
+      } from '../../packages/runtime/dist/index.js';
 
       // 性能计时开始
       const startTime = performance.now();
@@ -381,7 +384,7 @@
       const endTime = performance.now();
       document.getElementById('perf-stats').innerHTML = `
             <div>🚀 应用启动时间: ${(endTime - startTime).toFixed(2)}ms</div>
-            <div>📦 使用包: @fukict/core v0.1.0</div>
+            <div>📦 使用包: @fukict/runtime v0.1.0</div>
             <div>⚡ 渲染模式: 客户端直接渲染 (无编译)</div>
             <div>🎯 更新策略: 完全重新渲染 (简单模式)</div>
             <div>🔧 核心函数: hyperscript (参数: type, props, events, children)</div>
@@ -397,7 +400,7 @@
         render,
       };
 
-      console.log('🎉 @fukict/core demo 已加载完成!');
+      console.log('🎉 @fukict/runtime demo 已加载完成!');
       console.log('📝 可在控制台通过 window.fukictDemo 访问应用状态');
       console.log('🔧 核心 API: hyperscript(type, props, events, ...children)');
     </script>

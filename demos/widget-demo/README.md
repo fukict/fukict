@@ -209,7 +209,7 @@ const SimpleWidget = createWidget((props: { message: string }) => {
 ## 🔗 相关链接
 
 - [Fukict 项目主页](../../README.md)
-- [Core 包文档](../../packages/core/README.md)
+- [Core 包文档](../../packages/runtime/README.md)
 - [Babel Plugin 文档](../../packages/babel-plugin/README.md)
 - [更多演示项目](../)
 

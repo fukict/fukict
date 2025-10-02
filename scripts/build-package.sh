@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 可用的包
-AVAILABLE_PACKAGES=("core" "widget" "babel-plugin" "babel-preset-widget")
+AVAILABLE_PACKAGES=("runtime" "widget" "babel-plugin" "babel-preset-widget")
 
 # 颜色输出
 RED='\033[0;31m'
@@ -26,10 +26,10 @@ show_help() {
     echo "  $0                                    # Interactive mode"
     echo "  $0 --all                              # Build all packages (may ask about watch)"
     echo "  $0 --all --no-watch                   # Build all packages (no interaction)"
-    echo "  $0 --pkg-name core                    # Build single package (may ask about watch)"
-    echo "  $0 --pkg-name core --no-watch         # Build single package (no interaction)"
+    echo "  $0 --pkg-name runtime                    # Build single package (may ask about watch)"
+    echo "  $0 --pkg-name runtime --no-watch         # Build single package (no interaction)"
     echo "  $0 --all --watch                      # Watch all packages"
-    echo "  $0 --pkg-name core widget --watch     # Watch multiple packages"
+    echo "  $0 --pkg-name runtime widget --watch     # Watch multiple packages"
     echo ""
     exit 1
 }

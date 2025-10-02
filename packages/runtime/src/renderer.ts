@@ -100,7 +100,7 @@ export function createDOMFromTree(vnode: VNode): Node {
     try {
       vnode.ref(element);
     } catch (error) {
-      console.warn('[@fukict/core] Error in ref callback:', error);
+      console.warn('[@fukict/runtime] Error in ref callback:', error);
     }
   }
 
@@ -147,7 +147,7 @@ function createDOMFromComponent(vnode: VNode): Node {
       }
     } catch (error) {
       console.error(
-        `[@fukict/core] Error rendering registered component ${component.name || 'Anonymous'}:`,
+        `[@fukict/runtime] Error rendering registered component ${component.name || 'Anonymous'}:`,
         error,
       );
       return createTextNode(
@@ -185,7 +185,7 @@ function createDOMFromComponent(vnode: VNode): Node {
   } catch (error) {
     // 错误边界：组件渲染失败时的恢复机制
     console.error(
-      `[@fukict/core] Error rendering component ${component.name || 'Anonymous'}:`,
+      `[@fukict/runtime] Error rendering component ${component.name || 'Anonymous'}:`,
       error,
     );
     return createTextNode(
@@ -262,7 +262,7 @@ export function render(vnode: VNode, options: RenderOptions): void {
     const domNode = createDOMFromTree(vnode);
     appendChild(container, domNode);
   } catch (error) {
-    console.error('[@fukict/core] Error during render:', error);
+    console.error('[@fukict/runtime] Error during render:', error);
     // 在生产环境中，可以选择显示错误信息而不是崩溃
     const errorNode = createTextNode('[Render Error]');
     if (replace) {
@@ -319,7 +319,7 @@ export function updateDOM(
         }
       }
     } catch (error) {
-      console.error('[@fukict/core] Error during DOM replacement:', error);
+      console.error('[@fukict/runtime] Error during DOM replacement:', error);
     }
     return;
   }
@@ -350,7 +350,7 @@ export function updateDOM(
         try {
           oldVNode.ref(null);
         } catch (error) {
-          console.warn('[@fukict/core] Error in old ref cleanup:', error);
+          console.warn('[@fukict/runtime] Error in old ref cleanup:', error);
         }
       }
 
@@ -359,7 +359,7 @@ export function updateDOM(
         try {
           newVNode.ref(element);
         } catch (error) {
-          console.warn('[@fukict/core] Error in new ref callback:', error);
+          console.warn('[@fukict/runtime] Error in new ref callback:', error);
         }
       }
     }
@@ -368,7 +368,7 @@ export function updateDOM(
     domToVNodeMap.set(domNode, newVNode);
     vNodeToDOMMap.set(newVNode, domNode);
   } catch (error) {
-    console.error('[@fukict/core] Error during DOM update:', error);
+    console.error('[@fukict/runtime] Error during DOM update:', error);
   }
 }
 
@@ -410,7 +410,7 @@ function updateProperties(
 
 /**
  * 简化的子节点差异更新算法
- * 保持 Core 层的职责单一，提供基础但有效的子节点管理
+ * 保持 Runtime 层的职责单一，提供基础但有效的子节点管理
  *
  * @param parent - 父元素
  * @param oldChildren - 旧子节点数组
@@ -499,9 +499,9 @@ export function hydrate(vnode: VNode, existingDOM: Element): void {
     // - 递归处理子节点
     // - 处理客户端特有的属性
 
-    console.warn('[@fukict/core] Hydration is not fully implemented yet');
+    console.warn('[@fukict/runtime] Hydration is not fully implemented yet');
   } catch (error) {
-    console.error('[@fukict/core] Error during hydration:', error);
+    console.error('[@fukict/runtime] Error during hydration:', error);
     throw error;
   }
 }

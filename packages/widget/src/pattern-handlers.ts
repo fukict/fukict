@@ -1,7 +1,7 @@
 import {
   type ComponentPatternHandler,
   registerComponentPattern,
-} from '@fukict/core';
+} from '@fukict/runtime';
 
 /**
  * 检查是否为Widget类（包括继承链）

@@ -1,6 +1,6 @@
 # @fukict/widget
 
-基于 @fukict/core 的组件开发编码范式，属于增强层，为复杂应用提供结构化的组件开发模式和更好的开发体验。
+基于 @fukict/runtime 的组件开发编码范式，属于增强层，为复杂应用提供结构化的组件开发模式和更好的开发体验。
 
 ## 🚀 特性
 
@@ -400,12 +400,12 @@ interface WidgeFuncInstance {
 
 ## 🔗 相关包
 
-- [@fukict/core](../core) - 核心渲染引擎
+- [@fukict/runtime](../runtime) - 核心渲染引擎
 - [@fukict/babel-plugin](../babel-plugin) - JSX 编译插件
 
 ---
 
-**注意**: `@fukict/widget` 不是一个框架，而是一套组件开发编码范式。它提供了基于 `@fukict/core` 的结构化组件开发方式，包括 Widget 基类、createWidget 工厂函数和分层架构模式，帮助开发者以一致的方式构建可维护的组件。
+**注意**: `@fukict/widget` 不是一个框架，而是一套组件开发编码范式。它提供了基于 `@fukict/runtime` 的结构化组件开发方式，包括 Widget 基类、createWidget 工厂函数和分层架构模式，帮助开发者以一致的方式构建可维护的组件。
 
 ## �� 许可证
 

@@ -21,7 +21,7 @@ describe('@fukict/babel-plugin', () => {
 
     expect(output).toContain('hyperscript("div", null, null, "Hello World")');
     expect(output).toContain(
-      'import { hyperscript, Fragment } from "@fukict/core"',
+      'import { hyperscript, Fragment } from "@fukict/runtime"',
     );
   });
 

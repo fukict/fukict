@@ -6,7 +6,7 @@ alwaysApply: true
 # Fukict 开发指南
 
 ## 📦 核心架构
-- `@fukict/core` - 渲染引擎 < 10KB
+- `@fukict/runtime` - 渲染引擎 < 10KB
 - `@fukict/babel-plugin` - JSX 编译优化  
 - `@fukict/widget` - 组件编码范式
 - `@fukict/babel-preset-widget` - 零配置

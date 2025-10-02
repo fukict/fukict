@@ -1,6 +1,6 @@
 ---
 '@fukict/widget': patch
-'@fukict/core': patch
+'@fukict/runtime': patch
 ---
 
 Fix JSX type export

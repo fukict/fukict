@@ -36,7 +36,7 @@ export default defineConfig({
 {
   "compilerOptions": {
     "jsx": "preserve",
-    "jsxImportSource": "@fukict/core"
+    "jsxImportSource": "@fukict/runtime"
   }
 }
 ```
@@ -116,7 +116,7 @@ demos/rsbuild-demo/
 
 ### 生产依赖
 
-- `@fukict/core`: 核心运行时库
+- `@fukict/runtime`: 核心运行时库
 
 ### 开发依赖
 
@@ -152,7 +152,7 @@ pnpm run build
 ## 🔗 相关链接
 
 - [Rsbuild 官方文档](https://rsbuild.dev/)
-- [Fukict 核心库](../../packages/core/)
+- [Fukict 核心库](../../packages/runtime/)
 - [Babel 插件源码](../../packages/babel-plugin/)
 
 ## 许可证

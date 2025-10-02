@@ -20,7 +20,7 @@ if (existsSync(`packages/${packageName}`)) {
   packageJsonPath = resolve('package.json');
 } else {
   throw new Error(
-    `Package not found: ${packageName}. Available packages: core, widget, babel-plugin, babel-preset-widget`,
+    `Package not found: ${packageName}. Available packages: runtime, widget, babel-plugin, babel-preset-widget`,
   );
 }
 
@@ -62,7 +62,7 @@ const getPackageConfig = () => {
   };
 
   switch (packageName) {
-    case 'core':
+    case 'runtime':
     case 'widget':
       return {
         ...baseConfig,

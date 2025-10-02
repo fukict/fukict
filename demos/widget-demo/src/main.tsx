@@ -1,4 +1,4 @@
-import { render } from '@fukict/core';
+import { render } from '@fukict/runtime';
 
 import { App } from './App';
 

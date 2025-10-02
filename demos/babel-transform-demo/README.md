@@ -162,7 +162,7 @@ hyperscript(Counter, { count: 5, onIncrement: handleIncrement });
 转换后的文件顶部应自动添加：
 
 ```js
-import { Fragment, hyperscript } from '@fukict/core';
+import { Fragment, hyperscript } from '@fukict/runtime';
 ```
 
 ## 📊 验证要点
@@ -241,7 +241,7 @@ node -c dist/test.js
 
 - [Babel 插件开发文档](https://babeljs.io/docs/en/plugins)
 - [AST Explorer](https://astexplorer.net/) - 在线 AST 查看器
-- [Fukict 核心库](../../packages/core/)
+- [Fukict 核心库](../../packages/runtime/)
 - [Babel 插件源码](../../packages/babel-plugin/)
 
 ## �� 许可证

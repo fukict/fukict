@@ -6,7 +6,7 @@ alwaysApply: false
 # 🏗️ Fukict 包开发指南
 
 ## 📦 包结构 & 构建
-- `@fukict/core` - 渲染引擎 < 10KB
+- `@fukict/runtime` - 渲染引擎 < 10KB
 - `@fukict/babel-plugin` - JSX 编译优化
 - `@fukict/widget` - 组件范式  
 - `@fukict/babel-preset-widget` - 零配置
@@ -15,7 +15,7 @@ alwaysApply: false
 ```bash
 # 快速构建
 ./scripts/build-package.sh --all --no-watch        # 构建所有包
-./scripts/build-package.sh --pkg-name core --watch # 监听单包
+./scripts/build-package.sh --pkg-name runtime --watch # 监听单包
 
 # 交互模式
 ./scripts/build-package.sh                         # 选择包和模式
@@ -32,7 +32,7 @@ packages/{name}/
 
 ## 🎯 核心包特性
 
-### Core (/packages/core)
+### Core (/packages/runtime)
 - **文件**: renderer.ts, jsx-runtime.ts, dom-utils.ts
 - **功能**: VNode → DOM 转换, 精确差异对比
 - **输出**: ESM 多入口 (renderer, jsx-runtime 等)
@@ -51,7 +51,7 @@ packages/{name}/
 1. **tsdown**: 统一构建工具，支持 watch 模式
 2. **环境**: watch=development, build=production  
 3. **测试**: `vitest` jsdom 环境
-4. **验证**: 自动包名验证 (core|widget|babel-plugin|babel-preset-widget)
+4. **验证**: 自动包名验证 (runtime|widget|babel-plugin|babel-preset-widget)
 
 ## ⚡ 性能要求
 - Bundle < 10KB, 编译时优化

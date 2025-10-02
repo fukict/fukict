@@ -57,7 +57,7 @@ export default defineConfig({
 {
   "compilerOptions": {
     "jsx": "preserve",
-    "jsxImportSource": "@fukict/core"
+    "jsxImportSource": "@fukict/runtime"
   }
 }`}
         </div>

@@ -4,9 +4,9 @@
 
 ### Minor Changes
 
-- pre-release refactoring - core architecture improvement and toolchain integration
+- pre-release refactoring - runtime architecture improvement and toolchain integration
 
 ### Patch Changes
 
 - Updated dependencies
-  - @fukict/core@0.0.0-alpha-20250608081318
+  - @fukict/runtime@0.0.0-alpha-20250608081318

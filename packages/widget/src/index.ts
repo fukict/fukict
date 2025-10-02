@@ -38,7 +38,7 @@ export type {
 
 export * from './jsx-runtime';
 
-// 不再重新导出 core 的函数，保持包的职责分离
-// 用户应该从 @fukict/core 导入 hyperscript, render 等基础函数
+// 不再重新导出 runtime 的函数，保持包的职责分离
+// 用户应该从 @fukict/runtime 导入 hyperscript, render 等基础函数
 
 export const version = '0.1.0';

@@ -1,5 +1,5 @@
 /**
- * @fukict/core
+ * @fukict/runtime
  *
  * 高性能客户端渲染库核心包
  * 提供 VNode 到 DOM 的转换、渲染引擎和 TypeScript 支持

@@ -1,5 +1,5 @@
 {
-  "name": "@fukict/core",
+  "name": "@fukict/runtime",
   "version": "0.0.0-alpha-20250608081318",
   "description": "轻量级 DOM 渲染引擎，VNode 到 DOM 转换",
   "keywords": [
@@ -18,7 +18,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/fukict/fukict.git",
-    "directory": "packages/core"
+    "directory": "packages/runtime"
   },
   "license": "MIT",
   "author": "xiaoyown",

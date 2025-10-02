@@ -1,6 +1,6 @@
-# 🚀 @fukict/core Basic Demo
+# 🚀 @fukict/runtime Basic Demo
 
-一个**无需编译**的基础演示，直接展示 `@fukict/core` 的核心功能。通过原生 ES 模块加载，无需任何构建工具。
+一个**无需编译**的基础演示，直接展示 `@fukict/runtime` 的核心功能。通过原生 ES 模块加载，无需任何构建工具。
 
 ## ✨ 演示特性
 
@@ -78,7 +78,7 @@ open demos/basic-demo/index.html
 ## 📊 性能表现
 
 - **启动时间**: 通常 < 5ms
-- **包大小**: core 包 ~6KB (未压缩)
+- **包大小**: runtime 包 ~6KB (未压缩)
 - **渲染性能**: 1000 节点 < 20ms
 - **内存占用**: 零内存泄漏
 - **更新策略**: 完全重新渲染 (简单直接)
@@ -130,8 +130,8 @@ hyperscript('div', { style: 'color: red' }, null, 'Hello!');
 
 ## 🔗 相关资源
 
-- [Fukict 核心库](../../packages/core/)
-- [TypeScript 类型定义](../../packages/core/types/jsx.d.ts)
+- [Fukict 核心库](../../packages/runtime/)
+- [TypeScript 类型定义](../../packages/runtime/types/jsx.d.ts)
 - [更多构建工具示例](../)
 
 ## 📝 学习路径

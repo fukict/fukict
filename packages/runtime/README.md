@@ -1,4 +1,4 @@
-# @fukict/core
+# @fukict/runtime
 
 专注于 Web 客户端渲染的高性能 DOM 库核心包，采用编译时优化 + 运行时渲染的分离架构。
 
@@ -38,7 +38,7 @@ graph LR
 ## 安装
 
 ```bash
-pnpm add @fukict/core
+pnpm add @fukict/runtime
 ```
 
 ## 快速开始
@@ -46,7 +46,7 @@ pnpm add @fukict/core
 ### 基础使用
 
 ```typescript
-import { h, render } from '@fukict/core';
+import { h, render } from '@fukict/runtime';
 
 // 使用 h 函数创建 VNode
 const app = h(
@@ -89,7 +89,7 @@ render(<App />, { container: document.getElementById('root')! });
 将 VNode 渲染到指定容器。
 
 ```typescript
-import { render } from '@fukict/core';
+import { render } from '@fukict/runtime';
 
 render(vnode, {
   container: document.getElementById('root')!,
@@ -102,7 +102,7 @@ render(vnode, {
 将 VNode 树转换为 DOM 元素。
 
 ```typescript
-import { createDOMFromTree, h } from '@fukict/core';
+import { createDOMFromTree, h } from '@fukict/runtime';
 
 const vnode = h('div', { id: 'test' }, 'Hello');
 const domElement = createDOMFromTree(vnode);
@@ -113,7 +113,7 @@ const domElement = createDOMFromTree(vnode);
 基于新旧 VNode 的差异更新 DOM。
 
 ```typescript
-import { updateDOM } from '@fukict/core';
+import { updateDOM } from '@fukict/runtime';
 
 updateDOM(oldVNode, newVNode, existingDOMNode);
 ```
@@ -128,7 +128,7 @@ import {
   createTextNode,
   removeNode,
   setProperty,
-} from '@fukict/core';
+} from '@fukict/runtime';
 
 // 创建元素
 const div = createElement('div');
@@ -147,7 +147,7 @@ batchUpdate(() => {
 创建 VNode 的辅助函数。
 
 ```typescript
-import { h } from '@fukict/core';
+import { h } from '@fukict/runtime';
 
 const vnode = h(
   'div',
@@ -165,9 +165,9 @@ const vnode = h(
 注册组件编码范式处理器。
 
 ```typescript
-import { registerComponentPattern } from '@fukict/core';
-import type { ComponentPatternHandler } from '@fukict/core';
-import { h } from '@fukict/core';
+import { registerComponentPattern } from '@fukict/runtime';
+import type { ComponentPatternHandler } from '@fukict/runtime';
+import { h } from '@fukict/runtime';
 
 const handler: ComponentPatternHandler = {
   // 检测组件是否属于此编码范式
@@ -191,7 +191,7 @@ registerComponentPattern('MY_PATTERN', handler);
 检查组件是否属于已注册的编码范式。
 
 ```typescript
-import { isRegisteredComponent } from '@fukict/core';
+import { isRegisteredComponent } from '@fukict/runtime';
 
 const isRegistered = isRegisteredComponent(MyComponent);
 console.log(isRegistered); // true 或 false
@@ -202,7 +202,7 @@ console.log(isRegistered); // true 或 false
 获取组件所属的编码范式名称。
 
 ```typescript
-import { getComponentPattern } from '@fukict/core';
+import { getComponentPattern } from '@fukict/runtime';
 
 const pattern = getComponentPattern(MyComponent);
 console.log(pattern); // 'MY_PATTERN' 或 null
@@ -213,7 +213,7 @@ console.log(pattern); // 'MY_PATTERN' 或 null
 渲染已注册编码范式的组件。
 
 ```typescript
-import { renderRegisteredComponent } from '@fukict/core';
+import { renderRegisteredComponent } from '@fukict/runtime';
 
 const vnode = renderRegisteredComponent(MyComponent, { prop: 'value' }, []);
 // 返回渲染后的 VNode 或 null
@@ -222,8 +222,8 @@ const vnode = renderRegisteredComponent(MyComponent, { prop: 'value' }, []);
 ### 组件支持
 
 ```typescript
-import type { ComponentFunction } from '@fukict/core';
-import { h } from '@fukict/core';
+import type { ComponentFunction } from '@fukict/runtime';
+import { h } from '@fukict/runtime';
 
 const Button: ComponentFunction = props => {
   return h(
@@ -249,13 +249,13 @@ const app = h(
 
 ### 组件编码范式注册
 
-@fukict/core 提供了组件编码范式注册机制，支持第三方组件库通过运行时注册实现自定义的组件编码模式。core 包专注于 VNode 到 DOM 的渲染，通过范式注册实现组件的抽象。
+@fukict/runtime 提供了组件编码范式注册机制，支持第三方组件库通过运行时注册实现自定义的组件编码模式。runtime 包专注于 VNode 到 DOM 的渲染，通过范式注册实现组件的抽象。
 
 #### 注册编码范式处理器
 
 ```typescript
-import { h, registerComponentPattern } from '@fukict/core';
-import type { ComponentPatternHandler } from '@fukict/core';
+import { h, registerComponentPattern } from '@fukict/runtime';
+import type { ComponentPatternHandler } from '@fukict/runtime';
 
 // 注册自定义组件编码范式
 const handler: ComponentPatternHandler = {
@@ -278,8 +278,8 @@ registerComponentPattern('CUSTOM_PATTERN', handler);
 #### 使用示例：Class 组件编码范式
 
 ```typescript
-import { registerComponentPattern, h, render } from '@fukict/core';
-import type { VNode } from '@fukict/core';
+import { registerComponentPattern, h, render } from '@fukict/runtime';
+import type { VNode } from '@fukict/runtime';
 
 // 1. 定义组件基类
 class Component {
@@ -326,7 +326,7 @@ render(app, { container: document.getElementById('root')! });
 
 #### 内置编码范式
 
-@fukict/core 内置支持以下组件编码范式：
+@fukict/runtime 内置支持以下组件编码范式：
 
 - **函数组件**：`ComponentFunction` 类型的函数
 - **HTML 元素**：原生 HTML 标签字符串
@@ -392,7 +392,7 @@ interface ComponentPatternHandler {
 {
   "compilerOptions": {
     "jsx": "preserve",
-    "jsxImportSource": "@fukict/core",
+    "jsxImportSource": "@fukict/runtime",
     "lib": ["DOM", "ES2020"],
     "module": "ESNext",
     "moduleResolution": "bundler"
@@ -479,7 +479,7 @@ const Button = props => h('button', props, props.children);
 
 ## 🏗️ 架构说明
 
-`@fukict/core` 是整个生态系统的基础设施：
+`@fukict/runtime` 是整个生态系统的基础设施：
 
 - **底层渲染引擎**：处理 VNode 到真实 DOM 的转换
 - **DOM 工具集**：提供高性能的 DOM 操作函数
@@ -490,10 +490,10 @@ const Button = props => h('button', props, props.children);
 
 ### 基础层独立使用
 
-`@fukict/core` 可以与 `@fukict/babel-plugin` 配合，提供完整的基础 JSX 支持：
+`@fukict/runtime` 可以与 `@fukict/babel-plugin` 配合，提供完整的基础 JSX 支持：
 
 ```bash
-pnpm add @fukict/core @fukict/babel-plugin
+pnpm add @fukict/runtime @fukict/babel-plugin
 ```
 
 **适合场景**：

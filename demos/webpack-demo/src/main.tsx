@@ -1,4 +1,4 @@
-import { render } from '@fukict/core';
+import { render } from '@fukict/runtime';
 
 import { Counter } from './Counter';
 
@@ -70,7 +70,7 @@ function App() {
         <div className="logo">🚀</div>
         <h1 className="title">Fukict + Webpack</h1>
         <p className="subtitle">
-          使用 @fukict/babel-plugin + @fukict/core 构建
+          使用 @fukict/babel-plugin + @fukict/runtime 构建
         </p>
       </div>
 
