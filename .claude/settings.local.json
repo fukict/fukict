@@ -12,7 +12,10 @@
       "Bash(npx tsc:*)",
       "Bash(npx eslint:*)",
       "mcp__ide__getDiagnostics",
-      "Bash(pnpm test:*)"
+      "Bash(pnpm test:*)",
+      "Bash(pnpm dev:*)",
+      "Bash(pnpm type-check:*)",
+      "Bash(pnpm lint:*)"
     ],
     "deny": [],
     "ask": []

@@ -131,12 +131,14 @@ importers:
       '@babel/preset-typescript': ^7.27.1
       '@fukict/babel-plugin': workspace:*
       '@fukict/babel-preset-widget': workspace:*
+      '@fukict/router': workspace:*
       '@fukict/runtime': workspace:*
       '@fukict/widget': workspace:*
       '@types/node': ^20.10.0
       typescript: ^5.3.3
       vite: ^5.0.10
     dependencies:
+      '@fukict/router': link:../../packages/router
       '@fukict/runtime': link:../../packages/runtime
       '@fukict/widget': link:../../packages/widget
     devDependencies:
@@ -189,6 +191,14 @@ importers:
       '@babel/types': 7.28.4
       premove: 4.0.0
       typescript: 5.9.3
+
+  packages/router:
+    specifiers:
+      '@fukict/runtime': workspace:*
+      '@fukict/widget': workspace:*
+    devDependencies:
+      '@fukict/runtime': link:../runtime
+      '@fukict/widget': link:../widget
 
   packages/runtime:
     specifiers:

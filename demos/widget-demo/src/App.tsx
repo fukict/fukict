@@ -1,119 +1,153 @@
+import { RouterLink, RouterView } from '@fukict/router';
+import type { Router } from '@fukict/router';
 import { defineWidget } from '@fukict/widget';
 
-import { Counter } from './components/Counter';
-import { FormWidget } from './components/FormWidget';
-import { TodoList } from './components/TodoList';
+interface AppProps {
+  router: Router;
+}
 
 // 演示应用组件
-export const App = defineWidget(_ => {
-  // 组件实例引用
-  let counterInstance: Counter | null = null;
-
-  // 组件挂载回调 - 测试 onMounted 获取实例
-  const handleCounterMount = (instance: Counter) => {
-    counterInstance = instance;
-    // 测试公共属性和方法
-    if (counterInstance) {
-      // 测试 DOM 查询方法
-      const display = counterInstance.$('.count-display');
-      if (display) {
-        console.log(
-          '   - DOM 查询成功，当前计数显示:',
-          display.element?.textContent,
-        );
-      }
-    }
-  };
-
+export const App = defineWidget<AppProps>(({ router }) => {
   return (
     <div className="demo-app">
-      <header className="demo-header">
-        <h1>🚀 Fukict Widget 演示</h1>
-        <p>展示正确的 Widget 编码范式 - 事件直接在 JSX 上绑定</p>
+      <header className="app-header">
+        <div className="header-content">
+          <h1>🚀 Fukict Widget + Router Demo</h1>
+          <p>展示 Widget 编码范式和路由系统的完整示例</p>
+        </div>
       </header>
 
-      <div className="demo-section">
-        <h2>📊 Widget 类组件 + onMount 测试</h2>
-        <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px; background: white; margin-bottom: 10px;">
-          <Counter initialCount={5} onMounted={handleCounterMount} />
-        </div>
-        <p style="color: #666; font-size: 0.9rem;">
-          ✅ Counter 组件通过 JSX 语法挂载，使用 onMounted
-          回调获取实例并测试方法调用
-        </p>
-      </div>
-
-      <div className="demo-section">
-        <h2>📝 简化版待办列表 - Widget 编码范式</h2>
-        <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px; background: white; margin-bottom: 10px;">
-          <TodoList title="📝 正确的 Widget 事件处理" />
-        </div>
-        <p style="color: #666; font-size: 0.9rem;">
-          ✅ 使用 on:event 直接在 JSX 上绑定事件，自动跟随 DOM 销毁而清理
-        </p>
-      </div>
-
-      <div className="demo-section">
-        <h2>📋 表单组件 - 事件处理演示</h2>
-        <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px; background: white; margin-bottom: 10px;">
-          <FormWidget title="📋 Widget 事件绑定演示" />
-        </div>
-        <p style="color: #666; font-size: 0.9rem;">
-          ✅ 展示正确的 Widget 事件处理和 DOM 操作方式
-        </p>
-      </div>
-
-      <div className="demo-section">
-        <h2>🔧 测试结果验证</h2>
-        <div
-          className="info-card"
-          style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #17a2b8;"
+      <nav className="app-nav">
+        <RouterLink router={router} to="/" activeClass="nav-link-active">
+          🏠 首页
+        </RouterLink>
+        <RouterLink router={router} to="/about" activeClass="nav-link-active">
+          📖 关于
+        </RouterLink>
+        <RouterLink router={router} to="/demos" activeClass="nav-link-active">
+          🎨 Demo 列表
+        </RouterLink>
+        <RouterLink
+          router={router}
+          to={{ name: 'user', params: { id: '123' } }}
+          activeClass="nav-link-active"
         >
-          <pre
-            id="component-flags"
-            style="background: #2c3e50; color: #ecf0f1; padding: 15px; border-radius: 6px; overflow-x: auto; font-size: 0.9rem;"
-          >
-            检查中...
-          </pre>
-        </div>
-        <div style="margin-top: 15px; padding: 15px; background: #e8f5e8; border-radius: 6px;">
-          <h4 style="margin: 0 0 10px 0; color: #2d7d32;">
-            🎯 Widget 编码范式要点:
-          </h4>
-          <ul style="margin: 0; padding-left: 20px; color: #2d7d32;">
-            <li>✅ 事件监听直接在 JSX 上使用 on:event_name 绑定</li>
-            <li>✅ 事件会跟随 DOM 销毁自动清理，无需手动管理</li>
-            <li>✅ Class 组件在 onUnmounting 中清理内存泄漏风险变量</li>
-            <li>✅ Function 组件避免定义复杂状态，专注简单展示</li>
-            <li>✅ 使用 Widget DOM 查询 API ($ 和 $$) 精确操作</li>
-          </ul>
-        </div>
-      </div>
+          👤 用户示例
+        </RouterLink>
+      </nav>
+
+      <main className="app-main">
+        <RouterView router={router} />
+      </main>
+
+      <footer className="app-footer">
+        <p>
+          Powered by <strong>Fukict</strong> - 轻量级 DOM 渲染库 +{' '}
+          <strong>Fukict Router</strong>
+        </p>
+      </footer>
 
       <style>{`
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
         .demo-app {
-          max-width: 1000px;
-          margin: 0 auto;
-          padding: 20px;
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
-        .demo-header {
+
+        .app-header {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          padding: 30px 20px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+          max-width: 1200px;
+          margin: 0 auto;
           text-align: center;
-          margin-bottom: 40px;
-          padding-bottom: 20px;
-          border-bottom: 2px solid #e0e0e0;
         }
-        .demo-header h1 {
-          color: #2c3e50;
+
+        .header-content h1 {
+          font-size: 2.5rem;
           margin-bottom: 10px;
+          font-weight: 600;
         }
-        .demo-header p {
-          color: #7f8c8d;
-          font-size: 1.1rem;
+
+        .header-content p {
+          font-size: 1.2rem;
+          opacity: 0.9;
         }
+
+        .app-nav {
+          background: white;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+          padding: 0;
+          display: flex;
+          justify-content: center;
+          gap: 0;
+          position: sticky;
+          top: 0;
+          z-index: 100;
+        }
+
+        .app-nav a {
+          padding: 16px 28px;
+          text-decoration: none;
+          color: #555;
+          font-weight: 500;
+          transition: all 0.3s ease;
+          border-bottom: 3px solid transparent;
+          display: inline-block;
+        }
+
+        .app-nav a:hover {
+          background: #f8f9fa;
+          color: #667eea;
+        }
+
+        .app-nav a.router-link-active {
+          color: #667eea;
+          border-bottom-color: #667eea;
+          background: #f8f9fa;
+        }
+
+        .app-main {
+          flex: 1;
+          max-width: 1200px;
+          width: 100%;
+          margin: 0 auto;
+          padding: 40px 20px;
+        }
+
+        .app-footer {
+          background: #2c3e50;
+          color: white;
+          text-align: center;
+          padding: 20px;
+          margin-top: auto;
+        }
+
+        .app-footer p {
+          margin: 0;
+          opacity: 0.9;
+        }
+
+        .app-footer strong {
+          color: #3498db;
+        }
+
+        /* 通用样式 */
         .demo-section {
           margin-bottom: 40px;
         }
+
         .demo-section h2 {
           color: #34495e;
           border-left: 4px solid #3498db;

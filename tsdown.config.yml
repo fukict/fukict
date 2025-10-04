@@ -15,6 +15,12 @@ packages:
     format: esm
     description: '组件编码范式抽象层'
 
+  router:
+    platform: browser
+    entry: ['src/index.ts']
+    format: esm
+    description: '轻量级路由系统'
+
   # Node.js 环境包
   babel-plugin:
     platform: node

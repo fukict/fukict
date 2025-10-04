@@ -10,6 +10,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@fukict/router": "workspace:*",
     "@fukict/runtime": "workspace:*",
     "@fukict/widget": "workspace:*"
   },

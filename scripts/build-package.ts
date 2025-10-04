@@ -14,6 +14,7 @@ const __dirname = dirname(__filename);
 const AVAILABLE_PACKAGES = [
   'runtime',
   'widget',
+  'router',
   'babel-plugin',
   'babel-preset-widget',
 ] as const;

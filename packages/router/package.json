@@ -1,0 +1,40 @@
+{
+  "name": "@fukict/router",
+  "version": "0.1.0",
+  "description": "Lightweight router for fukict framework",
+  "keywords": [
+    "fukict",
+    "router",
+    "routing",
+    "spa"
+  ],
+  "license": "MIT",
+  "author": "",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "vitest --run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@fukict/runtime": "workspace:*",
+    "@fukict/widget": "workspace:*"
+  },
+  "peerDependencies": {
+    "@fukict/runtime": "workspace:*",
+    "@fukict/widget": "workspace:*"
+  }
+}
