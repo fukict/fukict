@@ -1,8 +1,14 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { removeEvents, setEvents, updateEvents } from '../src/dom-utils.js';
+import {
+  removeEvent,
+  removeEvents,
+  setEvent,
+  setEvents,
+  updateEvent,
+} from '../src/dom/events.js';
 import { jsx } from '../src/jsx-runtime.js';
-import { createDOMFromTree } from '../src/renderer.js';
+import { createDOMFromTree } from '../src/renderer/creator.js';
 
 // Mock DOM environment
 const mockElement = () => ({
@@ -90,37 +96,61 @@ describe('Event Handling', () => {
     expect(mockEl.removeEventListener).toHaveBeenCalledTimes(2);
   });
 
-  it('should update events on DOM element', () => {
+  it('should set single event on DOM element', () => {
+    const mockEl = mockElement();
+    const handleClick = vi.fn();
+
+    setEvent(mockEl as any, 'click', handleClick);
+
+    expect(mockEl.addEventListener).toHaveBeenCalledWith('click', handleClick);
+    expect(mockEl.addEventListener).toHaveBeenCalledTimes(1);
+  });
+
+  it('should remove single event from DOM element', () => {
+    const mockEl = mockElement();
+    const handleClick = vi.fn();
+
+    removeEvent(mockEl as any, 'click', handleClick);
+
+    expect(mockEl.removeEventListener).toHaveBeenCalledWith(
+      'click',
+      handleClick,
+    );
+    expect(mockEl.removeEventListener).toHaveBeenCalledTimes(1);
+  });
+
+  it('should update single event on DOM element', () => {
     const mockEl = mockElement();
     const oldClick = vi.fn();
     const newClick = vi.fn();
-    const newMouseOver = vi.fn();
 
-    const oldEvents = { click: oldClick };
-    const newEvents = { click: newClick, mouseover: newMouseOver };
+    updateEvent(mockEl as any, 'click', newClick, oldClick);
 
-    updateEvents(mockEl as any, newEvents, oldEvents);
-
-    // Should remove old events
+    // Should remove old event
     expect(mockEl.removeEventListener).toHaveBeenCalledWith('click', oldClick);
 
-    // Should add new events
+    // Should add new event
     expect(mockEl.addEventListener).toHaveBeenCalledWith('click', newClick);
-    expect(mockEl.addEventListener).toHaveBeenCalledWith(
-      'mouseover',
-      newMouseOver,
-    );
   });
 
-  it('should handle null events in updateEvents', () => {
+  it('should skip update when event handler is the same', () => {
+    const mockEl = mockElement();
+    const sameHandler = vi.fn();
+
+    updateEvent(mockEl as any, 'click', sameHandler, sameHandler);
+
+    // Should not perform any operations
+    expect(mockEl.removeEventListener).not.toHaveBeenCalled();
+    expect(mockEl.addEventListener).not.toHaveBeenCalled();
+  });
+
+  it('should handle null handlers in updateEvent', () => {
     const mockEl = mockElement();
     const oldClick = vi.fn();
 
-    const oldEvents = { click: oldClick };
+    updateEvent(mockEl as any, 'click', null, oldClick);
 
-    updateEvents(mockEl as any, null, oldEvents);
-
-    // Should only remove old events
+    // Should only remove old event
     expect(mockEl.removeEventListener).toHaveBeenCalledWith('click', oldClick);
     expect(mockEl.addEventListener).not.toHaveBeenCalled();
   });

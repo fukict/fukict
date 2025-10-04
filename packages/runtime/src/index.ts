@@ -32,19 +32,10 @@ export type { ComponentPatternHandler } from './pattern-registry';
 export { render, createDOMFromTree, updateDOM, hydrate } from './renderer';
 
 // 导出 DOM 工具集
-export {
-  createElement,
-  createTextNode,
-  createFragment,
-  insertBefore,
-  appendChild,
-  removeNode,
-  replaceNode,
-  clearChildren,
-  setProperty,
-  removeProperty,
-  updateProperty,
-} from './dom-utils';
+export * from './dom';
+
+// 导出 VNode 缓存管理（高级 API）
+export * from './vnode-cache';
 
 // 导出 JSX 辅助函数
 export * from './jsx-runtime';
