@@ -72,7 +72,7 @@ export function createDOMFromTree(vnode: VNode): Node {
   // 建立双向映射关系（支持后续的增量更新）
   setVNodeDOM(vnode, element);
 
-  // 调用 ref 回调（React 风格的 ref 支持）
+  // 调用 ref 回调（风格的 ref 支持）
   if (vnode.ref && typeof vnode.ref === 'function') {
     try {
       vnode.ref(element);

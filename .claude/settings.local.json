@@ -1,21 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(readlink:*)",
-      "Bash(cat:*)",
-      "Bash(chmod:*)",
-      "Bash(pnpm install:*)",
-      "Bash(pnpm extract-metadata:*)",
-      "Bash(tsx scripts/build-package.ts:*)",
-      "Bash(npx tsx:*)",
-      "Bash(pnpm build:pkg:*)",
-      "Bash(npx tsc:*)",
-      "Bash(npx eslint:*)",
-      "mcp__ide__getDiagnostics",
-      "Bash(pnpm test:*)",
-      "Bash(pnpm dev:*)",
-      "Bash(pnpm type-check:*)",
-      "Bash(pnpm lint:*)"
+      "Bash(do)",
+      "Bash(echo:*)",
+      "Bash(pnpm:*)",
+      "Bash(timeout 15 pnpm --filter comprehensive-demo dev)",
+      "Bash(timeout 10 pnpm --filter comprehensive-demo dev)"
     ],
     "deny": [],
     "ask": []

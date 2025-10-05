@@ -20,6 +20,8 @@ export interface RouterLinkProps {
   router: Router;
   /** 目标路由 */
   to: RouteLocationRaw;
+  /** 自定义 class */
+  class?: string;
   /** 激活时的 class */
   activeClass?: string;
   /** 精确匹配激活时的 class */
@@ -46,6 +48,7 @@ export const RouterLink = defineWidget<RouterLinkProps>(props => {
   const {
     router,
     to,
+    class: className,
     activeClass = 'router-link-active',
     exactActiveClass = 'router-link-exact-active',
     replace = false,
@@ -92,6 +95,9 @@ export const RouterLink = defineWidget<RouterLinkProps>(props => {
 
   // 构建 class
   const classList: string[] = [];
+  if (className) {
+    classList.push(className);
+  }
   if (isActive && activeClass) {
     classList.push(activeClass);
   }

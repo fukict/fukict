@@ -1,0 +1,43 @@
+{
+  "name": "@fukict/state",
+  "version": "0.1.0",
+  "description": "Lightweight observable state management for fukict",
+  "keywords": [
+    "fukict",
+    "state",
+    "observable",
+    "state-management"
+  ],
+  "license": "MIT",
+  "author": "",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "vitest --run",
+    "test:watch": "vitest"
+  },
+  "peerDependencies": {
+    "@fukict/runtime": "workspace:*",
+    "@fukict/widget": "workspace:*"
+  },
+  "devDependencies": {
+    "@fukict/runtime": "workspace:*",
+    "@fukict/widget": "workspace:*",
+    "jsdom": "^24.0.0",
+    "typescript": "^5.6.3",
+    "vitest": "^1.0.0"
+  }
+}

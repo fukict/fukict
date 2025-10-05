@@ -6,7 +6,7 @@
  * @module @fukict/runtime/dom/attributes
  */
 
-// DOM 属性映射表 - 处理 React/JSX 到 HTML 属性名称转换
+// DOM 属性映射表 - 处理 JSX 到 HTML 属性名称转换
 const PROPERTY_NAME_MAP: Record<string, string> = {
   className: 'class',
   htmlFor: 'for',

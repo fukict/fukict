@@ -15,6 +15,7 @@ const AVAILABLE_PACKAGES = [
   'runtime',
   'widget',
   'router',
+  'state',
   'babel-plugin',
   'babel-preset-widget',
 ] as const;

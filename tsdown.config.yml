@@ -21,6 +21,12 @@ packages:
     format: esm
     description: '轻量级路由系统'
 
+  state:
+    platform: browser
+    entry: ['src/index.ts']
+    format: esm
+    description: '轻量级观察者状态管理'
+
   # Node.js 环境包
   babel-plugin:
     platform: node

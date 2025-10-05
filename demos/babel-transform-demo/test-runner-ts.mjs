@@ -37,16 +37,6 @@ if (fourParamPattern.test(transformedCode)) {
   console.log('❌ 未检测到4参数jsx调用格式');
 }
 
-// 检查TypeScript特定问题
-if (
-  transformedCode.includes('React.FC') ||
-  transformedCode.includes('React.ReactNode')
-) {
-  console.log('❌ 发现未处理的React类型');
-} else {
-  console.log('✅ TypeScript类型已正确处理');
-}
-
 // 检查是否包含runtime导入
 if (transformedCode.includes('import { jsx, Fragment }')) {
   console.log('✅ 自动添加runtime导入');
