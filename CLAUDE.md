@@ -259,6 +259,21 @@ export default defineConfig({
 6. **测试覆盖**：新功能必须包含测试用例
 7. **Metadata 文件**：src/metadata.ts 由脚本自动生成，不要手动编辑
 
+## Absolute Rules for Claude Code
+
+**CRITICAL: These rules must ALWAYS be followed:**
+
+1. **禁止自动启动服务或构建**：
+   - 永远不要主动执行 `pnpm dev`、`pnpm build`、`pnpm start` 等构建或启动命令
+   - 仅在用户明确要求时才执行这些命令
+   - 不要假设用户想要立即运行或测试代码
+
+2. **文档编写规范**：
+   - 编写文档时禁止随意添加代码示例
+   - 如果文档确实需要代码示例，保持极简，不要添加大量代码
+   - 代码示例应仅展示关键概念，避免完整实现
+   - 优先使用伪代码或简化的代码片段
+
 ## Widget 组件编码范式
 
 Widget 是 fukict 的可选组件抽象层，提供状态管理和生命周期：
