@@ -1,7 +1,6 @@
 import { Widget } from '@fukict/widget';
 import type { Router } from '@fukict/router';
-import { RouterLink } from '@fukict/router';
-import { exampleCategories } from '../config/examples';
+import { navigationConfig } from '../config/navigation';
 
 interface SidebarProps {
   router: Router;
@@ -34,7 +33,7 @@ export class Sidebar extends Widget<SidebarProps> {
   }
 
   private updateCollapsedUI() {
-    exampleCategories.forEach((category) => {
+    navigationConfig.forEach((category) => {
       const categoryEl = this.$(`[data-category="${category.id}"]`)?.element;
 
       if (categoryEl) {
@@ -49,22 +48,34 @@ export class Sidebar extends Widget<SidebarProps> {
     });
   }
 
+  private navigateToRoute(routeName: string) {
+    this.props.router.push({ name: routeName });
+  }
+
   render() {
     const { router } = this.props;
+    const currentRoute = router.getCurrentRoute();
 
     return (
       <aside class="w-72 bg-white border-r border-gray-200 h-screen overflow-hidden sticky top-0 flex flex-col">
         {/* Logo Header */}
         <div class="flex-none border-b border-gray-200">
-          <RouterLink router={router} to="/" class="block px-6 py-5 hover:bg-gray-50">
+          <a
+            href="/"
+            class="block px-6 py-5 hover:bg-gray-50"
+            on:click={(e) => {
+              e.preventDefault();
+              this.navigateToRoute('home');
+            }}
+          >
             <h1 class="text-lg font-bold text-gray-900">Fukict Demo</h1>
             <p class="text-xs text-gray-500 mt-1">示例集合</p>
-          </RouterLink>
+          </a>
         </div>
 
         {/* Navigation */}
         <nav class="flex-1 overflow-y-auto py-2">
-          {exampleCategories.map((category) => {
+          {navigationConfig.map((category) => {
             const isCollapsed = this._collapsed[category.id];
 
             return (
@@ -84,18 +95,25 @@ export class Sidebar extends Widget<SidebarProps> {
 
                 {/* Examples List */}
                 <ul class="category-list mt-3 px-3 space-y-1.5">
-                  {category.examples.map((example) => (
-                    <li key={example.id}>
-                      <RouterLink
-                        router={router}
-                        to={example.path}
-                        class="block px-3 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-md"
-                        activeClass="bg-primary-50 text-primary-700 font-medium border-l-3 border-primary-600"
-                      >
-                        {example.title}
-                      </RouterLink>
-                    </li>
-                  ))}
+                  {category.items.map((item) => {
+                    const isActive = currentRoute.name === item.id;
+                    return (
+                      <li key={item.id}>
+                        <a
+                          href="#"
+                          class={`block px-3 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-md ${
+                            isActive ? 'bg-primary-50 text-primary-700 font-medium border-l-3 border-primary-600' : ''
+                          }`}
+                          on:click={(e) => {
+                            e.preventDefault();
+                            this.navigateToRoute(item.id);
+                          }}
+                        >
+                          {item.title}
+                        </a>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             );

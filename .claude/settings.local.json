@@ -5,7 +5,15 @@
       "Bash(echo:*)",
       "Bash(pnpm:*)",
       "Bash(timeout 15 pnpm --filter comprehensive-demo dev)",
-      "Bash(timeout 10 pnpm --filter comprehensive-demo dev)"
+      "Bash(timeout 10 pnpm --filter comprehensive-demo dev)",
+      "mcp__ide__getDiagnostics",
+      "Bash(tsx scripts/build-package.ts:*)",
+      "Bash(npx tsx:*)",
+      "Bash(open http://localhost:5175/)",
+      "Bash(for:*)",
+      "Bash(do sed -i '' 's/<RouterView router={this.router} \\/>/<RouterView router={this.router} depth={1} \\/>/g' \"$file\")",
+      "Bash(done)",
+      "Bash(do sed -i '' 's/ depth={1}//g' \"$file\")"
     ],
     "deny": [],
     "ask": []

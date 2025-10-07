@@ -114,8 +114,12 @@ export class RouteMatcher {
   private buildRouteTables(
     routes: RouteDefinitions,
     parent?: RouteRecord,
+    parentName?: string,
   ): void {
     for (const [name, definition] of Object.entries(routes)) {
+      // 构建完整的路由名称（使用点分隔，如 'runtime.hello-world'）
+      const fullName = parentName ? `${parentName}.${name}` : name;
+
       // 构建路由路径（考虑嵌套）
       const fullPath = parent
         ? this.parser.joinPath(parent.path, definition.path)
@@ -123,7 +127,7 @@ export class RouteMatcher {
 
       // 创建路由记录
       const record: RouteRecord = {
-        name,
+        name: fullName,
         path: fullPath,
         regex: null,
         keys: [],
@@ -135,7 +139,7 @@ export class RouteMatcher {
       };
 
       // 添加到所有路由集合
-      this.allRoutes.set(name, record);
+      this.allRoutes.set(fullName, record);
 
       // 根据路径类型分类存储
       if (this.parser.isStatic(fullPath)) {
@@ -159,7 +163,7 @@ export class RouteMatcher {
 
       // 处理子路由
       if (definition.children) {
-        this.buildRouteTables(definition.children, record);
+        this.buildRouteTables(definition.children, record, fullName);
       }
     }
 

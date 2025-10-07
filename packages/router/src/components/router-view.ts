@@ -9,7 +9,7 @@ import { jsx } from '@fukict/runtime/jsx-runtime';
 import { Widget } from '@fukict/widget';
 
 import { RouteWidget } from '../route-widget';
-import type { Router } from '../router';
+import type { Router, IRouterView } from '../router';
 
 /**
  * RouterView Props
@@ -17,7 +17,7 @@ import type { Router } from '../router';
 export interface RouterViewProps {
   /** Router 实例 */
   router: Router;
-  /** 命名视图名称（用于嵌套路由） */
+  /** 命名视图名称（用于嵌套路由，暂未实现） */
   name?: string;
 }
 
@@ -25,42 +25,51 @@ export interface RouterViewProps {
  * RouterView 组件
  * 负责渲染当前路由匹配的组件，并注入路由上下文
  */
-export class RouterView extends Widget<RouterViewProps> {
+export class RouterView extends Widget<RouterViewProps> implements IRouterView {
   private currentComponent: Widget | null = null;
-  private unwatch: (() => void) | null = null;
+  private currentRouteName: string | null = null;
   private containerElement: Element | null = null;
 
+  // 父子关联（每个深度同时只有一个活跃的子路由）
+  private parentRouterView: IRouterView | null = null;
+  private childRouterView: IRouterView | null = null;
+
+  // 监听器（仅根 RouterView 需要）
+  private unwatch: (() => void) | null = null;
+
   protected onMounted(): void {
-    console.log('[@fukict/router] RouterView onMounted');
+    const { router } = this.props;
+
     // 获取渲染容器
     this.containerElement = this.root;
     if (!this.containerElement) {
-      console.error('[@fukict/router] RouterView container not found');
       return;
     }
 
-    console.log(
-      '[@fukict/router] RouterView container:',
-      this.containerElement,
-    );
+    // 从 router 栈获取父级
+    this.parentRouterView = router.getCurrentParentRouterView();
 
-    const { router } = this.props;
+    // 如果是子 RouterView，注册到父级
+    if (this.parentRouterView) {
+      this.parentRouterView.registerChild(this);
+    }
 
-    // 监听路由变化
-    this.unwatch = router.afterEach(() => {
-      console.log('[@fukict/router] Route changed');
-      this.handleRouteChange();
-    });
+    // 先完成初始渲染
+    this.renderRoute();
 
-    // 初始渲染
-    this.handleRouteChange();
+    // 只有根 RouterView 在初始渲染后监听路由变化
+    if (!this.parentRouterView) {
+      this.unwatch = router.afterEach(() => {
+        this.checkAndUpdate();
+      });
+    }
   }
 
   protected onUnmounting(): void {
-    // 卸载当前路由组件
-    if (this.currentComponent && this.currentComponent.isMounted) {
-      this.currentComponent.unmount();
-      this.currentComponent = null;
+    // 从父级注销
+    if (this.parentRouterView) {
+      this.parentRouterView.unregisterChild(this);
+      this.parentRouterView = null;
     }
 
     // 取消路由监听
@@ -68,63 +77,149 @@ export class RouterView extends Widget<RouterViewProps> {
       this.unwatch();
       this.unwatch = null;
     }
+
+    // 清理整个组件树（自下往上）
+    this.cleanup();
   }
 
   /**
-   * 处理路由变化
+   * 注册子 RouterView（实现 IRouterView 接口）
    */
-  private handleRouteChange(): void {
-    console.log('[@fukict/router] handleRouteChange called');
-    if (!this.containerElement) {
-      console.error('[@fukict/router] No container element');
+  registerChild(child: IRouterView): void {
+    this.childRouterView = child;
+  }
+
+  /**
+   * 注销子 RouterView（实现 IRouterView 接口）
+   */
+  unregisterChild(child: IRouterView): void {
+    if (this.childRouterView === child) {
+      this.childRouterView = null;
+    }
+  }
+
+  /**
+   * 计算当前 RouterView 的深度（通过遍历 parent 链）
+   */
+  private calculateDepth(): number {
+    let depth = 0;
+    let parent = this.parentRouterView;
+    while (parent) {
+      depth++;
+      parent = (parent as RouterView).parentRouterView;
+    }
+    return depth;
+  }
+
+  /**
+   * 获取当前层应该渲染的路由
+   */
+  private getMatchedRoute() {
+    const depth = this.calculateDepth();
+    const currentRoute = this.props.router.getCurrentRoute();
+    return currentRoute.matched[depth] || null;
+  }
+
+  /**
+   * 清理：自下往上卸载组件
+   * 实现 IRouterView 接口
+   */
+  cleanup(): void {
+    console.log('Cleaning up RouterView at depth:', !this.currentComponent?.isMounted);
+    // 1. 判断是否需要清理
+    if (!this.currentComponent?.isMounted) {
+      return;
+    }
+
+    // 2. 先递归清理子级
+    if (this.childRouterView) {
+      console.info('Exist children of route component:', this.currentRouteName);
+      this.childRouterView.cleanup();
+      this.childRouterView = null;
+    }
+
+    console.info('Unmounting route component:', this.currentRouteName);
+    // 3. 卸载自己的组件
+    this.currentComponent.unmount();
+    this.currentComponent = null;
+    this.currentRouteName = null;
+  }
+
+  /**
+   * 检查并更新：判断当前层是否需要更新
+   * 实现 IRouterView 接口
+   */
+  checkAndUpdate(): void {
+    const matched = this.getMatchedRoute();
+
+    // 1. 没有匹配的路由，清理
+    if (!matched) {
+      this.cleanup();
+      return;
+    }
+
+    // 2. 当前层未变化，通知子级检查
+    if (this.currentRouteName === matched.name) {
+      if (this.childRouterView) {
+        this.childRouterView.checkAndUpdate();
+      }
+      return;
+    }
+
+    // 3. 当前层变化，清理旧组件并重新渲染
+    this.cleanup();
+    this.renderRoute();
+  }
+
+  /**
+   * 渲染：创建并挂载组件
+   */
+  private renderRoute(): void {
+    if (!this.isMounted || !this.containerElement) {
       return;
     }
 
     const { router } = this.props;
-    const currentRoute = router.getCurrentRoute();
-    console.log('[@fukict/router] Current route:', currentRoute);
-    const matched = currentRoute.matched[0]; // 简化处理，取第一个匹配
+    const matched = this.getMatchedRoute();
 
-    // 卸载旧组件
-    if (this.currentComponent && this.currentComponent.isMounted) {
-      console.log('[@fukict/router] Unmounting old component');
-      this.currentComponent.unmount();
-      this.currentComponent = null;
-    }
-
-    // 清空容器
-    this.containerElement.innerHTML = '';
-
+    // 没有匹配的路由，跳过
     if (!matched) {
-      // 没有匹配的路由，不渲染任何内容
-      console.warn('[@fukict/router] No matched route');
       return;
     }
 
-    console.log('[@fukict/router] Matched route:', matched);
     const ComponentClass = matched.component;
+    this.currentRouteName = matched.name;
 
     // 检查是否为 Widget 类
     if (!ComponentClass || !(ComponentClass.prototype instanceof Widget)) {
       throw new Error(
         `[@fukict/router] Route component must be a Widget class component. ` +
-          `Route: ${currentRoute.name || currentRoute.path}`,
+          `Route: ${matched.name || matched.path}`,
       );
     }
 
-    // 创建新组件实例
-    console.log('[@fukict/router] Creating component instance');
-    this.currentComponent = new ComponentClass({});
+    // 1. 压入栈（让子 RouterView 能找到自己）
+    router.pushRouterView(this);
 
-    // 注入 route context（如果是 RouteWidget）
-    if (this.currentComponent instanceof RouteWidget) {
-      console.log('[@fukict/router] Injecting route context');
-      this.injectRouteContext(this.currentComponent, router, currentRoute);
+    try {
+      // 2. 创建并挂载组件
+      this.currentComponent = new ComponentClass({});
+
+      // 注入 route context（如果是 RouteWidget）
+      if (this.currentComponent instanceof RouteWidget) {
+        const currentRoute = router.getCurrentRoute();
+        this.injectRouteContext(this.currentComponent, router, currentRoute);
+      }
+
+      this.currentComponent.mount(this.containerElement, true);
+    } catch (error) {
+      // 渲染失败，清理状态
+      this.currentRouteName = null;
+      throw error;
+    } finally {
+      // 3. 弹出栈
+      router.popRouterView();
     }
-
-    // 挂载新组件
-    console.log('[@fukict/router] Mounting component to container');
-    this.currentComponent.mount(this.containerElement, true);
   }
 
   /**

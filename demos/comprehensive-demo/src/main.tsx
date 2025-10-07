@@ -1,21 +1,7 @@
 import { createRouter } from '@fukict/router';
 import { App } from './App';
-import { Home } from './pages/Home';
-import { allExamples } from './config/examples';
+import { routes } from './config/routes';
 import './styles/index.css';
-
-// 创建路由配置
-const routes = [
-  {
-    path: '/',
-    component: Home,
-  },
-  // 动态加载所有示例路由
-  ...allExamples.map(example => ({
-    path: example.path,
-    component: example.component,
-  })),
-];
 
 // 创建路由实例
 const router = createRouter({

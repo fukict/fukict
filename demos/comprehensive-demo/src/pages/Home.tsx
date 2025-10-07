@@ -1,6 +1,4 @@
 import { RouteWidget } from '@fukict/router';
-import { RouterLink } from '@fukict/router';
-import { exampleCategories } from '../config/examples';
 
 export class Home extends RouteWidget {
   render() {
@@ -115,67 +113,6 @@ export class Home extends RouteWidget {
           </div>
         </div>
 
-        {/* Categories */}
-        <div class="mb-12">
-          <h2 class="text-3xl font-extrabold text-gray-900 mb-8 flex items-center gap-3">
-            <span class="text-3xl">📚</span>
-            示例分类
-          </h2>
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {exampleCategories.map((category, index) => {
-              const colors = [
-                'from-blue-500 to-cyan-500',
-                'from-purple-500 to-pink-500',
-                'from-green-500 to-emerald-500',
-                'from-orange-500 to-red-500',
-                'from-indigo-500 to-purple-500',
-                'from-pink-500 to-rose-500',
-              ];
-              const bgColors = [
-                'from-blue-50 to-cyan-50',
-                'from-purple-50 to-pink-50',
-                'from-green-50 to-emerald-50',
-                'from-orange-50 to-red-50',
-                'from-indigo-50 to-purple-50',
-                'from-pink-50 to-rose-50',
-              ];
-
-              return (
-                <RouterLink
-                  key={category.id}
-                  router={this.route.router}
-                  to={category.examples[0]?.path || '/'}
-                  class="group block"
-                >
-                  <div class={`relative bg-gradient-to-br ${bgColors[index]} rounded-2xl p-8 shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-200 hover:border-primary-300 hover:-translate-y-1`}>
-                    {/* Icon badge */}
-                    <div class={`absolute top-6 right-6 w-16 h-16 bg-gradient-to-br ${colors[index]} rounded-2xl shadow-lg flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-6 transition-transform`}>
-                      <span class="text-3xl">{category.icon}</span>
-                    </div>
-
-                    <div class="pr-20">
-                      <h3 class="text-2xl font-bold text-gray-900 mb-3">
-                        {category.title}
-                      </h3>
-                      <p class="text-gray-700 mb-4 leading-relaxed">
-                        {category.description}
-                      </p>
-                      <div class="flex items-center gap-4">
-                        <span class={`inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r ${colors[index]} text-white rounded-full text-sm font-semibold shadow-md`}>
-                          <span>{category.examples.length}</span>
-                          <span>个示例</span>
-                        </span>
-                        <span class="text-sm text-gray-500 group-hover:text-primary-600 transition-colors">
-                          点击探索 →
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </RouterLink>
-              );
-            })}
-          </div>
-        </div>
       </div>
     );
   }

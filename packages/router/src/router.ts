@@ -15,8 +15,22 @@ import type {
   RouteDefinitions,
   RouteLocation,
   RouteLocationRaw,
+  RouteRecord,
   RouterOptions,
 } from './types';
+
+/**
+ * RouterView 接口（用于栈管理，避免循环依赖）
+ */
+export interface IRouterView {
+  checkAndUpdate(): void;
+  registerChild(child: IRouterView): void;
+  unregisterChild(child: IRouterView): void;
+  /**
+   * 清理当前 RouterView 及其所有子路由的组件
+   */
+  cleanup(): void;
+}
 
 /**
  * Router 类
@@ -30,6 +44,9 @@ export class Router<Routes extends RouteDefinitions = RouteDefinitions> {
   private afterEachHooks: NavigationHook[];
   private isReady: boolean;
   private unlisten: (() => void) | null;
+
+  // RouterView 渲染栈
+  private routerViewStack: IRouterView[] = [];
 
   constructor(options: RouterOptions & { routes: Routes }) {
     const { mode = 'hash', routes, base = '', beforeEach, afterEach } = options;
@@ -215,6 +232,34 @@ export class Router<Routes extends RouteDefinitions = RouteDefinitions> {
   }
 
   /**
+   * 获取当前父 RouterView
+   */
+  getCurrentParentRouterView(): IRouterView | null {
+    return this.routerViewStack[this.routerViewStack.length - 1] ?? null;
+  }
+
+  /**
+   * 获取下一层的 depth
+   */
+  getNextDepth(): number {
+    return this.routerViewStack.length;
+  }
+
+  /**
+   * 将 RouterView 压入渲染栈
+   */
+  pushRouterView(view: IRouterView): void {
+    this.routerViewStack.push(view);
+  }
+
+  /**
+   * 从渲染栈弹出 RouterView
+   */
+  popRouterView(): void {
+    this.routerViewStack.pop();
+  }
+
+  /**
    * 销毁路由器
    */
   destroy(): void {
@@ -368,6 +413,14 @@ export class Router<Routes extends RouteDefinitions = RouteDefinitions> {
       };
     }
 
+    // 构建完整的路由链（从根到叶子）
+    const matched: RouteRecord[] = [];
+    let current: RouteRecord | undefined = match.route;
+    while (current) {
+      matched.unshift(current); // 在数组开头插入
+      current = current.parent;
+    }
+
     return {
       name: match.route.name,
       path,
@@ -375,7 +428,7 @@ export class Router<Routes extends RouteDefinitions = RouteDefinitions> {
       query,
       hash: hash ? `#${hash}` : '',
       fullPath,
-      matched: [match.route],
+      matched,
       meta: match.route.meta,
     };
   }
