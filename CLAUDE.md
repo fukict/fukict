@@ -2,298 +2,239 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project Overview
+## 🚨 重要：项目正在重构中
 
-Fukict 是一个专注于性能场景的轻量级 DOM 渲染库 (< 10KB)，采用编译时优化策略，通过 JSX 编译期转换减少运行时开销。适用于数据可视化、游戏UI、大量DOM操作等性能敏感场景。
+当前项目正在进行架构重构，所有旧代码已移至 `old/` 目录。
 
-## Runtime Architecture
+**重构状态**：设计阶段
+**当前任务**：参考 `REFACTOR_TODO.md`
 
-Fukict 采用 monorepo 架构，由以下核心包组成：
+## 开发工作流规范
 
-### `@fukict/runtime` (packages/runtime/)
+### 强制规则
 
-- **职责**: 轻量级 VNode 到 DOM 渲染引擎
-- **核心模块**:
-  - `renderer.ts`: VNode 树到真实 DOM 的转换引擎，支持增量更新
-  - `jsx-runtime.ts`: JSX 运行时支持
-  - `dom-utils.ts`: 精确 DOM 操作工具集
-  - `pattern-registry.ts`: 组件编码范式注册机制
-- **关键特性**:
-  - WeakMap 实现 VNode-DOM 双向映射，自动垃圾回收
-  - 多入口导出 (renderer, jsx-runtime, dom-utils 等)
-  - RefCallback 机制支持 DOM 引用
+1. **任务完成后必须更新 TODO**
+   - 每完成 `REFACTOR_TODO.md` 中的一个任务，立即标记为已完成
+   - 如果任务拆分或变更，必须更新 TODO 文档
 
-### `@fukict/babel-plugin` (packages/babel-plugin/)
+2. **功能边界变更必须更新文档**
+   - 包职责变更 → 更新对应包的 `DESIGN.md`
+   - API 变更 → 更新对应包的 `API.md`
+   - 架构变更 → 更新根目录 `docs/` 下的架构文档
 
-- **职责**: JSX 编译时转换，将 JSX 语法转换为优化的 VNode 结构
-- **输出**: ESM + CJS 双格式
-- **配置**: 在 Vite/Webpack 中需要配置 `@babel/plugin-syntax-jsx` 和本插件
+3. **设计决策必须记录**
+   - 所有重要设计决策必须在 `DESIGN.md` 中记录
+   - 包含：决策背景、考虑的方案、最终选择、理由
 
-### `@fukict/widget` (packages/widget/)
+4. **设计文档专注设计，不涉及代码**
+   - `DESIGN.md` 只描述设计思路、架构、机制
+   - 不要包含代码实现细节
+   - 代码示例放在 `EXAMPLES.md`
 
-- **职责**: 组件编码范式抽象层，提供类组件和函数组件支持
-- **核心功能**:
-  - `class-widget.ts`: 类组件基类 Widget<Props>
-  - `functional-widget.ts`: defineWidget<Props> 函数组件工厂
-  - `scheduler.ts`: 渲染调度器配置
-  - `pattern-handlers.ts`: 自动注册 Widget 编码范式到 runtime
-- **依赖**: 依赖 `@fukict/runtime` 的 pattern-registry 机制
+## 项目架构（重构后）
 
-### `@fukict/babel-preset-widget` (packages/babel-preset-widget/)
+### 核心包
 
-- **职责**: Widget 零配置预设，简化 Babel 配置
+**@fukict/runtime** - 轻量级 DOM 渲染引擎
+- **职责**：VNode 到 DOM 的转换和基础渲染
+- **核心特性**：
+  - VNode 创建（hyperscript / JSX runtime）
+  - DOM 创建和挂载
+  - **注册机制**（核心中的核心）：开放钩子让其他包扩展渲染能力
+  - 基础 DOM 操作工具
+- **不包含**：状态管理、生命周期、组件抽象
+- **大小目标**：< 5KB gzipped
+
+**@fukict/widget** - 组件抽象层
+- **职责**：提供组件编程范式
+- **核心特性**：
+  - Widget 类组件（生命周期、状态、refs、slots）
+  - defineWidget 函数组件
+  - 通过 runtime 注册机制扩展渲染能力
+  - 组件挂载/卸载/更新管理
+  - 数组节点渲染
+  - 脱围渲染（fukict:detach）
+- **依赖**：@fukict/runtime（peer）
+- **大小目标**：< 8KB gzipped
+
+**@fukict/scheduler** - 调度器（从 widget 剥离）
+- **职责**：渲染任务调度
+- **核心特性**：
+  - 优先级队列
+  - requestIdleCallback / requestAnimationFrame
+  - 任务取消
+- **依赖**：无（可选集成 widget）
+- **大小目标**：< 2KB gzipped
+
+**@fukict/babel-plugin** - JSX 编译优化
+- **职责**：JSX 语法转换
+- **核心特性**：
+  - 事件分离（on: 前缀）
+  - 静态优化
+  - 组件类型识别
+
+**@fukict/babel-preset-widget** - 零配置预设
+- **职责**：简化 Babel 配置
+- **包含**：@babel/plugin-syntax-jsx + @fukict/babel-plugin
+
+**@fukict/router** - 路由管理
+- **职责**：单页应用路由
+- **依赖**：@fukict/widget（peer）
+
+**@fukict/flux** - 状态管理（重命名自 state）
+- **职责**：应用级状态管理
+- **依赖**：@fukict/widget（可选）
+
+### 预留包
+
+**@fukict/create** - 脚手架工具（未实现）
+**@fukict/devtools** - 开发者工具（未实现）
+
+### 包依赖关系
+
+```
+@fukict/runtime (核心，无依赖)
+    ↑ peer
+@fukict/widget
+    ↑ peer
+@fukict/router
+@fukict/flux (可选依赖 widget)
+
+@fukict/scheduler (独立)
+
+@fukict/babel-plugin (独立)
+    ↑
+@fukict/babel-preset-widget
+```
+
+### 用户使用方式
+
+**安装**：
+```bash
+pnpm add @fukict/widget @fukict/runtime
+pnpm add -D @fukict/babel-preset-widget
+# 可选
+pnpm add @fukict/scheduler @fukict/router @fukict/flux
+```
+
+**引用**：
+```typescript
+// ✅ 推荐：仅从 widget 引用
+import { Widget, render, h } from '@fukict/widget'
+
+// ❌ 不推荐：直接引用 runtime
+// import { render } from '@fukict/runtime'
+```
+
+## 文档管理结构
+
+### 根目录文档 `docs/`
+- `ARCHITECTURE.md` - 整体架构设计
+- `GETTING_STARTED.md` - 快速开始
+- `CORE_CONCEPTS.md` - 核心概念
+- `API_INDEX.md` - API 索引
+
+### 包级别文档 `packages/*/docs/`
+- `DESIGN.md` - 设计文档（专注设计思路，不含代码）
+- `API.md` - API 文档
+- `EXAMPLES.md` - 使用示例
+- `CHANGELOG.md` - 变更日志
+
+## 重构关键设计问题
+
+### 1. runtime 注册机制（最核心）
+
+需要思考：
+- 如何设计通用的钩子注册接口？
+- 如何保证钩子执行顺序？
+- 如何处理钩子返回值？
+- 如何支持异步钩子？
+- 如何避免钩子冲突？
+
+### 2. widget 扩展机制
+
+需要思考：
+- 如何通过注册机制完全控制组件渲染？
+- 如何实现组件实例的生命周期管理？
+- 如何实现 refs 自动注册和清理？
+- 如何实现 slots 的高效提取和渲染？
+- 如何实现脱围渲染？
+
+### 3. 数组节点渲染
+
+需要思考：
+- 如何注册数组节点的渲染逻辑？
+- 是否需要 key 优化？如何设计？
+- 如何与 widget 的 diff 机制配合？
+
+### 4. 包导出策略
+
+需要思考：
+- runtime 应该导出哪些 API？
+- widget 应该重新导出哪些 runtime API？
+- 如何防止用户直接使用 runtime？
+- 如何保持类型完整性？
 
 ## Common Commands
 
-### 构建
+### 重构阶段
 
 ```bash
-# 构建所有包（推荐）
-pnpm build                                    # 清理 + 提取 metadata + 构建包 + 构建 demos
-pnpm build:pkg                                # 仅构建包
+# 查看重构任务
+cat REFACTOR_TODO.md
 
-# 监听模式开发
-pnpm build:pkg:watch                          # 监听所有包
-tsx scripts/build-package.ts --pkg-name runtime --watch  # 监听单个包
-
-# 仅构建特定包
-tsx scripts/build-package.ts --pkg-name runtime widget --no-watch
-
-# 提取包 metadata
-pnpm extract-metadata                         # 提取 version + dependencies 到各包的 src/metadata.ts
+# 当前不可用（等待重构完成）
+# pnpm build
+# pnpm test
 ```
 
-### 测试
+## 重要约束
 
-```bash
-# 运行所有包测试
-pnpm test
-
-# 单包测试
-cd packages/runtime && pnpm test
-cd packages/widget && pnpm test:watch
-```
-
-### 代码质量
-
-```bash
-pnpm lint           # ESLint 检查
-pnpm lint:fix       # 自动修复
-pnpm format         # Prettier 格式化
-```
-
-### 发布
-
-```bash
-pnpm release        # 交互式发布工具（TypeScript 实现）
-pnpm changeset      # 手动创建 changeset
-
-# 或直接执行 TypeScript 脚本
-npx tsx scripts/release.ts
-```
-
-### Demo 开发
-
-```bash
-cd demos/vite-demo && pnpm dev         # Vite 热重载
-cd demos/webpack-demo && pnpm start    # Webpack 开发服务器
-cd demos/rsbuild-demo && pnpm dev      # Rsbuild 快速构建
-```
-
-## Development Workflow
-
-### 包开发标准流程
-
-1. 确认工作目录：使用 `pwd` 确认在正确的包目录下 (packages/{name}/)
-2. 修改源码：编辑 `src/` 下文件
-3. 运行测试：`pnpm test` (使用 Vitest + jsdom 环境)
-4. 构建：`tsx scripts/build-package.ts --pkg-name {name} --no-watch`
-5. 在 demo 中验证：链接到 demos/ 项目测试
-
-**注意**：构建前会自动提取 metadata.ts (version + dependencies)
-
-### 添加新包
-
-新包必须遵循以下结构：
-
-```
-packages/{name}/
-├── src/index.ts        # 主导出入口
-├── tests/*.test.ts     # Vitest 测试用例
-├── package.json        # 必须包含正确的 exports 字段
-└── vitest.config.ts    # 测试配置（可选）
-```
-
-**同时需要在 `tsdown.config.yml` 中添加包配置**：
-
-```yaml
-packages:
-  { name }:
-    platform: browser # 或 node
-    entry: 'src/index.ts'
-    format: esm # 或 ['esm', 'cjs']
-    description: '包描述'
-```
-
-package.json 核心字段：
-
-```json
-{
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    }
-  },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "name": "@fukict/{name}",
-  "scripts": {
-    "test": "vitest --run"
-  },
-  "type": "module",
-  "types": "./dist/index.d.ts"
-}
-```
-
-### 添加新 Demo
-
-Demo 用于展示不同工具链集成，每个 demo 必须：
-
-- 包含 Counter、Todo List、性能测试等通用功能
-- 独立工作，不依赖其他 demo
-- 正确配置 Babel 处理 JSX (使用 `@fukict/babel-plugin` 或 `@fukict/babel-preset-widget`)
-
-## Critical Configuration Notes
-
-### Vite 项目配置
-
-**必须禁用 esbuild JSX 转换**，让 Babel 接管：
-
-```js
-// vite.config.js
-export default defineConfig({
-  esbuild: {
-    jsx: 'preserve', // 关键：让 babel 处理
-  },
-  plugins: [
-    {
-      name: 'fukict-babel',
-      async transform(code, id) {
-        if (!/\.(tsx?|jsx?)$/.test(id)) return;
-        if (!/<[A-Za-z]/.test(code)) return;
-
-        const result = await babel.transformAsync(code, {
-          plugins: ['@babel/plugin-syntax-jsx', '@fukict/babel-plugin'],
-        });
-        return result;
-      },
-    },
-  ],
-});
-```
-
-### Widget 使用注意事项
-
-使用 `@fukict/widget` 时：
-
-- 类组件：继承 `Widget<Props>` 并实现 `render()` 方法
-- 函数组件：使用 `defineWidget<Props>` 工厂函数
-- Babel 配置：使用 `@fukict/babel-preset-widget` 简化配置
-- Widget 自动注册到 runtime 的 pattern-registry，无需手动注册
-
-## Performance Principles
-
-- **编译时优化优先**：利用 Babel 插件在构建时优化 VNode 结构
-- **精确 DOM 操作**：使用 dom-utils 提供的细粒度 API
-- **自动内存管理**：WeakMap 确保 VNode-DOM 映射自动回收
-- **Bundle 大小监控**：runtime 包必须保持 < 10KB 压缩后体积
-- **Tree Shaking 支持**：所有包使用 ESM，sideEffects: false
-
-## Release Process
-
-使用 changesets 管理版本（TypeScript 交互式工具）：
-
-1. **正式发布**: `pnpm release` → 选择 "1) 正式发布"
-
-   - 流程：格式化 → lint → 测试 → 构建 → 版本更新 → 发布 npm → git 标签
-   - 需要先创建 changeset
-
-2. **预发布**: `pnpm release` → 选择 "2/3/4) Alpha/Beta/RC"
-
-   - 无需 changeset，基于当前更改直接生成快照版本
-
-3. **手动流程**:
-   ```bash
-   pnpm changeset              # 创建变更记录
-   pnpm changeset:version      # 更新版本号
-   pnpm build                  # 构建
-   pnpm changeset:publish      # 发布
-   ```
-
-**发布工具功能**：
-
-- 自动检查 git 状态和 npm 权限
-- 交互式菜单选择发布类型
-- 自动执行完整发布流程
-- 支持创建和推送 git 标签
-
-## Toolchain
-
-- **包管理器**: pnpm (强制，engines 字段限定)
-- **构建工具**: tsdown (统一构建，支持 watch 模式)
-- **构建配置**: tsdown.config.yml (YAML 格式，易于扩展)
-- **脚本执行**: tsx (TypeScript 脚本直接执行)
-- **测试框架**: Vitest (jsdom 环境)
-- **类型检查**: TypeScript 5.6+
-- **代码规范**: ESLint 9 + Prettier
-- **版本管理**: changesets
-
-## Important Constraints
-
-1. **目录路径**：编辑文件前必须 `pwd` 确认当前目录，避免在根目录编辑包文件
-2. **包名验证**：构建脚本会自动验证包名，仅允许 runtime|widget|babel-plugin|babel-preset-widget
-3. **依赖管理**：禁止使用 npm/yarn，必须使用 pnpm
-4. **Node 版本**：>=16.0.0
-5. **TypeScript 覆盖**：所有包必须 100% TypeScript 编写
-6. **测试覆盖**：新功能必须包含测试用例
-7. **Metadata 文件**：src/metadata.ts 由脚本自动生成，不要手动编辑
+1. **当前处于设计阶段**：先完成所有设计文档，再开始实现
+2. **设计优先于实现**：不要急于编码，先把设计打磨好
+3. **注册机制是核心**：花最多时间设计 runtime 的注册机制
+4. **文档驱动开发**：每个包先写 DESIGN.md，再写代码
+5. **逐个攻破**：按 REFACTOR_TODO.md 的顺序，逐个完成任务
 
 ## Absolute Rules for Claude Code
 
-**CRITICAL: These rules must ALWAYS be followed:**
+**CRITICAL: 重构期间必须遵守的规则**
 
-1. **禁止自动启动服务或构建**：
-   - 永远不要主动执行 `pnpm dev`、`pnpm build`、`pnpm start` 等构建或启动命令
-   - 仅在用户明确要求时才执行这些命令
-   - 不要假设用户想要立即运行或测试代码
+1. **禁止直接编写实现代码**：
+   - 当前阶段只做设计，不写实现
+   - 先完成 REFACTOR_TODO.md 阶段一、二、三的所有任务
+   - 只有设计评审通过后，才能进入阶段五（实施）
 
-2. **文档编写规范**：
-   - 编写文档时禁止随意添加代码示例
-   - 如果文档确实需要代码示例，保持极简，不要添加大量代码
-   - 代码示例应仅展示关键概念，避免完整实现
-   - 优先使用伪代码或简化的代码片段
+2. **每完成一个任务必须更新 TODO**：
+   - 完成任务后立即在 REFACTOR_TODO.md 标记为已完成
+   - 格式：`- [x] 任务描述`
 
-## Widget 组件编码范式
+3. **设计文档不要包含代码**：
+   - DESIGN.md 专注于设计思路、架构、机制
+   - 不要写实现代码，不要写代码示例
+   - 代码示例放在 EXAMPLES.md
 
-Widget 是 fukict 的可选组件抽象层，提供状态管理和生命周期：
+4. **功能边界变更必须同步文档**：
+   - 包职责变更 → 更新 DESIGN.md
+   - API 变更 → 更新 API.md
+   - 架构变更 → 更新 docs/ARCHITECTURE.md
 
-```tsx
-// 类组件
-class Counter extends Widget<{ initialCount: number }> {
-  render() {
-    return <div>{this.props.initialCount}</div>;
-  }
-}
+5. **重点关注注册机制**：
+   - runtime 的注册机制是整个框架的核心
+   - 必须反复推敲，确保设计足够灵活和强大
+   - 设计时考虑：组件渲染、生命周期、数组节点、脱围渲染等扩展点
 
-// 函数组件
-const Counter = defineWidget<{ initialCount: number }>(
-  ({ initialCount }) => <div>{initialCount}</div>
-);
-```
+6. **设计决策必须有理由**：
+   - 每个设计决策必须在文档中说明理由
+   - 包含：问题背景、考虑的方案、最终选择、选择理由
 
-关键机制：
+## 参考资料
 
-- Widget 通过 `pattern-handlers.ts` 自动注册到 runtime 的 `pattern-registry`
-- Runtime 的 `renderer.ts` 通过 `isRegisteredComponent` 和 `renderRegisteredComponent` 调用 Widget 渲染逻辑
-- 这种设计实现了 runtime 和 widget 的解耦，runtime 仅提供注册机制，不依赖 widget 实现
+- 旧实现代码：`old/packages/` 目录
+- 旧文档：`old/docs/` 目录
+- 架构分析：参考之前的问题分析（已记录在聊天历史中）
+
+---
+
+**当前状态**：🟡 设计阶段
+**下一步**：完成 REFACTOR_TODO.md 的阶段一任务
