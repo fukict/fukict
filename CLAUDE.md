@@ -94,9 +94,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```
 @fukict/runtime (核心，无依赖)
-    ↑ peer
-@fukict/widget
-    ↑ peer
+    ↑ dependencies
+@fukict/widget (用户安装这个)
+    ↑ peerDependencies
 @fukict/router
 @fukict/flux (可选依赖 widget)
 
@@ -111,10 +111,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **安装**：
 ```bash
-pnpm add @fukict/widget @fukict/runtime
+# 最小安装（runtime 自动安装）
+pnpm add @fukict/widget
+
+# 完整功能
+pnpm add @fukict/widget @fukict/scheduler @fukict/router @fukict/flux
+
+# 开发工具
 pnpm add -D @fukict/babel-preset-widget
-# 可选
-pnpm add @fukict/scheduler @fukict/router @fukict/flux
 ```
 
 **引用**：
