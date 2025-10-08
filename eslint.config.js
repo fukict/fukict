@@ -3,6 +3,7 @@ import tsPlugin from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 
 import prettierConfig from 'eslint-config-prettier';
+import globals from 'globals';
 
 export default [
   js.configs.recommended,
@@ -12,46 +13,12 @@ export default [
       ecmaVersion: 2022,
       sourceType: 'module',
       globals: {
-        // Node.js 全局变量
-        console: 'readonly',
-        process: 'readonly',
-        Buffer: 'readonly',
-        __dirname: 'readonly',
-        __filename: 'readonly',
-        global: 'readonly',
-        module: 'readonly',
-        require: 'readonly',
-        exports: 'readonly',
-
-        // DOM 全局变量
-        window: 'readonly',
-        document: 'readonly',
-        HTMLElement: 'readonly',
-        HTMLInputElement: 'readonly',
-        HTMLButtonElement: 'readonly',
-        HTMLDivElement: 'readonly',
-        HTMLFormElement: 'readonly',
-        HTMLUListElement: 'readonly',
-        Element: 'readonly',
-        Event: 'readonly',
-        KeyboardEvent: 'readonly',
+        ...globals.browser,
+        ...globals.node,
+        // TypeScript DOM type interfaces (not runtime globals)
+        CSSStyleDeclaration: 'readonly',
+        HTMLElementEventMap: 'readonly',
         EventListener: 'readonly',
-        EventTarget: 'readonly',
-        Node: 'readonly',
-        Text: 'readonly',
-        DocumentFragment: 'readonly',
-        MutationObserver: 'readonly',
-
-        // Web APIs
-        setTimeout: 'readonly',
-        clearTimeout: 'readonly',
-        setInterval: 'readonly',
-        clearInterval: 'readonly',
-        fetch: 'readonly',
-        alert: 'readonly',
-        localStorage: 'readonly',
-        sessionStorage: 'readonly',
-        FormData: 'readonly',
       },
     },
     rules: {

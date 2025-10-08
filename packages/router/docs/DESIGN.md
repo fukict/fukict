@@ -21,6 +21,7 @@ router 是 Fukict 的路由管理器，职责：
 ```
 
 **依赖说明**：
+
 - router 依赖 widget 的 Widget 类和生命周期机制
 - RouterView 本身是一个 Widget 组件
 - 用户需要同时安装 widget 和 router
@@ -47,20 +48,21 @@ Router 实例创建
 
 ```typescript
 interface RouteConfig {
-  path: string                    // 路径模式
-  component?: Component           // 组件（同步）
-  loader?: () => Promise<any>     // 懒加载（异步）
-  children?: RouteConfig[]        // 嵌套路由
-  redirect?: string               // 重定向
-  name?: string                   // 路由名称（可选）
-  meta?: Record<string, any>      // 元信息（可选）
-  beforeEnter?: NavigationGuard   // 路由级守卫
+  path: string; // 路径模式
+  component?: Component; // 组件（同步）
+  loader?: () => Promise<any>; // 懒加载（异步）
+  children?: RouteConfig[]; // 嵌套路由
+  redirect?: string; // 重定向
+  name?: string; // 路由名称（可选）
+  meta?: Record<string, any>; // 元信息（可选）
+  beforeEnter?: NavigationGuard; // 路由级守卫
 }
 ```
 
 ### 路径模式
 
 **支持的模式**：
+
 - 静态路径：`/home`、`/about`
 - 动态参数：`/users/:id`、`/posts/:postId/comments`
 - 可选参数：`/docs/:lang?`
@@ -68,6 +70,7 @@ interface RouteConfig {
 - 正则约束：`/users/:id(\\d+)`
 
 **匹配优先级**：
+
 1. 静态路径 > 动态路径 > 通配符
 2. 先定义 > 后定义
 
@@ -77,15 +80,15 @@ interface RouteConfig {
 
 ```typescript
 class Router {
-  constructor(options: RouterOptions)
+  constructor(options: RouterOptions);
 }
 
 interface RouterOptions {
-  routes: RouteConfig[]           // 路由配置
-  mode?: 'history' | 'hash'       // 模式（默认 history）
-  base?: string                   // 基础路径
-  fallback?: Component            // 404 组件
-  scrollBehavior?: ScrollBehavior // 滚动行为
+  routes: RouteConfig[]; // 路由配置
+  mode?: 'history' | 'hash'; // 模式（默认 history）
+  base?: string; // 基础路径
+  fallback?: Component; // 404 组件
+  scrollBehavior?: ScrollBehavior; // 滚动行为
 }
 ```
 
@@ -94,33 +97,34 @@ interface RouterOptions {
 ```typescript
 class Router {
   // 当前路由（响应式）
-  get route(): Route
+  get route(): Route;
 
   // 导航
-  push(location: Location): Promise<void>
-  replace(location: Location): Promise<void>
-  go(n: number): void
-  back(): void
-  forward(): void
+  push(location: Location): Promise<void>;
+  replace(location: Location): Promise<void>;
+  go(n: number): void;
+  back(): void;
+  forward(): void;
 
   // 守卫
-  beforeEach(guard: NavigationGuard): UnregisterFn
-  afterEach(hook: AfterNavigationHook): UnregisterFn
+  beforeEach(guard: NavigationGuard): UnregisterFn;
+  afterEach(hook: AfterNavigationHook): UnregisterFn;
 
   // 工具
-  resolve(location: Location): Route
-  subscribe(listener: () => void): UnregisterFn
+  resolve(location: Location): Route;
+  subscribe(listener: () => void): UnregisterFn;
 
   // 生命周期
-  start(): void
-  stop(): void
+  start(): void;
+  stop(): void;
 
   // 状态
-  isLoading: boolean
+  isLoading: boolean;
 }
 ```
 
 **API 改进说明**：
+
 - `route` 替代 `getCurrentRoute()` - 更简洁
 - `subscribe()` 用于组件订阅路由变化
 
@@ -128,13 +132,13 @@ class Router {
 
 ```typescript
 interface Route {
-  path: string                    // 完整路径
-  params: Record<string, string>  // 动态参数
-  query: Record<string, string>   // 查询参数
-  hash: string                    // hash
-  matched: RouteConfig[]          // 匹配的路由链（嵌套）
-  meta: Record<string, any>       // 合并的元信息
-  name?: string                   // 路由名称
+  path: string; // 完整路径
+  params: Record<string, string>; // 动态参数
+  query: Record<string, string>; // 查询参数
+  hash: string; // hash
+  matched: RouteConfig[]; // 匹配的路由链（嵌套）
+  meta: Record<string, any>; // 合并的元信息
+  name?: string; // 路由名称
 }
 ```
 
@@ -143,21 +147,23 @@ interface Route {
 ### 守卫类型
 
 **全局守卫**：
+
 ```typescript
 router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !isAuthenticated()) {
-    next('/login')
+    next('/login');
   } else {
-    next()
+    next();
   }
-})
+});
 
 router.afterEach((to, from) => {
-  console.log(`Navigated to ${to.path}`)
-})
+  console.log(`Navigated to ${to.path}`);
+});
 ```
 
 **路由级守卫**：
+
 ```typescript
 {
   path: '/admin',
@@ -183,10 +189,10 @@ router.afterEach((to, from) => {
 ### next() 语义
 
 ```typescript
-next()              // 继续导航
-next(false)         // 取消导航
-next('/login')      // 重定向
-next({ name: 'home' })  // 命名路由重定向
+next(); // 继续导航
+next(false); // 取消导航
+next('/login'); // 重定向
+next({ name: 'home' }); // 命名路由重定向
 ```
 
 ## 组件生命周期管理
@@ -194,6 +200,7 @@ next({ name: 'home' })  // 命名路由重定向
 ### 核心问题
 
 **路由切换时需要**：
+
 1. 卸载旧路由组件（调用 onBeforeUnmount）
 2. 渲染新路由组件（触发 onMounted）
 3. 嵌套路由只更新变化的层级
@@ -202,38 +209,38 @@ next({ name: 'home' })  // 命名路由重定向
 
 ```typescript
 class RouterView extends Widget {
-  private currentComponent?: Widget
-  private unsubscribe?: UnregisterFn
+  private currentComponent?: Widget;
+  private unsubscribe?: UnregisterFn;
 
   onMounted() {
     // 订阅路由变化
     this.unsubscribe = this.props.router.subscribe(() => {
-      this.updateView()
-    })
+      this.updateView();
+    });
 
     // 初始渲染
-    this.updateView()
+    this.updateView();
   }
 
   onBeforeUnmount() {
     // 卸载当前组件（会自动递归卸载子组件）
-    this.unmountCurrentComponent()
+    this.unmountCurrentComponent();
 
     // 取消订阅
-    this.unsubscribe?.()
+    this.unsubscribe?.();
   }
 
   private updateView() {
-    const route = this.props.router.route
-    const depth = this.props.depth || 0
-    const matched = route.matched[depth]
+    const route = this.props.router.route;
+    const depth = this.props.depth || 0;
+    const matched = route.matched[depth];
 
     // 路由变化，卸载旧组件
-    this.unmountCurrentComponent()
+    this.unmountCurrentComponent();
 
     // 渲染新组件
     if (matched?.component) {
-      this.forceUpdate()
+      this.forceUpdate();
     }
   }
 
@@ -243,31 +250,31 @@ class RouterView extends Widget {
       // 1. 调用 onBeforeUnmount
       // 2. 递归卸载所有子组件（通过 refs 获取子 RouterView）
       // 3. 移除 DOM
-      this.currentComponent.unmount()
-      this.currentComponent = undefined
+      this.currentComponent.unmount();
+      this.currentComponent = undefined;
     }
   }
 
   render() {
-    const route = this.props.router.route
-    const depth = this.props.depth || 0
-    const matched = route.matched[depth]
+    const route = this.props.router.route;
+    const depth = this.props.depth || 0;
+    const matched = route.matched[depth];
 
     if (!matched) {
-      return this.props.fallback || null
+      return this.props.fallback || null;
     }
 
     if (matched.loader && !matched.component) {
-      return this.props.loading || null
+      return this.props.loading || null;
     }
 
-    const Component = matched.component
+    const Component = matched.component;
 
     // 创建组件实例（Widget 会在 onMounted 中处理初始化）
-    const instance = new Component({ ...route })
-    this.currentComponent = instance
+    const instance = new Component({ ...route });
+    this.currentComponent = instance;
 
-    return instance.render()
+    return instance.render();
   }
 }
 ```
@@ -277,23 +284,26 @@ class RouterView extends Widget {
 **场景**：`/dashboard/stats` → `/dashboard/settings`
 
 **matched 变化**：
+
 ```typescript
 旧路由: [
   { path: '/dashboard', component: DashboardLayout },
-  { path: 'stats', component: Stats }
-]
+  { path: 'stats', component: Stats },
+];
 
 新路由: [
   { path: '/dashboard', component: DashboardLayout },
-  { path: 'settings', component: Settings }
-]
+  { path: 'settings', component: Settings },
+];
 ```
 
 **装卸逻辑**：
+
 - **深度 0（DashboardLayout）**：未变化，不重新渲染
 - **深度 1（Stats → Settings）**：变化，卸载 Stats，渲染 Settings
 
 **实现方式**：
+
 - 每个 RouterView 独立管理自己深度的组件
 - 深度 0 的 RouterView 检测到 `matched[0]` 未变化，不卸载
 - 深度 1 的 RouterView 检测到 `matched[1]` 变化，卸载旧组件，渲染新组件
@@ -332,9 +342,9 @@ class RouterView extends Widget {
 const routes = [
   {
     path: '/heavy',
-    loader: () => import('./HeavyComponent')
-  }
-]
+    loader: () => import('./HeavyComponent'),
+  },
+];
 ```
 
 ### 加载流程
@@ -358,8 +368,8 @@ const routes = [
 ```typescript
 const router = new Router({
   mode: 'history',
-  routes
-})
+  routes,
+});
 // URL: /users/123
 ```
 
@@ -371,8 +381,8 @@ const router = new Router({
 ```typescript
 const router = new Router({
   mode: 'hash',
-  routes
-})
+  routes,
+});
 // URL: /#/users/123
 ```
 
@@ -412,43 +422,45 @@ class App extends Widget {
 
 ```typescript
 interface RouteConfig {
-  path: string
-  component?: Component
-  loader?: () => Promise<any>
-  children?: RouteConfig[]
-  redirect?: string
-  name?: string
-  meta?: Record<string, any>
-  beforeEnter?: NavigationGuard
+  path: string;
+  component?: Component;
+  loader?: () => Promise<any>;
+  children?: RouteConfig[];
+  redirect?: string;
+  name?: string;
+  meta?: Record<string, any>;
+  beforeEnter?: NavigationGuard;
 }
 
 interface Route {
-  path: string
-  params: Record<string, string>
-  query: Record<string, string>
-  hash: string
-  matched: RouteConfig[]
-  meta: Record<string, any>
-  name?: string
+  path: string;
+  params: Record<string, string>;
+  query: Record<string, string>;
+  hash: string;
+  matched: RouteConfig[];
+  meta: Record<string, any>;
+  name?: string;
 }
 
-type Location = string | {
-  path?: string
-  name?: string
-  params?: Record<string, any>
-  query?: Record<string, any>
-  hash?: string
-}
+type Location =
+  | string
+  | {
+      path?: string;
+      name?: string;
+      params?: Record<string, any>;
+      query?: Record<string, any>;
+      hash?: string;
+    };
 
 type NavigationGuard = (
   to: Route,
   from: Route,
-  next: NextFunction
-) => void | Promise<void>
+  next: NextFunction,
+) => void | Promise<void>;
 
-type NextFunction = (location?: false | Location) => void
+type NextFunction = (location?: false | Location) => void;
 
-type AfterNavigationHook = (to: Route, from: Route) => void
+type AfterNavigationHook = (to: Route, from: Route) => void;
 ```
 
 ## 性能优化
@@ -457,16 +469,16 @@ type AfterNavigationHook = (to: Route, from: Route) => void
 
 ```typescript
 class Router {
-  private matchCache = new Map<string, Route>()
+  private matchCache = new Map<string, Route>();
 
   private match(path: string): Route {
     if (this.matchCache.has(path)) {
-      return this.matchCache.get(path)!
+      return this.matchCache.get(path)!;
     }
 
-    const route = this.doMatch(path)
-    this.matchCache.set(path, route)
-    return route
+    const route = this.doMatch(path);
+    this.matchCache.set(path, route);
+    return route;
   }
 }
 ```
@@ -474,16 +486,16 @@ class Router {
 ### 正则表达式缓存
 
 ```typescript
-const regexCache = new Map<string, RegExp>()
+const regexCache = new Map<string, RegExp>();
 
 function pathToRegex(path: string): RegExp {
   if (regexCache.has(path)) {
-    return regexCache.get(path)!
+    return regexCache.get(path)!;
   }
 
-  const regex = compilePathToRegex(path)
-  regexCache.set(path, regex)
-  return regex
+  const regex = compilePathToRegex(path);
+  regexCache.set(path, regex);
+  return regex;
 }
 ```
 
@@ -494,6 +506,7 @@ function pathToRegex(path: string): RegExp {
 **决策**：使用 getter `route` 替代方法 `getCurrentRoute()`
 
 **理由**：
+
 - 更简洁（`router.route` vs `router.getCurrentRoute()`）
 - 语义更好（属性而非动作）
 - 类似 Vue Router 3.x 的 `$route`
@@ -503,6 +516,7 @@ function pathToRegex(path: string): RegExp {
 **决策**：RouterView 持有组件实例引用，路由变化时主动调用 unmount()
 
 **理由**：
+
 - 确保 onBeforeUnmount 被调用
 - 清理事件监听器、定时器等
 - 避免内存泄漏
@@ -512,6 +526,7 @@ function pathToRegex(path: string): RegExp {
 **决策**：每个 RouterView 只管理自己深度的组件
 
 **理由**：
+
 - 只更新变化的层级
 - 避免父组件重新渲染导致子组件也重新渲染
 - 性能更好

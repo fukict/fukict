@@ -1,0 +1,45 @@
+{
+  "compilerOptions": {
+    // Target modern browsers (ES2015+)
+    "target": "ES2015",
+    "module": "ESNext",
+    "lib": ["ES2015", "DOM", "DOM.Iterable"],
+
+    // Output settings
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+
+    // Module resolution
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+
+    // Type checking
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": false,
+    "exactOptionalPropertyTypes": false,
+
+    // JSX settings
+    "jsx": "react-jsx",
+    "jsxImportSource": ".",
+
+    // Quality
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // Emit
+    "removeComments": false,
+    "importHelpers": false,
+    "isolatedModules": true
+  },
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
+  "include": ["src/**/*"]
+}

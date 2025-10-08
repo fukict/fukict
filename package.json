@@ -35,6 +35,7 @@
     "changeset:version": "changeset version",
     "clean": "pnpm -r clean",
     "clear": "premove **/node_modules && premove pnpm-lock.yaml",
+    "dev:no-build": "npx http-server -p 8080 -c-1 --cors",
     "extract-metadata": "tsx scripts/extract-metadata.ts",
     "format": "prettier --write .",
     "lint": "eslint .",
@@ -55,6 +56,7 @@
     "@typescript-eslint/parser": "^8.33.1",
     "eslint": "^9.28.0",
     "eslint-config-prettier": "^10.1.5",
+    "globals": "^16.4.0",
     "premove": "^4.0.0",
     "prettier": "3.4.2",
     "prettier-plugin-packagejson": "2.5.6",
@@ -64,9 +66,9 @@
     "typescript": "^5.6.3",
     "yaml": "^2.6.1"
   },
+  "packageManager": "pnpm@10.18.1",
   "engines": {
     "node": ">=16.0.0",
     "pnpm": ">=7.0.0"
-  },
-  "packageManager": "pnpm@7.33.7+sha512.7afe2410642b39c698df46da4ce5c7231a5cce360698d69f8cf8f42257d40b3e43f231053b07b8de849fd4ffbf4a71ff57b835137777a352388f3d3da747200e"
+  }
 }

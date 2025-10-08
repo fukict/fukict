@@ -32,21 +32,25 @@
 ### 2. 职责边界
 
 **@fukict/runtime** - 最小运行时
+
 - 仅负责 VNode → DOM
 - 提供注册机制，不内置组件概念
 - 无依赖，体积极小
 
 **@fukict/widget** - 组件抽象
+
 - 通过注册机制扩展 runtime
 - 提供 Widget 类组件和函数组件
 - 管理生命周期、refs、slots
 
 **@fukict/scheduler** - 调度器
+
 - 独立包，可选使用
 - 提供优先级调度
 - 与 widget 松耦合
 
 **其他包** - 按需加载
+
 - router：路由管理
 - flux：状态管理
 - 编译工具：JSX 转换
@@ -62,6 +66,7 @@ runtime 不内置任何高级功能，所有扩展通过注册实现：
 - devtools 注册调试钩子
 
 这种设计允许：
+
 - 多种组件范式共存
 - 按需加载功能
 - 第三方扩展
@@ -71,6 +76,7 @@ runtime 不内置任何高级功能，所有扩展通过注册实现：
 ### Direct Dependencies
 
 **@fukict/widget** 直接依赖 @fukict/runtime：
+
 - 用户只需安装 widget，runtime 自动安装
 - widget 锁定兼容的 runtime 版本
 - 避免版本冲突和 peer dependency 警告
@@ -101,6 +107,7 @@ import { render } from '@fukict/runtime'
 ```
 
 **理由**：
+
 - 降低心智负担（只需知道 widget）
 - widget 重新导出 runtime 必要 API
 - 保持类型完整性
@@ -113,11 +120,13 @@ import { render } from '@fukict/runtime'
 **决策**：runtime 只提供 VNode → DOM，组件概念由 widget 提供
 
 **理由**：
+
 - 保持 runtime 极简（< 5KB）
 - 支持多种组件范式
 - 按需加载高级功能
 
 **权衡**：
+
 - 需要注册机制的复杂度
 - 但换来了极大的灵活性
 
@@ -126,11 +135,13 @@ import { render } from '@fukict/runtime'
 **决策**：scheduler 从 widget 剥离为独立包
 
 **理由**：
+
 - 不是所有场景都需要调度
 - 某些场景需要自定义调度策略
 - 减少 widget 体积
 
 **权衡**：
+
 - 用户需要额外安装
 - 但提供了选择权
 
@@ -139,12 +150,14 @@ import { render } from '@fukict/runtime'
 **决策**：widget 直接依赖 runtime，用户只需安装 widget
 
 **理由**：
+
 - 降低用户心智负担（只需知道 widget）
 - 避免版本管理问题
 - 避免 peer dependency 警告
 - Fukict 定位是组件框架，不是纯渲染库
 
 **权衡**：
+
 - ✅ 优势：简化用户安装，99% 用户使用 widget，体验大幅提升
 - ⚠️ 劣势：widget 与 runtime 紧耦合
   - runtime 重构会影响 widget
@@ -160,11 +173,13 @@ import { render } from '@fukict/runtime'
 **决策**：runtime 提供 ComponentHandler 注册，widget 注册实现
 
 **理由**：
+
 - runtime 保持纯粹（VNode → DOM）
 - 支持多种扩展（widget、devtools、第三方）
 - 按需加载，未使用零开销
 
 **权衡**：
+
 - ✅ 优势：极大的扩展性和灵活性
 - ⚠️ 劣势：运行时性能开销
   - 每次组件渲染需要遍历处理器
@@ -180,17 +195,20 @@ import { render } from '@fukict/runtime'
 ### 性能目标
 
 **体积目标**：
+
 - **runtime**: < 5KB gzipped
 - **widget**: < 8KB gzipped
 - **完整框架** (runtime + widget + scheduler): < 15KB gzipped
 
 **运行时性能目标**：
+
 - **首次渲染**：优于 React/Preact（目标：快 10-20%）
 - **更新性能**：与 Vue 3 相当（无 key diff 情况下）
 - **内存占用**：比 React 低 30%（无 Fiber 架构开销）
 - **注册机制开销**：< 5% 渲染时间
 
 **性能基准测试**：
+
 - 使用 js-framework-benchmark 作为基准
 - 重点对比：React、Preact、Vue 3、Solid
 - 必须通过的场景：
@@ -203,6 +221,7 @@ import { render } from '@fukict/runtime'
   - 清空表格
 
 **性能权衡说明**：
+
 - ✅ 初版不实现 key-based diff：降低复杂度，但列表性能可能不如竞品
 - ✅ 扩展机制有运行时开销：但通过优化保持在可接受范围
 - ✅ 简化的调度器：无时间切片，但体积小、实现简单

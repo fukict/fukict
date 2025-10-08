@@ -28,7 +28,14 @@
       "Bash(corepack enable)",
       "Bash(corepack prepare:*)",
       "Bash(cat:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(npx http-server:*)",
+      "Bash(open http://localhost:8080/no-build/)",
+      "Bash(open http://localhost:8080/examples/no-build/)",
+      "Bash(curl:*)",
+      "Bash(corepack:*)",
+      "Bash(npx eslint:*)",
+      "Bash(tree:*)"
     ],
     "deny": [],
     "ask": []

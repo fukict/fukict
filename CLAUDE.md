@@ -14,15 +14,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### 强制规则
 
 1. **任务完成后必须更新 TODO**
+
    - 每完成 `REFACTOR_TODO.md` 中的一个任务，立即标记为已完成
    - 如果任务拆分或变更，必须更新 TODO 文档
 
 2. **功能边界变更必须更新文档**
+
    - 包职责变更 → 更新对应包的 `DESIGN.md`
    - API 变更 → 更新对应包的 `API.md`
    - 架构变更 → 更新根目录 `docs/` 下的架构文档
 
 3. **设计决策必须记录**
+
    - 所有重要设计决策必须在 `DESIGN.md` 中记录
    - 包含：决策背景、考虑的方案、最终选择、理由
 
@@ -36,6 +39,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### 核心包
 
 **@fukict/runtime** - 轻量级 DOM 渲染引擎
+
 - **职责**：VNode 到 DOM 的转换和基础渲染
 - **核心特性**：
   - VNode 创建（hyperscript / JSX runtime）
@@ -46,6 +50,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **大小目标**：< 5KB gzipped
 
 **@fukict/widget** - 组件抽象层
+
 - **职责**：提供组件编程范式
 - **核心特性**：
   - Widget 类组件（生命周期、状态、refs、slots）
@@ -58,6 +63,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **大小目标**：< 8KB gzipped
 
 **@fukict/scheduler** - 调度器（从 widget 剥离）
+
 - **职责**：渲染任务调度
 - **核心特性**：
   - 优先级队列
@@ -67,6 +73,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **大小目标**：< 2KB gzipped
 
 **@fukict/babel-plugin** - JSX 编译优化
+
 - **职责**：JSX 语法转换
 - **核心特性**：
   - 事件分离（on: 前缀）
@@ -74,14 +81,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - 组件类型识别
 
 **@fukict/babel-preset-widget** - 零配置预设
+
 - **职责**：简化 Babel 配置
 - **包含**：@babel/plugin-syntax-jsx + @fukict/babel-plugin
 
 **@fukict/router** - 路由管理
+
 - **职责**：单页应用路由
 - **依赖**：@fukict/widget（peer）
 
 **@fukict/flux** - 状态管理（重命名自 state）
+
 - **职责**：应用级状态管理
 - **依赖**：@fukict/widget（可选）
 
@@ -110,6 +120,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### 用户使用方式
 
 **安装**：
+
 ```bash
 # 最小安装（runtime 自动安装）
 pnpm add @fukict/widget
@@ -122,9 +133,10 @@ pnpm add -D @fukict/babel-preset-widget
 ```
 
 **引用**：
+
 ```typescript
 // ✅ 推荐：仅从 widget 引用
-import { Widget, render, h } from '@fukict/widget'
+import { Widget, h, render } from '@fukict/widget';
 
 // ❌ 不推荐：直接引用 runtime
 // import { render } from '@fukict/runtime'
@@ -133,12 +145,14 @@ import { Widget, render, h } from '@fukict/widget'
 ## 文档管理结构
 
 ### 根目录文档 `docs/`
+
 - `ARCHITECTURE.md` - 整体架构设计
 - `GETTING_STARTED.md` - 快速开始
 - `CORE_CONCEPTS.md` - 核心概念
 - `API_INDEX.md` - API 索引
 
 ### 包级别文档 `packages/*/docs/`
+
 - `DESIGN.md` - 设计文档（专注设计思路，不含代码）
 - `API.md` - API 文档
 - `EXAMPLES.md` - 使用示例
@@ -149,6 +163,7 @@ import { Widget, render, h } from '@fukict/widget'
 ### 1. runtime 注册机制（最核心）
 
 需要思考：
+
 - 如何设计通用的钩子注册接口？
 - 如何保证钩子执行顺序？
 - 如何处理钩子返回值？
@@ -158,6 +173,7 @@ import { Widget, render, h } from '@fukict/widget'
 ### 2. widget 扩展机制
 
 需要思考：
+
 - 如何通过注册机制完全控制组件渲染？
 - 如何实现组件实例的生命周期管理？
 - 如何实现 refs 自动注册和清理？
@@ -167,6 +183,7 @@ import { Widget, render, h } from '@fukict/widget'
 ### 3. 数组节点渲染
 
 需要思考：
+
 - 如何注册数组节点的渲染逻辑？
 - 是否需要 key 优化？如何设计？
 - 如何与 widget 的 diff 机制配合？
@@ -174,6 +191,7 @@ import { Widget, render, h } from '@fukict/widget'
 ### 4. 包导出策略
 
 需要思考：
+
 - runtime 应该导出哪些 API？
 - widget 应该重新导出哪些 runtime API？
 - 如何防止用户直接使用 runtime？
@@ -205,25 +223,30 @@ cat REFACTOR_TODO.md
 **CRITICAL: 重构期间必须遵守的规则**
 
 1. **禁止直接编写实现代码**：
+
    - 当前阶段只做设计，不写实现
    - 先完成 REFACTOR_TODO.md 阶段一、二、三的所有任务
    - 只有设计评审通过后，才能进入阶段五（实施）
 
 2. **每完成一个任务必须更新 TODO**：
+
    - 完成任务后立即在 REFACTOR_TODO.md 标记为已完成
    - 格式：`- [x] 任务描述`
 
 3. **设计文档不要包含代码**：
+
    - DESIGN.md 专注于设计思路、架构、机制
    - 不要写实现代码，不要写代码示例
    - 代码示例放在 EXAMPLES.md
 
 4. **功能边界变更必须同步文档**：
+
    - 包职责变更 → 更新 DESIGN.md
    - API 变更 → 更新 API.md
    - 架构变更 → 更新 docs/ARCHITECTURE.md
 
 5. **重点关注注册机制**：
+
    - runtime 的注册机制是整个框架的核心
    - 必须反复推敲，确保设计足够灵活和强大
    - 设计时考虑：组件渲染、生命周期、数组节点、脱围渲染等扩展点

@@ -29,6 +29,7 @@ scheduler 是完全独立的包：
 ```
 
 **为什么独立？**
+
 - 不是所有场景都需要调度
 - 某些场景需要同步渲染（如测试）
 - 用户可以自定义调度策略
@@ -39,36 +40,41 @@ scheduler 是完全独立的包：
 
 ```typescript
 enum Priority {
-  Immediate = 1,    // 立即执行（同步）
-  High = 2,         // 高优先级（尽快）
-  Normal = 3,       // 正常优先级（默认）
-  Low = 4,          // 低优先级（空闲时）
-  Idle = 5          // 空闲优先级（完全空闲时）
+  Immediate = 1, // 立即执行（同步）
+  High = 2, // 高优先级（尽快）
+  Normal = 3, // 正常优先级（默认）
+  Low = 4, // 低优先级（空闲时）
+  Idle = 5, // 空闲优先级（完全空闲时）
 }
 ```
 
 ### 调度策略
 
 **Immediate**：
+
 - 同步执行，不调度
 - 用于紧急更新（如用户输入）
 
 **High**：
+
 - 使用 `requestAnimationFrame`
 - 在下一帧执行
 - 用于动画、交互反馈
 
 **Normal**：
+
 - 使用 `setTimeout(0)` 或 `Promise.resolve()`
 - 在当前任务后执行
 - 用于常规更新
 
 **Low**：
+
 - 使用 `requestIdleCallback`
 - 在浏览器空闲时执行
 - 用于非紧急更新
 
 **Idle**：
+
 - 使用 `requestIdleCallback` + 长超时
 - 完全空闲时执行
 - 用于后台任务、预加载
@@ -95,25 +101,25 @@ enum Priority {
 
 ```typescript
 interface Task {
-  id: number               // 任务 ID
-  callback: () => void     // 任务函数
-  priority: Priority       // 优先级
-  expiration?: number      // 过期时间（超时强制执行）
-  cancelled: boolean       // 是否已取消
+  id: number; // 任务 ID
+  callback: () => void; // 任务函数
+  priority: Priority; // 优先级
+  expiration?: number; // 过期时间（超时强制执行）
+  cancelled: boolean; // 是否已取消
 }
 
 // 每个优先级一个队列
-const queues: Map<Priority, Task[]> = new Map()
+const queues: Map<Priority, Task[]> = new Map();
 ```
 
 ### 任务调度器
 
 ```typescript
 class Scheduler {
-  private taskId = 0
-  private queues = new Map<Priority, Task[]>()
-  private rafScheduled = false
-  private idleScheduled = false
+  private taskId = 0;
+  private queues = new Map<Priority, Task[]>();
+  private rafScheduled = false;
+  private idleScheduled = false;
 
   // 调度任务
   schedule(callback: () => void, priority: Priority): TaskId {
@@ -121,25 +127,25 @@ class Scheduler {
       id: ++this.taskId,
       callback,
       priority,
-      cancelled: false
-    }
+      cancelled: false,
+    };
 
     // 加入对应优先级队列
-    this.enqueue(task)
+    this.enqueue(task);
 
     // 触发调度
-    this.flush(priority)
+    this.flush(priority);
 
-    return task.id
+    return task.id;
   }
 
   // 取消任务
   cancel(taskId: TaskId): void {
     // 标记为已取消
     for (const queue of this.queues.values()) {
-      const task = queue.find(t => t.id === taskId)
+      const task = queue.find(t => t.id === taskId);
       if (task) {
-        task.cancelled = true
+        task.cancelled = true;
       }
     }
   }
@@ -162,11 +168,11 @@ if (priority === Priority.Immediate) {
 ```typescript
 if (priority === Priority.High) {
   if (!this.rafScheduled) {
-    this.rafScheduled = true
+    this.rafScheduled = true;
     requestAnimationFrame(() => {
-      this.rafScheduled = false
-      this.flushQueue(Priority.High)
-    })
+      this.rafScheduled = false;
+      this.flushQueue(Priority.High);
+    });
   }
 }
 ```
@@ -176,8 +182,8 @@ if (priority === Priority.High) {
 ```typescript
 if (priority === Priority.Normal) {
   queueMicrotask(() => {
-    this.flushQueue(Priority.Normal)
-  })
+    this.flushQueue(Priority.Normal);
+  });
 }
 ```
 
@@ -186,13 +192,16 @@ if (priority === Priority.Normal) {
 ```typescript
 if (priority === Priority.Low || priority === Priority.Idle) {
   if (!this.idleScheduled) {
-    this.idleScheduled = true
-    requestIdleCallback((deadline) => {
-      this.idleScheduled = false
-      this.flushIdleQueue(deadline)
-    }, {
-      timeout: priority === Priority.Idle ? 5000 : 1000
-    })
+    this.idleScheduled = true;
+    requestIdleCallback(
+      deadline => {
+        this.idleScheduled = false;
+        this.flushIdleQueue(deadline);
+      },
+      {
+        timeout: priority === Priority.Idle ? 5000 : 1000,
+      },
+    );
   }
 }
 ```
@@ -238,11 +247,16 @@ function flushQueue(priority: Priority) {
 ```typescript
 function getTimeoutForPriority(priority: Priority): number {
   switch (priority) {
-    case Priority.Immediate: return 0
-    case Priority.High: return 250        // 250ms
-    case Priority.Normal: return 5000     // 5s
-    case Priority.Low: return 10000       // 10s
-    case Priority.Idle: return Infinity   // 永不过期
+    case Priority.Immediate:
+      return 0;
+    case Priority.High:
+      return 250; // 250ms
+    case Priority.Normal:
+      return 5000; // 5s
+    case Priority.Low:
+      return 10000; // 10s
+    case Priority.Idle:
+      return Infinity; // 永不过期
   }
 }
 ```
@@ -255,15 +269,15 @@ widget 检测 scheduler 是否可用：
 
 ```typescript
 // widget 内部
-import * as scheduler from '@fukict/scheduler'
+import * as scheduler from '@fukict/scheduler';
 
 function scheduleUpdate(callback: () => void, priority: Priority) {
   if (scheduler && typeof scheduler.schedule === 'function') {
     // 使用 scheduler
-    return scheduler.schedule(callback, priority)
+    return scheduler.schedule(callback, priority);
   } else {
     // 同步执行
-    callback()
+    callback();
   }
 }
 ```
@@ -275,13 +289,13 @@ class Widget {
   forceUpdate(priority: Priority = Priority.Normal) {
     const updateTask = () => {
       // 执行 diff/patch
-      const newVNode = this.render()
-      patchDOM(this.vnode, newVNode, this.root)
-      this.vnode = newVNode
-    }
+      const newVNode = this.render();
+      patchDOM(this.vnode, newVNode, this.root);
+      this.vnode = newVNode;
+    };
 
     // 使用 scheduler（如果可用）
-    scheduleUpdate(updateTask, priority)
+    scheduleUpdate(updateTask, priority);
   }
 }
 ```
@@ -291,17 +305,17 @@ class Widget {
 ```typescript
 class Counter extends Widget {
   handleClick = () => {
-    this.count++
+    this.count++;
     // 高优先级更新（交互反馈）
-    this.forceUpdate(Priority.High)
-  }
+    this.forceUpdate(Priority.High);
+  };
 
   loadData = async () => {
-    const data = await fetch('/api/data')
-    this.data = data
+    const data = await fetch('/api/data');
+    this.data = data;
     // 低优先级更新（非紧急）
-    this.forceUpdate(Priority.Low)
-  }
+    this.forceUpdate(Priority.Low);
+  };
 }
 ```
 
@@ -311,25 +325,22 @@ class Counter extends Widget {
 
 ```typescript
 // 调度任务
-function schedule(
-  callback: () => void,
-  priority?: Priority
-): TaskId
+function schedule(callback: () => void, priority?: Priority): TaskId;
 
 // 取消任务
-function cancel(taskId: TaskId): void
+function cancel(taskId: TaskId): void;
 
 // 批量调度（同优先级）
 function batchSchedule(
   callbacks: Array<() => void>,
-  priority?: Priority
-): TaskId[]
+  priority?: Priority,
+): TaskId[];
 
 // 刷新所有任务（用于测试）
-function flushAll(): void
+function flushAll(): void;
 
 // 清空所有任务
-function clearAll(): void
+function clearAll(): void;
 ```
 
 ### 配置 API
@@ -337,33 +348,33 @@ function clearAll(): void
 ```typescript
 interface SchedulerConfig {
   // 是否启用调度（false 则同步执行）
-  enabled?: boolean
+  enabled?: boolean;
 
   // 自定义优先级超时时间
   timeouts?: {
-    [Priority.High]?: number
-    [Priority.Normal]?: number
-    [Priority.Low]?: number
-  }
+    [Priority.High]?: number;
+    [Priority.Normal]?: number;
+    [Priority.Low]?: number;
+  };
 
   // 是否启用过期检查
-  expiration?: boolean
+  expiration?: boolean;
 }
 
-function configure(config: SchedulerConfig): void
+function configure(config: SchedulerConfig): void;
 ```
 
 ### 工具 API
 
 ```typescript
 // 获取当前配置
-function getConfig(): SchedulerConfig
+function getConfig(): SchedulerConfig;
 
 // 获取待执行任务数量
-function getPendingCount(priority?: Priority): number
+function getPendingCount(priority?: Priority): number;
 
 // 是否有待执行任务
-function hasPending(priority?: Priority): boolean
+function hasPending(priority?: Priority): boolean;
 ```
 
 ## 浏览器兼容性
@@ -373,21 +384,21 @@ function hasPending(priority?: Priority): boolean
 ```typescript
 const requestIdleCallback =
   window.requestIdleCallback ||
-  function(callback: IdleRequestCallback, options?: { timeout?: number }) {
-    const start = Date.now()
+  function (callback: IdleRequestCallback, options?: { timeout?: number }) {
+    const start = Date.now();
     return setTimeout(() => {
       callback({
         didTimeout: false,
-        timeRemaining: () => Math.max(0, 50 - (Date.now() - start))
-      })
-    }, 1) as any
-  }
+        timeRemaining: () => Math.max(0, 50 - (Date.now() - start)),
+      });
+    }, 1) as any;
+  };
 
 const cancelIdleCallback =
   window.cancelIdleCallback ||
-  function(id: number) {
-    clearTimeout(id)
-  }
+  function (id: number) {
+    clearTimeout(id);
+  };
 ```
 
 ### requestAnimationFrame
@@ -402,13 +413,13 @@ const cancelIdleCallback =
 
 ```typescript
 function flushQueue(priority: Priority) {
-  const queue = this.queues.get(priority)
+  const queue = this.queues.get(priority);
 
   // 批量执行（避免多次 RAF/Idle）
   while (queue.length > 0) {
-    const task = queue.shift()
+    const task = queue.shift();
     if (!task.cancelled) {
-      task.callback()
+      task.callback();
     }
   }
 }
@@ -418,19 +429,19 @@ function flushQueue(priority: Priority) {
 
 ```typescript
 function flushIdleQueue(deadline: IdleDeadline) {
-  const queue = this.queues.get(Priority.Low)
+  const queue = this.queues.get(Priority.Low);
 
   // 在空闲时间内执行尽可能多的任务
   while (queue.length > 0 && deadline.timeRemaining() > 0) {
-    const task = queue.shift()
+    const task = queue.shift();
     if (!task.cancelled) {
-      task.callback()
+      task.callback();
     }
   }
 
   // 如果还有任务，继续调度
   if (queue.length > 0) {
-    this.flush(Priority.Low)
+    this.flush(Priority.Low);
   }
 }
 ```
@@ -441,10 +452,10 @@ function flushIdleQueue(deadline: IdleDeadline) {
 
 ```typescript
 // 测试时禁用调度
-configure({ enabled: false })
+configure({ enabled: false });
 
 // 所有任务同步执行
-schedule(() => console.log('task'), Priority.Low)
+schedule(() => console.log('task'), Priority.Low);
 // 立即输出 'task'
 ```
 
@@ -452,11 +463,11 @@ schedule(() => console.log('task'), Priority.Low)
 
 ```typescript
 // 调度任务（不执行）
-schedule(() => console.log('task 1'), Priority.Normal)
-schedule(() => console.log('task 2'), Priority.Normal)
+schedule(() => console.log('task 1'), Priority.Normal);
+schedule(() => console.log('task 2'), Priority.Normal);
 
 // 手动刷新所有任务
-flushAll()
+flushAll();
 // 输出 'task 1', 'task 2'
 ```
 
@@ -466,7 +477,7 @@ flushAll()
 
 ```typescript
 // 启用调试日志
-schedule.debug = true
+schedule.debug = true;
 
 // 输出示例：
 // [Scheduler] Schedule task #1 (priority: Normal)
@@ -479,14 +490,14 @@ schedule.debug = true
 ```typescript
 // 任务执行时间统计
 interface TaskStats {
-  taskId: number
-  priority: Priority
-  startTime: number
-  endTime: number
-  duration: number
+  taskId: number;
+  priority: Priority;
+  startTime: number;
+  endTime: number;
+  duration: number;
 }
 
-function getStats(): TaskStats[]
+function getStats(): TaskStats[];
 ```
 
 ## 使用示例
@@ -494,15 +505,15 @@ function getStats(): TaskStats[]
 ### 基本使用
 
 ```typescript
-import { schedule, Priority } from '@fukict/scheduler'
+import { Priority, schedule } from '@fukict/scheduler';
 
 // 调度渲染任务
 const taskId = schedule(() => {
-  console.log('Render!')
-}, Priority.Normal)
+  console.log('Render!');
+}, Priority.Normal);
 
 // 取消任务
-cancel(taskId)
+cancel(taskId);
 ```
 
 ### 与 widget 集成
@@ -511,28 +522,28 @@ cancel(taskId)
 class MyWidget extends Widget {
   handleClick = () => {
     // 高优先级更新
-    this.forceUpdate(Priority.High)
-  }
+    this.forceUpdate(Priority.High);
+  };
 
   loadData = () => {
     // 低优先级更新
-    this.forceUpdate(Priority.Low)
-  }
+    this.forceUpdate(Priority.Low);
+  };
 }
 ```
 
 ### 批量调度
 
 ```typescript
-import { batchSchedule, Priority } from '@fukict/scheduler'
+import { Priority, batchSchedule } from '@fukict/scheduler';
 
 const tasks = [
   () => updateComponent1(),
   () => updateComponent2(),
-  () => updateComponent3()
-]
+  () => updateComponent3(),
+];
 
-batchSchedule(tasks, Priority.Normal)
+batchSchedule(tasks, Priority.Normal);
 ```
 
 ## 体积目标
@@ -547,11 +558,13 @@ batchSchedule(tasks, Priority.Normal)
 **决策**：scheduler 独立于 widget
 
 **理由**：
+
 - 不是所有场景都需要
 - SSR/测试需要同步执行
 - 用户可以自定义调度策略
 
 **权衡**：
+
 - 需要额外安装
 - 但提供了选择权
 
@@ -560,11 +573,13 @@ batchSchedule(tasks, Priority.Normal)
 **决策**：Immediate、High、Normal、Low、Idle
 
 **理由**：
+
 - 覆盖常见场景
 - 区分度合适
 - 不过于复杂
 
 **权衡**：
+
 - 比 React 的 5 个级别简单
 - 但够用
 
@@ -573,11 +588,13 @@ batchSchedule(tasks, Priority.Normal)
 **决策**：初版不实现时间切片
 
 **理由**：
+
 - 增加复杂度
 - 大部分场景不需要
 - 可以后续版本添加
 
 **权衡**：
+
 - 长任务可能阻塞
 - 但降低了初版复杂度
 
@@ -586,29 +603,34 @@ batchSchedule(tasks, Priority.Normal)
 **决策**：可以配置禁用调度
 
 **理由**：
+
 - 测试需要同步执行
 - 调试更方便
 - 某些特殊场景需要确定性执行顺序
 
 **权衡**：
+
 - 增加了配置项
 - 但提供了必要的灵活性
 
 ## 对比 React Scheduler
 
 ### React Scheduler
+
 - 复杂的时间切片
 - 5 个优先级
 - 紧密集成 Fiber
 - 体积较大
 
 ### Fukict Scheduler
+
 - 简单的优先级队列
 - 5 个优先级
 - 独立包，可选使用
 - 体积小（< 2KB）
 
 **Fukict 特色**：
+
 - 更简单
 - 更轻量
 - 更灵活（可选）

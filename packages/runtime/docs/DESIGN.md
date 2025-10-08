@@ -6,8 +6,9 @@ runtime 是 Fukict 的核心渲染引擎，职责：
 
 1. **VNode 创建**：提供 hyperscript 和 JSX runtime
 2. **DOM 渲染**：将 VNode 树转换为真实 DOM
-3. **扩展点定义**：开放扩展点让其他包扩展渲染能力
-4. **基础工具**：DOM 操作、属性设置、事件绑定
+3. **节点替换**：用新 VNode 替换已有 DOM 节点（无 diff/patch）
+4. **扩展点定义**：开放扩展点让其他包扩展渲染能力
+5. **基础工具**：DOM 操作、属性设置、事件绑定
 
 ## 不包含的功能
 
@@ -15,6 +16,9 @@ runtime 是 Fukict 的核心渲染引擎，职责：
 - ❌ 生命周期（由 widget 提供）
 - ❌ 状态管理（由 flux 提供）
 - ❌ 调度器（由 scheduler 提供）
+- ❌ Diff/Patch 算法（由 widget 提供）
+
+**注意**：runtime 提供 `replaceNode` 用于简单的节点替换，但不会进行 diff/patch 优化。
 
 ## 核心设计理念
 
@@ -37,6 +41,7 @@ Widget 包（通过扩展点注册）
 ```
 
 **为什么这样设计？**
+
 - runtime 保持最小化
 - 功能可按需扩展
 - 支持多种组件范式共存
@@ -51,18 +56,18 @@ Widget 包（通过扩展点注册）
 
 ```typescript
 interface ComponentHandler {
-  name: string
-  priority?: number
+  name: string;
+  priority?: number;
 
   // 必需
-  detect(fn: Function): boolean
-  render(component: Function, props: any, children: VNodeChild[]): VNode | null
+  detect(fn: Function): boolean;
+  render(component: Function, props: any, children: VNodeChild[]): VNode | null;
 
   // 可选
-  processVNode?(vnode: VNode): VNode
-  onMount?(element: Element, vnode: VNode): void
-  processAttribute?(element: Element, key: string, value: any): boolean
-  onUnmount?(element: Element, vnode: VNode): void
+  processVNode?(vnode: VNode): VNode;
+  onMount?(element: Element, vnode: VNode): void;
+  processAttribute?(element: Element, key: string, value: any): boolean;
+  onUnmount?(element: Element, vnode: VNode): void;
 }
 ```
 
@@ -74,6 +79,7 @@ runtime.registerComponentHandler(handler: ComponentHandler): UnregisterFn
 ```
 
 **为什么集中注册？**
+
 - 概念清晰：注册的是"如何处理某种组件"
 - 代码聚合：相关逻辑在一起
 - 类型安全：一个接口，TypeScript 类型推导更好
@@ -95,24 +101,29 @@ VNodeChild = VNode | string | number | boolean | null | undefined | VNodeChild[]
 ### 设计决策
 
 **为什么 children 是数组？**
+
 - 简化遍历逻辑
 - 支持数组子节点（map）
 - 递归扁平化嵌套数组
 
 **为什么 props 可以为 null？**
+
 - 减少内存占用（无 props 时不创建空对象）
 - 性能优化（减少对象创建）
 
 **为什么支持 boolean/null/undefined？**
+
 - JSX 条件渲染兼容性
 - 渲染时过滤这些值
 
 **为什么没有 key？**
+
 - 初版不实现 key diff
 - 简化实现，降低复杂度
 - 未来可通过 props 扩展
 
 **为什么没有 ref 字段？**
+
 - ref 通过 props 传递（props['fukict:ref']）
 - 统一属性处理逻辑
 
@@ -153,6 +164,90 @@ VNodeChild = VNode | string | number | boolean | null | undefined | VNodeChild[]
 - **属性设置时**：handler.processAttribute()
 - **DOM 移除时**：handler.onUnmount()
 
+## 节点替换设计
+
+### replaceNode API
+
+```typescript
+function replaceNode(
+  oldNode: Node,
+  newVNode: VNode | null,
+  oldVNode?: VNode,
+): Node | null;
+```
+
+**功能**：
+
+- 用新的 VNode 替换现有的 DOM 节点
+- 自动触发清理钩子（oldVNode 的 onUnmount）
+- 自动触发挂载钩子（newVNode 的 onMount）
+- 如果 newVNode 为 null，则删除节点
+
+**使用场景**：
+
+```typescript
+// 简单的计数器更新
+function Counter() {
+  let count = 0;
+  let containerNode = null;
+
+  function increment() {
+    count++;
+    // 重新创建 VNode
+    const newVNode = h('div', null, `Count: ${count}`);
+    // 替换旧节点
+    containerNode = replaceNode(containerNode, newVNode);
+  }
+
+  return h(
+    'div',
+    {
+      ref: el => {
+        containerNode = el.firstChild;
+      },
+    },
+    h('div', null, `Count: ${count}`),
+  );
+}
+```
+
+**设计决策**：
+
+**为什么提供 replaceNode？**
+
+- 用户反馈：仅提供 `render` 导致更新非常麻烦
+- 需要手动保存 DOM 引用并手动更新
+- 或者需要手动操作 DOM（createElement、appendChild 等）
+- `replaceNode` 提供了中间方案：声明式创建 VNode，命令式替换节点
+
+**为什么不做 diff/patch？**
+
+- diff/patch 算法复杂，增加 runtime 体积
+- widget 包会提供完整的 diff/patch
+- `replaceNode` 已经满足简单场景需求
+
+**性能权衡**：
+
+- ✅ 比手动 DOM 操作更简洁（声明式）
+- ✅ 比完全重建容器更精确（只替换目标节点）
+- ⚠️ 没有 diff 优化，会重建整个子树
+- ⚠️ 事件监听器会重新绑定
+- ⚠️ 不适合频繁更新或大型列表
+
+**Widget 对比**：
+
+- Runtime: `replaceNode` - 全量替换，无优化
+- Widget: `diff/patch` - 最小化 DOM 操作，事件复用
+
+**推荐用法**：
+
+- ✅ 简单示例和原型
+- ✅ 低频更新场景
+- ✅ 小型应用
+- ❌ 生产环境的复杂应用（推荐使用 Widget）
+- ❌ 大型列表渲染
+- ❌ 高频更新场景
+
 ## hyperscript 设计
 
 ### 签名
@@ -162,7 +257,7 @@ function hyperscript(
   type: string | Function,
   props: Record<string, any> | null,
   ...children: VNodeChild[]
-): VNode
+): VNode;
 ```
 
 ### 事件处理
@@ -188,27 +283,28 @@ hyperscript(
 ```typescript
 // runtime 内部处理
 function render(vnode) {
-  const props = {}
-  const events = {}
+  const props = {};
+  const events = {};
 
   for (const [key, value] of Object.entries(vnode.props)) {
     if (key.startsWith('on:')) {
-      const eventName = key.slice(3)  // 移除 'on:' 前缀
-      events[eventName] = value
+      const eventName = key.slice(3); // 移除 'on:' 前缀
+      events[eventName] = value;
     } else {
-      props[key] = value
+      props[key] = value;
     }
   }
 
   // 设置属性
-  setAttributes(element, props)
+  setAttributes(element, props);
 
   // 绑定事件
-  bindEvents(element, events)
+  bindEvents(element, events);
 }
 ```
 
 **为什么这样设计？**
+
 - props 统一管理，简化 API
 - babel-plugin 只需要编译为 props
 - runtime 内部分离事件，用户无感知
@@ -243,11 +339,13 @@ removeEventListener(element: Element, type: string, handler: EventListener): voi
 ### 设计原则
 
 **为什么是原子操作而非批量？**
+
 - 简化实现
 - 调用者可以自行批量
 - 扩展点可以精确控制每个操作
 
 **为什么不抽象跨平台？**
+
 - runtime 专注浏览器 DOM
 - 跨平台由上层处理
 - 保持体积最小
@@ -261,7 +359,7 @@ removeEventListener(element: Element, type: string, handler: EventListener): voi
 export { hyperscript, h, jsx, jsxs, jsxDEV, Fragment }
 
 // 渲染函数
-export { render }
+export { render, replaceNode, unmount }
 
 // 扩展机制
 export { registerComponentHandler }
@@ -319,8 +417,8 @@ export type { VNode, VNodeChild, RenderOptions, ... }
 declare namespace JSX {
   interface Element extends VNode {}
   interface IntrinsicElements {
-    div: HTMLAttributes
-    span: HTMLAttributes
+    div: HTMLAttributes;
+    span: HTMLAttributes;
     // ... 所有 HTML 元素
   }
 }
@@ -363,11 +461,13 @@ declare namespace JSX {
 **决策**：runtime 不内置 diff 算法
 
 **理由**：
+
 - diff 逻辑复杂，增加体积
 - widget 可以实现自己的 diff
 - 保持 runtime 职责单一
 
 **权衡**：
+
 - widget 需要自己实现 diff
 - 但 runtime 保持极简
 
@@ -376,11 +476,13 @@ declare namespace JSX {
 **决策**：初版不实现 key diff
 
 **理由**：
+
 - key diff 算法复杂
 - 大部分场景不需要
 - 可以通过后续版本添加
 
 **权衡**：
+
 - 列表渲染性能可能不是最优
 - 但降低了初版复杂度
 
@@ -389,11 +491,13 @@ declare namespace JSX {
 **决策**：即使增加复杂度也要做扩展机制
 
 **理由**：
+
 - 这是扩展性的核心
 - 没有它就无法实现 widget
 - 是整个架构的基石
 
 **权衡**：
+
 - 增加了实现复杂度
 - 但换来了无限的扩展性
 
@@ -402,11 +506,13 @@ declare namespace JSX {
 **决策**：注册完整的 ComponentHandler，而非分散注册
 
 **理由**：
+
 - 概念清晰：注册的是"如何处理某种组件"
 - 代码聚合：相关逻辑在一起，易于维护
 - 类型安全：一个接口包含所有方法，TypeScript 推导更好
 
 **对比**：
+
 ```typescript
 // ❌ 分散注册（6 次调用）
 runtime.registerComponentDetector(...)
@@ -419,7 +525,37 @@ runtime.registerComponentHandler({
 })
 ```
 
+### 5. 为什么提供 replaceNode？
+
+**决策**：提供 `replaceNode` API 用于节点替换，但不实现 diff/patch
+
+**理由**：
+
+- 用户反馈：仅提供 `render` 导致更新过于麻烦
+- 需要在"手动 DOM 操作"和"完整 diff/patch"之间提供中间方案
+- 满足简单场景和原型开发需求
+- 保持 runtime 体积最小（不增加 diff 算法）
+
+**权衡**：
+
+- ✅ 比手动 DOM 操作简洁（声明式 VNode）
+- ✅ 比完全重建容器精确（只替换目标节点）
+- ❌ 没有 diff 优化（全量重建子树）
+- ❌ 事件需要重新绑定
+- ❌ 不适合高频更新和大型列表
+
+**适用场景**：
+
+- 简单示例和原型
+- 低频更新的小型应用
+- 不适合生产环境的复杂应用（推荐 Widget）
+
+**设计原则**：
+
+- Runtime: 提供基础能力，追求极简
+- Widget: 提供完整的 diff/patch，追求性能
+
 ---
 
-**文档状态**：设计阶段
-**最后更新**：2025-01-08
+**文档状态**：实现阶段
+**最后更新**：2025-01-09

@@ -32,6 +32,7 @@ runtime 内部分离 on: 前缀的事件
 ```
 
 **为什么不在编译期分离事件？**
+
 - 简化 hyperscript API（只需要 props 参数）
 - runtime 分离开销很小（只在渲染时一次）
 - 用户手写代码更简单
@@ -41,6 +42,7 @@ runtime 内部分离 on: 前缀的事件
 ### 基本转换规则
 
 **输入 JSX**：
+
 ```tsx
 <div class="container" on:click={handleClick}>
   Hello {name}
@@ -48,12 +50,14 @@ runtime 内部分离 on: 前缀的事件
 ```
 
 **输出（编译后）**：
+
 ```javascript
 hyperscript(
   'div',
   { class: 'container', 'on:click': handleClick },
-  'Hello ', name
-)
+  'Hello ',
+  name,
+);
 ```
 
 ### 转换流程
@@ -82,14 +86,14 @@ hyperscript(
 // JSX
 <button on:click={handleClick} on:mouseenter={handleEnter}>
   Click
-</button>
+</button>;
 
 // 编译为
 hyperscript(
   'button',
   { 'on:click': handleClick, 'on:mouseenter': handleEnter },
-  'Click'
-)
+  'Click',
+);
 ```
 
 **runtime 处理**：
@@ -100,15 +104,16 @@ runtime 在渲染时分离 `on:` 前缀的属性并绑定事件：
 // runtime 内部
 for (const [key, value] of Object.entries(props)) {
   if (key.startsWith('on:')) {
-    const eventName = key.slice(3)
-    element.addEventListener(eventName, value)
+    const eventName = key.slice(3);
+    element.addEventListener(eventName, value);
   } else {
-    element.setAttribute(key, value)
+    element.setAttribute(key, value);
   }
 }
 ```
 
 **为什么不在编译期分离？**
+
 - 简化 hyperscript API（统一用 props）
 - runtime 分离开销很小（仅在渲染时一次）
 - 用户手写 hyperscript 更简单
@@ -118,15 +123,17 @@ for (const [key, value] of Object.entries(props)) {
 ### props 对象构建
 
 **规则**：
+
 1. 所有 JSX 属性都进入 props
 2. 包括 `on:` 前缀的事件
 3. 排除 `children`（作为独立参数）
 
 **示例**：
+
 ```tsx
 <div class="box" id="main" on:click={fn} style={{ color: 'red' }}>
   content
-</div>
+</div>;
 
 // 编译为
 hyperscript(
@@ -135,29 +142,32 @@ hyperscript(
     class: 'box',
     id: 'main',
     'on:click': fn,
-    style: { color: 'red' }
+    style: { color: 'red' },
   },
-  'content'
-)
+  'content',
+);
 ```
 
 ### 特殊属性处理
 
 **className → class**：
+
 ```tsx
-<div className="box" />
+<div className="box" />;
 // 编译为
-hyperscript('div', { class: 'box' }, null)
+hyperscript('div', { class: 'box' }, null);
 ```
 
 **style 对象**：
+
 ```tsx
-<div style={{ color: 'red', fontSize: 16 }} />
+<div style={{ color: 'red', fontSize: 16 }} />;
 // 保持对象形式，runtime 处理
-hyperscript('div', { style: { color: 'red', fontSize: 16 } }, null)
+hyperscript('div', { style: { color: 'red', fontSize: 16 } }, null);
 ```
 
 **布尔属性**：
+
 ```tsx
 <input disabled />
 <input disabled={true} />
@@ -174,16 +184,20 @@ hyperscript('input', { disabled: false }, null)
 ### children 扁平化
 
 **JSX 语法**：
+
 ```tsx
 <div>
   Hello
   {name}
   <span>World</span>
-  {items.map(item => <li>{item}</li>)}
+  {items.map(item => (
+    <li>{item}</li>
+  ))}
 </div>
 ```
 
 **编译为**：
+
 ```javascript
 hyperscript(
   'div',
@@ -191,11 +205,12 @@ hyperscript(
   'Hello',
   name,
   hyperscript('span', null, 'World'),
-  items.map(item => hyperscript('li', null, item))
-)
+  items.map(item => hyperscript('li', null, item)),
+);
 ```
 
 **处理规则**：
+
 1. 文本节点直接作为字符串
 2. 表达式 `{expr}` 保持原样
 3. JSX 元素递归编译
@@ -204,13 +219,14 @@ hyperscript(
 ### 空子节点过滤
 
 **编译期不过滤**：
+
 ```tsx
 <div>
   {false}
   {null}
   {undefined}
   {true && <span>show</span>}
-</div>
+</div>;
 
 // 编译为（保持原样）
 hyperscript(
@@ -220,11 +236,12 @@ hyperscript(
   false,
   null,
   undefined,
-  true && hyperscript('span', null, null, 'show')
-)
+  true && hyperscript('span', null, null, 'show'),
+);
 ```
 
 **原因**：
+
 - 条件渲染需要运行时判断
 - 编译期无法确定值
 - 由 runtime 在渲染时过滤
@@ -247,19 +264,21 @@ hyperscript(
 ```
 
 **编译为**：
+
 ```javascript
 hyperscript(
   Fragment,
   null,
   hyperscript('div', null, 'First'),
-  hyperscript('div', null, 'Second')
-)
+  hyperscript('div', null, 'Second'),
+);
 ```
 
 **Fragment 定义**：
+
 ```typescript
 // 从 runtime 导入
-import { Fragment } from '@fukict/runtime'
+import { Fragment } from '@fukict/runtime';
 ```
 
 ## 组件处理
@@ -269,22 +288,24 @@ import { Fragment } from '@fukict/runtime'
 ```tsx
 <MyComponent count={1} on:click={fn}>
   <div>child</div>
-</MyComponent>
+</MyComponent>;
 
 // 编译为
 hyperscript(
   MyComponent,
   { count: 1, 'on:click': fn },
-  hyperscript('div', null, 'child')
-)
+  hyperscript('div', null, 'child'),
+);
 ```
 
 **babel-plugin 不区分**：
+
 - 是 Widget 类还是函数组件
 - 是 defineWidget 还是普通函数
 - 统一作为函数引用传递给 hyperscript
 
 **组件识别由 runtime 钩子处理**：
+
 - runtime 通过组件检测钩子识别
 - widget 注册钩子处理 Widget 类和函数组件
 
@@ -319,6 +340,7 @@ function App() {
 ```
 
 **初版不实现**：
+
 - 增加复杂度
 - 性能提升有限
 - 可以后续版本添加
@@ -346,42 +368,47 @@ const _static_1 = { __static__: true, vnode: ... }
 ```typescript
 interface BabelPluginOptions {
   // JSX 编译目标
-  runtime?: 'classic' | 'automatic'  // 默认 automatic
+  runtime?: 'classic' | 'automatic'; // 默认 automatic
 
   // 导入来源
-  importSource?: string  // 默认 '@fukict/runtime'
+  importSource?: string; // 默认 '@fukict/runtime'
 
   // 事件前缀
-  eventPrefix?: string  // 默认 'on:'
+  eventPrefix?: string; // 默认 'on:'
 
   // 开发模式
-  development?: boolean  // 注入 displayName 等
+  development?: boolean; // 注入 displayName 等
 }
 ```
 
 ### runtime 模式
 
 **automatic（推荐）**：
-```tsx
-// 用户代码
-<div>Hello</div>
 
+```tsx
 // 编译后（自动导入）
-import { jsx as _jsx } from '@fukict/runtime/jsx-runtime'
-_jsx('div', { children: 'Hello' })
+import { jsx as _jsx } from '@fukict/runtime/jsx-runtime';
+
+// 用户代码
+<div>Hello</div>;
+
+_jsx('div', { children: 'Hello' });
 ```
 
 **classic**：
+
 ```tsx
 // 用户代码
-import { h } from '@fukict/runtime'
-<div>Hello</div>
+import { h } from '@fukict/runtime';
+
+<div>Hello</div>;
 
 // 编译后（使用用户导入的 h）
-h('div', null, null, 'Hello')
+h('div', null, null, 'Hello');
 ```
 
 **Fukict 使用 classic 模式**：
+
 - 更接近 hyperscript 语义
 - 参数顺序明确（type, props, events, children）
 - 方便调试
@@ -391,19 +418,21 @@ h('div', null, null, 'Hello')
 **development: true 时**：
 
 1. **注入 displayName**：
+
 ```javascript
-const MyComponent = () => <div />
-MyComponent.displayName = 'MyComponent'
+const MyComponent = () => <div />;
+MyComponent.displayName = 'MyComponent';
 ```
 
-2. **注入 __source 信息**（调试用）：
+2. **注入 \_\_source 信息**（调试用）：
+
 ```javascript
 hyperscript(
   'div',
   { __source: { fileName: 'App.tsx', lineNumber: 10 } },
   null,
-  'Hello'
-)
+  'Hello',
+);
 ```
 
 **生产模式移除**：减少体积
@@ -420,20 +449,23 @@ function hyperscript(
   type: string | Function,
   props: Record<string, any> | null,
   ...children: VNodeChild[]
-): VNode
+): VNode;
 ```
 
 ### 导入声明
 
 **自动注入导入**：
+
 ```javascript
 // 如果用户没有导入，自动添加
-import { hyperscript } from '@fukict/runtime'
+import { hyperscript } from '@fukict/runtime';
 ```
 
 **或使用别名**：
+
 ```javascript
-import { h as _h } from '@fukict/runtime'
+import { h as _h } from '@fukict/runtime';
+
 // 使用 _h 调用
 ```
 
@@ -442,22 +474,26 @@ import { h as _h } from '@fukict/runtime'
 ### 编译期错误
 
 **无效的 JSX**：
+
 ```tsx
 <div on:={fn} />  // 空事件名
 ```
 
 **提示**：
+
 ```
 Babel plugin error: Empty event name after 'on:'
 at App.tsx:10:5
 ```
 
 **类型错误（配合 TypeScript）**：
+
 ```tsx
 <div unknown-attr="value" />
 ```
 
 **不报错**：
+
 - babel-plugin 不做类型检查
 - 由 TypeScript 处理
 
@@ -480,16 +516,18 @@ at App.tsx:10:5
 ### TypeScript
 
 **tsconfig.json**：
+
 ```json
 {
   "compilerOptions": {
-    "jsx": "preserve",  // 保留 JSX，交给 Babel 处理
+    "jsx": "preserve", // 保留 JSX，交给 Babel 处理
     "jsxImportSource": "@fukict/widget"
   }
 }
 ```
 
 **或使用 react-jsx 模式（借用 React 的 JSX 转换）**：
+
 ```json
 {
   "compilerOptions": {
@@ -502,14 +540,15 @@ at App.tsx:10:5
 ### Vite
 
 **vite.config.ts**：
+
 ```typescript
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vite';
 
 export default defineConfig({
   esbuild: {
     jsxFactory: 'h',
     jsxFragment: 'Fragment',
-    jsxInject: `import { h, Fragment } from '@fukict/widget'`
+    jsxInject: `import { h, Fragment } from '@fukict/widget'`,
   },
   // 或使用 babel 插件
   plugins: [
@@ -517,17 +556,18 @@ export default defineConfig({
       name: 'fukict',
       config() {
         return {
-          esbuild: false  // 禁用 esbuild jsx
-        }
-      }
-    }
-  ]
-})
+          esbuild: false, // 禁用 esbuild jsx
+        };
+      },
+    },
+  ],
+});
 ```
 
 ### Webpack
 
 **webpack.config.js**：
+
 ```javascript
 module.exports = {
   module: {
@@ -537,27 +577,28 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@fukict/babel-preset-widget']
-          }
-        }
-      }
-    ]
-  }
-}
+            presets: ['@fukict/babel-preset-widget'],
+          },
+        },
+      },
+    ],
+  },
+};
 ```
 
 ### Rsbuild
 
 **rsbuild.config.ts**：
+
 ```typescript
 export default {
   tools: {
-    babel: (config) => {
-      config.presets.push('@fukict/babel-preset-widget')
-      return config
-    }
-  }
-}
+    babel: config => {
+      config.presets.push('@fukict/babel-preset-widget');
+      return config;
+    },
+  },
+};
 ```
 
 ## 测试策略
@@ -579,9 +620,7 @@ export default {
 ### Snapshot 测试
 
 ```typescript
-expect(
-  transform('<div on:click={fn}>Hello</div>')
-).toMatchSnapshot()
+expect(transform('<div on:click={fn}>Hello</div>')).toMatchSnapshot();
 ```
 
 ## 设计权衡记录
@@ -591,11 +630,13 @@ expect(
 **决策**：使用 classic 模式（手动导入 h）
 
 **理由**：
+
 - hyperscript 参数顺序明确
 - 更接近底层语义
 - 方便调试和理解
 
 **权衡**：
+
 - 需要手动导入（但 widget 会重新导出）
 - 但更灵活，可以使用别名
 
@@ -604,11 +645,13 @@ expect(
 **决策**：使用 `on:` 前缀而非 `on` 前缀
 
 **理由**：
+
 - 与普通属性明确区分（onClick vs on:click）
 - 避免命名冲突
 - 编译期容易识别
 
 **权衡**：
+
 - 语法略显冗长
 - 但更清晰
 
@@ -617,11 +660,13 @@ expect(
 **决策**：保留 null/undefined/boolean，由 runtime 处理
 
 **理由**：
+
 - 条件渲染需要运行时判断
 - 编译期无法确定值
 - 保持编译器简单
 
 **权衡**：
+
 - 输出代码包含无效值
 - 但逻辑正确，runtime 会过滤
 
@@ -630,11 +675,13 @@ expect(
 **决策**：初版不实现常量提升、静态标记
 
 **理由**：
+
 - 增加复杂度
 - 性能提升有限（现代引擎已优化）
 - 可以后续添加
 
 **权衡**：
+
 - 性能不是最优
 - 但保持简单
 
