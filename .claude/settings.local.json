@@ -13,7 +13,22 @@
       "Bash(for:*)",
       "Bash(do sed -i '' 's/<RouterView router={this.router} \\/>/<RouterView router={this.router} depth={1} \\/>/g' \"$file\")",
       "Bash(done)",
-      "Bash(do sed -i '' 's/ depth={1}//g' \"$file\")"
+      "Bash(do sed -i '' 's/ depth={1}//g' \"$file\")",
+      "Bash(rm:*)",
+      "Bash(./node_modules/.bin/tsx:*)",
+      "Bash(npx tsdown:*)",
+      "WebSearch",
+      "WebFetch(domain:tsdown.dev)",
+      "WebFetch(domain:github.com)",
+      "Bash(timeout 10 pnpm dev)",
+      "Bash(fnm install:*)",
+      "Bash(fnm use:*)",
+      "Bash(node:*)",
+      "Bash(npm:*)",
+      "Bash(corepack enable)",
+      "Bash(corepack prepare:*)",
+      "Bash(cat:*)",
+      "Bash(npx tsc:*)"
     ],
     "deny": [],
     "ask": []

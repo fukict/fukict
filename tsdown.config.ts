@@ -134,6 +134,7 @@ function getPackageConfig() {
     ...packageConfig,
     clean: !isWatchMode, // watch 模式下不清理，避免频繁删除
     external: createExternalFn(commonConfig.external || []),
+    tsconfig: resolve(process.cwd(), 'tsconfig.json'), // 使用顶层 tsconfig 选项替代废弃的 resolve.tsconfigFilename
     onSuccess: isWatchMode
       ? undefined
       : () => {

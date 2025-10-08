@@ -10,7 +10,7 @@ export function hyperscript(
   events: Record<string, EventListener> | null,
   ...children: VNodeChild[]
 ): VNode {
-  const { children: propsChildren, key, ref, ...restProps } = props || {};
+  const { children: propsChildren, ref, ...restProps } = props || {};
 
   // 简单 children 处理
   const finalChildren: VNodeChild[] = [];
@@ -30,7 +30,6 @@ export function hyperscript(
     props: restProps,
     events: events,
     children: finalChildren,
-    key,
     ref,
   };
 }

@@ -7,12 +7,18 @@ export interface VNode {
   props: Record<string, any> | null;
   events: Record<string, EventListener> | null; // 新增：编译时分离的事件监听器
   children: VNodeChild[];
-  key?: string | number;
   ref?: RefCallback; // 新增：ref 回调
 }
 
-// 子节点类型
-export type VNodeChild = VNode | string | number | boolean | null | undefined;
+// 子节点类型（支持数组嵌套）
+export type VNodeChild =
+  | VNode
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | VNodeChild[];
 
 // 组件函数类型
 export type ComponentFunction = (props: Record<string, any>) => VNode;
@@ -98,8 +104,12 @@ export interface DOMEventProps {
 // DOM 属性类型
 export interface DOMProps extends DOMEventProps, Record<string, any> {
   children?: VNodeChild | VNodeChild[];
-  key?: string | number;
   ref?: RefCallback;
+
+  // Fukict 框架属性
+  'fukict:slot'?: string; // 具名插槽
+  'fukict:ref'?: string; // 组件引用
+  'fukict:detach'?: boolean; // 脱围标记
 
   // 通用 HTML 属性
   id?: string;

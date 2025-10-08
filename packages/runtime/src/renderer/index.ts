@@ -111,6 +111,5 @@ export function hydrate(vnode: VNode, existingDOM: Element): void {
 
 // 转发导出其他渲染器模块
 export { createDOMFromTree } from './creator';
-export { updateDOM } from './differ';
 
 // 不导出 component 模块（内部使用）

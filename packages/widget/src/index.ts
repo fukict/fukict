@@ -14,6 +14,12 @@ export {
   isClassWidget,
 } from './helpers';
 
+// 导出 Widget 层基础设施
+export { WidgetList } from './widget-list';
+export { extractSlots, getSlot, isEmptySlots } from './slots-extractor';
+export { RefsManager, extractRefName, isDetached } from './refs-manager';
+export { patchDOM } from './differ';
+
 // 导出调度器配置
 export {
   configureScheduler,
@@ -36,10 +42,37 @@ export type {
   ComponentMountCallback,
 } from './types';
 
+export type { SlotsMap } from './slots-extractor';
+export type { RefsMap } from './refs-manager';
+
 export * from './jsx-runtime';
 
-// 不再重新导出 runtime 的函数，保持包的职责分离
-// 用户应该从 @fukict/runtime 导入 hyperscript, render 等基础函数
+// ===== 从 @fukict/runtime 重新导出常用内容 =====
+// 减少用户心智负担，避免同时引用两个包
+
+export {
+  // 核心渲染函数
+  render,
+  // JSX 工厂函数
+  hyperscript,
+  h,
+  Fragment,
+} from '@fukict/runtime';
+
+export type {
+  // VNode 类型
+  VNode,
+  VNodeChild,
+  // 组件类型
+  ComponentFunction,
+  // Props 类型
+  DOMProps,
+  DOMEventProps,
+  // Ref 类型
+  RefCallback,
+  // 渲染选项
+  RenderOptions,
+} from '@fukict/runtime';
 
 // 导出包元数据
 export { METADATA } from './metadata';

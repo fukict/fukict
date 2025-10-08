@@ -25,5 +25,18 @@ export declare namespace JSX {
      * 当 Widget 组件挂载到 DOM 后调用，传入 Widget 实例
      */
     onMounted?: (instance: any) => void;
+
+    /**
+     * 子节点
+     * 所有 Widget 组件都支持 children
+     */
+    children?: RuntimeJSX.Element | RuntimeJSX.Element[];
+
+    /**
+     * Fukict 框架属性
+     */
+    'fukict:slot'?: string; // 具名插槽
+    'fukict:ref'?: string; // 组件引用
+    'fukict:detach'?: boolean; // 脱围标记
   }
 }

@@ -1,7 +1,8 @@
 import type { VNode } from '@fukict/runtime';
-import { render, updateDOM } from '@fukict/runtime';
+import { render } from '@fukict/runtime';
 
 import { deepClone, deepEqual } from './helpers';
+import { patchDOM } from './differ';
 import { immediateRender, scheduleRender } from './scheduler';
 import type {
   WidgeFuncInstance,
@@ -62,8 +63,8 @@ export const defineWidget: WidgetFuncFactory = <T extends WidgetProps>(
       // 生成新的 VNode
       const newVNode = renderFn(currentProps);
 
-      // 使用 runtime 包的精确更新算法
-      updateDOM(currentVNode, newVNode, currentElement);
+      // 使用 Widget 层的 diff/patch 算法
+      patchDOM(currentVNode, newVNode, currentElement);
 
       // 更新当前 VNode 引用
       currentVNode = newVNode;

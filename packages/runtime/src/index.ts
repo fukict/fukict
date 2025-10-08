@@ -29,7 +29,7 @@ export {
 export type { ComponentPatternHandler } from './pattern-registry';
 
 // 导出渲染引擎
-export { render, createDOMFromTree, updateDOM, hydrate } from './renderer';
+export { render, createDOMFromTree, hydrate } from './renderer';
 
 // 导出 DOM 工具集
 export * from './dom';

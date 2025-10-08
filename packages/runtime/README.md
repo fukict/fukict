@@ -307,7 +307,7 @@ class TodoList extends Component {
     return h('div', { class: 'todo-list' },
       h('h2', null, 'Todo List'),
       ...this.props.items.map((item: any) =>
-        h('div', { key: item.id }, item.text)
+        h('div', { }, item.text)
       )
     );
   }
@@ -419,7 +419,6 @@ interface VNode {
   type: string | ComponentFunction;
   props: Record<string, any> | null;
   children: VNodeChild[];
-  key?: string | number;
 }
 
 type VNodeChild = VNode | string | number | boolean | null | undefined;
