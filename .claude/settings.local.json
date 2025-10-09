@@ -39,7 +39,11 @@
       "Bash(ls:*)",
       "Bash(wc:*)",
       "Bash(npx madge:*)",
-      "Bash(sort:*)"
+      "Bash(sort:*)",
+      "Bash(PACKAGE_NAME=widget npx tsdown)",
+      "Bash(open http://localhost:8080/examples/no-build/widget.html)",
+      "Bash(git checkout:*)",
+      "Bash(PACKAGE_NAME=widget pnpm --filter @fukict/widget build)"
     ],
     "deny": [],
     "ask": []

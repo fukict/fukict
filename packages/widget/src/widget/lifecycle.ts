@@ -69,34 +69,43 @@ export function mountChildren<TProps extends WidgetProps>(
 
   // 1. Handle component VNodes
   if (instance) {
-    // The DOM node and instance are now stored on the component VNode itself
-    // (stored by runtime's renderComponent)
-    const instanceNode = (vnode as any).__dom__;
-
-    const refName = extractRefName(vnode);
-
-    // Register ref
-    if (refName) {
-      widget.refs.set(refName, instance);
-    }
-
-    // Set element reference using the DOM stored on component VNode
-    if (instanceNode instanceof Element) {
-      instance.element = instanceNode;
+    // Check if this is a rendered VNode (would cause infinite recursion)
+    // If instance.__vnode__ === vnode, this is the rendered result, not a component reference
+    if (instance.__vnode__ === vnode) {
+      // This is a rendered VNode (e.g., h('div') returned by Widget.render())
+      // It has __instance__ for reverse lookup, but should not trigger special handling
+      // Continue processing as a normal DOM element
     } else {
-      console.warn('[mountChildren] instanceNode is NOT an Element!', { instanceNode });
+      // This is a component VNode (e.g., h(CounterWidget))
+      // The DOM node and instance are now stored on the component VNode itself
+      // (stored by runtime's renderComponent)
+      const instanceNode = (vnode as any).__dom__;
+
+      const refName = extractRefName(vnode);
+
+      // Register ref
+      if (refName) {
+        widget.refs.set(refName, instance);
+      }
+
+      // Set element reference using the DOM stored on component VNode
+      if (instanceNode instanceof Element) {
+        instance.element = instanceNode;
+      } else {
+        console.warn('[mountChildren] instanceNode is NOT an Element!', { instanceNode });
+      }
+
+      // Recursively mount the instance's own child tree
+      // IMPORTANT: Use the instance as the parent widget, not the outer widget
+      if (instance.__vnode__ && instanceNode) {
+        mountChildren(instance, instance.__vnode__, instanceNode);
+      }
+
+      // Trigger child's onMounted
+      instance.onMounted?.();
+
+      return;
     }
-
-    // Recursively mount the instance's own child tree
-    // IMPORTANT: Use the instance as the parent widget, not the outer widget
-    if (instance.__vnode__ && instanceNode) {
-      mountChildren(instance, instance.__vnode__, instanceNode);
-    }
-
-    // Trigger child's onMounted
-    instance.onMounted?.();
-
-    return;
   }
 
   // 2. Handle DOM element VNodes
@@ -173,22 +182,30 @@ export function unmountChildren<TProps extends WidgetProps>(
 
   // 1. Handle component VNodes
   if (instance) {
-    const refName = extractRefName(vnode);
+    // Check if this is a rendered VNode (would cause infinite recursion)
+    // If instance.__vnode__ === vnode, this is the rendered result, not a component reference
+    if (instance.__vnode__ === vnode) {
+      // This is a rendered VNode, should not trigger special handling
+      // Continue processing as a normal DOM element
+    } else {
+      // This is a component VNode
+      const refName = extractRefName(vnode);
 
-    // Trigger child's onBeforeUnmount
-    instance.onBeforeUnmount?.();
+      // Trigger child's onBeforeUnmount
+      instance.onBeforeUnmount?.();
 
-    // Recursively unmount child's tree
-    if (instance.__vnode__) {
-      unmountChildren(widget, instance.__vnode__);
+      // Recursively unmount child's tree
+      if (instance.__vnode__) {
+        unmountChildren(widget, instance.__vnode__);
+      }
+
+      // Clean up ref
+      if (refName) {
+        widget.refs.delete(refName);
+      }
+
+      return;
     }
-
-    // Clean up ref
-    if (refName) {
-      widget.refs.delete(refName);
-    }
-
-    return;
   }
 
   // 2. Handle DOM element VNodes

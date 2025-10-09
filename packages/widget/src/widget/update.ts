@@ -3,9 +3,12 @@
  *
  * Widget update logic (imports diff)
  */
-import { createNode } from '@fukict/runtime';
+import type { VNode } from '@fukict/runtime';
+import { createNode, unmount } from '@fukict/runtime';
 
-import { diff } from '../diff/index.js';
+import { diff } from '../diff/core.js';
+import { patchProps } from '../diff/props.js';
+import { isVNode } from '../diff/types.js';
 import type { WidgetProps } from '../types/index.js';
 import type { Widget } from './class.js';
 
@@ -19,26 +22,18 @@ export function update<TProps extends WidgetProps>(
   widget: Widget<TProps>,
   newProps: Partial<TProps>,
 ): void {
-  console.log('[update] CALLED with newProps:', newProps);
-  console.log('[update] Widget state:', {
-    hasElement: !!widget.element,
-    hasVnode: !!widget.__vnode__,
-    widgetType: widget.constructor.name,
-  });
-
   // Merge props
   widget.props = { ...widget.props, ...newProps };
 
   // Only perform update if component is mounted
   // If not mounted yet, the initial mount will use the updated props
   if (widget.element && widget.__vnode__) {
-    console.log('[update] Calling performUpdate...');
     performUpdate(widget);
   } else {
-    console.log('[update] Skipped - not mounted', {
-      hasElement: !!widget.element,
-      hasVnode: !!widget.__vnode__,
-    });
+    // console.log('[update] Skipped - not mounted', {
+    //   hasElement: !!widget.element,
+    //   hasVnode: !!widget.__vnode__,
+    // });
   }
 }
 
@@ -50,8 +45,6 @@ export function update<TProps extends WidgetProps>(
 export function performUpdate<TProps extends WidgetProps>(
   widget: Widget<TProps>,
 ): void {
-  console.log('[performUpdate] CALLED');
-
   if (!widget.element) {
     throw new Error('Cannot __performUpdate: component not mounted');
   }
@@ -61,30 +54,110 @@ export function performUpdate<TProps extends WidgetProps>(
     throw new Error('Cannot __performUpdate: no previous VNode');
   }
 
-  console.log('[performUpdate] Old VNode:', oldVNode);
-
   // Create new VNode
   const newVNode = widget.render();
-  console.log('[performUpdate] New VNode:', newVNode);
 
-  // Perform diff/patch with new algorithm
-  const parentElement = widget.element.parentElement;
-  if (!parentElement) {
-    throw new Error('Cannot __performUpdate: element has no parent');
+  // Check if root element type changed
+  if (oldVNode.type === newVNode.type && typeof oldVNode.type === 'string') {
+    // Same type - can patch in place
+
+    // Step 1: Patch props directly on widget.element
+    patchProps(widget.element, oldVNode.props || {}, newVNode.props || {});
+
+    // Step 2: Diff children (inline implementation based on diffChildren logic)
+    const oldChildren = oldVNode.children || [];
+    const newChildren = newVNode.children || [];
+
+    // Build a map of old children to their DOM nodes
+    const oldDOMMap = new Map();
+    let domIndex = 0;
+
+    for (const oldChild of oldChildren) {
+      if (
+        oldChild === null ||
+        oldChild === undefined ||
+        typeof oldChild === 'boolean'
+      ) {
+        continue;
+      }
+
+      const domNode = widget.element.childNodes[domIndex];
+      if (domNode) {
+        oldDOMMap.set(oldChild, domNode);
+        domIndex++;
+      }
+    }
+
+    // Diff position by position
+    const maxLength = Math.max(oldChildren.length, newChildren.length);
+
+    for (let i = 0; i < maxLength; i++) {
+      const oldChild = oldChildren[i];
+      const newChild = newChildren[i];
+
+      if (i < oldChildren.length && i < newChildren.length) {
+        // Both exist - diff
+        const isOldVNode = isVNode(oldChild);
+        const isNewVNode = isVNode(newChild);
+
+        if (isOldVNode && isNewVNode) {
+          // CRITICAL: Set __dom__ on oldChild so that diff can find it
+          const oldNode = oldDOMMap.get(oldChild);
+          if (oldNode) {
+            (oldChild as any).__dom__ = oldNode;
+          }
+
+          diff(oldChild as VNode, newChild as VNode, widget.element, widget);
+        } else if (oldChild !== newChild) {
+          // Text node changed - replace
+          const oldNode = oldDOMMap.get(oldChild);
+          if (oldNode) {
+            const newNode = createNode(newChild);
+            if (newNode) {
+              widget.element.replaceChild(newNode, oldNode);
+            }
+          }
+        } else {
+          // console.log(
+          //   `[performUpdate] → Skipping unchanged text at position ${i}`,
+          // );
+        }
+      } else if (i < newChildren.length) {
+        // New child - mount
+        const newNode = createNode(newChild);
+        if (newNode) {
+          widget.element.appendChild(newNode);
+        }
+      } else {
+        // Old child - unmount
+        const oldNode = oldDOMMap.get(oldChild);
+        if (oldNode) {
+          if (isVNode(oldChild)) {
+            unmount(oldNode, oldChild as VNode);
+          } else {
+            widget.element.removeChild(oldNode);
+          }
+        }
+      }
+    }
+
+    // Update VNode reference
+    widget.__vnode__ = newVNode;
+  } else {
+    // Different type - need to replace entire element
+
+    const parentElement = widget.element.parentElement;
+    if (!parentElement) {
+      throw new Error('Cannot __performUpdate: element has no parent');
+    }
+
+    const newNode = createNode(newVNode);
+    if (newNode && newNode instanceof Element) {
+      parentElement.replaceChild(newNode, widget.element);
+      widget.element = newNode;
+      widget.__vnode__ = newVNode;
+    }
   }
-
-  console.log('[performUpdate] Calling diff()...');
-  const newNode = diff(oldVNode, newVNode, parentElement, widget);
-  console.log('[performUpdate] diff() returned:', newNode);
-
-  // Update element reference if changed
-  if (newNode && newNode instanceof Element) {
-    widget.element = newNode;
-  }
-
-  // Update VNode reference
-  widget.__vnode__ = newVNode;
-  console.log('[performUpdate] Complete');
 }
 
 /**

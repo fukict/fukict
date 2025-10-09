@@ -35,14 +35,43 @@ export function patchProps(
       continue;
     }
 
+    // Skip event handlers (handled by runtime)
+    if (key.startsWith('on:')) {
+      continue;
+    }
+
+    // Handle style object
+    if (key === 'style' && typeof newValue === 'object' && newValue !== null) {
+      const htmlElement = element as HTMLElement;
+      // Clear old styles
+      if (typeof oldValue === 'object' && oldValue !== null) {
+        for (const styleProp in oldValue) {
+          if (!(styleProp in newValue)) {
+            htmlElement.style.removeProperty(styleProp);
+          }
+        }
+      }
+      // Set new styles
+      for (const styleProp in newValue) {
+        htmlElement.style.setProperty(styleProp, newValue[styleProp]);
+      }
+      continue;
+    }
+
     // Remove if deleted
-    if (newValue === undefined) {
+    if (newValue === undefined || newValue === null) {
       element.removeAttribute(key);
       continue;
     }
 
     // Set new value
-    if (newValue != null) {
+    if (typeof newValue === 'boolean') {
+      if (newValue) {
+        element.setAttribute(key, '');
+      } else {
+        element.removeAttribute(key);
+      }
+    } else {
       element.setAttribute(key, String(newValue));
     }
   }
