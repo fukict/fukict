@@ -3,8 +3,8 @@
  *
  * JSX namespace and intrinsic elements for TypeScript
  */
-import type { VNode } from './core';
-import type { HTMLAttributes, SVGAttributes } from './dom-attributes';
+import type { VNode } from './core.js';
+import type { HTMLAttributes, SVGAttributes } from './dom-attributes.js';
 
 /**
  * JSX namespace for TypeScript

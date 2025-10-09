@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test Counter - Fukict Widget</title>
+
+    <!-- Import Map -->
+    <script type="importmap">
+      {
+        "imports": {
+          "@fukict/runtime": "/packages/runtime/dist/index.js",
+          "@fukict/widget": "/packages/widget/dist/index.js"
+        }
+      }
+    </script>
+
+    <style>
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+      }
+      .counter {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        margin: 5px;
+      }
+      .count {
+        font-size: 24px;
+        font-weight: bold;
+        margin: 10px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <script type="module">
+      import { Widget } from '@fukict/widget';
+      import { h } from '@fukict/runtime';
+
+      class CounterWidget extends Widget {
+        constructor(props) {
+          super(props);
+          this.state = {
+            count: props.initialCount || 0,
+          };
+        }
+
+        increment = () => {
+          console.log('[CounterWidget] increment clicked');
+          this.state.count++;
+          this.update({}); // Trigger re-render with diff/patch
+        };
+
+        decrement = () => {
+          console.log('[CounterWidget] decrement clicked');
+          this.state.count--;
+          this.update({}); // Trigger re-render
+        };
+
+        onMounted() {
+          console.log('[CounterWidget] Mounted!', this.element);
+        }
+
+        render() {
+          console.log('[CounterWidget] render() called, count:', this.state.count);
+          return h(
+            'div',
+            { class: 'counter' },
+            h('h2', null, 'Counter Test'),
+            h('div', { class: 'count' }, `Count: ${this.state.count}`),
+            h('button', { 'on:click': this.increment }, '+ Increment'),
+            h('button', { 'on:click': this.decrement }, '- Decrement'),
+            h('p', { style: { color: '#666', fontSize: '14px' } }, 'Test Issue: Stack overflow on mount, append on update')
+          );
+        }
+      }
+
+      // Mount app
+      console.log('[App] Creating CounterWidget...');
+      const counter = new CounterWidget({ initialCount: 0 });
+      console.log('[App] Mounting CounterWidget...');
+      counter.mount(document.getElementById('app'));
+      console.log('[App] CounterWidget mounted successfully!');
+    </script>
+  </body>
+</html>

@@ -4,6 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fukict Runtime - No Build Example</title>
+
+    <!-- Import Map: Map @fukict packages to local dist files -->
+    <script type="importmap">
+      {
+        "imports": {
+          "@fukict/runtime": "../../packages/runtime/dist/index.js"
+        }
+      }
+    </script>
+
     <style>
       body {
         font-family:
@@ -50,14 +60,14 @@
     <div id="app"></div>
 
     <script type="module">
-      // Import runtime from the built package
+      // Import runtime from the built package (will be resolved via import map)
       import {
         Fragment,
         h,
         registerComponentHandler,
         render,
         replaceNode,
-      } from '../../packages/runtime/dist/index.js';
+      } from '@fukict/runtime';
 
       // Simple counter component using replaceNode
       function createCounter() {

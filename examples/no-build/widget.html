@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fukict Widget - No Build Example</title>
+
+    <!-- Import Map: Map @fukict packages to local dist files -->
+    <script type="importmap">
+      {
+        "imports": {
+          "@fukict/runtime": "/packages/runtime/dist/index.js",
+          "@fukict/widget": "/packages/widget/dist/index.js"
+        }
+      }
+    </script>
+
+    <style>
+      body {
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+        max-width: 1000px;
+        margin: 50px auto;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      h1 {
+        color: #333;
+      }
+      .card {
+        background: white;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .counter {
+        margin: 20px 0;
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        margin: 5px;
+      }
+      button:hover {
+        background: #0056b3;
+      }
+      button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
+      .count {
+        font-size: 24px;
+        font-weight: bold;
+        margin: 10px 0;
+      }
+      .list-item {
+        padding: 10px;
+        margin: 5px 0;
+        background: #f0f0f0;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .list-item input[type='text'] {
+        flex: 1;
+        padding: 5px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      .info-box {
+        background: #e3f2fd;
+        border-left: 4px solid #2196f3;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 4px;
+      }
+      .warning-box {
+        background: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 4px;
+      }
+      .success-box {
+        background: #d4edda;
+        border-left: 4px solid #28a745;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 4px;
+      }
+      .slot-container {
+        border: 2px dashed #ccc;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 4px;
+      }
+      .slot-header {
+        background: #e3f2fd;
+        padding: 10px;
+        margin: -15px -15px 15px -15px;
+        border-radius: 4px 4px 0 0;
+        font-weight: bold;
+      }
+      .slot-footer {
+        background: #f5f5f5;
+        padding: 10px;
+        margin: 15px -15px -15px -15px;
+        border-radius: 0 0 4px 4px;
+        text-align: center;
+      }
+      code {
+        background: #f5f5f5;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: 'Monaco', 'Courier New', monospace;
+        font-size: 14px;
+      }
+      pre {
+        background: #f5f5f5;
+        padding: 15px;
+        border-radius: 4px;
+        overflow-x: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <script type="module">
+      // Import Widget from the built package (will be resolved via import map)
+      import { Widget } from '@fukict/widget';
+      import { h, render } from '@fukict/runtime';
+
+      // ======================
+      // Example 1: Basic Counter Widget
+      // ======================
+      class CounterWidget extends Widget {
+        constructor(props) {
+          super(props);
+          this.state = {
+            count: props.initialCount || 0,
+          };
+        }
+
+        increment = () => {
+          this.state.count++;
+          this.update({}); // Trigger re-render with diff/patch
+        };
+
+        decrement = () => {
+          this.state.count--;
+          this.update({}); // Trigger re-render with diff/patch
+        };
+
+        reset = () => {
+          this.state.count = this.props.initialCount || 0;
+          this.update({}); // Trigger re-render
+        };
+
+        onMounted() {
+          console.log('CounterWidget mounted!', this.element);
+        }
+
+        onBeforeUnmount() {
+          console.log('CounterWidget unmounting!');
+        }
+
+        render() {
+          return h(
+            'div',
+            { class: 'card counter' },
+            h('h2', null, 'Counter Widget (With Lifecycle)'),
+            h('div', { class: 'count' }, `Count: ${this.state.count}`),
+            h('button', { 'on:click': this.increment }, '➕ Increment'),
+            h('button', { 'on:click': this.decrement }, '➖ Decrement'),
+            h('button', { 'on:click': this.reset }, '🔄 Reset'),
+            h(
+              'p',
+              { style: { fontSize: '14px', color: '#666', marginTop: '10px' } },
+              '💡 使用 Widget.update() 进行高效的 diff/patch 更新',
+            ),
+          );
+        }
+      }
+
+      // ======================
+      // Example 2: Todo Item Widget (with refs)
+      // ======================
+      class TodoItemWidget extends Widget {
+        constructor(props) {
+          super(props);
+        }
+
+        toggle = () => {
+          this.props.onToggle(this.props.todo.id);
+        };
+
+        remove = () => {
+          this.props.onRemove(this.props.todo.id);
+        };
+
+        startEdit = () => {
+          this.props.onStartEdit(this.props.todo.id);
+        };
+
+        render() {
+          const { todo, isEditing } = this.props;
+
+          if (isEditing) {
+            return h(
+              'div',
+              { class: 'list-item' },
+              h('input', {
+                type: 'text',
+                value: todo.text,
+                'fukict:ref': 'editInput', // Register ref to parent
+                'on:blur': () => this.props.onFinishEdit(),
+                'on:keydown': e => {
+                  if (e.key === 'Enter') this.props.onFinishEdit();
+                  if (e.key === 'Escape') this.props.onCancelEdit();
+                },
+              }),
+              h(
+                'button',
+                { 'on:click': () => this.props.onFinishEdit() },
+                '✓',
+              ),
+              h(
+                'button',
+                { 'on:click': () => this.props.onCancelEdit() },
+                '✗',
+              ),
+            );
+          }
+
+          return h(
+            'div',
+            {
+              class: 'list-item',
+              style: {
+                textDecoration: todo.done ? 'line-through' : 'none',
+                opacity: todo.done ? '0.6' : '1',
+              },
+            },
+            h('input', {
+              type: 'checkbox',
+              checked: todo.done,
+              'on:change': this.toggle,
+            }),
+            h(
+              'span',
+              {
+                style: { flex: 1, cursor: 'pointer' },
+                'on:dblclick': this.startEdit,
+              },
+              todo.text,
+            ),
+            h('button', { 'on:click': this.remove }, '🗑️ Remove'),
+          );
+        }
+      }
+
+      // ======================
+      // Example 3: Todo List Widget (with refs management)
+      // ======================
+      class TodoListWidget extends Widget {
+        constructor(props) {
+          super(props);
+          this.state = {
+            todos: [
+              { id: 1, text: 'Learn Fukict Widget', done: false },
+              { id: 2, text: 'Understand lifecycle hooks', done: false },
+              { id: 3, text: 'Use refs for child access', done: true },
+            ],
+            nextId: 4,
+            editingId: null,
+            editingText: '',
+          };
+        }
+
+        addTodo = () => {
+          const text = prompt('Enter todo:');
+          if (text && text.trim()) {
+            this.state.todos.push({
+              id: this.state.nextId++,
+              text: text.trim(),
+              done: false,
+            });
+            this.update({});
+          }
+        };
+
+        toggleTodo = id => {
+          const todo = this.state.todos.find(t => t.id === id);
+          if (todo) {
+            todo.done = !todo.done;
+            this.update({});
+          }
+        };
+
+        removeTodo = id => {
+          this.state.todos = this.state.todos.filter(t => t.id !== id);
+          this.update({});
+        };
+
+        startEdit = id => {
+          const todo = this.state.todos.find(t => t.id === id);
+          if (todo) {
+            this.state.editingId = id;
+            this.state.editingText = todo.text;
+            this.update({});
+
+            // After re-render, focus the input using ref
+            setTimeout(() => {
+              const inputElement = this.refs.get('editInput');
+              if (inputElement) {
+                inputElement.focus();
+                inputElement.select();
+              }
+            }, 0);
+          }
+        };
+
+        finishEdit = () => {
+          const todo = this.state.todos.find(t => t.id === this.state.editingId);
+          if (todo) {
+            const inputElement = this.refs.get('editInput');
+            if (inputElement && inputElement.value.trim()) {
+              todo.text = inputElement.value.trim();
+            }
+          }
+          this.state.editingId = null;
+          this.update({});
+        };
+
+        cancelEdit = () => {
+          this.state.editingId = null;
+          this.update({});
+        };
+
+        onMounted() {
+          console.log('TodoListWidget mounted with refs:', this.refs);
+        }
+
+        render() {
+          const { todos, editingId } = this.state;
+          const doneCount = todos.filter(t => t.done).length;
+
+          return h(
+            'div',
+            { class: 'card' },
+            h('h2', null, 'Todo List Widget (With Refs)'),
+            h(
+              'p',
+              { style: { color: '#666', fontSize: '14px' } },
+              `${doneCount} / ${todos.length} completed`,
+            ),
+            h('button', { 'on:click': this.addTodo }, '➕ Add Todo'),
+            h(
+              'div',
+              { style: { marginTop: '15px' } },
+              ...todos.map(todo =>
+                h(TodoItemWidget, {
+                  key: todo.id,
+                  todo,
+                  isEditing: editingId === todo.id,
+                  onToggle: this.toggleTodo,
+                  onRemove: this.removeTodo,
+                  onStartEdit: this.startEdit,
+                  onFinishEdit: this.finishEdit,
+                  onCancelEdit: this.cancelEdit,
+                }),
+              ),
+            ),
+            h(
+              'p',
+              { style: { fontSize: '14px', color: '#666', marginTop: '10px' } },
+              '💡 双击编辑，使用 fukict:ref 聚焦输入框',
+            ),
+          );
+        }
+      }
+
+      // ======================
+      // Example 4: Card with Slots
+      // ======================
+      class CardWidget extends Widget {
+        render() {
+          const headerSlot = this.slots.get('header');
+          const footerSlot = this.slots.get('footer');
+          const defaultSlot = this.slots.get('default');
+
+          return h(
+            'div',
+            { class: 'card slot-container' },
+            headerSlot
+              ? h('div', { class: 'slot-header' }, ...headerSlot)
+              : null,
+            h(
+              'div',
+              { style: { padding: '10px 0' } },
+              defaultSlot ? defaultSlot : h('p', null, '(Empty card)'),
+            ),
+            footerSlot
+              ? h('div', { class: 'slot-footer' }, ...footerSlot)
+              : null,
+          );
+        }
+      }
+
+      // ======================
+      // Example 5: Detached Widget (Performance)
+      // ======================
+      class ExpensiveWidget extends Widget {
+        constructor(props) {
+          super(props);
+          this.state = {
+            renderCount: 0,
+          };
+        }
+
+        onMounted() {
+          console.log('ExpensiveWidget mounted (first time only)');
+        }
+
+        render() {
+          this.state.renderCount++;
+          return h(
+            'div',
+            { class: 'info-box' },
+            h('h3', null, '🚀 Detached Widget (Performance Optimization)'),
+            h('p', null, `Render count: ${this.state.renderCount}`),
+            h(
+              'p',
+              { style: { fontSize: '14px', margin: 0 } },
+              '💡 标记为 fukict:detach 后，父组件更新不会触发此组件重渲染',
+            ),
+          );
+        }
+      }
+
+      // ======================
+      // Example 6: Parent with Detached Child
+      // ======================
+      class ParentWidget extends Widget {
+        constructor(props) {
+          super(props);
+          this.state = {
+            parentRenderCount: 0,
+          };
+        }
+
+        triggerUpdate = () => {
+          this.state.parentRenderCount++;
+          this.update({});
+        };
+
+        render() {
+          return h(
+            'div',
+            { class: 'card' },
+            h('h2', null, 'Parent Widget with Detached Child'),
+            h(
+              'p',
+              null,
+              `Parent render count: ${this.state.parentRenderCount}`,
+            ),
+            h(
+              'button',
+              { 'on:click': this.triggerUpdate },
+              '🔄 Update Parent',
+            ),
+            h('div', { style: { marginTop: '15px' } }, [
+              h(
+                'div',
+                { class: 'warning-box' },
+                h('h4', { style: { marginTop: 0 } }, 'Normal Child'),
+                h('p', { style: { margin: 0 } }, '会随父组件一起重渲染'),
+              ),
+              h(ExpensiveWidget, {
+                'fukict:detach': true, // Mark as detached
+              }),
+            ]),
+          );
+        }
+      }
+
+      // ======================
+      // Main App
+      // ======================
+      class App extends Widget {
+        render() {
+          return h(
+            'div',
+            null,
+            h('h1', null, '🎨 Fukict Widget - No Build Example'),
+
+            // Feature explanation
+            h(
+              'div',
+              { class: 'success-box' },
+              h('h3', { style: { marginTop: 0 } }, '✨ Widget 提供的能力'),
+              h(
+                'ul',
+                { style: { marginBottom: 0 } },
+                h('li', null, '✅ 生命周期钩子 (onMounted, onBeforeUnmount)'),
+                h('li', null, '✅ 高效 diff/patch 更新 (update 方法)'),
+                h('li', null, '✅ 组件引用管理 (refs)'),
+                h('li', null, '✅ 插槽系统 (slots)'),
+                h('li', null, '✅ 脱围渲染优化 (fukict:detach)'),
+                h('li', null, '✅ 强制更新 (forceUpdate)'),
+                h('li', null, '💡 继承 Runtime 的所有能力'),
+              ),
+            ),
+
+            h('hr', { style: { margin: '30px 0', border: 'none', borderTop: '2px solid #e0e0e0' } }),
+
+            // Example 1: Counter
+            h(CounterWidget, { initialCount: 0 }),
+
+            h('hr', { style: { margin: '30px 0', border: 'none', borderTop: '2px solid #e0e0e0' } }),
+
+            // Example 2 & 3: Todo List
+            h(TodoListWidget),
+
+            h('hr', { style: { margin: '30px 0', border: 'none', borderTop: '2px solid #e0e0e0' } }),
+
+            // Example 4: Slots
+            h(
+              'div',
+              { class: 'card' },
+              h('h2', null, 'Slots Demo'),
+              h(
+                CardWidget,
+                null,
+                h('h3', { 'fukict:slot': 'header' }, '📋 Card Header Slot'),
+                h('p', { 'fukict:slot': 'default' }, 'This is the default slot content. You can put anything here!'),
+                h('p', { 'fukict:slot': 'default' }, 'Multiple elements in default slot are supported.'),
+                h('small', { 'fukict:slot': 'footer' }, 'Footer slot - Last updated: ' + new Date().toLocaleString()),
+              ),
+              h(
+                'p',
+                { style: { fontSize: '14px', color: '#666', marginTop: '10px' } },
+                '💡 使用 fukict:slot 属性分发内容到不同插槽',
+              ),
+            ),
+
+            h('hr', { style: { margin: '30px 0', border: 'none', borderTop: '2px solid #e0e0e0' } }),
+
+            // Example 5 & 6: Detached
+            h(ParentWidget),
+
+            h('hr', { style: { margin: '30px 0', border: 'none', borderTop: '2px solid #e0e0e0' } }),
+
+            // Code example
+            h(
+              'div',
+              { class: 'card' },
+              h('h2', null, '📝 代码示例'),
+              h('h3', null, '1. 基础 Widget'),
+              h('pre', null, `class MyWidget extends Widget {
+  constructor(props) {
+    super(props);
+    this.state = { count: 0 };
+  }
+
+  increment = () => {
+    this.state.count++;
+    this.update({}); // Trigger diff/patch
+  };
+
+  onMounted() {
+    console.log('Mounted!');
+  }
+
+  render() {
+    return h('div', null,
+      h('p', null, \`Count: \${this.state.count}\`),
+      h('button', { 'on:click': this.increment }, 'Click')
+    );
+  }
+}`),
+              h('h3', null, '2. 使用 Refs'),
+              h('pre', null, `// 在子组件上标记 ref
+h(ChildWidget, { 'fukict:ref': 'myChild' })
+
+// 在父组件中访问
+this.refs.get('myChild') // 返回 ChildWidget 实例`),
+              h('h3', null, '3. 使用 Slots'),
+              h('pre', null, `// 定义插槽内容
+h(CardWidget, null,
+  h('h3', { 'fukict:slot': 'header' }, 'Header'),
+  h('p', { 'fukict:slot': 'default' }, 'Content')
+)
+
+// 在组件中访问
+this.slots.get('header') // 返回 VNode[]`),
+              h('h3', null, '4. 脱围渲染'),
+              h('pre', null, `// 标记为 detached，父组件更新时跳过
+h(ExpensiveWidget, { 'fukict:detach': true })`),
+            ),
+          );
+        }
+      }
+
+      // Mount app
+      const app = new App({});
+      app.mount(document.getElementById('app'));
+    </script>
+  </body>
+</html>

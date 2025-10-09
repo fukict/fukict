@@ -5,8 +5,8 @@
  */
 
 // Core types
-export type { VNode, VNodeChild, RefCallback, UnregisterFn } from './core';
-export { Fragment } from './core';
+export type { VNode, VNodeChild, RefCallback, UnregisterFn } from './core.js';
+export { Fragment } from './core.js';
 
 // Extension system types
 export type { ComponentHandler } from './extensions';

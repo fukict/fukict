@@ -35,8 +35,13 @@ Fragment 符号，用于渲染多个根节点。
 将 VNode 渲染到容器元素。
 
 ```typescript
-function render(vnode: VNode | null, container: Element): Node | null;
+function render(vnode: VNodeChild, container: Element): Node | null;
 ```
+
+**行为**：
+1. 创建 DOM 节点（不触发生命周期）
+2. 插入到容器中
+3. **递归触发 `onMount` 钩子**（此时 DOM 已在文档中）
 
 ### `replaceNode`
 
@@ -45,10 +50,16 @@ function render(vnode: VNode | null, container: Element): Node | null;
 ```typescript
 function replaceNode(
   oldNode: Node,
-  newVNode: VNode | null,
+  newVNode: VNodeChild,
   oldVNode?: VNode,
 ): Node | null;
 ```
+
+**行为**：
+1. 触发旧节点的 `onUnmount` 钩子
+2. 创建新 DOM 节点（不触发生命周期）
+3. 替换 DOM
+4. **触发新节点的 `onMount` 钩子**（此时 DOM 已在文档中）
 
 **注意**：无 diff/patch，会重建整个子树。
 
@@ -83,7 +94,10 @@ interface ComponentHandler {
 
   // 可选
   processVNode?(vnode: VNode): VNode;
+
+  // DOM 插入后调用（此时可访问 DOM 属性）
   onMount?(element: Element, vnode: VNode): void;
+
   processAttribute?(element: Element, key: string, value: any): boolean;
   onUnmount?(element: Element, vnode: VNode): void;
 }

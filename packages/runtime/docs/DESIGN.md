@@ -143,8 +143,8 @@ VNodeChild = VNode | string | number | boolean | null | undefined | VNodeChild[]
     ↓ 设置属性（调用属性设置扩展点）
     ↓ 绑定事件
     ↓ 递归渲染子节点
-    ↓ 调用 DOM 挂载前扩展点
     ↓ 插入容器
+    ↓ 调用 onMount 扩展点（DOM 已插入）
 
 3b. 如果是 Function
     ↓ 遍历所有处理器，调用 detect
@@ -160,9 +160,32 @@ VNodeChild = VNode | string | number | boolean | null | undefined | VNodeChild[]
 - **组件检测时**：handler.detect()
 - **组件渲染时**：handler.render()
 - **VNode 创建后**：handler.processVNode()
-- **DOM 创建后**：handler.onMount()
+- **DOM 插入后**：handler.onMount() ← **关键：此时 DOM 已在文档中**
 - **属性设置时**：handler.processAttribute()
 - **DOM 移除时**：handler.onUnmount()
+
+### 挂载时机说明
+
+**重要**：`onMount` 钩子在 DOM **插入到文档**后调用，而非创建后立即调用。
+
+**原因**：
+- 保证此时可以访问 DOM 属性（offsetWidth, getBoundingClientRect 等）
+- 保证 refs 已正确设置
+- 保证生命周期语义正确
+
+**实现**：
+```typescript
+// 1. 创建 DOM（不触发生命周期）
+const node = createNode(vnode);
+
+// 2. 插入 DOM
+container.appendChild(node);
+
+// 3. 触发 onMount（此时 DOM 已在文档中）
+if (node instanceof Element) {
+  triggerOnMount(node, vnode);
+}
+```
 
 ## 节点替换设计
 
@@ -180,7 +203,7 @@ function replaceNode(
 
 - 用新的 VNode 替换现有的 DOM 节点
 - 自动触发清理钩子（oldVNode 的 onUnmount）
-- 自动触发挂载钩子（newVNode 的 onMount）
+- **在 DOM 替换后**自动触发挂载钩子（newVNode 的 onMount）
 - 如果 newVNode 为 null，则删除节点
 
 **使用场景**：

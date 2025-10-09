@@ -3,10 +3,10 @@
  *
  * Main rendering API
  */
-import { callOnUnmount } from '../component-handlers.js';
 import * as dom from '../dom/index.js';
-import type { VNode } from '../types/index.js';
+import type { VNode, VNodeChild } from '../types/index.js';
 import { createNode } from './create.js';
+import { mount } from './mount.js';
 
 /**
  * Render VNode to container
@@ -15,8 +15,8 @@ import { createNode } from './create.js';
  * @param container - Container element
  * @returns Rendered DOM node
  */
-export function render(vnode: VNode | null, container: Element): Node | null {
-  if (vnode === null) {
+export function render(vnode: VNodeChild, container: Element): Node | null {
+  if (vnode === null || vnode === undefined) {
     // Clear container
     while (container.firstChild) {
       dom.removeChild(container, container.firstChild);
@@ -24,10 +24,13 @@ export function render(vnode: VNode | null, container: Element): Node | null {
     return null;
   }
 
+  // Create and mount DOM
   const node = createNode(vnode);
+
   if (node) {
-    dom.appendChild(container, node);
+    mount(node, container);
   }
+
   return node;
 }
 
@@ -36,33 +39,30 @@ export function render(vnode: VNode | null, container: Element): Node | null {
  *
  * @param oldNode - Existing DOM node to replace
  * @param newVNode - New VNode to render
- * @param oldVNode - Optional VNode associated with oldNode (for cleanup)
+ * @param _oldVNode - Optional VNode associated with oldNode (unused, kept for API compatibility)
  * @returns New DOM node or null
  */
 export function replaceNode(
   oldNode: Node,
-  newVNode: VNode | null,
-  oldVNode?: VNode,
+  newVNode: VNodeChild,
+  _oldVNode?: VNode,
 ): Node | null {
   const parentNode = oldNode.parentNode;
   if (!parentNode) {
     return null;
   }
 
-  // Call cleanup for old node
-  if (oldVNode && oldNode instanceof Element) {
-    callOnUnmount(oldNode, oldVNode);
-  }
-
   // If new VNode is null, just remove old node
-  if (newVNode === null) {
+  if (newVNode === null || newVNode === undefined) {
     dom.removeChild(parentNode, oldNode);
     return null;
   }
 
   // Create new node
   const newNode = createNode(newVNode);
+
   if (newNode) {
+    // Replace DOM
     dom.replaceChild(parentNode, newNode, oldNode);
     return newNode;
   }
@@ -73,16 +73,12 @@ export function replaceNode(
 }
 
 /**
- * Unmount node and call cleanup
+ * Unmount node (simple DOM removal)
  *
  * @param node - DOM node
- * @param vnode - Associated VNode (optional)
+ * @param _vnode - Associated VNode (unused, kept for API compatibility)
  */
-export function unmount(node: Node, vnode?: VNode): void {
-  if (vnode && node instanceof Element) {
-    callOnUnmount(node, vnode);
-  }
-
+export function unmount(node: Node, _vnode?: VNode): void {
   if (node.parentNode) {
     dom.removeChild(node.parentNode, node);
   }

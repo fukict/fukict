@@ -3,10 +3,12 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "declarationDir": "./dist",
-
-    // JSX settings specific to runtime
-    "jsxImportSource": "."
+    "declarationDir": "./dist"
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "references": [
+    {
+      "path": "../runtime"
+    }
+  ]
 }

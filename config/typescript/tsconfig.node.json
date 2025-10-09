@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    // Target Node.js environment (ES2020+)
+    "target": "ES2020",
+    "module": "ESNext",
+    "lib": ["ES2020"],
+
+    // Output settings
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+
+    // Module resolution for Node.js
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+
+    // Type checking
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": false,
+    "exactOptionalPropertyTypes": false,
+
+    // Quality
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // Emit
+    "removeComments": false,
+    "importHelpers": false,
+    "isolatedModules": true,
+
+    // Project references
+    "composite": true
+  },
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
+}

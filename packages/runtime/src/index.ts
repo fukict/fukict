@@ -18,6 +18,9 @@ export type {
   SVGAttributes,
 } from './types/index.js';
 
+// JSX types (for extending in widget package)
+export type { JSX } from './types/jsx.js';
+
 export { Fragment } from './types/index.js';
 
 // VNode creation
@@ -25,6 +28,9 @@ export { hyperscript, h, jsx, jsxs, jsxDEV } from './vnode.js';
 
 // Rendering
 export { render, replaceNode, unmount } from './renderer/index.js';
+
+// DOM node creation (exported for widget package use)
+export { createNode } from './renderer/create.js';
 
 // Component handlers registry
 export {

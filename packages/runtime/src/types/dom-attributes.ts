@@ -4,8 +4,8 @@
  * Runtime-specific attribute extensions for HTML elements
  * Extends built-in DOM types with ref, event handlers, and custom attributes
  */
-import type { RefCallback } from './core';
-import type { EventHandlers } from './events';
+import type { RefCallback } from './core.js';
+import type { EventHandlers } from './events.js';
 
 /**
  * Style object type - mapped from CSSStyleDeclaration

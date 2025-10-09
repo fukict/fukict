@@ -3,11 +3,7 @@
  *
  * Create DOM nodes from VNode
  */
-import {
-  callOnMount,
-  findComponentHandler,
-  processVNode,
-} from '../component-handlers.js';
+import { findComponentHandler } from '../component-handlers.js';
 import * as dom from '../dom/index.js';
 import type { VNode, VNodeChild } from '../types/index.js';
 import { Fragment } from '../types/index.js';
@@ -69,7 +65,7 @@ export function createElementFromVNode(vnode: VNode): Node | null {
 
   // Component function
   if (typeof type === 'function') {
-    return renderComponent(type, props, children);
+    return renderComponent(vnode, type, props, children);
   }
 
   // String tag name - create element
@@ -89,8 +85,8 @@ export function createElementFromVNode(vnode: VNode): Node | null {
       }
     }
 
-    // Call onMount extension point
-    callOnMount(element, vnode);
+    // Store DOM reference on VNode for diff/patch
+    (vnode as any).__dom__ = element;
 
     return element;
   }
@@ -101,12 +97,14 @@ export function createElementFromVNode(vnode: VNode): Node | null {
 /**
  * Render component using registered handlers
  *
+ * @param componentVNode - Original component VNode (e.g., h(CounterWidget, ...))
  * @param component - Component function
  * @param props - Props
  * @param children - Children
  * @returns DOM node
  */
 function renderComponent(
+  componentVNode: VNode,
   component: Function,
   props: Record<string, any> | null,
   children: VNodeChild[],
@@ -116,16 +114,32 @@ function renderComponent(
 
   if (handler) {
     // Use handler to render component
-    const vnode = handler.render(component, props || {}, children);
-    if (vnode === null) {
+    const renderedVNode = handler.render(component, props || {}, children);
+    if (renderedVNode === null) {
       return null;
     }
 
-    // Process VNode through extensions
-    const processedVNode = processVNode(vnode);
+    // Extract instance reference if stored on rendered VNode
+    const instance = (renderedVNode as any).__instance__;
 
-    // Create DOM from processed VNode
-    return createNode(processedVNode);
+    // Create DOM from rendered VNode
+    const node = createNode(renderedVNode);
+
+    // Store DOM and instance references on BOTH VNodes
+    if (node) {
+      // Store on the rendered VNode (instance.__vnode__)
+      (renderedVNode as any).__dom__ = node;
+
+      // IMPORTANT: Also store on the original component VNode
+      // This allows mountChildren to find DOM and instance when traversing parent's children
+      (componentVNode as any).__dom__ = node;
+      if (instance) {
+        (componentVNode as any).__instance__ = instance;
+        (componentVNode as any).__instanceKey__ = (renderedVNode as any).__instanceKey__;
+      }
+    }
+
+    return node;
   }
 
   // No handler found - call function directly

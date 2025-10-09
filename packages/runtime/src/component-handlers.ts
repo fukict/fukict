@@ -4,7 +4,7 @@
  * Component handler registration mechanism
  * Allows external packages (like Widget) to register custom component renderers
  */
-import type { ComponentHandler, UnregisterFn, VNode } from './types/index.js';
+import type { ComponentHandler, UnregisterFn } from './types/index.js';
 
 /**
  * Registered component handlers (sorted by priority)
@@ -53,48 +53,19 @@ export function registerComponentHandler(
 export function findComponentHandler(
   component: Function,
 ): ComponentHandler | null {
+  // Always traverse handlers array (no caching)
   for (const handler of handlers) {
     if (handler.detect(component)) {
       return handler;
     }
   }
+
   return null;
 }
 
 /**
- * Process VNode through all handlers
- *
- * @param vnode - VNode to process
- * @returns Processed VNode
- */
-export function processVNode(vnode: VNode): VNode {
-  let result = vnode;
-
-  for (const handler of handlers) {
-    if (handler.processVNode) {
-      result = handler.processVNode(result);
-    }
-  }
-
-  return result;
-}
-
-/**
- * Call onMount for all handlers
- *
- * @param element - DOM element
- * @param vnode - Associated VNode
- */
-export function callOnMount(element: Element, vnode: VNode): void {
-  for (const handler of handlers) {
-    if (handler.onMount) {
-      handler.onMount(element, vnode);
-    }
-  }
-}
-
-/**
- * Process attribute through handlers
+ * Process attribute through all handlers
+ * Attributes are global and should be checked by all handlers
  *
  * @param element - DOM element
  * @param key - Attribute key
@@ -106,6 +77,8 @@ export function processAttribute(
   key: string,
   value: any,
 ): boolean {
+  // Note: Attributes are global, not tied to specific components
+  // So we check all handlers
   for (const handler of handlers) {
     if (handler.processAttribute) {
       if (handler.processAttribute(element, key, value)) {
@@ -117,22 +90,9 @@ export function processAttribute(
 }
 
 /**
- * Call onUnmount for all handlers
- *
- * @param element - DOM element
- * @param vnode - Associated VNode
- */
-export function callOnUnmount(element: Element, vnode: VNode): void {
-  for (const handler of handlers) {
-    if (handler.onUnmount) {
-      handler.onUnmount(element, vnode);
-    }
-  }
-}
-
-/**
  * Get all registered handlers (for debugging)
  */
 export function getHandlers(): ComponentHandler[] {
   return [...handlers];
 }
+

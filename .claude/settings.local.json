@@ -35,7 +35,11 @@
       "Bash(curl:*)",
       "Bash(corepack:*)",
       "Bash(npx eslint:*)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(ls:*)",
+      "Bash(wc:*)",
+      "Bash(npx madge:*)",
+      "Bash(sort:*)"
     ],
     "deny": [],
     "ask": []

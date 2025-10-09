@@ -7,3 +7,4 @@
 
 export { Fragment } from './types/core.js';
 export { jsx, jsxs, jsxDEV } from './vnode.js';
+export type { JSX } from './types/jsx.js';
