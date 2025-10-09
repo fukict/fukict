@@ -4,6 +4,7 @@
  * Utility functions for widget package
  */
 import type { VNode } from '@fukict/runtime';
+
 import { FUKICT_ATTRS } from '../constants/index.js';
 
 /**

@@ -17,7 +17,8 @@ export declare namespace JSX {
   // Inherit all runtime JSX types
   interface Element extends RuntimeJSX.Element {}
   interface IntrinsicElements extends RuntimeJSX.IntrinsicElements {}
-  interface ElementChildrenAttribute extends RuntimeJSX.ElementChildrenAttribute {}
+  interface ElementChildrenAttribute
+    extends RuntimeJSX.ElementChildrenAttribute {}
 
   // Extend with Widget-specific attributes
   interface IntrinsicAttributes {

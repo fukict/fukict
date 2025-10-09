@@ -17,6 +17,7 @@ Demonstrates the core `@fukict/runtime` package:
 - ✅ `replaceNode` for simple updates
 
 **What you'll see:**
+
 - Simple counter using `replaceNode`
 - Todo list with `replaceNode` updates
 - Custom component handler example
@@ -34,6 +35,7 @@ Demonstrates the `@fukict/widget` package with full component capabilities:
 - ✅ Component state and methods
 
 **What you'll see:**
+
 - Counter Widget with lifecycle hooks
 - Todo List Widget with refs for input focus
 - Card Widget with header/footer slots
@@ -63,6 +65,7 @@ npx http-server
 ```
 
 Then open:
+
 - Runtime demo: http://localhost:8000/runtime.html
 - Widget demo: http://localhost:8000/widget.html
 
@@ -90,8 +93,8 @@ Both examples use [Import Maps](https://developer.mozilla.org/en-US/docs/Web/HTM
 This allows you to write clean imports in the script:
 
 ```javascript
-import { Widget } from '@fukict/widget';
 import { h } from '@fukict/runtime';
+import { Widget } from '@fukict/widget';
 ```
 
 **Browser Support:** Import Maps are supported in all modern browsers (Chrome 89+, Safari 16.4+, Firefox 108+).
@@ -100,26 +103,28 @@ import { h } from '@fukict/runtime';
 
 ### Runtime vs Widget
 
-| Feature | Runtime | Widget |
-|---------|---------|--------|
-| **VNode creation** | ✅ `h()` | ✅ `h()` (inherited) |
-| **Initial render** | ✅ `render()` | ✅ `Widget.mount()` |
-| **Updates** | ⚠️ `replaceNode()` (full rebuild) | ✅ `Widget.update()` (diff/patch) |
-| **Lifecycle** | ❌ | ✅ `onMounted`, `onBeforeUnmount` |
-| **Refs** | ❌ | ✅ `fukict:ref` |
-| **Slots** | ❌ | ✅ `fukict:slot` |
-| **Detached** | ❌ | ✅ `fukict:detach` |
-| **State** | 📝 Manual | 📝 Manual (but with `update()`) |
+| Feature            | Runtime                           | Widget                            |
+| ------------------ | --------------------------------- | --------------------------------- |
+| **VNode creation** | ✅ `h()`                          | ✅ `h()` (inherited)              |
+| **Initial render** | ✅ `render()`                     | ✅ `Widget.mount()`               |
+| **Updates**        | ⚠️ `replaceNode()` (full rebuild) | ✅ `Widget.update()` (diff/patch) |
+| **Lifecycle**      | ❌                                | ✅ `onMounted`, `onBeforeUnmount` |
+| **Refs**           | ❌                                | ✅ `fukict:ref`                   |
+| **Slots**          | ❌                                | ✅ `fukict:slot`                  |
+| **Detached**       | ❌                                | ✅ `fukict:detach`                |
+| **State**          | 📝 Manual                         | 📝 Manual (but with `update()`)   |
 
 ### When to Use Each
 
 **Use Runtime (`@fukict/runtime`) when:**
+
 - You need minimal bundle size (< 5KB)
 - Building custom component systems
 - Server-side rendering
 - Static content with minimal interactivity
 
 **Use Widget (`@fukict/widget`) when:**
+
 - Building interactive applications
 - Need component lifecycle management
 - Want efficient updates (diff/patch)
@@ -180,8 +185,8 @@ function increment() {
 ### Widget Package - Basic Widget Class
 
 ```javascript
-import { Widget } from '@fukict/widget';
 import { h } from '@fukict/runtime';
+import { Widget } from '@fukict/widget';
 
 class CounterWidget extends Widget {
   constructor(props) {
@@ -199,9 +204,11 @@ class CounterWidget extends Widget {
   }
 
   render() {
-    return h('div', null,
+    return h(
+      'div',
+      null,
       h('p', null, `Count: ${this.state.count}`),
-      h('button', { 'on:click': this.increment }, 'Increment')
+      h('button', { 'on:click': this.increment }, 'Increment'),
     );
   }
 }
@@ -230,14 +237,16 @@ class ParentWidget extends Widget {
   };
 
   render() {
-    return h('div', null,
+    return h(
+      'div',
+      null,
       // Ref to child widget
       h(ChildWidget, { 'fukict:ref': 'myChild' }),
 
       // Ref to DOM element
       h('input', { 'fukict:ref': 'myInput' }),
 
-      h('button', { 'on:click': this.handleClick }, 'Focus Input')
+      h('button', { 'on:click': this.handleClick }, 'Focus Input'),
     );
   }
 }
@@ -251,19 +260,23 @@ class CardWidget extends Widget {
     const headerSlot = this.slots.get('header');
     const defaultSlot = this.slots.get('default');
 
-    return h('div', { class: 'card' },
+    return h(
+      'div',
+      { class: 'card' },
       headerSlot ? h('div', { class: 'header' }, ...headerSlot) : null,
-      h('div', { class: 'body' }, defaultSlot || [])
+      h('div', { class: 'body' }, defaultSlot || []),
     );
   }
 }
 
 // Usage
-h(CardWidget, null,
+h(
+  CardWidget,
+  null,
   h('h3', { 'fukict:slot': 'header' }, 'Card Title'),
   h('p', { 'fukict:slot': 'default' }, 'Card content'),
-  h('p', { 'fukict:slot': 'default' }, 'More content')
-)
+  h('p', { 'fukict:slot': 'default' }, 'More content'),
+);
 ```
 
 ### Widget Package - Detached Rendering
@@ -282,12 +295,14 @@ class ParentWidget extends Widget {
   };
 
   render() {
-    return h('div', null,
+    return h(
+      'div',
+      null,
       h('p', null, `Parent updates: ${this.state.parentCounter}`),
       h('button', { 'on:click': this.updateParent }, 'Update Parent'),
 
       // This widget won't re-render when parent updates
-      h(ExpensiveWidget, { 'fukict:detach': true })
+      h(ExpensiveWidget, { 'fukict:detach': true }),
     );
   }
 }
@@ -314,32 +329,30 @@ h(
 ```javascript
 import { Fragment } from '@fukict/runtime';
 
-h(Fragment, null,
-  h('div', null, 'First'),
-  h('div', null, 'Second')
-);
+h(Fragment, null, h('div', null, 'First'), h('div', null, 'Second'));
 ```
 
 ## Performance Tips
 
 1. **Use Widget's diff/patch instead of replaceNode**
+
    - `replaceNode`: Rebuilds entire subtree
    - `Widget.update()`: Only updates changed nodes
 
 2. **Mark static/expensive components as detached**
+
    ```javascript
-   h(ExpensiveChart, { 'fukict:detach': true })
+   h(ExpensiveChart, { 'fukict:detach': true });
    ```
 
 3. **Use refs for direct DOM access when needed**
+
    - Avoid querying DOM with `querySelector`
    - Use `fukict:ref` for type-safe access
 
 4. **Leverage component keys for list rendering**
    ```javascript
-   todos.map(todo =>
-     h(TodoItem, { key: todo.id, todo })
-   )
+   todos.map(todo => h(TodoItem, { key: todo.id, todo }));
    ```
 
 ## Next Steps
@@ -347,4 +360,3 @@ h(Fragment, null,
 - See widget examples for component-based architecture
 - Check JSX examples for declarative syntax
 - Explore router integration examples
-

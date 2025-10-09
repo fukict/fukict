@@ -15,21 +15,21 @@
 ```typescript
 // VNode 结构增强
 interface VNode {
-  type: Component | string | symbol
-  props: Props
-  children: VNodeChild[]
+  type: Component | string | symbol;
+  props: Props;
+  children: VNodeChild[];
 
   // 关联到组件实例
-  __instance__?: Widget          // 组件实例引用
-  __instanceKey__?: string       // 实例唯一标识（用于 diff 匹配）
+  __instance__?: Widget; // 组件实例引用
+  __instanceKey__?: string; // 实例唯一标识（用于 diff 匹配）
 }
 
 // Widget 实例增强
 class Widget {
-  __vnode__: VNode               // 当前渲染的 VNode（用于 diff）
-  __key__: string                // 实例唯一标识
-  element?: HTMLElement          // 关联的 DOM 元素
-  refs: Map<string, Widget>      // 子组件引用
+  __vnode__: VNode; // 当前渲染的 VNode（用于 diff）
+  __key__: string; // 实例唯一标识
+  element?: HTMLElement; // 关联的 DOM 元素
+  refs: Map<string, Widget>; // 子组件引用
 }
 ```
 
@@ -87,7 +87,7 @@ class Counter extends Widget<{}> {
 }
 ```
 
-### 2. __performUpdate() - 平滑更新（带 diff，框架内部使用）
+### 2. \_\_performUpdate() - 平滑更新（带 diff，框架内部使用）
 
 **语义**：执行更新流程，尽可能复用组件实例，最小化 DOM 操作
 
@@ -148,10 +148,10 @@ __performUpdate():
 class Widget<TProps = {}> {
   public update(newProps: Partial<TProps>): void {
     // 1. 合并 props
-    this.props = { ...this.props, ...newProps }
+    this.props = { ...this.props, ...newProps };
 
     // 2. 平滑更新（框架默认行为）
-    this.__performUpdate()
+    this.__performUpdate();
   }
 }
 ```
@@ -161,23 +161,23 @@ class Widget<TProps = {}> {
 ```typescript
 class MyWidget extends Widget<{ count: number }> {
   update(newProps: Partial<{ count: number }>) {
-    const oldCount = this.props.count
+    const oldCount = this.props.count;
 
     // 判断是否需要更新
     if (oldCount === newProps.count) {
-      return  // 跳过更新
+      return; // 跳过更新
     }
 
     // 更新 props
-    this.props = { ...this.props, ...newProps }
+    this.props = { ...this.props, ...newProps };
 
     // 处理 props 变化（替代 onPropsUpdated）
     if (Math.abs(oldCount - newProps.count!) > 100) {
       // 变化太大，强制重建
-      this.forceUpdate()
+      this.forceUpdate();
     } else {
       // 平滑更新
-      this.__performUpdate()
+      this.__performUpdate();
     }
   }
 }
@@ -185,11 +185,11 @@ class MyWidget extends Widget<{ count: number }> {
 
 ## 三种方法的对比
 
-| 方法                  | 可见性        | 调用者         | 使用 diff | 复用实例 | 框架调用 | 命名约定      |
-| --------------------- | ------------- | -------------- | --------- | -------- | -------- | ------------- |
-| `forceUpdate()`       | public        | 用户           | ❌        | ❌       | ❌ 从不  | 无前缀        |
-| `__performUpdate()`   | protected     | 框架/用户子类  | ✅        | ✅       | ✅ 总是  | `__` 前缀     |
-| `update(newProps)`    | public（可写） | 父组件/用户    | ✅        | ✅       | ✅ 总是  | 无前缀（可写）|
+| 方法                | 可见性         | 调用者        | 使用 diff | 复用实例 | 框架调用 | 命名约定       |
+| ------------------- | -------------- | ------------- | --------- | -------- | -------- | -------------- |
+| `forceUpdate()`     | public         | 用户          | ❌        | ❌       | ❌ 从不  | 无前缀         |
+| `__performUpdate()` | protected      | 框架/用户子类 | ✅        | ✅       | ✅ 总是  | `__` 前缀      |
+| `update(newProps)`  | public（可写） | 父组件/用户   | ✅        | ✅       | ✅ 总是  | 无前缀（可写） |
 
 **核心原则**：
 
@@ -206,19 +206,19 @@ class MyWidget extends Widget<{ count: number }> {
 function canReuseInstance(oldVNode: VNode, newVNode: VNode): boolean {
   // 1. 组件类型必须相同
   if (oldVNode.type !== newVNode.type) {
-    return false
+    return false;
   }
 
   // 2. 如果指定了 key，key 必须相同
-  const oldKey = oldVNode.props?.key ?? oldVNode.__instanceKey__
-  const newKey = newVNode.props?.key
+  const oldKey = oldVNode.props?.key ?? oldVNode.__instanceKey__;
+  const newKey = newVNode.props?.key;
 
   if (oldKey !== undefined && newKey !== undefined) {
-    return oldKey === newKey
+    return oldKey === newKey;
   }
 
   // 3. 默认可以复用（同类型组件）
-  return true
+  return true;
 }
 ```
 
@@ -283,6 +283,7 @@ diff(oldVNode, newVNode, parent):
 **核心理念**：最小运行时更新 + 用户自控更新
 
 脱围是 Fukict 的核心特性，支持：
+
 - ✅ **所有节点类型**：DOM 元素、函数组件、类组件
 - ✅ **持久化配置**：一旦脱围，永久生效（除非 forceUpdate）
 - ✅ **跳过整个子树**：diff 时跳过该节点及其所有子节点
@@ -333,14 +334,14 @@ function diff(oldVNode: VNode, newVNode: VNode, parent: Element) {
   // 持久化检查：旧节点已脱围
   if (oldVNode.__detached__) {
     // 传递脱围标记
-    newVNode.__detached__ = true
+    newVNode.__detached__ = true;
     // 跳过整个子树的 diff
-    return
+    return;
   }
 
   // 首次标记
   if (newVNode.props?.['fukict:detach']) {
-    newVNode.__detached__ = true
+    newVNode.__detached__ = true;
     // 首次标记，本次继续处理...
   }
 
@@ -366,25 +367,25 @@ function diff(oldVNode: VNode, newVNode: VNode, parent: Element) {
 
 ```typescript
 function diffComponent(oldVNode: VNode, newVNode: VNode, parent: Widget) {
-  const instance = oldVNode.__instance__
+  const instance = oldVNode.__instance__;
 
   if (canReuseInstance(oldVNode, newVNode)) {
     // 持久化脱围检查
     if (oldVNode.__detached__) {
-      newVNode.__detached__ = true
-      newVNode.__instance__ = instance
-      return  // 跳过 update()
+      newVNode.__detached__ = true;
+      newVNode.__instance__ = instance;
+      return; // 跳过 update()
     }
 
     // 首次脱围检查
     if (newVNode.props?.['fukict:detach']) {
-      newVNode.__detached__ = true
-      newVNode.__instance__ = instance
-      return  // 跳过 update()
+      newVNode.__detached__ = true;
+      newVNode.__instance__ = instance;
+      return; // 跳过 update()
     }
 
     // 普通组件：自动更新
-    instance.update(newVNode.props)
+    instance.update(newVNode.props);
   }
 }
 ```
@@ -395,14 +396,14 @@ function diffComponent(oldVNode: VNode, newVNode: VNode, parent: Widget) {
 function diffElement(oldVNode: VNode, newVNode: VNode, parent: Element) {
   // 持久化脱围检查
   if (oldVNode.__detached__) {
-    newVNode.__detached__ = true
+    newVNode.__detached__ = true;
     // 跳过整个子树的 diff
-    return
+    return;
   }
 
   // 首次脱围检查
   if (newVNode.props?.['fukict:detach']) {
-    newVNode.__detached__ = true
+    newVNode.__detached__ = true;
     // 首次标记，继续处理...
   }
 
@@ -412,15 +413,15 @@ function diffElement(oldVNode: VNode, newVNode: VNode, parent: Element) {
 
 ### 脱围节点的完整特性
 
-| 特性 | 普通节点 | 类组件脱围 | 函数组件/DOM 脱围 |
-| ---- | -------- | ---------- | ----------------- |
-| 首次创建 | 正常 | 正常 | 正常 |
-| onMounted | ✅ 自动触发 | ✅ 自动触发 | - |
-| 父组件更新时 diff | ✅ 是 | ❌ 否（跳过） | ❌ 否（跳过） |
-| 手动 update | - | `ref.update(props)` | `ref.update(vnode)` |
-| onBeforeUnmount | ✅ 自动触发 | ✅ 自动触发 | - |
-| 实例/元素复用 | ✅ | ✅ | ✅ |
-| 脱围持久化 | - | ✅ 是 | ✅ 是 |
+| 特性              | 普通节点    | 类组件脱围          | 函数组件/DOM 脱围   |
+| ----------------- | ----------- | ------------------- | ------------------- |
+| 首次创建          | 正常        | 正常                | 正常                |
+| onMounted         | ✅ 自动触发 | ✅ 自动触发         | -                   |
+| 父组件更新时 diff | ✅ 是       | ❌ 否（跳过）       | ❌ 否（跳过）       |
+| 手动 update       | -           | `ref.update(props)` | `ref.update(vnode)` |
+| onBeforeUnmount   | ✅ 自动触发 | ✅ 自动触发         | -                   |
+| 实例/元素复用     | ✅          | ✅                  | ✅                  |
+| 脱围持久化        | -           | ✅ 是               | ✅ 是               |
 
 **关键点**：
 
@@ -438,47 +439,47 @@ function diffElement(oldVNode: VNode, newVNode: VNode, parent: Element) {
 
 ```typescript
 function diffComponent(oldVNode: VNode, newVNode: VNode, parent: Widget) {
-  const oldInstance = oldVNode.__instance__
-  const oldRefName = oldVNode.props?.['fukict:ref']
-  const newRefName = newVNode.props?.['fukict:ref']
+  const oldInstance = oldVNode.__instance__;
+  const oldRefName = oldVNode.props?.['fukict:ref'];
+  const newRefName = newVNode.props?.['fukict:ref'];
 
   if (canReuseInstance(oldVNode, newVNode)) {
     // 复用实例
-    newVNode.__instance__ = oldInstance
+    newVNode.__instance__ = oldInstance;
 
     // 处理 ref 变化
     if (oldRefName !== newRefName) {
       // ref 名称变化了
       if (oldRefName) {
-        parent.refs.delete(oldRefName)  // 删除旧 ref
+        parent.refs.delete(oldRefName); // 删除旧 ref
       }
       if (newRefName) {
-        parent.refs.set(newRefName, oldInstance)  // 注册新 ref
+        parent.refs.set(newRefName, oldInstance); // 注册新 ref
       }
     } else if (newRefName) {
       // ref 名称未变，确保引用正确
-      parent.refs.set(newRefName, oldInstance)
+      parent.refs.set(newRefName, oldInstance);
     }
 
     // 更新组件
-    oldInstance.update(newVNode.props)
+    oldInstance.update(newVNode.props);
   } else {
     // 不能复用
 
     // 清理旧 ref
     if (oldRefName && oldInstance) {
-      parent.refs.delete(oldRefName)
-      oldInstance.unmount()
+      parent.refs.delete(oldRefName);
+      oldInstance.unmount();
     }
 
     // 创建新实例并注册新 ref
-    const newInstance = createComponent(newVNode)
+    const newInstance = createComponent(newVNode);
     if (newRefName) {
-      parent.refs.set(newRefName, newInstance)
+      parent.refs.set(newRefName, newInstance);
     }
 
-    newVNode.__instance__ = newInstance
-    newInstance.mount(parent.element)
+    newVNode.__instance__ = newInstance;
+    newInstance.mount(parent.element);
   }
 }
 ```
@@ -591,13 +592,13 @@ class Parent extends Widget<{}> {
 - ✅ 仅更新了 props 和 DOM
 - ✅ diff 机制生效
 
-## update() 与 forceUpdate() 与 __performUpdate() 的区别
+## update() 与 forceUpdate() 与 \_\_performUpdate() 的区别
 
-| 方法                  | 可见性        | 调用者         | props 变化 | 使用 diff | 复用实例 | 框架调用 | 命名约定  |
-| --------------------- | ------------- | -------------- | ---------- | --------- | -------- | -------- | --------- |
-| `update(newProps)`    | public（可写） | 父组件/用户    | 是         | ✅        | ✅       | ✅ 总是  | 无前缀    |
-| `__performUpdate()`   | protected     | 框架/用户子类  | 否         | ✅        | ✅       | ✅ 总是  | `__` 前缀 |
-| `forceUpdate()`       | public        | 用户           | 否         | ❌        | ❌       | ❌ 从不  | 无前缀    |
+| 方法                | 可见性         | 调用者        | props 变化 | 使用 diff | 复用实例 | 框架调用 | 命名约定  |
+| ------------------- | -------------- | ------------- | ---------- | --------- | -------- | -------- | --------- |
+| `update(newProps)`  | public（可写） | 父组件/用户   | 是         | ✅        | ✅       | ✅ 总是  | 无前缀    |
+| `__performUpdate()` | protected      | 框架/用户子类 | 否         | ✅        | ✅       | ✅ 总是  | `__` 前缀 |
+| `forceUpdate()`     | public         | 用户          | 否         | ❌        | ❌       | ❌ 从不  | 无前缀    |
 
 **共同点**：
 

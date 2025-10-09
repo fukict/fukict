@@ -1,3 +1,6 @@
+// Initialize handlers (side effect import)
+import './handlers/index.js';
+
 /**
  * @fukict/widget
  *
@@ -24,7 +27,11 @@ export {
 } from './utils/index.js';
 
 // Export constants
-export { FUKICT_ATTR_PREFIX, FUKICT_ATTRS, isFukictAttr } from './constants/index.js';
+export {
+  FUKICT_ATTR_PREFIX,
+  FUKICT_ATTRS,
+  isFukictAttr,
+} from './constants/index.js';
 
 // Export types
 export type {
@@ -40,6 +47,3 @@ export type { WidgetFunction } from './define-widget/index.js';
 
 // Re-export runtime types
 export type { VNode, VNodeChild } from '@fukict/runtime';
-
-// Initialize handlers (side effect import)
-import './handlers/index.js';

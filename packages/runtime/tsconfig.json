@@ -1,5 +1,4 @@
 {
-  "extends": "../../config/typescript/tsconfig.client.json",
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
@@ -8,5 +7,6 @@
     // JSX settings specific to runtime
     "jsxImportSource": "."
   },
+  "extends": "../../config/typescript/tsconfig.client.json",
   "include": ["src/**/*"]
 }

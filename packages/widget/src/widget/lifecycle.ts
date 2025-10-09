@@ -5,7 +5,7 @@
  */
 import type { VNode, VNodeChild } from '@fukict/runtime';
 import { createNode, replaceNode } from '@fukict/runtime';
-import type { Widget } from './class.js';
+
 import type { WidgetProps } from '../types/index.js';
 import {
   extractRefName,
@@ -13,6 +13,7 @@ import {
   isDetached,
   markDetached,
 } from '../utils/index.js';
+import type { Widget } from './class.js';
 
 /**
  * Flatten VNodeChild array recursively
@@ -92,7 +93,9 @@ export function mountChildren<TProps extends WidgetProps>(
       if (instanceNode instanceof Element) {
         instance.element = instanceNode;
       } else {
-        console.warn('[mountChildren] instanceNode is NOT an Element!', { instanceNode });
+        console.warn('[mountChildren] instanceNode is NOT an Element!', {
+          instanceNode,
+        });
       }
 
       // Recursively mount the instance's own child tree
@@ -138,7 +141,8 @@ export function mountChildren<TProps extends WidgetProps>(
 
     // Filter out null/undefined/boolean from flat children
     const validChildren = flatChildren.filter(
-      child => child !== null && child !== undefined && typeof child !== 'boolean'
+      child =>
+        child !== null && child !== undefined && typeof child !== 'boolean',
     );
 
     // Match each valid VNode child to its DOM node

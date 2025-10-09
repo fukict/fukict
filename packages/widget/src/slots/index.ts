@@ -4,6 +4,7 @@
  * Extract and manage slots from children
  */
 import type { VNodeChild } from '@fukict/runtime';
+
 import type { SlotsMap } from '../types/index.js';
 import { extractSlotName } from '../utils/index.js';
 

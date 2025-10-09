@@ -32,6 +32,7 @@ class Widget<TProps = {}> {
 ```
 
 **特点**：
+
 - 用户可以直接调用
 - 用户可以重写（如 `update()`）
 - 用户可以选择实现（如 `onMounted()`）
@@ -41,6 +42,7 @@ class Widget<TProps = {}> {
 **用途**：框架内部使用，用户不应直接调用（但可以在子类中调用）
 
 **为什么使用 `__` 而不是 `_`**：
+
 - 下划线有"忽略"之意，单个下划线不够醒目
 - 双下划线视觉上非常显眼，明确表示"框架内部"
 - 与内部属性 `__vnode__`、`__key__` 保持一致
@@ -51,17 +53,18 @@ class Widget<TProps = {}> {
 ```typescript
 class Widget<TProps = {}> {
   // 内部方法（框架使用）
-  protected __performUpdate(): void  // 执行更新流程（diff + patch）
+  protected __performUpdate(): void; // 执行更新流程（diff + patch）
 
   // 内部辅助方法
-  private __unmountChildren(): void
-  private __mountChildren(vnode: VNode): void
-  private __updateRefs(oldVNode: VNode, newVNode: VNode): void
-  private __extractSlots(children: VNodeChild[]): SlotsMap
+  private __unmountChildren(): void;
+  private __mountChildren(vnode: VNode): void;
+  private __updateRefs(oldVNode: VNode, newVNode: VNode): void;
+  private __extractSlots(children: VNodeChild[]): SlotsMap;
 }
 ```
 
 **特点**：
+
 - protected：用户可以在子类中调用（如在 `update()` 中调用 `this.__performUpdate()`）
 - private：完全内部实现，用户无法访问
 - 用户不应直接从外部调用
@@ -90,6 +93,7 @@ class Widget<TProps = {}> {
 ```
 
 **特点**：
+
 - 仅供框架内部使用
 - 用户不应直接访问或修改
 - 主要用于框架内部状态管理
@@ -175,18 +179,18 @@ class Widget<TProps = {}> {
 // ✅ 正确：重写 update()，内部调用 __performUpdate()
 class MyWidget extends Widget<{ count: number }> {
   update(newProps: Partial<{ count: number }>) {
-    const oldCount = this.props.count
+    const oldCount = this.props.count;
 
     // 更新 props
-    this.props = { ...this.props, ...newProps }
+    this.props = { ...this.props, ...newProps };
 
     // 处理 props 变化
     if (oldCount !== newProps.count) {
-      this.loadData(newProps.count!)
+      this.loadData(newProps.count!);
     }
 
     // 调用框架内部方法
-    this.__performUpdate()
+    this.__performUpdate();
   }
 }
 ```
@@ -195,37 +199,37 @@ class MyWidget extends Widget<{ count: number }> {
 // ✅ 正确：实现生命周期钩子
 class MyWidget extends Widget<{}> {
   onMounted() {
-    console.log('组件已挂载')
+    console.log('组件已挂载');
   }
 
   onBeforeUnmount() {
-    console.log('组件即将卸载')
+    console.log('组件即将卸载');
   }
 }
 ```
 
 ```typescript
 // ✅ 正确：从外部调用公开 API
-const widget = new MyWidget({ count: 0 })
-widget.mount(document.body)
-widget.update({ count: 1 })
-widget.forceUpdate()
-widget.unmount()
+const widget = new MyWidget({ count: 0 });
+widget.mount(document.body);
+widget.update({ count: 1 });
+widget.forceUpdate();
+widget.unmount();
 ```
 
 ### 错误用法
 
 ```typescript
 // ❌ 错误：从外部直接调用 __performUpdate()
-const widget = new MyWidget({ count: 0 })
-widget.__performUpdate()  // 不推荐！应该调用 update() 或 forceUpdate()
+const widget = new MyWidget({ count: 0 });
+widget.__performUpdate(); // 不推荐！应该调用 update() 或 forceUpdate()
 ```
 
 ```typescript
 // ❌ 错误：访问或修改内部属性
-const widget = new MyWidget({ count: 0 })
-widget.__vnode__ = someVNode  // 不要这样做！
-widget.__key__ = 'custom-key'  // 不要这样做！
+const widget = new MyWidget({ count: 0 });
+widget.__vnode__ = someVNode; // 不要这样做！
+widget.__key__ = 'custom-key'; // 不要这样做！
 ```
 
 ```typescript
@@ -240,31 +244,35 @@ class MyWidget extends Widget<{}> {
 
 ## 命名约定总结
 
-| 类型           | 命名规则        | 示例                     | 用途             | 用户可访问 |
-| -------------- | --------------- | ------------------------ | ---------------- | ---------- |
-| 公开方法       | 无前缀          | `update()`, `mount()`    | 用户可调用/重写  | ✅         |
-| 生命周期钩子   | 无前缀          | `onMounted()`            | 用户可选实现     | ✅         |
-| 公开属性       | 无前缀          | `props`, `refs`          | 用户可访问       | ✅         |
-| 框架内部方法   | `__` 前缀       | `__performUpdate()`      | 框架内部使用     | ⚠️（子类可调用）|
-| 框架内部属性   | `__xxx__` 形式  | `__vnode__`, `__key__`   | 框架内部状态     | ❌         |
+| 类型         | 命名规则       | 示例                   | 用途            | 用户可访问       |
+| ------------ | -------------- | ---------------------- | --------------- | ---------------- |
+| 公开方法     | 无前缀         | `update()`, `mount()`  | 用户可调用/重写 | ✅               |
+| 生命周期钩子 | 无前缀         | `onMounted()`          | 用户可选实现    | ✅               |
+| 公开属性     | 无前缀         | `props`, `refs`        | 用户可访问      | ✅               |
+| 框架内部方法 | `__` 前缀      | `__performUpdate()`    | 框架内部使用    | ⚠️（子类可调用） |
+| 框架内部属性 | `__xxx__` 形式 | `__vnode__`, `__key__` | 框架内部状态    | ❌               |
 
 ## 命名约定的好处
 
 1. **清晰的职责分离**：
+
    - 无前缀 = 用户 API
    - `__` 前缀 = 框架内部（protected/private）
    - `__xxx__` = 框架内部属性
 
 2. **避免意外误用**：
+
    - 用户看到 `__` 前缀，就知道这是内部方法
    - 视觉上非常醒目，比单个 `_` 更显眼
    - 编辑器会给出提示（TypeScript 的 protected/private）
 
 3. **保持灵活性**：
+
    - 用户可以在 `update()` 中调用 `this.__performUpdate()`
    - 但不会从外部直接调用
 
 4. **便于维护**：
+
    - 框架开发者可以自由修改 `__` 前缀方法的实现
    - 不影响用户的公开 API
 

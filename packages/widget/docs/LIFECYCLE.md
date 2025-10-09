@@ -35,7 +35,7 @@ class App extends Widget<{}> {
   render() {
     return (
       <div>
-        <ChildWidget />  {/* 自动挂载，自动触发 onMounted */}
+        <ChildWidget /> {/* 自动挂载，自动触发 onMounted */}
       </div>
     );
   }
@@ -46,7 +46,7 @@ class App extends Widget<{}> {
 
 ```typescript
 const widget = new MyWidget({ count: 0 });
-widget.mount(document.body);  // 手动挂载，手动控制时机
+widget.mount(document.body); // 手动挂载，手动控制时机
 ```
 
 ## 生命周期钩子说明
@@ -90,18 +90,18 @@ widget.mount(document.body);  // 手动挂载，手动控制时机
 ```typescript
 class MyWidget extends Widget<{ userId: number }> {
   update(newProps: Partial<{ userId: number }>) {
-    const oldUserId = this.props.userId
+    const oldUserId = this.props.userId;
 
     // 更新 props
-    this.props = { ...this.props, ...newProps }
+    this.props = { ...this.props, ...newProps };
 
     // 处理 props 变化
     if (oldUserId !== newProps.userId) {
-      this.loadUserData(newProps.userId!)
+      this.loadUserData(newProps.userId!);
     }
 
     // 平滑更新
-    this.__performUpdate()
+    this.__performUpdate();
   }
 }
 ```

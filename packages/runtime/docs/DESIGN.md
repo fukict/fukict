@@ -169,11 +169,13 @@ VNodeChild = VNode | string | number | boolean | null | undefined | VNodeChild[]
 **重要**：`onMount` 钩子在 DOM **插入到文档**后调用，而非创建后立即调用。
 
 **原因**：
+
 - 保证此时可以访问 DOM 属性（offsetWidth, getBoundingClientRect 等）
 - 保证 refs 已正确设置
 - 保证生命周期语义正确
 
 **实现**：
+
 ```typescript
 // 1. 创建 DOM（不触发生命周期）
 const node = createNode(vnode);

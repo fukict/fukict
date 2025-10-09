@@ -39,6 +39,7 @@ function render(vnode: VNodeChild, container: Element): Node | null;
 ```
 
 **行为**：
+
 1. 创建 DOM 节点（不触发生命周期）
 2. 插入到容器中
 3. **递归触发 `onMount` 钩子**（此时 DOM 已在文档中）
@@ -56,6 +57,7 @@ function replaceNode(
 ```
 
 **行为**：
+
 1. 触发旧节点的 `onUnmount` 钩子
 2. 创建新 DOM 节点（不触发生命周期）
 3. 替换 DOM

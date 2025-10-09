@@ -5,10 +5,12 @@
 ### 核心原则
 
 **分离创建和挂载**：
+
 - `createNode()` - 只创建 DOM，不触发生命周期
 - `mount()` - 插入 DOM 并触发 `onMount` 钩子
 
 **onMount 调用时机**：
+
 - 在 DOM **插入到文档**后调用
 - 保证此时可以访问 DOM 属性（offsetWidth, getBoundingClientRect 等）
 
@@ -108,7 +110,7 @@ registerComponentHandler({
     const instance = vnode.__instance__;
     if (instance) {
       instance.element = element;
-      instance.onMounted?.();  // ← 此时 DOM 已插入，可以访问 DOM 属性
+      instance.onMounted?.(); // ← 此时 DOM 已插入，可以访问 DOM 属性
     }
   },
 
@@ -171,33 +173,33 @@ registerComponentHandler({
 ```typescript
 // runtime/src/renderer/create.ts
 function createElementFromVNode(vnode: VNode): Element {
-  const element = dom.createElement(vnode.type as string)
+  const element = dom.createElement(vnode.type as string);
 
   // ... 设置属性、创建子节点 ...
 
   // 处理 fukict:ref（仅脱围节点）
   if (vnode.props?.['fukict:ref'] && vnode.__detached__) {
     // 脱围的 DOM 元素/函数组件：注册 DetachedRef
-    const parent = getCurrentWidget()
+    const parent = getCurrentWidget();
     if (parent) {
-      const refName = vnode.props['fukict:ref']
+      const refName = vnode.props['fukict:ref'];
       const detachedRef: DetachedRef = {
         element,
         update: (newVNode: VNode) => {
           // 使用 replaceNode 更新
-          const newNode = createNode(newVNode)
+          const newNode = createNode(newVNode);
           if (newNode) {
-            replaceNode(element, newNode, vnode)
+            replaceNode(element, newNode, vnode);
             // 更新引用
-            detachedRef.element = newNode as Element
+            detachedRef.element = newNode as Element;
           }
-        }
-      }
-      parent.refs.set(refName, detachedRef)
+        },
+      };
+      parent.refs.set(refName, detachedRef);
     }
   }
 
-  return element
+  return element;
 }
 ```
 
@@ -206,8 +208,8 @@ function createElementFromVNode(vnode: VNode): Element {
 ```typescript
 // widget/src/types.ts
 export interface DetachedRef<T extends Element = Element> {
-  element: T                        // DOM 元素引用
-  update: (newVNode: VNode) => void // 更新函数
+  element: T; // DOM 元素引用
+  update: (newVNode: VNode) => void; // 更新函数
 }
 ```
 
@@ -275,10 +277,10 @@ class Widget<TProps = {}> {
 
 ### 手动挂载 vs 自动挂载
 
-| 方式       | 触发时机                  | 使用场景                   | onMounted 调用 |
-| ---------- | ------------------------- | -------------------------- | -------------- |
-| 自动挂载   | 父组件渲染时自动创建      | 常规子组件                 | 自动           |
-| 手动挂载   | 用户调用 `mount()` 时创建 | 延迟加载、条件渲染         | 手动           |
+| 方式     | 触发时机                  | 使用场景           | onMounted 调用 |
+| -------- | ------------------------- | ------------------ | -------------- |
+| 自动挂载 | 父组件渲染时自动创建      | 常规子组件         | 自动           |
+| 手动挂载 | 用户调用 `mount()` 时创建 | 延迟加载、条件渲染 | 手动           |
 
 ### 脱围机制与挂载
 

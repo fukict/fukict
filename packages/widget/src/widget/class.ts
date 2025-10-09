@@ -4,8 +4,14 @@
  * Core Widget class definition without circular dependencies
  */
 import type { VNode } from '@fukict/runtime';
-import type { WidgetProps, RefsMap, SlotsMap, WidgetLifecycle } from '../types/index.js';
+
 import { extractSlots } from '../slots/index.js';
+import type {
+  RefsMap,
+  SlotsMap,
+  WidgetLifecycle,
+  WidgetProps,
+} from '../types/index.js';
 
 /**
  * Widget base class

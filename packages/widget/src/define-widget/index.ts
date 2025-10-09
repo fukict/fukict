@@ -5,6 +5,7 @@
  * Function components are lightweight, stateless components without lifecycle.
  */
 import type { VNode } from '@fukict/runtime';
+
 import type { WidgetProps } from '../types/index.js';
 
 /**

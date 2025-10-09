@@ -5,6 +5,7 @@
 **核心理念**：最小运行时更新 + 用户自控更新
 
 脱围是 Fukict 的核心特性之一，提供：
+
 - ✅ **跳过自动 diff/patch**：减少运行时开销
 - ✅ **精确控制更新时机**：由用户决定何时更新
 - ✅ **支持所有节点类型**：DOM 元素、函数组件、类组件
@@ -15,6 +16,7 @@
 **脱围 = 更新脱围，而非生命周期脱围**
 
 脱围节点仍然：
+
 - ✅ 正常触发 `onMounted`（首次挂载时，仅组件）
 - ✅ 正常触发 `onBeforeUnmount`（卸载时，仅组件）
 - ✅ 可以手动更新
@@ -49,19 +51,19 @@
 
 ```tsx
 class Parent extends Widget<{}> {
-  protected declare refs: {
-    child: ExpensiveChild  // 引用实例
-  }
+  declare protected refs: {
+    child: ExpensiveChild; // 引用实例
+  };
 
   onMounted() {
     // ✅ 子组件的 onMounted 已正常触发
-    console.log(this.refs.child.element);  // 有值
+    console.log(this.refs.child.element); // 有值
   }
 
   handleUpdate = () => {
     // 手动更新脱围子组件
-    this.refs.child.update({ data: 'new' })
-  }
+    this.refs.child.update({ data: 'new' });
+  };
 
   render() {
     return (
@@ -80,24 +82,24 @@ class Parent extends Widget<{}> {
 
 ```tsx
 class Parent extends Widget<{}> {
-  protected declare refs: {
-    func: DetachedRef<HTMLDivElement>,
-    box: DetachedRef<HTMLDivElement>
-  }
+  declare protected refs: {
+    func: DetachedRef<HTMLDivElement>;
+    box: DetachedRef<HTMLDivElement>;
+  };
 
   handleUpdateFunc = () => {
     // 手动更新脱围函数组件
-    this.refs.func.update(<FuncComp data="new" />)
-  }
+    this.refs.func.update(<FuncComp data="new" />);
+  };
 
   handleUpdateBox = () => {
     // 手动更新脱围 DOM 元素
     this.refs.box.update(
       <div>
         <NewExpensiveContent />
-      </div>
-    )
-  }
+      </div>,
+    );
+  };
 
   render() {
     return (
@@ -119,8 +121,8 @@ class Parent extends Widget<{}> {
 
 ```typescript
 interface DetachedRef<T extends Element = Element> {
-  element: T                              // DOM 元素引用
-  update: (newVNode: VNode) => void       // 更新函数
+  element: T; // DOM 元素引用
+  update: (newVNode: VNode) => void; // 更新函数
 }
 ```
 
@@ -165,9 +167,9 @@ class Parent extends Widget<{}> {
 // runtime 处理 fukict:detach（通用处理，不区分节点类型）
 function processVNode(vnode: VNode): VNode {
   if (vnode.props?.['fukict:detach']) {
-    vnode.__detached__ = true  // 标记为脱围
+    vnode.__detached__ = true; // 标记为脱围
   }
-  return vnode
+  return vnode;
 }
 ```
 
@@ -180,15 +182,15 @@ function diff(oldVNode: VNode, newVNode: VNode, parent: Element) {
   // 检查旧节点是否已脱围（持久化检查）
   if (oldVNode.__detached__) {
     // 传递脱围标记到新 VNode
-    newVNode.__detached__ = true
+    newVNode.__detached__ = true;
 
     // 跳过整个子树的 diff/patch
-    return
+    return;
   }
 
   // 检查是否首次标记脱围
   if (newVNode.props?.['fukict:detach']) {
-    newVNode.__detached__ = true
+    newVNode.__detached__ = true;
     // 首次标记，本次继续处理（创建/挂载）
   }
 
@@ -239,25 +241,25 @@ onUnmount(element, vnode) {
 
 ```typescript
 function diffComponent(oldVNode: VNode, newVNode: VNode, parent: Widget) {
-  const instance = oldVNode.__instance__
+  const instance = oldVNode.__instance__;
 
   // 持久化脱围检查
   if (oldVNode.__detached__) {
-    newVNode.__detached__ = true
-    newVNode.__instance__ = instance  // 复用实例
-    return  // 跳过 update()
+    newVNode.__detached__ = true;
+    newVNode.__instance__ = instance; // 复用实例
+    return; // 跳过 update()
   }
 
   if (canReuseInstance(oldVNode, newVNode)) {
     // 检查首次脱围
     if (newVNode.props?.['fukict:detach']) {
-      newVNode.__detached__ = true
-      newVNode.__instance__ = instance
-      return  // 跳过 update()
+      newVNode.__detached__ = true;
+      newVNode.__instance__ = instance;
+      return; // 跳过 update()
     }
 
     // 正常组件：自动更新
-    instance.update(newVNode.props)
+    instance.update(newVNode.props);
   }
 }
 ```
@@ -268,14 +270,14 @@ function diffComponent(oldVNode: VNode, newVNode: VNode, parent: Widget) {
 function diffElement(oldVNode: VNode, newVNode: VNode, parent: Element) {
   // 持久化脱围检查
   if (oldVNode.__detached__) {
-    newVNode.__detached__ = true
+    newVNode.__detached__ = true;
     // 跳过整个子树的 diff
-    return
+    return;
   }
 
   // 检查首次脱围
   if (newVNode.props?.['fukict:detach']) {
-    newVNode.__detached__ = true
+    newVNode.__detached__ = true;
     // 首次标记，继续处理...
   }
 
@@ -308,7 +310,7 @@ processVNode(vnode) {
 ```typescript
 // runtime 处理 fukict:ref（针对非组件节点）
 function processElementRef(element: Element, vnode: VNode, parent: Widget) {
-  const refName = vnode.props?.['fukict:ref']
+  const refName = vnode.props?.['fukict:ref'];
 
   if (refName && vnode.__detached__) {
     // 脱围节点：创建 DetachedRef 对象
@@ -316,19 +318,19 @@ function processElementRef(element: Element, vnode: VNode, parent: Widget) {
       element,
       update: (newVNode: VNode) => {
         // 使用 replaceNode 更新
-        const newNode = createNode(newVNode)
+        const newNode = createNode(newVNode);
         if (newNode) {
-          replaceNode(element, newNode, vnode)
+          replaceNode(element, newNode, vnode);
           // 更新引用
-          detachedRef.element = newNode as Element
+          detachedRef.element = newNode as Element;
         }
-      }
-    }
+      },
+    };
 
-    parent.refs.set(refName, detachedRef)
+    parent.refs.set(refName, detachedRef);
   } else if (refName) {
     // 普通节点：直接注册 element
-    parent.refs.set(refName, element)
+    parent.refs.set(refName, element);
   }
 }
 ```
@@ -505,14 +507,14 @@ render() {
 
 ```typescript
 class Parent extends Widget<{}> {
-  protected declare refs: {
-    child: ExpensiveChild
-  }
+  declare protected refs: {
+    child: ExpensiveChild;
+  };
 
   // 在需要时手动更新
-  handleDataChange = (newData) => {
-    this.refs.child.update({ data: newData })
-  }
+  handleDataChange = newData => {
+    this.refs.child.update({ data: newData });
+  };
 }
 ```
 
@@ -530,16 +532,16 @@ class Parent extends Widget<{}> {
 
 ### 对比：脱围 vs 正常节点
 
-| 特性 | 正常节点 | 类组件脱围 | 函数组件/DOM 脱围 |
-| ---- | -------- | ---------- | ----------------- |
-| 创建时机 | 父组件 render 时 | 父组件 render 时 | 父组件 render 时 |
-| onMounted | 自动触发 | 自动触发 ✅ | - |
-| onBeforeUnmount | 自动触发 | 自动触发 ✅ | - |
-| diff/patch | 父组件更新时自动 | 跳过 ❌ | 跳过 ❌ |
-| ref 类型 | Element | Widget 实例 | DetachedRef |
-| 手动更新 | - | `ref.update(props)` | `ref.update(vnode)` |
-| 脱围持久化 | - | ✅ 是 | ✅ 是 |
-| 卸载时机 | 父组件卸载/diff 替换 | 父组件卸载/diff 替换 | 父组件卸载/diff 替换 |
+| 特性            | 正常节点             | 类组件脱围           | 函数组件/DOM 脱围    |
+| --------------- | -------------------- | -------------------- | -------------------- |
+| 创建时机        | 父组件 render 时     | 父组件 render 时     | 父组件 render 时     |
+| onMounted       | 自动触发             | 自动触发 ✅          | -                    |
+| onBeforeUnmount | 自动触发             | 自动触发 ✅          | -                    |
+| diff/patch      | 父组件更新时自动     | 跳过 ❌              | 跳过 ❌              |
+| ref 类型        | Element              | Widget 实例          | DetachedRef          |
+| 手动更新        | -                    | `ref.update(props)`  | `ref.update(vnode)`  |
+| 脱围持久化      | -                    | ✅ 是                | ✅ 是                |
+| 卸载时机        | 父组件卸载/diff 替换 | 父组件卸载/diff 替换 | 父组件卸载/diff 替换 |
 
 ### DetachedRef 类型
 

@@ -135,7 +135,9 @@ function renderComponent(
       (componentVNode as any).__dom__ = node;
       if (instance) {
         (componentVNode as any).__instance__ = instance;
-        (componentVNode as any).__instanceKey__ = (renderedVNode as any).__instanceKey__;
+        (componentVNode as any).__instanceKey__ = (
+          renderedVNode as any
+        ).__instanceKey__;
       }
     }
 

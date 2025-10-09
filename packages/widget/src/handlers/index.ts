@@ -5,9 +5,10 @@
  */
 import { registerComponentHandler } from '@fukict/runtime';
 import type { VNode, VNodeChild } from '@fukict/runtime';
-import { Widget } from '../widget/index.js';
-import { isWidgetFunction } from '../define-widget/index.js';
+
 import { isFukictAttr } from '../constants/index.js';
+import { isWidgetFunction } from '../define-widget/index.js';
+import { Widget } from '../widget/index.js';
 
 /**
  * Register Widget class component handler

@@ -5,15 +5,15 @@
  */
 import { Widget as WidgetClass } from './class.js';
 import {
-  mount as mountImpl,
-  unmount as unmountImpl,
   mountChildren,
+  mount as mountImpl,
   unmountChildren,
+  unmount as unmountImpl,
 } from './lifecycle.js';
 import {
-  update as updateImpl,
-  performUpdate as performUpdateImpl,
   forceUpdate as forceUpdateImpl,
+  performUpdate as performUpdateImpl,
+  update as updateImpl,
 } from './update.js';
 
 // Wire up Widget prototype methods to avoid circular dependencies
@@ -35,7 +35,10 @@ WidgetClass.prototype.forceUpdate = function () {
 };
 
 // Add internal methods for diff module
-(WidgetClass.prototype as any).__mountChildren = function (vnode: any, node: Node) {
+(WidgetClass.prototype as any).__mountChildren = function (
+  vnode: any,
+  node: Node,
+) {
   mountChildren(this, vnode, node);
 };
 

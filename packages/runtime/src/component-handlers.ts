@@ -95,4 +95,3 @@ export function processAttribute(
 export function getHandlers(): ComponentHandler[] {
   return [...handlers];
 }
-
