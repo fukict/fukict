@@ -1,0 +1,29 @@
+# Fukict Packages Build Configuration
+# 包构建配置，定义每个包的基本信息
+
+packages:
+  # 浏览器环境包
+  basic:
+    description: '轻量级 VNode 到 DOM 渲染引擎'
+    metadata: true # 生成 metadata.ts
+
+  # Node.js 环境包
+  babel-preset:
+    description: 'Fukict Babel 预设'
+    metadata: false # 不生成 metadata.ts
+
+  # vite plugin
+  vite-plugin:
+    description: 'Vite 插件'
+    metadata: false # 不生成 metadata.ts
+
+
+  # 未来的包（注释掉）
+  # router:
+  #   description: '轻量级路由系统'
+  #
+  # flux:
+  #   description: '轻量级状态管理'
+  #
+  # scheduler:
+  #   description: '任务调度器'

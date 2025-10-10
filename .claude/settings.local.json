@@ -43,7 +43,20 @@
       "Bash(PACKAGE_NAME=widget npx tsdown)",
       "Bash(open http://localhost:8080/examples/no-build/widget.html)",
       "Bash(git checkout:*)",
-      "Bash(PACKAGE_NAME=widget pnpm --filter @fukict/widget build)"
+      "Bash(PACKAGE_NAME=widget pnpm --filter @fukict/widget build)",
+      "Bash(mkdir:*)",
+      "Bash(open http://localhost:5173/)",
+      "Bash(npx babel:*)",
+      "Bash(npx @babel/cli:*)",
+      "Bash(open http://localhost:5174/)",
+      "Bash(PACKAGE_NAME=basic pnpm --filter @fukict/basic build:*)",
+      "Bash(PACKAGE_NAME=babel-preset pnpm --filter @fukict/babel-preset build:*)",
+      "Bash(open http://localhost:5176/)",
+      "Bash(lsof:*)",
+      "Bash(xargs kill:*)",
+      "Bash(tsx scripts/extract-metadata.ts:*)",
+      "Bash(PACKAGE_NAME=basic npx tsdown:*)",
+      "Bash(npx vite build:*)"
     ],
     "deny": [],
     "ask": []

@@ -1,0 +1,60 @@
+{
+  "name": "@fukict/basic",
+  "version": "0.1.0",
+  "description": "Lightweight DOM rendering basic with extension mechanism",
+  "keywords": [
+    "fukict",
+    "basic",
+    "vdom",
+    "rendering",
+    "dom",
+    "browser"
+  ],
+  "bugs": {
+    "url": "https://github.com/fukict/fukict/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fukict/fukict.git",
+    "directory": "packages/basic"
+  },
+  "license": "MIT",
+  "author": "Fukict Team",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "browser": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./jsx-runtime": {
+      "types": "./dist/jsx-runtime.d.ts",
+      "browser": "./dist/jsx-runtime.js",
+      "default": "./dist/jsx-runtime.js"
+    },
+    "./jsx-dev-runtime": {
+      "types": "./dist/jsx-runtime.d.ts",
+      "browser": "./dist/jsx-runtime.js",
+      "default": "./dist/jsx-runtime.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsx ../../scripts/build-package.ts --pkg-name basic --no-watch",
+    "dev": "tsx ../../scripts/build-package.ts --pkg-name basic --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

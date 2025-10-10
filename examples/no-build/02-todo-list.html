@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fukict Basic Example - Todo List</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+
+      .todo-app {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .todo-app h1 {
+        margin: 0 0 20px 0;
+        color: #333;
+        text-align: center;
+      }
+
+      .todo-input {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .todo-input input {
+        flex: 1;
+        padding: 10px;
+        font-size: 16px;
+        border: 2px solid #ddd;
+        border-radius: 4px;
+      }
+
+      .todo-input button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .todo-input button:hover {
+        background: #0056b3;
+      }
+
+      .todo-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .todo-item {
+        display: flex;
+        align-items: center;
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+        gap: 10px;
+      }
+
+      .todo-item:hover {
+        background: #f8f9fa;
+      }
+
+      .todo-item input[type='checkbox'] {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+      }
+
+      .todo-item span {
+        flex: 1;
+        font-size: 16px;
+      }
+
+      .todo-item.completed span {
+        text-decoration: line-through;
+        color: #999;
+      }
+
+      .todo-item button {
+        padding: 6px 12px;
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      .todo-item button:hover {
+        background: #c82333;
+      }
+
+      .todo-stats {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 2px solid #eee;
+        text-align: center;
+        color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="module">
+      import { Fukict, attach, h } from '../../packages/basic/dist/index.js';
+
+      class TodoList extends Fukict {
+        constructor(props) {
+          super(props);
+          this.todos = [];
+          this.nextId = 1;
+        }
+
+        addTodo() {
+          const inputRef = this.refs.get('todoInput');
+          const text = inputRef?.current?.value.trim();
+
+          if (text) {
+            this.todos.push({
+              id: this.nextId++,
+              text,
+              completed: false,
+            });
+            inputRef.current.value = '';
+            this.update(this.props);
+          }
+        }
+
+        toggleTodo(id) {
+          const todo = this.todos.find(t => t.id === id);
+          if (todo) {
+            todo.completed = !todo.completed;
+            this.update(this.props);
+          }
+        }
+
+        deleteTodo(id) {
+          this.todos = this.todos.filter(t => t.id !== id);
+          this.update(this.props);
+        }
+
+        renderTodoItem(todo) {
+          return h(
+            'li',
+            {
+              class: todo.completed ? 'todo-item completed' : 'todo-item',
+              key: todo.id,
+            },
+            [
+              h(
+                'input',
+                {
+                  type: 'checkbox',
+                  checked: todo.completed,
+                  'on:change': () => this.toggleTodo(todo.id),
+                },
+                [],
+              ),
+              h('span', null, [todo.text]),
+              h(
+                'button',
+                {
+                  'on:click': () => this.deleteTodo(todo.id),
+                },
+                ['删除'],
+              ),
+            ],
+          );
+        }
+
+        render() {
+          const completed = this.todos.filter(t => t.completed).length;
+          const total = this.todos.length;
+
+          return h('div', { class: 'todo-app' }, [
+            h('h1', null, ['待办事项']),
+
+            h('div', { class: 'todo-input' }, [
+              h(
+                'input',
+                {
+                  'fukict:ref': 'todoInput',
+                  type: 'text',
+                  placeholder: '输入待办事项...',
+                  'on:keypress': e => {
+                    if (e.key === 'Enter') this.addTodo();
+                  },
+                },
+                [],
+              ),
+              h(
+                'button',
+                {
+                  'on:click': () => this.addTodo(),
+                },
+                ['添加'],
+              ),
+            ]),
+
+            h(
+              'ul',
+              { class: 'todo-list' },
+              this.todos.map(todo => this.renderTodoItem(todo)),
+            ),
+
+            h('div', { class: 'todo-stats' }, [
+              `总计: ${total} | 已完成: ${completed} | 未完成: ${total - completed}`,
+            ]),
+          ]);
+        }
+
+        mounted() {
+          console.log('TodoList mounted!');
+          const inputRef = this.refs.get('todoInput');
+          inputRef?.current?.focus();
+        }
+      }
+
+      // 渲染应用
+      const app = h(TodoList, {}, []);
+      attach(app, document.getElementById('root'));
+    </script>
+  </body>
+</html>

@@ -1,0 +1,60 @@
+{
+  "name": "@fukict/babel-preset",
+  "version": "0.1.0",
+  "description": "Zero-config Babel preset for Fukict with automatic component wrapping",
+  "keywords": [
+    "fukict",
+    "babel",
+    "preset",
+    "jsx",
+    "compiler",
+    "transform"
+  ],
+  "bugs": {
+    "url": "https://github.com/fukict/fukict/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fukict/fukict.git",
+    "directory": "packages/babel-preset"
+  },
+  "license": "MIT",
+  "author": "Fukict Team",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsx ../../scripts/build-package.ts --pkg-name babel-preset --no-watch",
+    "dev": "tsx ../../scripts/build-package.ts --pkg-name babel-preset --watch",
+    "test": "node --test test/**/*.test.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/helper-plugin-utils": "^7.25.9",
+    "@babel/plugin-syntax-jsx": "^7.25.9",
+    "@babel/preset-typescript": "^7.27.1",
+    "@babel/types": "^7.26.0"
+  },
+  "devDependencies": {
+    "@types/babel__core": "^7.20.5",
+    "@types/babel__helper-plugin-utils": "^7.10.3",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "@babel/core": "^7.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

@@ -30,9 +30,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
    - 包含：决策背景、考虑的方案、最终选择、理由
 
 4. **设计文档专注设计，不涉及代码**
+
    - `DESIGN.md` 只描述设计思路、架构、机制
    - 不要包含代码实现细节
    - 代码示例放在 `EXAMPLES.md`
+
+5. **不要启动开发服务**
+
+   - 开发服务由用户自己启动
 
 ## 项目架构（重构后）
 

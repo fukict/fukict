@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "declarationDir": "./dist",
+    "composite": false, // 禁用 composite 以生成 JS 文件
+
+    // JSX settings specific to runtime
+    "jsxImportSource": "."
+  },
+  "extends": "../../config/typescript/tsconfig.client.json",
+  "include": ["src/**/*"]
+}
