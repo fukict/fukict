@@ -2,271 +2,189 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## 🚨 重要：项目正在重构中
+## Project Overview
 
-当前项目正在进行架构重构，所有旧代码已移至 `old/` 目录。
+Fukict is a lightweight DOM rendering library focused on performance-critical scenarios. The architecture emphasizes:
+- Compile-time JSX optimization to reduce runtime overhead
+- Direct DOM manipulation with minimal abstraction
+- Modular design with clear separation of concerns
 
-**重构状态**：设计阶段
-**当前任务**：参考 `REFACTOR_TODO.md`
+## Package Architecture
 
-## 开发工作流规范
+The monorepo contains four core packages:
 
-### 强制规则
+### @fukict/basic
+The foundational rendering engine with no dependencies. Provides:
+- VNode creation via `hyperscript()` / `h()` / JSX runtime
+- Core rendering functions (`attach()`, `diff()`, `unmount()`)
+- Class components (`Fukict`) and function components (`defineFukict`)
+- DOM utilities and lifecycle management
+- Ref system and slots mechanism
 
-1. **任务完成后必须更新 TODO**
+### @fukict/babel-preset
+JSX transformation preset for compile-time optimization:
+- Transforms JSX to hyperscript calls with event separation (`on:` prefix)
+- Ensures children are always arrays (critical for runtime)
+- Automatically imports hyperscript from `@fukict/basic`
+- Handles both class and function components
 
-   - 每完成 `REFACTOR_TODO.md` 中的一个任务，立即标记为已完成
-   - 如果任务拆分或变更，必须更新 TODO 文档
+### @fukict/router
+Single-page application routing built on @fukict/basic:
+- Hash and history mode support
+- Nested routes with layout pattern
+- Navigation guards (beforeEach, afterEach, beforeEnter)
+- `Router`, `RouterView`, `Link`, and `RouteComponent` classes
+- Subscription-based reactivity for route changes
 
-2. **功能边界变更必须更新文档**
+### @fukict/vite-plugin
+Vite integration plugin that applies babel-preset transformation to JSX/TSX files.
 
-   - 包职责变更 → 更新对应包的 `DESIGN.md`
-   - API 变更 → 更新对应包的 `API.md`
-   - 架构变更 → 更新根目录 `docs/` 下的架构文档
+## Key Architectural Patterns
 
-3. **设计决策必须记录**
+### Component Model
+Two component types exist:
+1. **Class components** extend `Fukict` with lifecycle methods (mounted, beforeUnmount, etc.)
+2. **Function components** use `defineFukict()` for simpler stateless components
 
-   - 所有重要设计决策必须在 `DESIGN.md` 中记录
-   - 包含：决策背景、考虑的方案、最终选择、理由
+Both support:
+- `fukict:ref` - Component instance references
+- `fukict:detach` - Skip re-rendering (for persistent components)
+- `this.slots.default` - Children passed to component
 
-4. **设计文档专注设计，不涉及代码**
+### Router Architecture
+Uses a subscription-based pattern where:
+- `Router` maintains `currentRoute` and notifies subscribers on changes
+- `RouterView` subscribes to router and re-renders matched components
+- Components extending `RouteComponent` have access to `this.router` and `this.route`
+- **Layout Pattern**: Parent route components (like LayoutPage) contain Header/Footer, making them reactive to route changes
 
-   - `DESIGN.md` 只描述设计思路、架构、机制
-   - 不要包含代码实现细节
-   - 代码示例放在 `EXAMPLES.md`
+Critical: Router components should use `h()` function directly instead of JSX to avoid children array issues.
 
-5. **不要启动开发服务**
+### JSX Compilation
+The babel-preset ensures:
+- JSX children are ALWAYS arrays (runtime expects this)
+- Events with `on:` prefix are separated from attributes
+- Type-only imports (`import type`) are skipped when adding hyperscript imports
+- Both class and function components get proper transformation
 
-   - 开发服务由用户自己启动
+## Development Commands
 
-## 项目架构（重构后）
-
-### 核心包
-
-**@fukict/runtime** - 轻量级 DOM 渲染引擎
-
-- **职责**：VNode 到 DOM 的转换和基础渲染
-- **核心特性**：
-  - VNode 创建（hyperscript / JSX runtime）
-  - DOM 创建和挂载
-  - **注册机制**（核心中的核心）：开放钩子让其他包扩展渲染能力
-  - 基础 DOM 操作工具
-- **不包含**：状态管理、生命周期、组件抽象
-- **大小目标**：< 5KB gzipped
-
-**@fukict/widget** - 组件抽象层
-
-- **职责**：提供组件编程范式
-- **核心特性**：
-  - Widget 类组件（生命周期、状态、refs、slots）
-  - defineWidget 函数组件
-  - 通过 runtime 注册机制扩展渲染能力
-  - 组件挂载/卸载/更新管理
-  - 数组节点渲染
-  - 脱围渲染（fukict:detach）
-- **依赖**：@fukict/runtime（peer）
-- **大小目标**：< 8KB gzipped
-
-**@fukict/scheduler** - 调度器（从 widget 剥离）
-
-- **职责**：渲染任务调度
-- **核心特性**：
-  - 优先级队列
-  - requestIdleCallback / requestAnimationFrame
-  - 任务取消
-- **依赖**：无（可选集成 widget）
-- **大小目标**：< 2KB gzipped
-
-**@fukict/babel-plugin** - JSX 编译优化
-
-- **职责**：JSX 语法转换
-- **核心特性**：
-  - 事件分离（on: 前缀）
-  - 静态优化
-  - 组件类型识别
-
-**@fukict/babel-preset-widget** - 零配置预设
-
-- **职责**：简化 Babel 配置
-- **包含**：@babel/plugin-syntax-jsx + @fukict/babel-plugin
-
-**@fukict/router** - 路由管理
-
-- **职责**：单页应用路由
-- **依赖**：@fukict/widget（peer）
-
-**@fukict/flux** - 状态管理（重命名自 state）
-
-- **职责**：应用级状态管理
-- **依赖**：@fukict/widget（可选）
-
-### 预留包
-
-**@fukict/create** - 脚手架工具（未实现）
-**@fukict/devtools** - 开发者工具（未实现）
-
-### 包依赖关系
-
-```
-@fukict/runtime (核心，无依赖)
-    ↑ dependencies
-@fukict/widget (用户安装这个)
-    ↑ peerDependencies
-@fukict/router
-@fukict/flux (可选依赖 widget)
-
-@fukict/scheduler (独立)
-
-@fukict/babel-plugin (独立)
-    ↑
-@fukict/babel-preset-widget
-```
-
-### 用户使用方式
-
-**安装**：
+### Building Packages
 
 ```bash
-# 最小安装（runtime 自动安装）
-pnpm add @fukict/widget
+# Build all packages (required before running examples)
+pnpm build
 
-# 完整功能
-pnpm add @fukict/widget @fukict/scheduler @fukict/router @fukict/flux
+# Watch mode for development (all packages)
+pnpm build:watch
 
-# 开发工具
-pnpm add -D @fukict/babel-preset-widget
+# Build specific package
+tsx scripts/build-package.ts --pkg-name basic --no-watch
+
+# Watch specific packages
+tsx scripts/build-package.ts --pkg-name basic router --watch
 ```
 
-**引用**：
-
-```typescript
-// ✅ 推荐：仅从 widget 引用
-import { Widget, h, render } from '@fukict/widget';
-
-// ❌ 不推荐：直接引用 runtime
-// import { render } from '@fukict/runtime'
-```
-
-## 文档管理结构
-
-### 根目录文档 `docs/`
-
-- `ARCHITECTURE.md` - 整体架构设计
-- `GETTING_STARTED.md` - 快速开始
-- `CORE_CONCEPTS.md` - 核心概念
-- `API_INDEX.md` - API 索引
-
-### 包级别文档 `packages/*/docs/`
-
-- `DESIGN.md` - 设计文档（专注设计思路，不含代码）
-- `API.md` - API 文档
-- `EXAMPLES.md` - 使用示例
-- `CHANGELOG.md` - 变更日志
-
-## 重构关键设计问题
-
-### 1. runtime 注册机制（最核心）
-
-需要思考：
-
-- 如何设计通用的钩子注册接口？
-- 如何保证钩子执行顺序？
-- 如何处理钩子返回值？
-- 如何支持异步钩子？
-- 如何避免钩子冲突？
-
-### 2. widget 扩展机制
-
-需要思考：
-
-- 如何通过注册机制完全控制组件渲染？
-- 如何实现组件实例的生命周期管理？
-- 如何实现 refs 自动注册和清理？
-- 如何实现 slots 的高效提取和渲染？
-- 如何实现脱围渲染？
-
-### 3. 数组节点渲染
-
-需要思考：
-
-- 如何注册数组节点的渲染逻辑？
-- 是否需要 key 优化？如何设计？
-- 如何与 widget 的 diff 机制配合？
-
-### 4. 包导出策略
-
-需要思考：
-
-- runtime 应该导出哪些 API？
-- widget 应该重新导出哪些 runtime API？
-- 如何防止用户直接使用 runtime？
-- 如何保持类型完整性？
-
-## Common Commands
-
-### 重构阶段
+### Running Examples
 
 ```bash
-# 查看重构任务
-cat REFACTOR_TODO.md
+# Router example
+cd examples/infra-router && pnpm dev
 
-# 当前不可用（等待重构完成）
-# pnpm build
-# pnpm test
+# Basic Vite example
+cd examples/basic-vite && pnpm dev
+
+# No-build example (uses pre-built dist files)
+pnpm dev:no-build
+# Then open http://localhost:8080/examples/no-build/
 ```
 
-## 重要约束
+### Linting and Formatting
 
-1. **当前处于设计阶段**：先完成所有设计文档，再开始实现
-2. **设计优先于实现**：不要急于编码，先把设计打磨好
-3. **注册机制是核心**：花最多时间设计 runtime 的注册机制
-4. **文档驱动开发**：每个包先写 DESIGN.md，再写代码
-5. **逐个攻破**：按 REFACTOR_TODO.md 的顺序，逐个完成任务
+```bash
+# Lint
+pnpm lint
 
-## Absolute Rules for Claude Code
+# Auto-fix linting issues
+pnpm lint:fix
 
-**CRITICAL: 重构期间必须遵守的规则**
+# Format code
+pnpm format
+```
 
-1. **禁止直接编写实现代码**：
+### Release Management
 
-   - 当前阶段只做设计，不写实现
-   - 先完成 REFACTOR_TODO.md 阶段一、二、三的所有任务
-   - 只有设计评审通过后，才能进入阶段五（实施）
+```bash
+# Extract metadata (version info)
+pnpm extract-metadata
 
-2. **每完成一个任务必须更新 TODO**：
+# Changesets workflow
+pnpm changeset              # Create changeset
+pnpm changeset:version      # Bump versions
+pnpm changeset:release      # Build and publish
 
-   - 完成任务后立即在 REFACTOR_TODO.md 标记为已完成
-   - 格式：`- [x] 任务描述`
+# Alpha/Beta releases
+pnpm version:alpha
+pnpm version:beta
+```
 
-3. **设计文档不要包含代码**：
+## Critical Rules
 
-   - DESIGN.md 专注于设计思路、架构、机制
-   - 不要写实现代码，不要写代码示例
-   - 代码示例放在 EXAMPLES.md
+### Forbidden Operations
+1. Never start dev servers (`pnpm dev`) - user starts these manually
+2. Never execute git write operations (`git add`, `git commit`, `git push`)
+3. Never auto-install dependencies (`pnpm install`)
 
-4. **功能边界变更必须同步文档**：
+Read-only git commands (`git status`, `git diff`, `git log`) are allowed.
 
-   - 包职责变更 → 更新 DESIGN.md
-   - API 变更 → 更新 API.md
-   - 架构变更 → 更新 docs/ARCHITECTURE.md
+### Code Modification Rules
+1. When modifying router package components, use `h()` function instead of JSX
+2. Ensure all JSX children are arrays in components
+3. Type-only imports must use `import type` syntax
+4. Router subscription cleanup must be handled to prevent infinite loops
 
-5. **重点关注注册机制**：
+### Build Process
+The build system:
+- Uses TypeScript compiler (tsc) for transpilation
+- Extracts metadata from package.json into metadata.ts files
+- Supports parallel watch mode for multiple packages
+- Available packages are read from tsdown.config.yml (legacy, now using tsc)
 
-   - runtime 的注册机制是整个框架的核心
-   - 必须反复推敲，确保设计足够灵活和强大
-   - 设计时考虑：组件渲染、生命周期、数组节点、脱围渲染等扩展点
+## Common Issues and Solutions
 
-6. **设计决策必须有理由**：
-   - 每个设计决策必须在文档中说明理由
-   - 包含：问题背景、考虑的方案、最终选择、选择理由
+### Router Infinite Loop
+**Symptom**: "Maximum call stack size exceeded" when navigating
+**Cause**: `handleRouteChange()` calling `notify()`, triggering itself recursively
+**Fix**: Remove `notify()` calls from `handleRouteChange()`, use `unsubscribeRouteChange` to prevent duplicate subscriptions
 
-## 参考资料
+### Link Active State Not Updating
+**Symptom**: Header/Footer links don't highlight when route changes
+**Cause**: Components outside RouterView scope don't respond to route changes
+**Solution**: Use Layout Pattern - make Header/Footer part of a RouteComponent that wraps all pages
 
-- 旧实现代码：`old/packages/` 目录
-- 旧文档：`old/docs/` 目录
-- 架构分析：参考之前的问题分析（已记录在聊天历史中）
+### Hyperscript Not Defined
+**Symptom**: Runtime error "hyperscript is not defined" in JSX files
+**Cause**: babel-preset trying to add hyperscript to type-only imports
+**Fix**: Check `node.importKind !== 'type'` before adding to existing import
 
----
+### Children Not Array Warning
+**Symptom**: Console warns "Element vnode children is not an array"
+**Cause**: JSX not being transformed by babel-preset (using TypeScript's react-jsx mode instead)
+**Solution**: Convert to h() function calls OR ensure babel-preset is being used
 
-**当前状态**：🟡 设计阶段
-**下一步**：完成 REFACTOR_TODO.md 的阶段一任务
+## File Structure Notes
+
+- `packages/*/src/` - Source code (TypeScript)
+- `packages/*/dist/` - Compiled output (generated, gitignored)
+- `scripts/build-package.ts` - Build orchestration
+- `scripts/extract-metadata.ts` - Version metadata extraction
+- `examples/` - Working examples of package usage
+- `old/` - Legacy code from previous architecture (reference only)
+
+## TypeScript Configuration
+
+All packages use:
+- `moduleResolution: "nodeNext"` (not "node" or "node10")
+- `module: "NodeNext"`
+- Composite projects are disabled (`composite: false`)
+- Router package does NOT use JSX config (uses h() directly)

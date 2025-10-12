@@ -34,13 +34,14 @@ export default declare<PluginOptions>(api => {
 
         // Add imports if needed
         if (needsHyperscript || needsFragment) {
-          // Find existing import from @fukict/basic
+          // Find existing VALUE import from @fukict/basic (not type-only)
           let existingImport: t.ImportDeclaration | null = null;
 
           for (const node of path.node.body) {
             if (
               t.isImportDeclaration(node) &&
-              node.source.value === '@fukict/basic'
+              node.source.value === '@fukict/basic' &&
+              node.importKind !== 'type' // Skip type-only imports
             ) {
               existingImport = node;
               break;

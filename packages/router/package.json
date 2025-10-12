@@ -1,0 +1,54 @@
+{
+  "name": "@fukict/router",
+  "version": "0.1.0",
+  "description": "Router for Fukict framework with nested routing and lazy loading",
+  "keywords": [
+    "fukict",
+    "router",
+    "routing",
+    "spa",
+    "single-page-application",
+    "navigation"
+  ],
+  "bugs": {
+    "url": "https://github.com/fukict/fukict/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fukict/fukict.git",
+    "directory": "packages/router"
+  },
+  "license": "MIT",
+  "author": "Fukict Team",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "browser": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsx ../../scripts/build-package.ts --pkg-name router --no-watch",
+    "dev": "tsx ../../scripts/build-package.ts --pkg-name router --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@fukict/basic": "workspace:*",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "@fukict/basic": "workspace:*"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

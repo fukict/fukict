@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "declarationDir": "./dist",
+    "composite": false
+  },
+  "extends": "../../config/typescript/tsconfig.client.json",
+  "include": ["src/**/*"]
+}

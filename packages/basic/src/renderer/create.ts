@@ -110,17 +110,21 @@ function renderElement(vnode: VNode, componentInstance?: any): Node {
   }
 
   // Render children (pass component instance for nested fukict:ref)
-  for (const child of children) {
-    const node = createRealNode(child, componentInstance);
+  if (Array.isArray(children)) {
+    for (const child of children) {
+      const node = createRealNode(child, componentInstance);
 
-    if (!node) continue;
+      if (!node) continue;
 
-    // node 可能是单个或数组
-    if (Array.isArray(node)) {
-      node.forEach(n => element.appendChild(n));
-    } else {
-      element.appendChild(node);
+      // node 可能是单个或数组
+      if (Array.isArray(node)) {
+        node.forEach(n => element.appendChild(n));
+      } else {
+        element.appendChild(node);
+      }
     }
+  } else {
+    console.warn('Element vnode children is not an array:', vnode);
   }
 
   // 保存单个节点到 __dom__
@@ -142,17 +146,21 @@ function renderFragment(vnode: VNode, componentInstance?: any): Node[] {
   const { children } = vnode;
   const nodes: Node[] = [];
 
-  for (const child of children) {
-    const node = createRealNode(child, componentInstance);
+  if (Array.isArray(children)) {
+    for (const child of children) {
+      const node = createRealNode(child, componentInstance);
 
-    if (!node) continue;
+      if (!node) continue;
 
-    // node 可能是单个 Node 或 Node[]（嵌套 Fragment）
-    if (Array.isArray(node)) {
-      nodes.push(...node);
-    } else {
-      nodes.push(node);
+      // node 可能是单个 Node 或 Node[]（嵌套 Fragment）
+      if (Array.isArray(node)) {
+        nodes.push(...node);
+      } else {
+        nodes.push(node);
+      }
     }
+  } else {
+    console.warn('Element vnode children is not an array:', vnode);
   }
 
   // 保存所有节点到 __dom__
@@ -217,7 +225,7 @@ function renderClassComponent(vnode: VNode, componentInstance?: any): Node {
   const instance = new (type as any)(props);
 
   // 2. Extract and set slots from children
-  if (children && children.length > 0) {
+  if (children) {
     instance.slots = extractSlots(children);
   }
 

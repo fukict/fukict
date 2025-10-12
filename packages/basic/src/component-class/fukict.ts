@@ -5,7 +5,7 @@ import { createRealNode } from '../renderer/create.js';
 import { diff, removeNode } from '../renderer/diff/index.js';
 import { activate } from '../renderer/mount.js';
 import type { Ref, Slots } from '../types/class.js';
-import type { VNode } from '../types/core.js';
+import type { VNode, VNodeChild } from '../types/core.js';
 import type {
   FukictDetachAttribute,
   FukictRefAttribute,
@@ -17,9 +17,11 @@ let componentIdCounter = 0;
 
 /**
  * Component children props
+ * Note: TypeScript sees children as VNodeChild during JSX compilation,
+ * but Babel transforms them to VNode[] at runtime
  */
 export interface BaseProps {
-  children?: VNode[];
+  children?: VNodeChild | VNodeChild[];
 }
 
 /**

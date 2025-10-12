@@ -1,0 +1,13 @@
+@import 'tailwindcss';
+
+.router-link {
+  @apply transition-colors duration-200;
+}
+
+.router-link-active {
+  @apply font-semibold;
+}
+
+.router-link-exact-active {
+  @apply text-blue-600 dark:text-blue-400;
+}

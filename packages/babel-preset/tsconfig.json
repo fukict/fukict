@@ -3,7 +3,9 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "declarationDir": "./dist",
-    "composite": false // 禁用 composite 以生成 JS 文件
+    "composite": false, // 禁用 composite 以生成 JS 文件
+    "module": "NodeNext",
+    "moduleResolution": "nodeNext"
   },
   "extends": "../../config/typescript/tsconfig.node.json",
   "include": ["src/**/*"]

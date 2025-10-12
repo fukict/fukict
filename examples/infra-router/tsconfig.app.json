@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "useDefineForClassFields": true,
+
+    /* Bundler mode */
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    /* Types */
+    "types": ["vite/client"],
+
+    /* JSX Configuration */
+    "jsx": "preserve",
+    "jsxImportSource": "@fukict/basic"
+  },
+  "extends": "../../config/typescript/tsconfig.client.json",
+  "include": ["src"]
+}

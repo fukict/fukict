@@ -17,10 +17,13 @@ packages:
     description: 'Vite 插件'
     metadata: false # 不生成 metadata.ts
 
+  # router
+  router:
+    description: '轻量级路由系统'
+    metadata: true # 不生成 metadata.ts
+
 
   # 未来的包（注释掉）
-  # router:
-  #   description: '轻量级路由系统'
   #
   # flux:
   #   description: '轻量级状态管理'

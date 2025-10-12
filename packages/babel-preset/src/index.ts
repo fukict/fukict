@@ -1,13 +1,13 @@
-import autoDefineFukict from './auto-define-fukict.js';
-import displayName from './display-name.js';
-import jsxTransform from './jsx-transform.js';
-import type { FukictPresetOptions } from './types.js';
+import autoDefineFukict from './auto-define-fukict';
+import displayName from './display-name';
+import jsxTransform from './jsx-transform';
+import type { FukictPresetOptions } from './types';
 
 /**
  * Fukict Babel Preset
  * Zero-config preset with JSX transform and auto component wrapping
  */
-export default function fukictPreset(
+function fukictPreset(
   _api: any,
   options: FukictPresetOptions = {},
 ) {
@@ -53,3 +53,8 @@ export default function fukictPreset(
     plugins,
   };
 }
+
+// CommonJS export for Babel 7 compatibility
+module.exports = fukictPreset;
+// Also export as default for dual compatibility
+module.exports.default = fukictPreset;

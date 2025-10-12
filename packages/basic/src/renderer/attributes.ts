@@ -18,6 +18,10 @@ export function setAttributes(
   componentInstance?: any,
 ): void {
   for (const [key, value] of Object.entries(props)) {
+    if (key === 'children') {
+      continue;
+    }
+
     // Handle fukict:ref (class component refs)
     if (
       key === 'fukict:ref' &&

@@ -6,6 +6,7 @@
 import * as dom from '../dom/index.js';
 import type { VNode, VNodeChild } from '../types/index.js';
 import { createRealNode } from './create.js';
+import { removeNode } from './diff/index.js';
 import { activate } from './mount.js';
 
 // Export diff function for use in Fukict.update
@@ -38,10 +39,7 @@ export function attach(
 
   // Return unmount function
   return () => {
-    // TODO: implement proper unmount with lifecycle
-    while (container.firstChild) {
-      dom.removeChild(container, container.firstChild);
-    }
+    removeNode(vnode, container);
   };
 }
 
