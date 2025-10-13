@@ -72,7 +72,8 @@ export class Router {
     this.depth = depth;
 
     // 使用传入的 history 或创建新的 history 管理器
-    this.history = options.history || createHistory(options.mode || 'hash', options.base);
+    this.history =
+      options.history || createHistory(options.mode || 'hash', options.base);
 
     // 创建路由匹配器
     this.matcher = new RouteMatcher(options.routes);
@@ -328,7 +329,10 @@ export class Router {
           query,
           hash,
           params: leafMatch.params,
-          meta: { ...leafMatch.config.meta, __redirect__: leafMatch.config.redirect },
+          meta: {
+            ...leafMatch.config.meta,
+            __redirect__: leafMatch.config.redirect,
+          },
           matched: matches.map(m => m.config),
         };
       }

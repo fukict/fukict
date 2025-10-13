@@ -29,6 +29,60 @@
 - Routing (use `@fukict/router`)
 - Scheduler (use `@fukict/scheduler`)
 
+## New Features (v3.1)
+
+### Context System
+
+Pure, side-effect-free context for passing data down the component tree:
+
+- **No Global State**: Context stored on VNode tree via `__context__`
+- **Instance-based**: Each VNode carries its own context chain
+- **Proxy-based Immutability**: Prevents child components from mutating context
+- **Priority System**: Lower-level contexts override parent contexts
+- **Unified API**: Same API for both function and class components
+
+```typescript
+// Create context
+const ThemeContext = createContext({ mode: 'light' });
+
+// Provide context
+class App extends Fukict {
+  mounted() {
+    provideContext.call(this, ThemeContext, { mode: 'dark' });
+  }
+}
+
+// Consume context
+class Button extends Fukict {
+  render() {
+    const theme = getContext.call(this, ThemeContext);
+    return <button style={`background: ${theme.mode === 'dark' ? '#000' : '#fff'}`} />;
+  }
+}
+```
+
+**See**: [Context System](./context-system.md)
+
+### SVG Support
+
+Complete SVG element and attribute support with full TypeScript type safety:
+
+- **60+ SVG Elements**: All standard SVG elements (svg, path, circle, etc.)
+- **CamelCase Attributes**: strokeWidth, viewBox, fillOpacity, etc.
+- **Type Safety**: Full TypeScript intellisense and type checking
+- **Presentation Attributes**: Complete SVG styling support
+- **Filters & Gradients**: Full support for advanced SVG features
+- **Animation**: SMIL animation elements support
+
+```typescript
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="50" cy="50" r="40" fill="blue" strokeWidth="2" stroke="black" />
+  <linearGradient id="grad">
+    <stop offset="0%" stopColor="yellow" stopOpacity="1" />
+  </linearGradient>
+</svg>
+```
+
 ## Documentation Structure
 
 ### Core Concepts
@@ -37,6 +91,7 @@
 - **[Component Design](./component-design.md)** - Class and Function components
 - **[Diff/Patch](./diff-patch.md)** - Update mechanism for each VNode type
 - **[Lifecycle](./lifecycle.md)** - Component lifecycle hooks
+- **[Context System](./context-system.md)** - Context API and data flow
 
 ### Reference
 
@@ -157,6 +212,6 @@ utils/         → Shared utilities
 
 ---
 
-**Document Version**: v3.0
-**Last Updated**: 2025-01-10
-**Status**: Design complete, implementation in progress
+**Document Version**: v3.1
+**Last Updated**: 2025-01-14
+**Status**: Design complete with Context System and SVG support

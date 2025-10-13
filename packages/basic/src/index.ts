@@ -30,6 +30,9 @@ export type {
   FukictConstructor,
 } from './types/index.js';
 
+// Context types (v3.1)
+export type { Context, ContextData } from './types/context.js';
+
 export { VNodeType } from './types/index.js';
 
 // JSX types (for extending in widget package)

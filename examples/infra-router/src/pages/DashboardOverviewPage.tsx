@@ -1,5 +1,5 @@
-import { RouteComponent } from '@fukict/router';
 import type { VNode } from '@fukict/basic';
+import { RouteComponent } from '@fukict/router';
 
 /**
  * Dashboard Overview 子页面
@@ -9,7 +9,9 @@ export class DashboardOverviewPage extends RouteComponent {
     return (
       <div class="space-y-4">
         <h2 class="text-2xl font-bold">Overview</h2>
-        <p class="text-gray-600">Dashboard overview with key metrics and statistics.</p>
+        <p class="text-gray-600">
+          Dashboard overview with key metrics and statistics.
+        </p>
 
         <div class="grid grid-cols-2 gap-4 mt-6">
           <div class="p-4 bg-blue-50 rounded-lg">

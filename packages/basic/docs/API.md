@@ -6,6 +6,7 @@ Complete API reference for @fukict/basic
 
 - [VNode Creation](#vnode-creation)
 - [Component APIs](#component-apis)
+- [Context APIs](#context-apis)
 - [Rendering APIs](#rendering-apis)
 - [Types](#types)
 
@@ -320,6 +321,159 @@ const app = h(Greeting, { name: 'World' }, []);
 
 ---
 
+## Context APIs
+
+Context system for passing data down the component tree without prop drilling.
+Context is stored on VNode tree with no global state. **Class Component only**.
+
+### Symbol-based Context Keys
+
+Define Symbol keys for context identification:
+
+```typescript
+// contexts.ts
+export const THEME_CONTEXT = Symbol('theme');
+export const USER_CONTEXT = Symbol('user');
+
+export interface ThemeContext {
+  mode: 'light' | 'dark';
+  primaryColor: string;
+}
+
+export interface UserContext {
+  name: string;
+  role: 'admin' | 'editor' | 'viewer';
+}
+```
+
+### `provideContext<T>(key, value): void`
+
+Provide context value at current component level.
+
+**Type Parameters:**
+
+- `T` - Context value type
+
+**Parameters:**
+
+- `key: string | symbol` - Context key (Symbol recommended)
+- `value: T` - Context value to provide (will be wrapped in Proxy)
+
+**Returns:** `void`
+
+**Access:** `protected` - Only available in Class Components
+
+**Example:**
+
+```typescript
+import { Fukict } from '@fukict/basic';
+
+import { THEME_CONTEXT, ThemeContext } from './contexts';
+
+class App extends Fukict {
+  state = { darkMode: false };
+
+  toggleTheme = () => {
+    this.state.darkMode = !this.state.darkMode;
+    this.provideContext<ThemeContext>(THEME_CONTEXT, {
+      mode: this.state.darkMode ? 'dark' : 'light',
+      primaryColor: this.state.darkMode ? '#6c757d' : '#007bff',
+    });
+    this.update(this.props);
+  };
+
+  mounted() {
+    this.provideContext<ThemeContext>(THEME_CONTEXT, {
+      mode: 'light',
+      primaryColor: '#007bff',
+    });
+  }
+}
+```
+
+**Features:**
+
+- Stores context on VNode tree (no global state)
+- Proxy-wrapped for immutability
+- Lower-level contexts override parent contexts
+- Only available in Class Components
+
+**Notes:**
+
+- Call in `mounted()` or during component lifecycle
+- Context persists until component unmounts
+- Child components see updated context immediately
+
+### `getContext<T>(key, defaultValue?): T | undefined`
+
+Get context value from current or parent contexts.
+
+**Type Parameters:**
+
+- `T` - Context value type
+
+**Parameters:**
+
+- `key: string | symbol` - Context key (Symbol recommended)
+- `defaultValue?: T` - Default value if context not found
+
+**Returns:** `T | undefined` - Context value (or default)
+
+**Access:** `protected` - Only available in Class Components
+
+**Example:**
+
+```typescript
+import { Fukict } from '@fukict/basic';
+import { THEME_CONTEXT, ThemeContext, USER_CONTEXT, UserContext } from './contexts';
+
+class Button extends Fukict {
+  render() {
+    const theme = this.getContext<ThemeContext>(THEME_CONTEXT, {
+      mode: 'light',
+      primaryColor: '#007bff',
+    });
+
+    const user = this.getContext<UserContext>(USER_CONTEXT, {
+      name: 'Guest',
+      role: 'viewer',
+    });
+
+    return (
+      <button
+        style={`background: ${theme.primaryColor}; color: ${theme.mode === 'dark' ? '#fff' : '#000'}`}
+        disabled={user.role === 'viewer'}
+      >
+        Click me
+      </button>
+    );
+  }
+}
+```
+
+**Lookup Process:**
+
+1. Check current component's context
+2. If not found, traverse up parent chain
+3. Return default value if not found in chain
+
+**Features:**
+
+- Type-safe context consumption
+- Automatic parent chain traversal
+- Priority system (lower levels win)
+- Immutable values (Proxy-protected)
+
+**Important:**
+
+- Context values are read-only (Proxy prevents mutation)
+- Returns default value when context not provided
+- Only available in Class Components
+
+**See:** [Context System](./context-system.md) for detailed usage patterns
+
+---
+
 ## Rendering APIs
 
 ### `attach(vnode, container): (() => void) | null`
@@ -488,6 +642,123 @@ type Slots = Record<string, VNodeChild[]>;
 ```
 
 ### Props Types
+
+#### `HTMLAttributes<T>`
+
+HTML element attributes with full TypeScript support.
+
+```typescript
+type HTMLAttributes<T extends HTMLElement = HTMLElement> =
+  RuntimeAttributes<T> &
+    Omit<Partial<T>, keyof Element | 'style'> & {
+      style?: CSSProperties | string;
+    };
+```
+
+**Features:**
+
+- All native HTML element properties
+- Event handlers with `on:` prefix
+- Ref support (`ref`, `fukict:ref`)
+- Style as object or string
+- Custom data attributes (`data-*`)
+
+**Example:**
+
+```typescript
+const input: HTMLAttributes<HTMLInputElement> = {
+  type: 'text',
+  value: 'Hello',
+  placeholder: 'Enter text',
+  disabled: false,
+  'on:input': e => console.log(e),
+  ref: el => console.log(el),
+  style: { color: 'red' },
+  'data-testid': 'my-input',
+};
+```
+
+#### `SVGAttributes<T>`
+
+SVG element attributes with full TypeScript support.
+
+```typescript
+type SVGAttributes<T extends SVGElement = SVGElement> = RuntimeAttributes<T> &
+  SVGPresentationAttributes & {
+    style?: CSSProperties | string;
+    viewBox?: string;
+    xmlns?: string;
+    // ... 50+ SVG-specific attributes
+  };
+```
+
+**Features:**
+
+- All SVG presentation attributes (fill, stroke, opacity, etc.)
+- SVG geometric attributes (x, y, width, height, viewBox, etc.)
+- Gradient attributes (stopColor, gradientUnits, etc.)
+- Filter attributes (stdDeviation, in, result, etc.)
+- Animation attributes (attributeName, dur, repeatCount, etc.)
+- CamelCase naming (strokeWidth, fillOpacity, viewBox, etc.)
+
+**Example:**
+
+```typescript
+// Circle element
+const circle: SVGAttributes<SVGCircleElement> = {
+  cx: 50,
+  cy: 50,
+  r: 40,
+  fill: 'blue',
+  stroke: 'black',
+  strokeWidth: 2,
+  opacity: 0.8,
+};
+
+// SVG root element
+const svg: SVGAttributes<SVGSVGElement> = {
+  viewBox: '0 0 100 100',
+  xmlns: 'http://www.w3.org/2000/svg',
+  width: 200,
+  height: 200,
+};
+
+// Gradient stop
+const stop: SVGAttributes<SVGStopElement> = {
+  offset: '50%',
+  stopColor: 'yellow',
+  stopOpacity: 1,
+};
+```
+
+**JSX Usage:**
+
+```tsx
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="yellow" stopOpacity="1" />
+      <stop offset="100%" stopColor="red" stopOpacity="1" />
+    </linearGradient>
+  </defs>
+  <circle
+    cx="50"
+    cy="50"
+    r="40"
+    fill="url(#grad)"
+    stroke="black"
+    strokeWidth="2"
+  />
+  <path
+    d="M 10 10 L 90 90"
+    stroke="blue"
+    strokeWidth="3"
+    strokeLinecap="round"
+  />
+</svg>
+```
+
+**See:** [SVG Support Examples](../../../examples/basic-vite/src/demos/SvgElement.tsx)
 
 #### `RuntimeAttributes`
 
@@ -712,6 +983,6 @@ import { Fukict } from '@fukict/basic';
 
 ---
 
-**Document Version**: v1.0
-**Last Updated**: 2025-01-10
-**Status**: Complete
+**Document Version**: v3.1
+**Last Updated**: 2025-01-14
+**Status**: Complete (with Context APIs and SVG support)

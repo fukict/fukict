@@ -73,10 +73,10 @@ export interface RuntimeAttributes<T extends Element = Element>
  */
 export type HTMLAttributes<T extends HTMLElement = HTMLElement> =
   RuntimeAttributes<T> &
-  Omit<Partial<T>, keyof Element | 'style'> & {
-    // Override style to support both string and object
-    style?: CSSProperties | string;
-  };
+    Omit<Partial<T>, keyof Element | 'style'> & {
+      // Override style to support both string and object
+      style?: CSSProperties | string;
+    };
 
 /**
  * SVG-specific presentation attributes
@@ -136,7 +136,12 @@ export interface SVGPresentationAttributes {
   // Other
   vectorEffect?: string;
   paintOrder?: string;
-  shapeRendering?: 'auto' | 'optimizeSpeed' | 'crispEdges' | 'geometricPrecision' | 'inherit';
+  shapeRendering?:
+    | 'auto'
+    | 'optimizeSpeed'
+    | 'crispEdges'
+    | 'geometricPrecision'
+    | 'inherit';
 }
 
 /**
@@ -146,83 +151,84 @@ export interface SVGPresentationAttributes {
  * - SVGAttributes<SVGSVGElement> - for svg elements
  * - SVGAttributes<SVGPathElement> - for path elements
  */
-export type SVGAttributes<T extends SVGElement = SVGElement> = RuntimeAttributes<T> &
-  SVGPresentationAttributes & {
-    // Override style to support both string and object
-    style?: CSSProperties | string;
+export type SVGAttributes<T extends SVGElement = SVGElement> =
+  RuntimeAttributes<T> &
+    SVGPresentationAttributes & {
+      // Override style to support both string and object
+      style?: CSSProperties | string;
 
-    // SVG-specific attributes that are not in the DOM interface
-    // These use camelCase naming convention for JSX
-    viewBox?: string;
-    xmlns?: string;
-    xmlnsXlink?: string;
-    xmlSpace?: 'default' | 'preserve';
-    x?: number | string;
-    y?: number | string;
-    width?: number | string;
-    height?: number | string;
-    cx?: number | string;
-    cy?: number | string;
-    r?: number | string;
-    rx?: number | string;
-    ry?: number | string;
-    x1?: number | string;
-    y1?: number | string;
-    x2?: number | string;
-    y2?: number | string;
-    d?: string;
-    points?: string;
-    offset?: number | string;
-    stopColor?: string;
-    stopOpacity?: number | string;
-    gradientUnits?: 'userSpaceOnUse' | 'objectBoundingBox';
-    gradientTransform?: string;
-    patternUnits?: 'userSpaceOnUse' | 'objectBoundingBox';
-    patternContentUnits?: 'userSpaceOnUse' | 'objectBoundingBox';
-    patternTransform?: string;
-    preserveAspectRatio?: string;
-    href?: string;
-    xlinkHref?: string;
-    markerWidth?: number | string;
-    markerHeight?: number | string;
-    orient?: string | number;
-    refX?: number | string;
-    refY?: number | string;
-    in?: string;
-    in2?: string;
-    result?: string;
-    stdDeviation?: number | string;
-    type?: string;
-    values?: string;
-    tableValues?: string;
-    slope?: number | string;
-    intercept?: number | string;
-    amplitude?: number | string;
-    exponent?: number | string;
-    k1?: number | string;
-    k2?: number | string;
-    k3?: number | string;
-    k4?: number | string;
-    operator?: string;
-    mode?: string;
-    attributeName?: string;
-    attributeType?: string;
-    from?: number | string;
-    to?: number | string;
-    dur?: number | string;
-    repeatCount?: number | string | 'indefinite';
-    begin?: string;
-    end?: string;
-    calcMode?: 'discrete' | 'linear' | 'paced' | 'spline';
-    keyTimes?: string;
-    keySplines?: string;
-    keyPoints?: string;
-    path?: string;
-    rotate?: number | string | 'auto' | 'auto-reverse';
-    scale?: number | string;
-    additive?: 'replace' | 'sum';
-    accumulate?: 'none' | 'sum';
-    restart?: 'always' | 'whenNotActive' | 'never';
-    // Allow any other SVG attributes
-    [key: string]: any;
-  };
+      // SVG-specific attributes that are not in the DOM interface
+      // These use camelCase naming convention for JSX
+      viewBox?: string;
+      xmlns?: string;
+      xmlnsXlink?: string;
+      xmlSpace?: 'default' | 'preserve';
+      x?: number | string;
+      y?: number | string;
+      width?: number | string;
+      height?: number | string;
+      cx?: number | string;
+      cy?: number | string;
+      r?: number | string;
+      rx?: number | string;
+      ry?: number | string;
+      x1?: number | string;
+      y1?: number | string;
+      x2?: number | string;
+      y2?: number | string;
+      d?: string;
+      points?: string;
+      offset?: number | string;
+      stopColor?: string;
+      stopOpacity?: number | string;
+      gradientUnits?: 'userSpaceOnUse' | 'objectBoundingBox';
+      gradientTransform?: string;
+      patternUnits?: 'userSpaceOnUse' | 'objectBoundingBox';
+      patternContentUnits?: 'userSpaceOnUse' | 'objectBoundingBox';
+      patternTransform?: string;
+      preserveAspectRatio?: string;
+      href?: string;
+      xlinkHref?: string;
+      markerWidth?: number | string;
+      markerHeight?: number | string;
+      orient?: string | number;
+      refX?: number | string;
+      refY?: number | string;
+      in?: string;
+      in2?: string;
+      result?: string;
+      stdDeviation?: number | string;
+      type?: string;
+      values?: string;
+      tableValues?: string;
+      slope?: number | string;
+      intercept?: number | string;
+      amplitude?: number | string;
+      exponent?: number | string;
+      k1?: number | string;
+      k2?: number | string;
+      k3?: number | string;
+      k4?: number | string;
+      operator?: string;
+      mode?: string;
+      attributeName?: string;
+      attributeType?: string;
+      from?: number | string;
+      to?: number | string;
+      dur?: number | string;
+      repeatCount?: number | string | 'indefinite';
+      begin?: string;
+      end?: string;
+      calcMode?: 'discrete' | 'linear' | 'paced' | 'spline';
+      keyTimes?: string;
+      keySplines?: string;
+      keyPoints?: string;
+      path?: string;
+      rotate?: number | string | 'auto' | 'auto-reverse';
+      scale?: number | string;
+      additive?: 'replace' | 'sum';
+      accumulate?: 'none' | 'sum';
+      restart?: 'always' | 'whenNotActive' | 'never';
+      // Allow any other SVG attributes
+      [key: string]: any;
+    };

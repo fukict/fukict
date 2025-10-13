@@ -246,15 +246,23 @@ function renderClassComponent(vnode: VNode, componentInstance?: any): Node {
     }
   }
 
-  // 4. Save instance
+  // 4. Save instance to vnode
   vnode.__instance__ = instance;
 
-  // 5. Create comment placeholder with instance ID and name
+  // 5. Save wrapper VNode to instance (for context traversal)
+  instance.__wrapper__ = vnode;
+
+  // 6. Save parent instance reference on wrapper VNode (for context chain)
+  if (componentInstance) {
+    (vnode as any).__parentInstance__ = componentInstance;
+  }
+
+  // 7. Create comment placeholder with instance ID and name
   const placeholder = dom.createComment(
     `fukict:${instance.__name__}#${instance.__id__}`,
   );
 
-  // 6. Save placeholder to vnode
+  // 8. Save placeholder to vnode
   vnode.__placeholder__ = placeholder;
 
   return placeholder;

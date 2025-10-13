@@ -5,12 +5,14 @@ import { createRealNode } from '../renderer/create.js';
 import { diff, removeNode } from '../renderer/diff/index.js';
 import { activate } from '../renderer/mount.js';
 import type { Ref, Slots } from '../types/class.js';
+import type { ContextData } from '../types/context.js';
 import type { VNode, VNodeChild } from '../types/core.js';
 import type {
   FukictDetachAttribute,
   FukictRefAttribute,
   FukictSlotAttribute,
 } from '../types/dom-attributes.js';
+import { createImmutableProxy, getParentContext } from '../utils/context.js';
 
 // Global component instance counter for unique IDs
 let componentIdCounter = 0;
@@ -108,33 +110,40 @@ export abstract class Fukict<
   /**
    * Refs map (shared with framework and user)
    */
-  readonly refs: Map<string | symbol, Ref> = new Map();
+  readonly refs: Map<string | symbol, Ref>;
 
   /**
-   * Current rendered VNode
+   * Current rendered VNode (component's internal render result)
    * @internal
    */
-  __vnode__: VNode | null = null;
+  __vnode__: VNode | null;
+
+  /**
+   * Wrapper VNode (ClassComponentVNode that wraps this instance in parent's tree)
+   * Used for context traversal - child can access parent's context via __wrapper__
+   * @internal
+   */
+  __wrapper__: VNode | null;
 
   /**
    * Parent DOM container
    * @internal
    */
-  __container__: Element | null = null;
+  __container__: Element | null;
 
   /**
    * Component placeholder (in container mode)
    * @internal
    */
-  __placeholder__: Comment | null = null;
+  __placeholder__: Comment | null;
 
   /**
    * Lifecycle execution flags (prevent re-entrant calls during lifecycle)
    * @internal
    */
-  __inUpdating__: boolean = false;
-  __inMounting__: boolean = false;
-  __inUnmounting__: boolean = false;
+  __inUpdating__: boolean;
+  __inMounting__: boolean;
+  __inUnmounting__: boolean;
 
   /**
    * Constructor
@@ -145,6 +154,16 @@ export abstract class Fukict<
     this.props = props;
     this.slots = {} as S;
 
+    // Initialize instance fields (avoid field initializers for better memory efficiency)
+    this.refs = new Map();
+    this.__vnode__ = null;
+    this.__wrapper__ = null;
+    this.__container__ = null;
+    this.__placeholder__ = null;
+    this.__inUpdating__ = false;
+    this.__inMounting__ = false;
+    this.__inUnmounting__ = false;
+
     // Note: Do NOT call render() here!
     // render() will be called in mount() after subclass constructor completes
   }
@@ -153,6 +172,105 @@ export abstract class Fukict<
    * Render method (must be implemented by subclass)
    */
   abstract render(): VNode;
+
+  /**
+   * Provide context value at current component level
+   *
+   * Only available in Class Components. Context is stored on VNode tree
+   * with no global state. Lower-level contexts override parent contexts.
+   *
+   * @param key - Context key (Symbol or string)
+   * @param value - Context value (will be wrapped in Proxy for immutability)
+   *
+   * @example
+   * ```ts
+   * import { THEME_CONTEXT, type ThemeContext } from './contexts';
+   *
+   * class App extends Fukict {
+   *   mounted() {
+   *     this.provideContext<ThemeContext>(THEME_CONTEXT, {
+   *       mode: 'dark',
+   *       color: '#000',
+   *     });
+   *   }
+   * }
+   * ```
+   */
+  protected provideContext<T>(key: string | symbol, value: T): void {
+    if (!this.__vnode__) {
+      console.warn(
+        `[Fukict] Cannot provide context in component "${this.__name__}": __vnode__ is null. ` +
+          `Make sure to call provideContext() after component is mounted.`,
+      );
+      return;
+    }
+
+    if (!this.__vnode__.__context__) {
+      this.__vnode__.__context__ = {
+        __parent__: getParentContext(this.__vnode__),
+      };
+    }
+
+    this.__vnode__.__context__[key] = createImmutableProxy(value);
+  }
+
+  /**
+   * Get context value from current or parent contexts
+   *
+   * Traverses up the VNode tree to find context. Returns default value
+   * if context not found.
+   *
+   * Search order:
+   * 1. Current component's __vnode__.__context__ (if component provided its own context)
+   * 2. Parent component's context (via __wrapper__.__parentInstance__)
+   *
+   * @param key - Context key (Symbol or string)
+   * @param defaultValue - Default value if context not found
+   * @returns Context value (or default)
+   *
+   * @example
+   * ```ts
+   * import { THEME_CONTEXT, type ThemeContext } from './contexts';
+   *
+   * class Button extends Fukict {
+   *   render() {
+   *     const theme = this.getContext<ThemeContext>(
+   *       THEME_CONTEXT,
+   *       { mode: 'light', color: '#fff' }
+   *     );
+   *     return <button style={`background: ${theme.color}`}>Click me</button>;
+   *   }
+   * }
+   * ```
+   */
+  protected getContext<T>(
+    key: string | symbol,
+    defaultValue?: T,
+  ): T | undefined {
+    // First, check if this component has its own context
+    if (this.__vnode__ && this.__vnode__.__context__) {
+      let currentContext: ContextData | undefined = this.__vnode__.__context__;
+
+      // Traverse up the chain starting from current component
+      while (currentContext) {
+        if (key in currentContext) {
+          return currentContext[key] as T;
+        }
+        currentContext = currentContext.__parent__;
+      }
+    }
+
+    // If not found in own context chain, look in parent component
+    if (this.__wrapper__) {
+      const parentInstance = (this.__wrapper__ as any).__parentInstance__;
+      if (parentInstance) {
+        // Recursively search in parent
+        return parentInstance.getContext(key, defaultValue);
+      }
+    }
+
+    return defaultValue;
+  }
 
   /**
    * Update component (props-driven update with built-in diff)
@@ -185,6 +303,11 @@ export abstract class Fukict<
 
     // Re-render
     const newVNode = this.render();
+
+    // Preserve context from old VNode to new VNode
+    if (this.__vnode__?.__context__) {
+      newVNode.__context__ = this.__vnode__.__context__;
+    }
 
     // Built-in diff and patch
     if (this.__vnode__ && this.__container__) {

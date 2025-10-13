@@ -1,9 +1,5 @@
 import { Fukict } from '@fukict/basic';
-import {
-  type RouteConfig,
-  Router,
-  RouterProvider,
-} from '@fukict/router';
+import { type RouteConfig, Router, RouterProvider } from '@fukict/router';
 
 import { AboutPage } from './pages/AboutPage';
 import { DashboardAnalyticsPage } from './pages/DashboardAnalyticsPage';

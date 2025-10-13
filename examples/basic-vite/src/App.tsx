@@ -3,6 +3,7 @@ import { Fukict } from '@fukict/basic';
 import { Sidebar } from './components/Sidebar';
 import { ClassComponentDemo } from './demos/ClassComponentDemo';
 import { CompositionDemo } from './demos/CompositionDemo';
+import { ContextDemo } from './demos/ContextDemo';
 import { EventHandlingDemo } from './demos/EventHandlingDemo';
 import { FragmentDemo } from './demos/FragmentDemo';
 import { FunctionComponentDemo } from './demos/FunctionComponentDemo';
@@ -28,6 +29,7 @@ export class App extends Fukict {
     slots: SlotsDemo,
     fragment: FragmentDemo,
     composition: CompositionDemo,
+    context: ContextDemo,
   };
 
   handleDemoChange = (demo: string) => {

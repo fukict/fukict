@@ -51,7 +51,7 @@ export class RouterView extends Fukict<RouterViewProps> {
     if (!matched || !matched.component) {
       return this.props.fallback || h('div', { class: 'router-view' }, []);
     }
-    
+
     const RouteComp = matched.component;
     const childRouter = this.getRouterForChild(matched);
 

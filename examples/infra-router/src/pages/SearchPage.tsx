@@ -1,5 +1,5 @@
-import { RouteComponent } from '@fukict/router';
 import type { VNode } from '@fukict/basic';
+import { RouteComponent } from '@fukict/router';
 
 /**
  * Search 页面 - 展示查询参数

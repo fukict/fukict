@@ -25,12 +25,14 @@ export type VNode =
 
 ## Field Usage
 
-| VNode Type         | `__type__` | `type`     | `__dom__`        | `__rendered__` | `__instance__` |
-| ------------------ | ---------- | ---------- | ---------------- | -------------- | -------------- |
-| Element            | `element`  | `string`   | `Node`           | -              | -              |
-| Fragment           | `fragment` | `symbol`   | `Node[]`         | -              | -              |
-| Function Component | `function` | `Function` | `Node \| Node[]` | `VNode`        | -              |
-| Class Component    | `class`    | `Function` | -                | -              | `instance`     |
+| VNode Type         | `__type__` | `type`     | `__dom__`        | `__rendered__` | `__instance__` | `__context__` |
+| ------------------ | ---------- | ---------- | ---------------- | -------------- | -------------- | ------------- |
+| Element            | `element`  | `string`   | `Node`           | -              | -              | ✅ Optional   |
+| Fragment           | `fragment` | `symbol`   | `Node[]`         | -              | -              | ✅ Optional   |
+| Function Component | `function` | `Function` | `Node \| Node[]` | `VNode`        | -              | ✅ Optional   |
+| Class Component    | `class`    | `Function` | -                | -              | `instance`     | ✅ Optional   |
+
+**Note**: `__context__` field (added in v3.1) stores context chain for data passing. See [Context System](./context-system.md).
 
 ## Compile-time Type Annotation
 

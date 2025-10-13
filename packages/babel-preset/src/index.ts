@@ -7,10 +7,7 @@ import type { FukictPresetOptions } from './types';
  * Fukict Babel Preset
  * Zero-config preset with JSX transform and auto component wrapping
  */
-function fukictPreset(
-  _api: any,
-  options: FukictPresetOptions = {},
-) {
+function fukictPreset(_api: any, options: FukictPresetOptions = {}) {
   const {
     development = process.env.NODE_ENV !== 'production',
     typescript = true, // Enable TypeScript support by default

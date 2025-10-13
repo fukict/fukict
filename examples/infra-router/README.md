@@ -5,22 +5,26 @@
 ## 功能展示
 
 ### 1. 基础路由导航
+
 - **Home 页面** (`/`) - 首页，包含功能概览
 - **About 页面** (`/about`) - 关于页面，展示路由信息
 
 ### 2. 动态路由参数
+
 - **User 页面** (`/user/:id`) - 用户资料页
   - 支持动态路由参数（如 `/user/123`）
   - 实现了 `routeParamsChanged` 钩子监听参数变化
   - 可以在同一组件内切换不同用户 ID
 
 ### 3. 查询参数
+
 - **Search 页面** (`/search`) - 搜索页面
   - 支持查询参数（如 `/search?q=fukict&page=1`）
   - 实现了 `routeQueryChanged` 钩子监听查询参数变化
   - 使用 `updateQuery()` 方法更新查询参数
 
 ### 4. 嵌套路由
+
 - **Dashboard 页面** (`/dashboard`) - 仪表板主页
   - **Overview** (`/dashboard/overview`) - 概览子页面
   - **Analytics** (`/dashboard/analytics`) - 分析子页面
@@ -28,11 +32,13 @@
   - 使用嵌套 `RouterView` 组件渲染子路由
 
 ### 5. 导航守卫
+
 - **全局前置守卫** (`beforeEach`) - 记录导航日志，更新页面标题
 - **全局后置钩子** (`afterEach`) - 导航完成后的回调
 - **路由级守卫** (`beforeEnter`) - User 页面的路由守卫示例
 
 ### 6. 路由组件
+
 - **Link 组件** - 声明式导航链接
   - 自动激活状态（`activeClass`、`exactActiveClass`）
   - 支持 `replace` 模式
@@ -41,6 +47,7 @@
   - 提供 `push()`、`replace()`、`back()`、`forward()` 等导航方法
 
 ### 7. 404 处理
+
 - **NotFound 页面** - 处理未匹配的路由
 
 ## 技术栈
@@ -136,7 +143,7 @@ const routes: RouteConfig[] = [
 
 ```typescript
 const router = new Router({
-  mode: 'hash',  // 或 'history'
+  mode: 'hash', // 或 'history'
   routes,
   beforeEach: (to, from, next) => {
     // 全局前置守卫
@@ -213,18 +220,22 @@ export class DashboardPage extends RouteComponent {
 ## 学习要点
 
 1. **声明式 vs 编程式导航**
+
    - 使用 `<Link>` 组件进行声明式导航
    - 使用 `push()`、`replace()` 等方法进行编程式导航
 
 2. **路由参数 vs 查询参数**
+
    - 路由参数 (`/user/:id`) - 路径的一部分，通过 `this.params` 访问
    - 查询参数 (`/search?q=...`) - URL 查询字符串，通过 `this.query` 访问
 
 3. **嵌套路由的层级关系**
+
    - 父路由组件中使用 `<RouterView>` 渲染子路由
    - 子路由继承父路由的 Router 实例
 
 4. **导航守卫的执行顺序**
+
    - 全局 `beforeEach` → 路由级 `beforeEnter` → 组件挂载
    - 导航完成后执行 `afterEach`
 
@@ -235,9 +246,11 @@ export class DashboardPage extends RouteComponent {
 ## 浏览器访问
 
 启动开发服务器后，在浏览器中访问：
+
 - http://localhost:5173/
 
 由于使用 hash 模式，URL 格式为：
+
 - http://localhost:5173/#/
 - http://localhost:5173/#/about
 - http://localhost:5173/#/user/123

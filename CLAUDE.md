@@ -5,6 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project Overview
 
 Fukict is a lightweight DOM rendering library focused on performance-critical scenarios. The architecture emphasizes:
+
 - Compile-time JSX optimization to reduce runtime overhead
 - Direct DOM manipulation with minimal abstraction
 - Modular design with clear separation of concerns
@@ -14,7 +15,9 @@ Fukict is a lightweight DOM rendering library focused on performance-critical sc
 The monorepo contains four core packages:
 
 ### @fukict/basic
+
 The foundational rendering engine with no dependencies. Provides:
+
 - VNode creation via `hyperscript()` / `h()` / JSX runtime
 - Core rendering functions (`attach()`, `diff()`, `unmount()`)
 - Class components (`Fukict`) and function components (`defineFukict`)
@@ -22,14 +25,18 @@ The foundational rendering engine with no dependencies. Provides:
 - Ref system and slots mechanism
 
 ### @fukict/babel-preset
+
 JSX transformation preset for compile-time optimization:
+
 - Transforms JSX to hyperscript calls with event separation (`on:` prefix)
 - Ensures children are always arrays (critical for runtime)
 - Automatically imports hyperscript from `@fukict/basic`
 - Handles both class and function components
 
 ### @fukict/router
+
 Single-page application routing built on @fukict/basic:
+
 - Hash and history mode support
 - Nested routes with layout pattern
 - Navigation guards (beforeEach, afterEach, beforeEnter)
@@ -37,22 +44,28 @@ Single-page application routing built on @fukict/basic:
 - Subscription-based reactivity for route changes
 
 ### @fukict/vite-plugin
+
 Vite integration plugin that applies babel-preset transformation to JSX/TSX files.
 
 ## Key Architectural Patterns
 
 ### Component Model
+
 Two component types exist:
+
 1. **Class components** extend `Fukict` with lifecycle methods (mounted, beforeUnmount, etc.)
 2. **Function components** use `defineFukict()` for simpler stateless components
 
 Both support:
+
 - `fukict:ref` - Component instance references
 - `fukict:detach` - Skip re-rendering (for persistent components)
 - `this.slots.default` - Children passed to component
 
 ### Router Architecture
+
 Uses a subscription-based pattern where:
+
 - `Router` maintains `currentRoute` and notifies subscribers on changes
 - `RouterView` subscribes to router and re-renders matched components
 - Components extending `RouteComponent` have access to `this.router` and `this.route`
@@ -61,7 +74,9 @@ Uses a subscription-based pattern where:
 Critical: Router components should use `h()` function directly instead of JSX to avoid children array issues.
 
 ### JSX Compilation
+
 The babel-preset ensures:
+
 - JSX children are ALWAYS arrays (runtime expects this)
 - Events with `on:` prefix are separated from attributes
 - Type-only imports (`import type`) are skipped when adding hyperscript imports
@@ -131,6 +146,7 @@ pnpm version:beta
 ## Critical Rules
 
 ### Forbidden Operations
+
 1. Never start dev servers (`pnpm dev`) - user starts these manually
 2. Never execute git write operations (`git add`, `git commit`, `git push`)
 3. Never auto-install dependencies (`pnpm install`)
@@ -138,13 +154,16 @@ pnpm version:beta
 Read-only git commands (`git status`, `git diff`, `git log`) are allowed.
 
 ### Code Modification Rules
+
 1. When modifying router package components, use `h()` function instead of JSX
 2. Ensure all JSX children are arrays in components
 3. Type-only imports must use `import type` syntax
 4. Router subscription cleanup must be handled to prevent infinite loops
 
 ### Build Process
+
 The build system:
+
 - Uses TypeScript compiler (tsc) for transpilation
 - Extracts metadata from package.json into metadata.ts files
 - Supports parallel watch mode for multiple packages
@@ -153,21 +172,25 @@ The build system:
 ## Common Issues and Solutions
 
 ### Router Infinite Loop
+
 **Symptom**: "Maximum call stack size exceeded" when navigating
 **Cause**: `handleRouteChange()` calling `notify()`, triggering itself recursively
 **Fix**: Remove `notify()` calls from `handleRouteChange()`, use `unsubscribeRouteChange` to prevent duplicate subscriptions
 
 ### Link Active State Not Updating
+
 **Symptom**: Header/Footer links don't highlight when route changes
 **Cause**: Components outside RouterView scope don't respond to route changes
 **Solution**: Use Layout Pattern - make Header/Footer part of a RouteComponent that wraps all pages
 
 ### Hyperscript Not Defined
+
 **Symptom**: Runtime error "hyperscript is not defined" in JSX files
 **Cause**: babel-preset trying to add hyperscript to type-only imports
 **Fix**: Check `node.importKind !== 'type'` before adding to existing import
 
 ### Children Not Array Warning
+
 **Symptom**: Console warns "Element vnode children is not an array"
 **Cause**: JSX not being transformed by babel-preset (using TypeScript's react-jsx mode instead)
 **Solution**: Convert to h() function calls OR ensure babel-preset is being used
@@ -184,6 +207,7 @@ The build system:
 ## TypeScript Configuration
 
 All packages use:
+
 - `moduleResolution: "nodeNext"` (not "node" or "node10")
 - `module: "NodeNext"`
 - Composite projects are disabled (`composite: false`)

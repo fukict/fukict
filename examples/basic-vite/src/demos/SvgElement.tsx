@@ -67,13 +67,7 @@ class ComplexSVGComponent extends Fukict {
               strokeWidth="2"
             />
 
-            <circle
-              cx="140"
-              cy="50"
-              r="40"
-              fill="blue"
-              filter="url(#blur1)"
-            />
+            <circle cx="140" cy="50" r="40" fill="blue" filter="url(#blur1)" />
 
             <ellipse
               cx="100"
@@ -93,11 +87,7 @@ class ComplexSVGComponent extends Fukict {
               strokeWidth="3"
             />
 
-            <polygon
-              points="100,10 150,90 50,90"
-              fill="purple"
-              opacity="0.7"
-            />
+            <polygon points="100,10 150,90 50,90" fill="purple" opacity="0.7" />
 
             <polyline
               points="10,100 40,80 70,100 100,80"
@@ -139,8 +129,22 @@ class ReusableSVGComponent extends Fukict {
           </defs>
 
           <use href="#star" x="10" y="10" width="50" height="50" fill="gold" />
-          <use href="#star" x="90" y="10" width="50" height="50" fill="silver" />
-          <use href="#star" x="170" y="10" width="50" height="50" fill="#cd7f32" />
+          <use
+            href="#star"
+            x="90"
+            y="10"
+            width="50"
+            height="50"
+            fill="silver"
+          />
+          <use
+            href="#star"
+            x="170"
+            y="10"
+            width="50"
+            height="50"
+            fill="#cd7f32"
+          />
         </svg>
       </div>
     );
@@ -173,7 +177,9 @@ class AnimatedSVGComponent extends Fukict {
             />
           </circle>
         </svg>
-        <p style="font-size: 12px; color: #666; margin: 5px 0;">圆形会自动缩放和变色</p>
+        <p style="font-size: 12px; color: #666; margin: 5px 0;">
+          圆形会自动缩放和变色
+        </p>
       </div>
     );
   }
@@ -198,7 +204,9 @@ export class SvgElementDemo extends Fukict {
           <h4>✨ 特性说明</h4>
           <ul style="line-height: 1.8;">
             <li>✅ 完整的 SVG 元素类型支持（60+ 元素）</li>
-            <li>✅ SVG 属性使用驼峰命名（strokeWidth, viewBox, fillOpacity 等）</li>
+            <li>
+              ✅ SVG 属性使用驼峰命名（strokeWidth, viewBox, fillOpacity 等）
+            </li>
             <li>✅ 完整的 TypeScript 智能提示</li>
             <li>✅ 支持所有 SVG 特性：渐变、滤镜、动画、路径等</li>
             <li>✅ 类型安全，编译时错误检查</li>

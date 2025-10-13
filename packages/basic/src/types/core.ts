@@ -3,6 +3,7 @@
  *
  * Core VNode and basic runtime types
  */
+import type { ContextData } from './context.js';
 
 /**
  * VNode child types - supports primitives, VNodes, and nested arrays
@@ -46,6 +47,13 @@ interface VNodeBase {
    * Slot name for slot mechanism
    */
   __slot_name__?: string;
+
+  /**
+   * Context data (added in v3.1)
+   * Stores context chain for data passing without prop drilling
+   * @see {@link ContextData}
+   */
+  __context__?: ContextData;
 }
 
 /**

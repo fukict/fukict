@@ -14,6 +14,7 @@ const demos = [
   { id: 'slots', label: 'Slots' },
   { id: 'fragment', label: 'Fragment' },
   { id: 'composition', label: '组件组合' },
+  { id: 'context', label: 'Context 上下文' },
 ];
 
 export const Sidebar = ({ currentDemo, onSelect }: SidebarProps) => {
