@@ -9,6 +9,7 @@ const demos = [
   { id: 'jsx-syntax', label: 'JSX 语法' },
   { id: 'event-handling', label: '事件处理 (on:)' },
   { id: 'lifecycle', label: '生命周期' },
+  { id: 'svg', label: 'SVG' },
   { id: 'refs', label: 'Refs (fukict:ref)' },
   { id: 'slots', label: 'Slots' },
   { id: 'fragment', label: 'Fragment' },

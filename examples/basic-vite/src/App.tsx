@@ -10,10 +10,11 @@ import { JSXSyntaxDemo } from './demos/JSXSyntaxDemo';
 import { LifecycleDemo } from './demos/LifecycleDemo';
 import { RefsDemo } from './demos/RefsDemo';
 import { SlotsDemo } from './demos/SlotsDemo';
+import { SvgElementDemo } from './demos/SvgElement';
 
 export class App extends Fukict {
   state = {
-    currentDemo: 'class-component',
+    currentDemo: 'function-component',
   };
 
   demos = {
@@ -21,6 +22,7 @@ export class App extends Fukict {
     'class-component': ClassComponentDemo,
     'jsx-syntax': JSXSyntaxDemo,
     'event-handling': EventHandlingDemo,
+    svg: SvgElementDemo,
     lifecycle: LifecycleDemo,
     refs: RefsDemo,
     slots: SlotsDemo,

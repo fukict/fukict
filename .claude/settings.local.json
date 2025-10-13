@@ -58,7 +58,8 @@
       "Bash(PACKAGE_NAME=basic npx tsdown:*)",
       "Bash(npx vite build:*)",
       "Bash(git restore:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []

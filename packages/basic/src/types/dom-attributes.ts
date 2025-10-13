@@ -72,7 +72,72 @@ export interface RuntimeAttributes<T extends Element = Element>
  * - HTMLAttributes<HTMLElement> - for generic elements
  */
 export type HTMLAttributes<T extends HTMLElement = HTMLElement> =
-  RuntimeAttributes<T> & Partial<Omit<T, keyof Element>>;
+  RuntimeAttributes<T> &
+  Omit<Partial<T>, keyof Element | 'style'> & {
+    // Override style to support both string and object
+    style?: CSSProperties | string;
+  };
+
+/**
+ * SVG-specific presentation attributes
+ * These attributes control the visual appearance of SVG elements
+ */
+export interface SVGPresentationAttributes {
+  // Color and painting
+  fill?: string;
+  fillOpacity?: number | string;
+  fillRule?: 'nonzero' | 'evenodd' | 'inherit';
+  stroke?: string;
+  strokeWidth?: number | string;
+  strokeOpacity?: number | string;
+  strokeLinecap?: 'butt' | 'round' | 'square' | 'inherit';
+  strokeLinejoin?: 'miter' | 'round' | 'bevel' | 'inherit';
+  strokeDasharray?: string | number;
+  strokeDashoffset?: string | number;
+  strokeMiterlimit?: number | string;
+
+  // Opacity
+  opacity?: number | string;
+
+  // Transform
+  transform?: string;
+  transformOrigin?: string;
+
+  // Text
+  fontSize?: number | string;
+  fontFamily?: string;
+  fontWeight?: number | string;
+  fontStyle?: string;
+  textAnchor?: 'start' | 'middle' | 'end' | 'inherit';
+  dominantBaseline?: string;
+
+  // Clipping and masking
+  clipPath?: string;
+  clipRule?: 'nonzero' | 'evenodd' | 'inherit';
+  mask?: string;
+
+  // Filter effects
+  filter?: string;
+
+  // Color
+  color?: string;
+  colorInterpolation?: 'auto' | 'sRGB' | 'linearRGB' | 'inherit';
+  colorRendering?: 'auto' | 'optimizeSpeed' | 'optimizeQuality' | 'inherit';
+
+  // Display
+  visibility?: 'visible' | 'hidden' | 'collapse' | 'inherit';
+  display?: string;
+
+  // Markers
+  markerStart?: string;
+  markerMid?: string;
+  markerEnd?: string;
+
+  // Other
+  vectorEffect?: string;
+  paintOrder?: string;
+  shapeRendering?: 'auto' | 'optimizeSpeed' | 'crispEdges' | 'geometricPrecision' | 'inherit';
+}
 
 /**
  * SVG element attributes (SVGElement is not HTMLElement)
@@ -81,5 +146,83 @@ export type HTMLAttributes<T extends HTMLElement = HTMLElement> =
  * - SVGAttributes<SVGSVGElement> - for svg elements
  * - SVGAttributes<SVGPathElement> - for path elements
  */
-export type SVGAttributes<T extends SVGElement = SVGElement> =
-  RuntimeAttributes<T> & Partial<Omit<T, keyof Element>>;
+export type SVGAttributes<T extends SVGElement = SVGElement> = RuntimeAttributes<T> &
+  SVGPresentationAttributes & {
+    // Override style to support both string and object
+    style?: CSSProperties | string;
+
+    // SVG-specific attributes that are not in the DOM interface
+    // These use camelCase naming convention for JSX
+    viewBox?: string;
+    xmlns?: string;
+    xmlnsXlink?: string;
+    xmlSpace?: 'default' | 'preserve';
+    x?: number | string;
+    y?: number | string;
+    width?: number | string;
+    height?: number | string;
+    cx?: number | string;
+    cy?: number | string;
+    r?: number | string;
+    rx?: number | string;
+    ry?: number | string;
+    x1?: number | string;
+    y1?: number | string;
+    x2?: number | string;
+    y2?: number | string;
+    d?: string;
+    points?: string;
+    offset?: number | string;
+    stopColor?: string;
+    stopOpacity?: number | string;
+    gradientUnits?: 'userSpaceOnUse' | 'objectBoundingBox';
+    gradientTransform?: string;
+    patternUnits?: 'userSpaceOnUse' | 'objectBoundingBox';
+    patternContentUnits?: 'userSpaceOnUse' | 'objectBoundingBox';
+    patternTransform?: string;
+    preserveAspectRatio?: string;
+    href?: string;
+    xlinkHref?: string;
+    markerWidth?: number | string;
+    markerHeight?: number | string;
+    orient?: string | number;
+    refX?: number | string;
+    refY?: number | string;
+    in?: string;
+    in2?: string;
+    result?: string;
+    stdDeviation?: number | string;
+    type?: string;
+    values?: string;
+    tableValues?: string;
+    slope?: number | string;
+    intercept?: number | string;
+    amplitude?: number | string;
+    exponent?: number | string;
+    k1?: number | string;
+    k2?: number | string;
+    k3?: number | string;
+    k4?: number | string;
+    operator?: string;
+    mode?: string;
+    attributeName?: string;
+    attributeType?: string;
+    from?: number | string;
+    to?: number | string;
+    dur?: number | string;
+    repeatCount?: number | string | 'indefinite';
+    begin?: string;
+    end?: string;
+    calcMode?: 'discrete' | 'linear' | 'paced' | 'spline';
+    keyTimes?: string;
+    keySplines?: string;
+    keyPoints?: string;
+    path?: string;
+    rotate?: number | string | 'auto' | 'auto-reverse';
+    scale?: number | string;
+    additive?: 'replace' | 'sum';
+    accumulate?: 'none' | 'sum';
+    restart?: 'always' | 'whenNotActive' | 'never';
+    // Allow any other SVG attributes
+    [key: string]: any;
+  };
