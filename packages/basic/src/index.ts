@@ -17,6 +17,7 @@ export type {
   UnregisterFn,
   RefCallback,
   CSSProperties,
+  ClassValue,
   RuntimeAttributes,
   EventHandlers,
   HTMLAttributes,

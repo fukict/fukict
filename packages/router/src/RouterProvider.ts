@@ -59,7 +59,7 @@ export class RouterProvider extends Fukict<RouterProviderProps> {
       if (!this.router) return;
 
       // 调用 updateRoute 更新路由状态（不会再修改 history）
-      this.router.updateRoute(path).then(() => {
+      void this.router.updateRoute(path).then(() => {
         // 路由更新完成后，触发重新渲染
         this.update();
       });

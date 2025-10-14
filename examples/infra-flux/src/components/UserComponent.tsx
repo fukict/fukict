@@ -43,7 +43,7 @@ export class UserComponent extends Fukict {
   private handleLogin = (e: Event): void => {
     e.preventDefault();
     if (this.email.trim()) {
-      userStore.actions.login(this.email);
+      void userStore.actions.login(this.email);
     }
   };
 

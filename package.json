@@ -41,6 +41,7 @@
     "publish": "tsx scripts/release.ts",
     "release": "tsx scripts/release.ts",
     "test": "pnpm -r test",
+    "typecheck": "pnpm -r typecheck",
     "version:alpha": "changeset version --snapshot alpha && changeset publish --tag alpha",
     "version:beta": "changeset version --snapshot beta && changeset publish --tag beta",
     "version:rc": "changeset version --snapshot rc && changeset publish --tag rc"

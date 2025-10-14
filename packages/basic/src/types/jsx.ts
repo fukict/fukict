@@ -264,10 +264,7 @@ export namespace JSX {
    */
   export interface IntrinsicElements
     extends IntrinsicHTMLElements,
-      IntrinsicSVGElements {
-    // Allow any other HTML element
-    [elemName: string]: any;
-  }
+      IntrinsicSVGElements {}
 
   export interface ElementChildrenAttribute {
     children: {};

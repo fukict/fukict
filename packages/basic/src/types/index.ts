@@ -34,6 +34,7 @@ export type { EventHandlers } from './events';
 // DOM attribute types
 export type {
   CSSProperties,
+  ClassValue,
   RuntimeAttributes,
   HTMLAttributes,
   SVGAttributes,

@@ -3,6 +3,65 @@
  *
  * Attribute and property manipulation
  */
+import { ClassValue } from '../types/dom-attributes';
+
+/**
+ * Convert ClassValue to class string
+ *
+ * @param value - Class value in various formats
+ * @returns Normalized class string
+ */
+function normalizeClassValue(value: ClassValue): string {
+  // Handle string
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  // Handle array
+  if (Array.isArray(value)) {
+    return value
+      .map(item => {
+        if (typeof item === 'string') {
+          return item;
+        }
+        // Handle object in array
+        return normalizeClassValue(item);
+      })
+      .filter(Boolean)
+      .join(' ');
+  }
+
+  // Handle object (boolean mode)
+  if (typeof value === 'object' && value !== null) {
+    return Object.entries(value)
+      .filter(([_, enabled]) => enabled)
+      .map(([className]) => className)
+      .join(' ');
+  }
+
+  return '';
+}
+
+/**
+ * Set class attribute on element with enhanced support
+ *
+ * Supports multiple formats:
+ * - string: 'foo bar'
+ * - array: ['foo', 'bar'] => 'foo bar'
+ * - object: { foo: true, bar: false } => 'foo'
+ * - mixed: ['foo', { bar: true, baz: false }] => 'foo bar'
+ *
+ * @param element - DOM element
+ * @param value - Class value in various formats
+ */
+export function setClass(element: Element, value: ClassValue): void {
+  const classString = normalizeClassValue(value);
+  if (classString) {
+    element.setAttribute('class', classString);
+  } else {
+    element.removeAttribute('class');
+  }
+}
 
 /**
  * Set attribute on element

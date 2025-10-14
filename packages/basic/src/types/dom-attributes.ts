@@ -4,7 +4,7 @@
  * Runtime-specific attribute extensions for HTML elements
  * Extends built-in DOM types with ref, event handlers, and custom attributes
  */
-import type { RefCallback } from './core.js';
+import type { RefCallback, VNodeChild } from './core.js';
 import type { EventHandlers } from './events.js';
 
 /**
@@ -14,6 +14,19 @@ import type { EventHandlers } from './events.js';
 export type CSSProperties = {
   [K in keyof CSSStyleDeclaration]?: CSSStyleDeclaration[K] | number;
 };
+
+/**
+ * Class value types
+ * - string: 'foo bar'
+ * - array: ['foo', 'bar']
+ * - object: { foo: true, bar: false } (boolean mode)
+ * - mixed: ['foo', { bar: true, baz: false }]
+ */
+export type ClassValue =
+  | string
+  | string[]
+  | Record<string, boolean | undefined>
+  | (string | Record<string, boolean | undefined>)[];
 
 /**
  * Fukict slot attribute (for slot content marking)
@@ -52,14 +65,17 @@ export interface RuntimeAttributes<T extends Element = Element>
   // Custom style handling (object or string)
   style?: CSSProperties | string;
 
-  // Allow className as alias for class
-  className?: string;
+  // Class with enhanced support (string, array, object, mixed)
+  class?: ClassValue;
 
-  // Data attributes
+  // Explicitly forbid className (use class instead)
+  className?: never;
+
+  // Children support (JSX children)
+  children?: VNodeChild | VNodeChild[];
+
+  // Data attributes - allow any data-* attribute
   [key: `data-${string}`]: any;
-
-  // Allow other custom attributes
-  [key: string]: any;
 }
 
 /**
@@ -229,6 +245,4 @@ export type SVGAttributes<T extends SVGElement = SVGElement> =
       additive?: 'replace' | 'sum';
       accumulate?: 'none' | 'sum';
       restart?: 'always' | 'whenNotActive' | 'never';
-      // Allow any other SVG attributes
-      [key: string]: any;
     };

@@ -66,9 +66,9 @@ export function setAttributes(
       continue;
     }
 
-    // Handle className -> class
-    if (key === 'className') {
-      dom.setAttribute(element, 'class', value);
+    // Handle class with enhanced support
+    if (key === 'class') {
+      dom.setClass(element, value);
       continue;
     }
 

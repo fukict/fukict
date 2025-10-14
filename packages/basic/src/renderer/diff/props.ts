@@ -91,9 +91,9 @@ export function setProp(
     return;
   }
 
-  // Handle className -> class
-  if (key === 'className') {
-    dom.setAttribute(element, 'class', value);
+  // Handle class with enhanced support
+  if (key === 'class') {
+    dom.setClass(element, value);
     return;
   }
 
@@ -117,12 +117,6 @@ export function removeProp(element: Element, key: string, oldValue: any): void {
   // Handle special properties
   if (key === 'value' || key === 'checked' || key === 'selected') {
     dom.setProperty(element, key, '');
-    return;
-  }
-
-  // Handle className -> class
-  if (key === 'className') {
-    dom.removeAttribute(element, 'class');
     return;
   }
 

@@ -26,6 +26,7 @@ export {
   removeAttribute,
   setProperty,
   setStyle,
+  setClass,
 } from './attributes.js';
 
 // Events
