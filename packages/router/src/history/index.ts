@@ -1,9 +1,12 @@
 import type { RouterMode } from '../types';
+import { BaseHistory } from './base';
+import { BrowserHistory } from './browser';
+import { HashHistory } from './hash';
+import type { HistoryListener, IHistory } from './types';
 
-export type { HistoryListener, IHistory } from './types';
-export { BaseHistory } from './base';
-export { HashHistory } from './hash';
-export { BrowserHistory } from './browser';
+export { BaseHistory, HashHistory, BrowserHistory };
+
+export type { HistoryListener, IHistory };
 
 /**
  * 创建 History 管理器
@@ -11,12 +14,10 @@ export { BrowserHistory } from './browser';
 export function createHistory(
   mode: RouterMode = 'hash',
   base?: string,
-): import('./types').IHistory {
+): IHistory {
   if (mode === 'history') {
-    const { BrowserHistory } = require('./browser');
     return new BrowserHistory(base);
   } else {
-    const { HashHistory } = require('./hash');
     return new HashHistory();
   }
 }
