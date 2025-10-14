@@ -1,0 +1,49 @@
+{
+  "name": "@fukict/flux",
+  "version": "0.1.0",
+  "description": "Minimal state management library for Fukict framework",
+  "keywords": [
+    "fukict",
+    "flux",
+    "state-management",
+    "store",
+    "reactive"
+  ],
+  "bugs": {
+    "url": "https://github.com/fukict/fukict/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fukict/fukict.git",
+    "directory": "packages/flux"
+  },
+  "license": "MIT",
+  "author": "Fukict Team",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "browser": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsx ../../scripts/build-package.ts --pkg-name flux --no-watch",
+    "dev": "tsx ../../scripts/build-package.ts --pkg-name flux --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

@@ -22,6 +22,11 @@ packages:
     description: '轻量级路由系统'
     metadata: true # 不生成 metadata.ts
 
+  # flux
+  flux:
+    description: '轻量级状态管理'
+    metadata: false # 不生成 metadata.ts
+
 
   # 未来的包（注释掉）
   #

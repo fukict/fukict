@@ -59,7 +59,8 @@
       "Bash(npx vite build:*)",
       "Bash(git restore:*)",
       "Bash(git add:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(/dev/null)"
     ],
     "deny": [],
     "ask": []

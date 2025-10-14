@@ -2,972 +2,573 @@
 
 ## 包职责
 
-flux 是 Fukict 的状态管理库，职责：
+flux 是 Fukict 的极简状态管理库，核心理念是 **Flux 自身无更新权限，仅提供订阅机制**。
 
-1. **状态管理**：集中式应用状态存储
-2. **可预测更新**：显式的状态变更机制
-3. **订阅通知**：状态变化自动通知订阅者
-4. **模块化**：支持状态模块拆分
-5. **开发工具**：时间旅行、状态快照
+职责定位：
 
-## 依赖关系
+1. **状态存储**：集中式应用状态容器
+2. **订阅通知**：状态变化时通知订阅者
+3. **状态读取**：提供当前状态快照
+4. **状态更新接口**：暴露更新方法，但由外部 Actions 调用
 
-```
-@fukict/flux (独立包，无强制依赖)
-    ↑ 可选集成
-@fukict/widget
-```
+**非职责**（刻意不做）：
 
-**依赖说明**：
+- ❌ 不提供内置的 Actions/Reducers（由用户在外部定义）
+- ❌ 不提供异步处理机制（由 Actions 层自行处理）
+- ❌ 不强制不可变更新（信任用户，性能优先）
+- ❌ 不提供全局单例（每个模块独立创建）
 
-- flux 核心不依赖任何包，可以独立使用
-- 与 widget 集成时，通过手动订阅机制连接
-- 用户可以在非 widget 环境中使用 flux
+## 核心设计原则
 
-## 不包含的功能
+### 1. 职责分离
 
-- ❌ 异步处理（用户自行处理，flux 只管状态）
-- ❌ 中间件系统（保持简单）
-- ❌ 组件渲染（由 widget 提供）
-- ❌ 自动响应式（必须手动订阅）
-
-## 核心设计理念
-
-### "单向数据流，显式变更"
-
-flux 遵循单向数据流，所有状态变更都是显式的：
+**Flux 层**：负责状态存储、订阅管理
+**Actions 层**：负责业务逻辑、状态更新
 
 ```
-State（状态）
-  ↓
-View（视图）
-  ↓
-Action（动作）
-  ↓
-Mutation（变更）
-  ↓
-State（新状态）
+┌─────────────────────────────────────┐
+│          Component Layer            │
+│  (订阅状态变化，调用 Actions)          │
+└────────────┬────────────────────────┘
+             │ subscribe / call actions
+             ↓
+┌─────────────────────────────────────┐
+│          Actions Layer              │
+│  (业务逻辑，调用 setState)            │
+└────────────┬────────────────────────┘
+             │ setState
+             ↓
+┌─────────────────────────────────────┐
+│           Flux Layer                │
+│  (状态存储，通知订阅者)                │
+└─────────────────────────────────────┘
 ```
 
-**为什么？**
+### 2. 单向数据流
 
-- 可预测：状态变更路径清晰
-- 可追踪：所有变更都有记录
-- 可调试：时间旅行、状态回滚
+状态更新流程：
 
-## 核心概念
+1. 用户操作 → 调用 Action
+2. Action 读取当前状态（getState）
+3. Action 计算新状态并更新（setState）
+4. Flux 通知所有订阅者
+5. 组件收到通知，触发重新渲染
 
-### State（状态）
+### 3. 最小化 API
 
-应用的单一数据源：
+只提供三个核心能力：
+
+- **读取状态**：`getState()`
+- **更新状态**：`setState()`
+- **订阅变化**：`subscribe()` / 返回取消订阅函数
+
+### 4. 模块化设计
+
+每个业务模块独立创建自己的 Flux 实例，避免全局状态污染：
+
+```
+App
+├── userFlux (用户状态)
+├── cartFlux (购物车状态)
+└── uiFlux (UI 状态)
+```
+
+## 使用模式
+
+### 基础模式：手动创建 Flux + Actions
+
+**适用场景**：简单状态、快速原型
+
+**设计思路**：
+
+- 直接实例化 Flux 类
+- 在外部定义 Actions 对象
+- Actions 直接调用 `flux.setState()`
+
+**优点**：灵活、直接、易理解
+**缺点**：需要手动管理 Flux 实例和 Actions 的关联
+
+### 工厂模式：createFlux（推荐）
+
+**适用场景**：模块化应用、需要类型安全
+
+**设计思路**：
+
+- 使用工厂函数封装 Flux 创建过程
+- Actions 定义在配置对象中，自动绑定到 Flux 实例
+- 返回统一的接口对象，包含 flux、actions、快捷方法
+
+**优点**：
+
+1. API 统一，使用方便
+2. 类型推导完整
+3. Actions 和 Flux 绑定清晰
+4. 支持模块化导出
+
+**缺点**：增加一层抽象
+
+### 选择器模式：局部订阅
+
+**适用场景**：大型状态树、性能优化
+
+**设计思路**：
+
+- 订阅时提供选择器函数，只选择需要的状态片段
+- Flux 比较选择器的返回值，只在变化时通知
+- 避免不相关状态变化触发不必要的渲染
+
+**优点**：性能优化、减少渲染
+**缺点**：需要额外的比较逻辑
+
+## 状态更新策略
+
+### 完整更新 vs 部分更新
+
+**完整更新**：`setState(newState)`
+
+- 完全替换状态对象
+- 适用于小型状态
+
+**部分更新**：`setState(partialState)`
+
+- 浅合并到当前状态
+- 适用于大型状态树
+
+### 不可变性建议（非强制）
+
+虽然不强制不可变更新，但建议遵循：
+
+1. **对象更新**：使用展开运算符 `{ ...state, key: value }`
+2. **数组更新**：使用非变异方法（map、filter、concat）
+3. **嵌套更新**：逐层展开
+
+**原因**：
+
+- 便于调试和追踪
+- 更容易实现时间旅行
+- 避免引用问题导致的 bug
+
+## 订阅机制设计
+
+### 订阅生命周期
+
+1. **订阅**：`subscribe(listener)` 返回取消函数
+2. **通知**：`setState()` 触发所有 listener
+3. **取消订阅**：调用返回的函数
+
+### 订阅时机
+
+**组件层**：
+
+- `mounted()` 中订阅
+- `beforeUnmount()` 中取消订阅
+
+**避免**：
+
+- 不在 `render()` 中订阅（每次渲染都会重复订阅）
+- 不忘记取消订阅（内存泄漏）
+
+### 选择器订阅
+
+**设计目标**：避免无关状态变化触发渲染
+
+**工作原理**：
+
+1. 用户提供选择器函数：`(state) => state.user`
+2. Flux 记录上次选择器的返回值
+3. 状态更新时，重新执行选择器
+4. 比较新旧值（浅比较），仅在变化时通知
+
+**适用场景**：
+
+- 大型状态树（如整个应用状态）
+- 组件只关心部分状态（如只需要 user 不需要 cart）
+
+## 与 Fukict 框架集成
+
+### 触发渲染
+
+Flux 不直接操作 DOM，而是通过 Fukict 的更新机制：
+
+1. 组件订阅 Flux 状态
+2. 状态变化时，listener 调用 `this.update()`
+3. Fukict 的 diff 算法处理实际 DOM 更新
+
+### 生命周期集成
+
+- **mounted**：订阅状态，获取初始数据
+- **beforeUnmount**：取消订阅，清理资源
+- **render**：读取状态快照（getState），不订阅
+
+### 订阅位置最佳实践
+
+**重要**：Fukict 的 VNode 更新是**自上而下**传播的，`this.update()` 会触发当前组件及其所有子组件的重新渲染。因此订阅位置的选择直接影响性能。
+
+#### 原则 1：在组件树的最上层订阅
+
+**推荐**：在根组件或布局组件订阅全局状态
+
+```
+App (订阅 globalFlux) ✅
+├── Header (读取状态，不订阅)
+├── Sidebar (读取状态，不订阅)
+└── Content (读取状态，不订阅)
+```
+
+**原因**：
+
+- 一次 update 触发，整个树重新渲染
+- 避免多个组件重复订阅
+- 减少订阅管理成本
+
+#### 原则 2：相同层级不同组件各自订阅
+
+**推荐**：兄弟组件订阅不同的 Flux 模块
+
+```
+App
+├── UserPanel (订阅 userFlux) ✅
+├── CartPanel (订阅 cartFlux) ✅
+└── NotificationPanel (订阅 notificationFlux) ✅
+```
+
+**原因**：
+
+- 状态隔离，互不影响
+- 用户状态变化不会触发购物车重新渲染
+- 每个组件只关心自己的状态
+
+#### 原则 3：使用 `fukict:detach` 脱围后自行订阅
+
+**推荐**：脱围组件（detach）自己订阅状态
+
+```
+App (订阅 globalFlux)
+├── StaticHeader (fukict:detach, 订阅 userFlux) ✅
+├── DynamicContent (读取 globalFlux)
+└── StaticFooter (fukict:detach, 订阅 settingsFlux) ✅
+```
+
+**原因**：
+
+- `fukict:detach` 让组件脱离父组件的更新链
+- 父组件 update 不会触发脱围组件的渲染
+- 脱围组件需要自己订阅状态，手动触发 update
+
+**使用场景**：
+
+- Header/Footer（很少变化，不需要跟随父组件更新）
+- 独立的弹窗/对话框
+- 性能敏感的组件（如编辑器）
+
+#### 反模式：避免深层嵌套的重复订阅
+
+**❌ 不推荐**：父子组件都订阅同一状态
+
+```
+App (订阅 userFlux) ❌
+└── UserProfile (订阅 userFlux) ❌
+    └── UserAvatar (订阅 userFlux) ❌
+```
+
+**问题**：
+
+- 状态变化时，三个组件都触发 update
+- App update 会导致 UserProfile 和 UserAvatar 重新渲染
+- UserProfile update 会导致 UserAvatar 重新渲染
+- UserAvatar update 自己再次渲染
+- **同一次状态变化，导致多次重复渲染**
+
+**改进方案**：只在 App 订阅
+
+```
+App (订阅 userFlux) ✅
+└── UserProfile (读取状态，不订阅)
+    └── UserAvatar (读取状态，不订阅)
+```
+
+#### 特殊场景：局部状态订阅
+
+如果子组件确实需要独立响应状态变化（不依赖父组件），考虑：
+
+1. **使用脱围 + 订阅**：
 
 ```typescript
-interface TodoState {
-  todos: Todo[];
-  filter: 'all' | 'active' | 'completed';
-}
-```
-
-**特点**：
-
-- 只读（不可直接修改）
-- 通过 mutation 变更
-- 集中式存储
-
-### Mutation（变更）
-
-同步修改状态的函数：
-
-```typescript
-const mutations = {
-  addTodo(state, todo: Todo) {
-    state.todos.push(todo);
-  },
-
-  removeTodo(state, id: string) {
-    state.todos = state.todos.filter(t => t.id !== id);
-  },
-};
-```
-
-**特点**：
-
-- 必须是同步函数
-- 接收 state 和 payload
-- 直接修改 state（内部使用 Proxy）
-
-### Action（动作）
-
-触发状态变更的接口：
-
-```typescript
-const actions = {
-  async fetchTodos(context) {
-    const todos = await api.getTodos();
-    context.commit('setTodos', todos);
-  },
-
-  addTodo(context, text: string) {
-    const todo = { id: generateId(), text, done: false };
-    context.commit('addTodo', todo);
-  },
-};
-```
-
-**特点**：
-
-- 可以是异步
-- 通过 `commit` 调用 mutation
-- 可以包含业务逻辑
-
-### Getter（计算属性）
-
-从 state 派生的计算值：
-
-```typescript
-const getters = {
-  completedTodos(state): Todo[] {
-    return state.todos.filter(t => t.done);
-  },
-
-  activeTodos(state): Todo[] {
-    return state.todos.filter(t => !t.done);
-  },
-
-  filteredTodos(state, getters): Todo[] {
-    switch (state.filter) {
-      case 'active':
-        return getters.activeTodos;
-      case 'completed':
-        return getters.completedTodos;
-      default:
-        return state.todos;
-    }
-  },
-};
-```
-
-**特点**：
-
-- 基于 state 计算
-- 可以依赖其他 getter
-- 自动缓存（state 不变则不重新计算）
-
-## Store 设计
-
-### 创建 Store
-
-```typescript
-const store = createStore({
-  state: {
-    count: 0,
-    todos: [],
-  },
-
-  mutations: {
-    increment(state) {
-      state.count++;
-    },
-
-    addTodo(state, todo) {
-      state.todos.push(todo);
-    },
-  },
-
-  actions: {
-    async incrementAsync(context) {
-      await delay(1000);
-      context.commit('increment');
-    },
-  },
-
-  getters: {
-    completedTodos(state) {
-      return state.todos.filter(t => t.done);
-    },
-  },
-});
-```
-
-### Store API
-
-```typescript
-interface Store<S = any> {
-  // 状态
-  state: S;
-
-  // 变更
-  commit(type: string, payload?: any): void;
-
-  // 动作
-  dispatch(type: string, payload?: any): Promise<any>;
-
-  // 计算属性
-  getters: Record<string, any>;
-
-  // 订阅
-  subscribe(listener: SubscribeListener): UnsubscribeFn;
-
-  // 模块
-  registerModule(path: string | string[], module: Module): void;
-  unregisterModule(path: string | string[]): void;
-
-  // 替换（热更新、时间旅行）
-  replaceState(state: S): void;
-}
-```
-
-## 响应式设计
-
-### Proxy 拦截用于变更追踪
-
-**重要说明**：Proxy 不是用于自动响应式，而是用于追踪变更历史、实现 devtools 和时间旅行。
-
-**state 是 Proxy 对象**：
-
-```typescript
-const state = new Proxy(rawState, {
-  get(target, key) {
-    // 仅用于追踪访问（非依赖收集）
-    if (__DEV__) {
-      trackAccess(target, key);
-    }
-    return Reflect.get(target, key);
-  },
-
-  set(target, key, value) {
-    // 记录变更历史（用于 devtools、时间旅行）
-    if (__DEV__) {
-      recordMutation(key, value);
-    }
-
-    const result = Reflect.set(target, key, value);
-
-    // 触发订阅（手动订阅的监听器）
-    trigger();
-
-    return result;
-  },
-});
-```
-
-**Proxy 的用途**：
-
-1. **变更追踪**：记录所有 state 变更历史（devtools）
-2. **时间旅行**：支持状态回滚和重放
-3. **开发警告**：检测直接修改 state（应该通过 mutation）
-
-**不是自动响应式**：
-
-- 组件不会自动更新
-- 必须手动订阅 `store.subscribe()`
-- 必须手动调用 `forceUpdate()`
-
-### 订阅通知
-
-**mutation 执行后通知订阅者**：
-
-```typescript
-class Store {
-  private listeners = new Set<SubscribeListener>();
-
-  commit(type: string, payload?: any) {
-    // 执行 mutation
-    this.mutations[type](this.state, payload);
-
-    // 通知订阅者
-    this.notify(type, payload);
-  }
-
-  private notify(type: string, payload: any) {
-    this.listeners.forEach(listener => {
-      listener({ type, payload, state: this.state });
-    });
-  }
-
-  subscribe(listener: SubscribeListener): UnsubscribeFn {
-    this.listeners.add(listener);
-    return () => this.listeners.delete(listener);
-  }
-}
-```
-
-## Getter 缓存设计
-
-### 计算缓存
-
-**只在依赖变化时重新计算**：
-
-```typescript
-class ComputedGetter {
-  private value: any;
-  private dirty = true;
-  private deps = new Set<string>();
-
-  constructor(private getter: Function) {}
-
-  get(state: any, getters: any) {
-    if (this.dirty) {
-      // 追踪依赖
-      this.deps.clear();
-      trackDeps(this.deps);
-
-      // 重新计算
-      this.value = this.getter(state, getters);
-      this.dirty = false;
-    }
-
-    return this.value;
-  }
-
-  invalidate(changedKey: string) {
-    if (this.deps.has(changedKey)) {
-      this.dirty = true;
-    }
-  }
-}
-```
-
-### Getter 依赖追踪
-
-```typescript
-const getters = {
-  // 依赖 state.todos
-  completedTodos(state) {
-    return state.todos.filter(t => t.done);
-  },
-
-  // 依赖 getters.completedTodos
-  completedCount(state, getters) {
-    return getters.completedTodos.length;
-  },
-};
-
-// state.todos 变化 → completedTodos 失效 → completedCount 失效
-```
-
-## Module 设计
-
-### 模块定义
-
-```typescript
-interface Module<S = any, R = any> {
-  state?: S | (() => S);
-  mutations?: MutationTree<S>;
-  actions?: ActionTree<S, R>;
-  getters?: GetterTree<S, R>;
-  modules?: ModuleTree<R>;
-  namespaced?: boolean;
-}
-```
-
-### 命名空间
-
-**模块注册**：
-
-```typescript
-const store = createStore({
-  modules: {
-    user: {
-      namespaced: true,
-      state: { name: '', id: '' },
-      mutations: {
-        setName(state, name) {
-          state.name = name;
-        },
-      },
-      actions: {
-        async fetchUser(context, id) {
-          const user = await api.getUser(id);
-          context.commit('setName', user.name);
-        },
-      },
-    },
-
-    todos: {
-      namespaced: true,
-      state: { items: [] },
-      // ...
-    },
-  },
-});
-```
-
-**访问方式**：
-
-```typescript
-// Mutation
-store.commit('user/setName', 'Alice');
-
-// Action
-store.dispatch('user/fetchUser', '123');
-
-// State
-store.state.user.name;
-
-// Getter
-store.getters['user/fullName'];
-```
-
-### 动态注册模块
-
-```typescript
-// 运行时注册模块
-store.registerModule('cart', {
-  namespaced: true,
-  state: { items: [] },
-  mutations: { ... },
-  actions: { ... }
-})
-
-// 卸载模块
-store.unregisterModule('cart')
-```
-
-**用途**：
-
-- 懒加载模块（按需加载）
-- 动态功能（插件系统）
-
-## 与 Widget 集成
-
-### 手动订阅（唯一方式）
-
-**重要**：flux 不提供自动响应式，组件必须手动订阅并调用 forceUpdate()
-
-```typescript
-class TodoList extends Widget {
-  private unsubscribe?: UnsubscribeFn
-
-  onMounted() {
-    // 订阅 store
-    this.unsubscribe = store.subscribe(() => {
-      this.forceUpdate()  // 状态变化，手动触发更新
-    })
-  }
-
-  onBeforeUnmount() {
-    // 取消订阅
-    this.unsubscribe?.()
-  }
-
-  render() {
-    const todos = store.state.todos
-    return <ul>{todos.map(todo => <li>{todo.text}</li>)}</ul>
-  }
-}
-```
-
-**为什么必须手动订阅？**
-
-- flux 不是自动响应式的
-- Proxy 仅用于变更追踪（devtools），不会触发组件更新
-- 简单直接
-- 完全控制
-- 无额外抽象
-- 易于理解和调试
-
-### 选择性订阅
-
-**只在特定 mutation 时更新**：
-
-```typescript
-class TodoList extends Widget {
-  onMounted() {
-    this.unsubscribe = store.subscribe(mutation => {
-      // 只在 todo 相关 mutation 时更新
-      if (mutation.type.startsWith('todo/')) {
-        this.forceUpdate();
-      }
+class IndependentWidget extends Fukict {
+  // props 中传入 fukict:detach
+  mounted() {
+    this.unsubscribe = widgetFlux.subscribe(() => {
+      this.update();  // 只更新自己，不影响父组件
     });
   }
 }
+
+// 使用时
+<IndependentWidget fukict:detach={true} />
 ```
 
-**优势**：避免不必要的更新，性能更好
-
-## 时间旅行设计
-
-### 历史记录
+2. **拆分 Flux 模块**：
 
 ```typescript
-class Store {
-  private history: StateSnapshot[] = [];
-  private historyIndex = -1;
-
-  commit(type: string, payload?: any) {
-    // 执行 mutation
-    this.mutations[type](this.state, payload);
-
-    // 记录快照
-    this.recordSnapshot(type, payload);
-  }
-
-  private recordSnapshot(type: string, payload: any) {
-    // 移除当前索引后的历史
-    this.history = this.history.slice(0, this.historyIndex + 1);
-
-    // 添加新快照
-    this.history.push({
-      state: cloneDeep(this.state),
-      mutation: { type, payload },
-      timestamp: Date.now(),
-    });
-
-    this.historyIndex++;
-  }
-}
+// 父组件订阅 parentFlux
+// 子组件订阅 childFlux
+// 两个状态互不干扰
 ```
 
-### 撤销/重做
+### 性能考虑
 
-```typescript
-interface Store {
-  undo(): void;
-  redo(): void;
-  canUndo(): boolean;
-  canRedo(): boolean;
-}
+- **批量更新**：多次 setState 可以合并通知（可选优化）
+- **选择器订阅**：避免不必要的组件更新
+- **状态分割**：按模块拆分 Flux 实例，减小状态树
+- **订阅位置**：遵循上述最佳实践，避免重复渲染
 
-class Store {
-  undo() {
-    if (!this.canUndo()) return;
+### 订阅位置决策树
 
-    this.historyIndex--;
-    const snapshot = this.history[this.historyIndex];
-    this.replaceState(snapshot.state);
-  }
-
-  redo() {
-    if (!this.canRedo()) return;
-
-    this.historyIndex++;
-    const snapshot = this.history[this.historyIndex];
-    this.replaceState(snapshot.state);
-  }
-
-  canUndo(): boolean {
-    return this.historyIndex > 0;
-  }
-
-  canRedo(): boolean {
-    return this.historyIndex < this.history.length - 1;
-  }
-}
+```
+需要订阅状态？
+├─ 是
+│  ├─ 是全局状态？
+│  │  ├─ 是 → 在根组件/布局组件订阅
+│  │  └─ 否 → 继续判断
+│  │
+│  ├─ 是否与兄弟组件共享状态？
+│  │  ├─ 是 → 在共同的父组件订阅
+│  │  └─ 否 → 各自订阅独立的 Flux 模块
+│  │
+│  └─ 是否需要脱离父组件更新？
+│     ├─ 是 → 使用 fukict:detach + 自行订阅
+│     └─ 否 → 依赖父组件的订阅，自己只读取状态
+│
+└─ 否 → 直接读取状态（getState），不订阅
 ```
 
-### 状态导出/导入
+## 扩展性设计
 
-```typescript
-interface Store {
-  export(): StateSnapshot
-  import(snapshot: StateSnapshot): void
-}
+### 中间件（可选功能）
 
-// 导出当前状态
-const snapshot = store.export()
-localStorage.setItem('app-state', JSON.stringify(snapshot))
+**设计目标**：在不修改核心的前提下，增加额外能力
 
-// 导入状态
-const snapshot = JSON.parse(localStorage.getItem('app-state'))
-store.import(snapshot)
+**触发时机**：每次 `setState()` 前后
+
+**应用场景**：
+
+- 日志记录（记录状态变化历史）
+- 开发工具集成（Redux DevTools）
+- 性能监控（统计更新耗时）
+- 持久化（自动保存到 localStorage）
+
+**设计原则**：
+
+- 中间件可选，默认不开启
+- 不影响核心性能
+- 用户可以自定义中间件
+
+### 时间旅行（可选功能）
+
+**设计目标**：支持撤销/重做
+
+**实现思路**：
+
+1. 中间件记录每次状态变化历史
+2. 提供 `undo()` / `redo()` 方法
+3. 跳转到历史状态时，触发订阅者
+
+**适用场景**：
+
+- 编辑器应用
+- 表单应用
+- 调试工具
+
+## 类型安全
+
+### TypeScript 支持
+
+**设计目标**：完整的类型推导，无需手动标注
+
+**类型层级**：
+
+```
+State Type (T)
+  ↓
+Flux<T>
+  ↓
+Actions (自动推导)
+  ↓
+Component (使用时自动提示)
 ```
 
-**用途**：
+### 类型推导要求
 
-- 状态持久化
-- 状态分享
-- 测试数据准备
+1. **状态类型**：从初始值自动推导
+2. **Actions 返回类型**：自动推导，无需标注
+3. **订阅 listener**：参数类型自动推导
+4. **选择器**：返回值类型自动推导
 
-## 开发工具支持
+## 测试策略
 
-### 调试模式
+### 单元测试
 
-```typescript
-const store = createStore({
-  state: { ... },
-  mutations: { ... },
-  debug: true  // 开发模式启用
-})
+**测试对象**：Flux 核心功能
 
-// 输出示例：
-// [Flux] Mutation: addTodo
-// [Flux] Payload: { id: '1', text: 'Buy milk' }
-// [Flux] State before: { todos: [] }
-// [Flux] State after: { todos: [{ id: '1', text: 'Buy milk' }] }
-```
+- 状态初始化
+- setState 更新
+- subscribe 订阅通知
+- 选择器订阅（仅在变化时通知）
+- 取消订阅
 
-### Mutation 追踪
+**测试原则**：
 
-```typescript
-store.subscribe((mutation, state) => {
-  console.log('Mutation:', mutation.type);
-  console.log('Payload:', mutation.payload);
-  console.log('State:', state);
-});
-```
+- 不依赖 Fukict 框架
+- 纯函数测试
+- 边界条件覆盖
 
-### DevTools 集成（未来）
+### 集成测试
 
-```typescript
-// 暴露给 DevTools 的接口
-if (window.__FUKICT_DEVTOOLS__) {
-  window.__FUKICT_DEVTOOLS__.registerStore(store);
-}
-```
+**测试对象**：Flux + Actions + Component
 
-## 类型安全设计
+- Actions 调用 setState
+- 组件订阅并触发更新
+- 多组件订阅同一状态
+- 组件卸载后取消订阅
 
-### 强类型 Store
+## 与其他状态管理方案对比
 
-```typescript
-interface RootState {
-  count: number;
-  todos: Todo[];
-}
+### vs Redux
 
-interface RootMutations {
-  increment(state: RootState): void;
-  addTodo(state: RootState, todo: Todo): void;
-}
+**相同点**：
 
-interface RootActions {
-  incrementAsync(context: ActionContext<RootState>): Promise<void>;
-}
-
-const store = createStore<RootState, RootMutations, RootActions>({
-  state: {
-    count: 0,
-    todos: [],
-  },
-
-  mutations: {
-    increment(state) {
-      state.count++; // ✅ 类型安全
-      state.foo++; // ❌ 类型错误
-    },
-  },
-});
-
-// 使用
-store.commit('increment'); // ✅ 类型正确
-store.commit('nonexistent'); // ❌ 类型错误
-```
-
-### Payload 类型推导
-
-```typescript
-const store = createStore({
-  mutations: {
-    addTodo(state: RootState, todo: Todo) {
-      state.todos.push(todo);
-    },
-  },
-});
-
-// TypeScript 推导 payload 类型
-store.commit('addTodo', { id: '1', text: 'foo', done: false }); // ✅
-store.commit('addTodo', { id: 123 }); // ❌ 类型错误
-```
-
-## 性能优化
-
-### 批量更新
-
-**问题**：连续多次 commit 导致多次通知
-
-**解决**：批量提交
-
-```typescript
-store.batch(() => {
-  store.commit('increment');
-  store.commit('addTodo', todo1);
-  store.commit('addTodo', todo2);
-});
-// 仅触发一次订阅通知
-```
-
-### 选择性订阅
-
-**问题**：订阅整个 store，任何变化都会通知
-
-**解决**：订阅特定 mutation
-
-```typescript
-store.subscribe(mutation => {
-  if (mutation.type === 'addTodo') {
-    // 只在 addTodo 时更新
-    this.forceUpdate();
-  }
-});
-```
-
-### Getter 缓存
-
-**自动缓存计算结果**，依赖未变化时直接返回缓存值。
-
-## 插件系统
-
-### Plugin 接口
-
-```typescript
-type Plugin = (store: Store) => void
-
-const logger: Plugin = (store) => {
-  store.subscribe((mutation, state) => {
-    console.log('Mutation:', mutation)
-    console.log('State:', state)
-  })
-}
-
-const store = createStore({
-  state: { ... },
-  plugins: [logger]
-})
-```
-
-### 常用插件
-
-**持久化插件**：
-
-```typescript
-const persist: Plugin = store => {
-  // 从 localStorage 恢复
-  const saved = localStorage.getItem('app-state');
-  if (saved) {
-    store.replaceState(JSON.parse(saved));
-  }
-
-  // 订阅变化，保存到 localStorage
-  store.subscribe((mutation, state) => {
-    localStorage.setItem('app-state', JSON.stringify(state));
-  });
-};
-```
-
-**日志插件**：
-
-```typescript
-const logger: Plugin = store => {
-  store.subscribe((mutation, state) => {
-    console.group(mutation.type);
-    console.log('Payload:', mutation.payload);
-    console.log('State:', state);
-    console.groupEnd();
-  });
-};
-```
-
-## API 设计总结
-
-### createStore
-
-```typescript
-function createStore<S, M, A, G>(options: StoreOptions<S, M, A, G>): Store<S>;
-
-interface StoreOptions<S, M, A, G> {
-  state: S | (() => S);
-  mutations?: MutationTree<S, M>;
-  actions?: ActionTree<S, A>;
-  getters?: GetterTree<S, G>;
-  modules?: ModuleTree;
-  plugins?: Plugin[];
-  debug?: boolean;
-}
-```
-
-### Store 接口
-
-```typescript
-interface Store<S = any> {
-  state: S;
-  getters: Record<string, any>;
-
-  commit(type: string, payload?: any): void;
-  dispatch(type: string, payload?: any): Promise<any>;
-
-  subscribe(listener: SubscribeListener): UnsubscribeFn;
-
-  registerModule(path: string | string[], module: Module): void;
-  unregisterModule(path: string | string[]): void;
-
-  replaceState(state: S): void;
-
-  // 时间旅行
-  undo(): void;
-  redo(): void;
-  canUndo(): boolean;
-  canRedo(): boolean;
-
-  // 导出/导入
-  export(): StateSnapshot;
-  import(snapshot: StateSnapshot): void;
-
-  // 批量更新
-  batch(fn: () => void): void;
-}
-```
-
-### 类型定义
-
-```typescript
-type MutationTree<S, M = any> = {
-  [K in keyof M]: (state: S, payload?: any) => void;
-};
-
-type ActionTree<S, A = any> = {
-  [K in keyof A]: (context: ActionContext<S>, payload?: any) => any;
-};
-
-type GetterTree<S, G = any> = {
-  [K in keyof G]: (state: S, getters: any) => any;
-};
-
-interface ActionContext<S> {
-  state: S;
-  getters: Record<string, any>;
-  commit: Commit;
-  dispatch: Dispatch;
-}
-
-type Commit = (type: string, payload?: any) => void;
-type Dispatch = (type: string, payload?: any) => Promise<any>;
-
-type SubscribeListener = (mutation: MutationPayload, state: any) => void;
-type UnsubscribeFn = () => void;
-
-interface MutationPayload {
-  type: string;
-  payload: any;
-}
-
-interface StateSnapshot {
-  state: any;
-  mutation?: MutationPayload;
-  timestamp: number;
-}
-```
-
-## 设计权衡记录
-
-### 1. 为什么不支持异步 Mutation？
-
-**决策**：Mutation 必须是同步的
-
-**理由**：
-
-- 可预测性：同步变更更容易追踪
-- 时间旅行：异步难以记录准确时间点
-- 调试友好：堆栈清晰
-
-**权衡**：
-
-- 异步逻辑放在 Action 中
-- 增加了一层抽象
-- 但保证了可预测性
-
-### 2. 为什么不内置中间件系统？
-
-**决策**：初版不提供中间件
-
-**理由**：
-
-- 保持简单
-- 插件系统已足够扩展
-- 避免过度设计
-
-**权衡**：
-
-- 某些高级功能受限
-- 但降低了学习成本
-
-### 3. 为什么使用 Proxy 而非 Object.defineProperty？
-
-**决策**：使用 Proxy 实现响应式
-
-**理由**：
-
-- 更强大（拦截所有操作）
-- 更简洁（不需要递归劫持）
-- 现代浏览器支持
-
-**权衡**：
-
-- 不兼容 IE11
-- 但 Fukict 本就不考虑 IE
-
-### 4. 为什么推荐手动订阅而非 HOC？
-
-**决策**：初版推荐手动订阅，HOC 作为可选工具
-
-**理由**：
-
-- 手动订阅更直接
-- 避免过早抽象
-- 用户完全控制
-
-**权衡**：
-
-- 样板代码略多
-- 但逻辑更清晰
-
-### 5. 为什么支持时间旅行？
-
-**决策**：内置时间旅行支持
-
-**理由**：
-
-- 调试利器
-- 实现成本不高
-- 开发体验提升
-
-**权衡**：
-
-- 增加内存占用（存储历史）
-- 但可以通过配置禁用
-
-## 对比其他状态管理库
-
-### Vuex
-
-- 完整的状态管理方案
-- Mutation/Action 分离
-- 模块化支持
-- DevTools 集成
-- 体积 ~10KB
-
-### Redux
-
-- 纯函数 reducer
-- 中间件生态丰富
-- 时间旅行调试
-- 社区强大
-- 体积 ~5KB（不含中间件）
-
-### MobX
-
-- 响应式状态
-- 自动追踪依赖
-- 简洁 API
-- 体积 ~15KB
-
-### Fukict Flux
-
-- 轻量级（目标 < 3KB）
 - 单向数据流
-- Mutation/Action 分离（类似 Vuex）
-- 时间旅行
-- 模块化
-- 专为 Widget 设计
+- 集中式状态管理
+- 可预测的状态更新
 
-**Fukict 特色**：
+**不同点**：
 
-- 更轻量
-- 更简洁
-- 核心功能完整
-- 与 widget 深度集成
+- Flux：Actions 在外部，无固定模式（更灵活）
+- Redux：强制 Reducer 模式，不可变更新（更严格）
+- Flux：无中间件内置（可选）
+- Redux：中间件生态丰富（如 redux-thunk）
 
----
+**适用场景**：
 
-**文档状态**：设计阶段
-**最后更新**：2025-01-08
+- Flux：轻量级应用、快速开发、性能敏感
+- Redux：大型应用、团队协作、严格约束
+
+### vs MobX
+
+**相同点**：
+
+- 响应式更新
+- 自动通知订阅者
+
+**不同点**：
+
+- Flux：手动订阅/取消订阅（显式）
+- MobX：自动追踪依赖（隐式）
+- Flux：浅层监听
+- MobX：深层响应式
+
+**适用场景**：
+
+- Flux：可控性强、调试清晰
+- MobX：开发效率高、自动优化
+
+### vs Zustand
+
+**相同点**：
+
+- 极简 API
+- 无样板代码
+- 模块化设计
+
+**不同点**：
+
+- Flux：Fukict 框架专用，与生命周期深度集成
+- Zustand：框架无关，React/Vue 通用
+- Flux：createFlux 工厂模式
+- Zustand：create 函数 + hooks
+
+**适用场景**：
+
+- Flux：Fukict 应用专用
+- Zustand：通用轻量级方案
+
+## 未来演进方向
+
+### 短期（v1.0）
+
+- 核心 Flux 类实现
+- createFlux 工厂函数
+- 选择器订阅
+- 完整的 TypeScript 类型
+
+### 中期（v1.x）
+
+- 中间件系统
+- 开发工具集成（DevTools）
+- 性能优化（批量更新）
+- 持久化插件
+
+### 长期（v2.0）
+
+- 时间旅行调试
+- 状态快照/恢复
+- 异步 Actions 辅助工具
+- 性能分析工具
+
+## 设计决策记录
+
+### 为什么 Flux 自身无更新权限？
+
+**决策**：Flux 只提供 setState 接口，不内置 Actions
+
+**原因**：
+
+1. **职责分离**：状态管理和业务逻辑解耦
+2. **灵活性**：用户可以自由组织 Actions（函数/类/对象）
+3. **可测试性**：Actions 可以独立测试，不依赖 Flux
+4. **轻量级**：核心代码最小化，不强加模式
+
+### 为什么不强制不可变更新？
+
+**决策**：建议但不强制
+
+**原因**：
+
+1. **性能**：避免深拷贝开销
+2. **灵活性**：简单场景可以直接修改
+3. **学习成本**：降低上手难度
+4. **信任用户**：用户知道自己在做什么
+
+**风险控制**：
+
+- 文档中强调最佳实践
+- 提供工具检测变异（可选）
+
+### 为什么选择工厂函数而非类继承？
+
+**决策**：推荐 createFlux 工厂函数，而非 `class MyFlux extends Flux`
+
+**原因**：
+
+1. **组合优于继承**：工厂函数更灵活
+2. **类型推导**：函数返回值类型推导更友好
+3. **简洁性**：减少样板代码
+4. **模块化**：每个模块独立导出
+
+### 为什么不提供全局单例？
+
+**决策**：每个模块独立创建 Flux 实例
+
+**原因**：
+
+1. **模块隔离**：避免全局状态污染
+2. **可测试性**：每个测试独立实例
+3. **服务端渲染**：每个请求独立状态
+4. **灵活性**：用户可以自己决定是否全局
+
+**用户可以自己实现全局单例**：
+
+```typescript
+// store/index.ts
+export const globalStore = createFlux({ ... });
+```
