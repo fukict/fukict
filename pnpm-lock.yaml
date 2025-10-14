@@ -98,6 +98,28 @@ importers:
         specifier: ^6.3.6
         version: 6.3.6(@types/node@20.19.21)(jiti@2.6.1)(lightningcss@1.30.1)(tsx@4.20.6)(yaml@2.8.1)
 
+  examples/infra-i18n:
+    dependencies:
+      '@fukict/basic':
+        specifier: workspace:*
+        version: link:../../packages/basic
+      '@fukict/i18n':
+        specifier: workspace:*
+        version: link:../../packages/i18n
+    devDependencies:
+      '@fukict/vite-plugin':
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin
+      '@tailwindcss/vite':
+        specifier: ^4.0.0
+        version: 4.1.14(vite@6.3.6(@types/node@20.19.21)(jiti@2.6.1)(lightningcss@1.30.1)(tsx@4.20.6)(yaml@2.8.1))
+      tailwindcss:
+        specifier: ^4.0.0
+        version: 4.1.14
+      vite:
+        specifier: ^6.3.6
+        version: 6.3.6(@types/node@20.19.21)(jiti@2.6.1)(lightningcss@1.30.1)(tsx@4.20.6)(yaml@2.8.1)
+
   examples/infra-router:
     dependencies:
       '@fukict/basic':
@@ -155,6 +177,12 @@ importers:
         version: 5.9.3
 
   packages/flux:
+    devDependencies:
+      typescript:
+        specifier: ^5.0.0
+        version: 5.9.3
+
+  packages/i18n:
     devDependencies:
       typescript:
         specifier: ^5.0.0

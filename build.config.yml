@@ -10,23 +10,27 @@ packages:
   # Node.js 环境包
   babel-preset:
     description: 'Fukict Babel 预设'
-    metadata: false # 不生成 metadata.ts
+    metadata: false
 
   # vite plugin
   vite-plugin:
     description: 'Vite 插件'
-    metadata: false # 不生成 metadata.ts
+    metadata: false
 
   # router
   router:
     description: '轻量级路由系统'
-    metadata: true # 不生成 metadata.ts
+    metadata: true
 
   # flux
   flux:
     description: '轻量级状态管理'
-    metadata: false # 不生成 metadata.ts
+    metadata: false
 
+  # i18n
+  i18n:
+    description: '国际化库'
+    metadata: true
 
   # 未来的包（注释掉）
   #
