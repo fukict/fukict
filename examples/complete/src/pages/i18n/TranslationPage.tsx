@@ -10,6 +10,7 @@ import { SplitView } from '../../components/SplitView';
  * 基础翻译演示用的 i18n 实例
  */
 const basicI18n = createI18n({
+  defaultLocale: 'zh',
   locale: 'zh',
   fallbackLocale: 'en',
   messages: {
@@ -74,7 +75,7 @@ class BasicTranslationDemo extends Fukict {
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
-            on:click={() => basicI18n.setLocale('zh')}
+            on:click={() => void basicI18n.changeLocale('zh')}
           >
             中文
           </button>
@@ -84,7 +85,7 @@ class BasicTranslationDemo extends Fukict {
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
-            on:click={() => basicI18n.setLocale('en')}
+            on:click={() => void basicI18n.changeLocale('en')}
           >
             EN
           </button>
@@ -98,6 +99,7 @@ class BasicTranslationDemo extends Fukict {
  * 参数插值演示用的 i18n 实例
  */
 const paramsI18n = createI18n({
+  defaultLocale: 'zh',
   locale: 'zh',
   fallbackLocale: 'en',
   messages: {
@@ -170,7 +172,7 @@ class ParamsDemo extends Fukict {
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
-            on:click={() => paramsI18n.setLocale('zh')}
+            on:click={() => void paramsI18n.changeLocale('zh')}
           >
             中文
           </button>
@@ -180,7 +182,7 @@ class ParamsDemo extends Fukict {
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
-            on:click={() => paramsI18n.setLocale('en')}
+            on:click={() => void paramsI18n.changeLocale('en')}
           >
             EN
           </button>
@@ -194,6 +196,7 @@ class ParamsDemo extends Fukict {
  * 复数形式演示用的 i18n 实例
  */
 const pluralI18n = createI18n({
+  defaultLocale: 'zh',
   locale: 'zh',
   fallbackLocale: 'en',
   messages: {
@@ -318,7 +321,7 @@ class PluralDemo extends Fukict {
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
-            on:click={() => pluralI18n.setLocale('zh')}
+            on:click={() => void pluralI18n.changeLocale('zh')}
           >
             中文
           </button>
@@ -328,7 +331,7 @@ class PluralDemo extends Fukict {
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
-            on:click={() => pluralI18n.setLocale('en')}
+            on:click={() => void pluralI18n.changeLocale('en')}
           >
             EN
           </button>
@@ -342,6 +345,7 @@ class PluralDemo extends Fukict {
  * 组件中使用演示用的 i18n 实例
  */
 const componentI18n = createI18n({
+  defaultLocale: 'zh',
   locale: 'zh',
   fallbackLocale: 'en',
   messages: {
@@ -407,7 +411,7 @@ class ComponentUsageDemo extends Fukict {
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
-            on:click={() => componentI18n.setLocale('zh')}
+            on:click={() => void componentI18n.changeLocale('zh')}
           >
             中文
           </button>
@@ -417,7 +421,7 @@ class ComponentUsageDemo extends Fukict {
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
-            on:click={() => componentI18n.setLocale('en')}
+            on:click={() => void componentI18n.changeLocale('en')}
           >
             EN
           </button>
@@ -502,7 +506,7 @@ const msg2 = i18n.t('user.profile');
     en: {
       greeting: 'Hello, {name}!',
       welcome: 'Welcome {user}, you have {count} new messages.',
-      productInfo: 'Product: {name}, Price: ${price}',
+      productInfo: 'Product: {name}, Price: {price}',
     },
     zh: {
       greeting: '你好,{name}!',

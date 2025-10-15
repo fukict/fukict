@@ -10,6 +10,7 @@ import { SplitView } from '../../components/SplitView';
  * 创建演示用的 i18n 实例
  */
 const demoI18n = createI18n({
+  defaultLocale: 'zh',
   locale: 'zh',
   fallbackLocale: 'en',
   messages: {
@@ -71,7 +72,7 @@ class BasicConfigDemo extends Fukict {
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
-            on:click={() => demoI18n.setLocale('zh')}
+            on:click={() => void demoI18n.changeLocale('zh')}
           >
             中文
           </button>
@@ -81,7 +82,7 @@ class BasicConfigDemo extends Fukict {
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
-            on:click={() => demoI18n.setLocale('en')}
+            on:click={() => void demoI18n.changeLocale('en')}
           >
             English
           </button>
@@ -91,7 +92,7 @@ class BasicConfigDemo extends Fukict {
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
-            on:click={() => demoI18n.setLocale('ja')}
+            on:click={() => void demoI18n.changeLocale('ja')}
           >
             日本語
           </button>
@@ -105,6 +106,7 @@ class BasicConfigDemo extends Fukict {
  * 多语言配置演示
  */
 const configI18n = createI18n({
+  defaultLocale: 'en',
   locale: 'en',
   fallbackLocale: 'en',
   messages: {
@@ -177,7 +179,7 @@ class NestedMessagesDemo extends Fukict {
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
-            on:click={() => configI18n.setLocale('en')}
+            on:click={() => void configI18n.changeLocale('en')}
           >
             EN
           </button>
@@ -187,7 +189,7 @@ class NestedMessagesDemo extends Fukict {
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
-            on:click={() => configI18n.setLocale('zh')}
+            on:click={() => void configI18n.changeLocale('zh')}
           >
             中文
           </button>
@@ -201,6 +203,7 @@ class NestedMessagesDemo extends Fukict {
  * 回退语言演示
  */
 const fallbackI18n = createI18n({
+  defaultLocale: 'zh',
   locale: 'zh',
   fallbackLocale: 'en',
   messages: {
@@ -254,7 +257,7 @@ class FallbackDemo extends Fukict {
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
-            on:click={() => fallbackI18n.setLocale('zh')}
+            on:click={() => void fallbackI18n.changeLocale('zh')}
           >
             中文
           </button>
@@ -264,7 +267,7 @@ class FallbackDemo extends Fukict {
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
-            on:click={() => fallbackI18n.setLocale('en')}
+            on:click={() => void fallbackI18n.changeLocale('en')}
           >
             EN
           </button>
@@ -305,6 +308,9 @@ export class I18nConfigPage extends RouteComponent {
 
 const i18n = createI18n({
   // 默认语言
+  defaultLocale: 'zh',
+
+  // 当前语言
   locale: 'zh',
 
   // 回退语言(当翻译缺失时使用)
@@ -327,8 +333,8 @@ const i18n = createI18n({
   },
 });
 
-// 切换语言
-i18n.setLocale('en');
+// 切换语言(异步)
+await i18n.changeLocale('en');
 
 // 使用翻译
 const msg = i18n.t('greeting', { name: 'Alice' });`}
@@ -447,6 +453,9 @@ i18n.t('greeting')  // "你好,世界!" (存在)`}
             <CodeBlock
               fukict:slot="code"
               code={`const i18n = createI18n({
+  // 默认语言
+  defaultLocale: 'zh',
+
   // 当前语言
   locale: 'zh',
 
@@ -459,21 +468,24 @@ i18n.t('greeting')  // "你好,世界!" (存在)`}
     zh: { /* ... */ },
     ja: { /* ... */ },
   },
-
-  // 是否在控制台警告缺失的翻译
-  warnMissing: true,
 });
 
 // API 方法
-i18n.setLocale('en')           // 切换语言
+await i18n.changeLocale('en')  // 切换语言(异步)
 i18n.t('key', params)          // 翻译
-i18n.subscribe(callback)       // 订阅语言变化`}
+i18n.subscribe(callback)       // 订阅语言变化
+i18n.n(value, options)         // 格式化数字
+i18n.d(date, options)          // 格式化日期
+i18n.rt(value, unit)           // 格式化相对时间`}
             />
             <DemoBox fukict:slot="demo">
               <div class="text-sm text-gray-700 space-y-3">
                 <div class="bg-blue-50 border border-blue-200 rounded p-3">
                   <p class="font-medium text-blue-900 mb-2">配置项:</p>
                   <ul class="list-disc list-inside space-y-1 text-blue-800 text-xs">
+                    <li>
+                      <strong>defaultLocale:</strong> 默认语言
+                    </li>
                     <li>
                       <strong>locale:</strong> 当前使用的语言
                     </li>
@@ -483,22 +495,28 @@ i18n.subscribe(callback)       // 订阅语言变化`}
                     <li>
                       <strong>messages:</strong> 所有语言的翻译消息
                     </li>
-                    <li>
-                      <strong>warnMissing:</strong> 是否警告缺失的翻译
-                    </li>
                   </ul>
                 </div>
                 <div class="bg-green-50 border border-green-200 rounded p-3">
                   <p class="font-medium text-green-900 mb-2">API 方法:</p>
                   <ul class="list-disc list-inside space-y-1 text-green-800 text-xs">
                     <li>
-                      <strong>setLocale(locale):</strong> 切换语言
+                      <strong>changeLocale(locale):</strong> 切换语言(异步)
                     </li>
                     <li>
                       <strong>t(key, params):</strong> 获取翻译
                     </li>
                     <li>
                       <strong>subscribe(callback):</strong> 订阅语言变化
+                    </li>
+                    <li>
+                      <strong>n(value, options):</strong> 格式化数字
+                    </li>
+                    <li>
+                      <strong>d(date, options):</strong> 格式化日期
+                    </li>
+                    <li>
+                      <strong>rt(value, unit):</strong> 格式化相对时间
                     </li>
                   </ul>
                 </div>

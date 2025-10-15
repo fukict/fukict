@@ -96,11 +96,76 @@ export function replaceNode(
 }
 
 /**
+ * Unmount VNode recursively (call beforeUnmount on all class components)
+ */
+function unmountVNode(vnode: VNodeChild): void {
+  if (!vnode) return;
+
+  // Primitive - nothing to unmount
+  if (
+    typeof vnode === 'string' ||
+    typeof vnode === 'number' ||
+    typeof vnode === 'boolean'
+  ) {
+    return;
+  }
+
+  // Array - unmount each item
+  if (Array.isArray(vnode)) {
+    vnode.forEach(child => unmountVNode(child));
+    return;
+  }
+
+  // VNode object
+  if (typeof vnode === 'object' && '__type__' in vnode) {
+    const vnodeObj = vnode as VNode;
+
+    // Class Component - call unmount (which will handle its own __vnode__)
+    if (vnodeObj.__type__ === VNodeType.ClassComponent) {
+      const instance = (vnodeObj as any).__instance__;
+      if (instance && typeof instance.unmount === 'function') {
+        instance.unmount();
+      }
+      return;
+    }
+
+    // Function Component - unmount its rendered vnode
+    if (vnodeObj.__type__ === VNodeType.FunctionComponent) {
+      const renderedVNode = (vnodeObj as any).__renderedVNode__;
+      if (renderedVNode) {
+        unmountVNode(renderedVNode);
+      }
+      return;
+    }
+
+    // Fragment - unmount all children
+    if (vnodeObj.__type__ === VNodeType.Fragment) {
+      if (vnodeObj.children && Array.isArray(vnodeObj.children)) {
+        vnodeObj.children.forEach(child => unmountVNode(child));
+      }
+      return;
+    }
+
+    // Element - unmount all children recursively
+    if (vnodeObj.__type__ === VNodeType.Element) {
+      if (vnodeObj.children && Array.isArray(vnodeObj.children)) {
+        vnodeObj.children.forEach(child => unmountVNode(child));
+      }
+      return;
+    }
+  }
+}
+
+/**
  * Remove node from DOM
  */
 export function removeNode(vnode: VNodeChild, container: Element): void {
   if (!vnode) return;
 
+  // First, unmount all components recursively (trigger beforeUnmount hooks)
+  unmountVNode(vnode);
+
+  // Then remove DOM nodes
   // Primitive - find and remove text node (simplified)
   if (
     typeof vnode === 'string' ||
@@ -119,19 +184,12 @@ export function removeNode(vnode: VNodeChild, container: Element): void {
   if (typeof vnode === 'object' && '__type__' in vnode) {
     const vnodeObj = vnode as VNode;
 
-    // Class Component - call unmount
+    // Class Component - remove placeholder if exists
     if (vnodeObj.__type__ === VNodeType.ClassComponent) {
-      const instance = (vnodeObj as any).__instance__;
-      if (instance && typeof instance.unmount === 'function') {
-        instance.unmount();
-      }
-
-      // Remove placeholder if exists
       const placeholder = (vnodeObj as any).__placeholder__;
       if (placeholder && placeholder.parentNode) {
         placeholder.parentNode.removeChild(placeholder);
       }
-
       return;
     }
 

@@ -380,9 +380,7 @@ export abstract class Fukict<
   unmount(): void {
     this.__inUnmounting__ = true;
 
-    if (this.beforeUnmount) {
-      this.beforeUnmount();
-    }
+    this.beforeUnmount?.();
 
     removeNode(this.__vnode__, this.__container__ as Element);
 
