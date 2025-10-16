@@ -1,5 +1,5 @@
 import { Fukict } from '@fukict/basic';
-import { Link, RouteComponent } from '@fukict/router';
+import { RouteComponent } from '@fukict/router';
 
 import { CodeBlock } from '../../components/CodeBlock';
 import { DemoBox } from '../../components/DemoBox';

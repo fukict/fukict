@@ -159,9 +159,7 @@ export namespace JSX {
     datalist: HTMLAttributes<HTMLDataListElement>;
     fieldset: HTMLAttributes<HTMLFieldSetElement>;
     form: HTMLAttributes<HTMLFormElement>;
-    input: HTMLAttributes<
-      Omit<HTMLInputElement, 'value'> & { value?: string | number }
-    >;
+    input: HTMLAttributes<HTMLInputElement>;
     label: HTMLAttributes<HTMLLabelElement>;
     legend: HTMLAttributes<HTMLLegendElement>;
     meter: HTMLAttributes<HTMLMeterElement>;

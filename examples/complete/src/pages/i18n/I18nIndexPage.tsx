@@ -1,122 +1,527 @@
+import { Fukict } from '@fukict/basic';
+import { createI18n } from '@fukict/i18n';
 import { RouteComponent } from '@fukict/router';
 
-/**
- * I18n 模块页面
- */
-export class I18nIndexPage extends RouteComponent {
+import { CodeBlock } from '../../components/CodeBlock';
+import { DemoBox } from '../../components/DemoBox';
+import { SplitView } from '../../components/SplitView';
+
+// 定义消息
+const messages = {
+  en: {
+    greeting: 'Hello, {name}!',
+    welcome: 'Welcome to Fukict i18n Demo',
+    description: 'A lightweight, type-safe internationalization library',
+    language: 'Language',
+    features: {
+      title: 'Features',
+      item1: 'Type-safe translation keys',
+      item2: 'Reactive locale switching',
+      item3: 'Parameter interpolation',
+      item4: 'Number and date formatting',
+    },
+    form: {
+      nameLabel: 'Your name:',
+      namePlaceholder: 'Enter your name',
+      ageLabel: 'Your age:',
+      itemsLabel: 'Item count:',
+      greeting: 'Hello, {name}! You are {age} years old.',
+      items: {
+        zero: 'No items',
+        one: '{count} item',
+        other: '{count} items',
+      },
+    },
+    formatting: {
+      title: 'Formatting Examples',
+      number: 'Number: {value}',
+      currency: 'Currency: {value}',
+      date: 'Date: {value}',
+      relativeTime: 'Relative time: {value}',
+    },
+  },
+  zh: {
+    greeting: '你好，{name}！',
+    welcome: '欢迎使用 Fukict i18n 演示',
+    description: '一个轻量级、类型安全的国际化库',
+    language: '语言',
+    features: {
+      title: '特性',
+      item1: '类型安全的翻译键',
+      item2: '响应式语言切换',
+      item3: '参数插值',
+      item4: '数字和日期格式化',
+    },
+    form: {
+      nameLabel: '你的名字：',
+      namePlaceholder: '输入你的名字',
+      ageLabel: '你的年龄：',
+      itemsLabel: '项目数量：',
+      greeting: '你好，{name}！你今年 {age} 岁。',
+      items: {
+        zero: '没有项目',
+        one: '{count} 个项目',
+        other: '{count} 个项目',
+      },
+    },
+    formatting: {
+      title: '格式化示例',
+      number: '数字：{value}',
+      currency: '货币：{value}',
+      date: '日期：{value}',
+      relativeTime: '相对时间：{value}',
+    },
+  },
+  ja: {
+    greeting: 'こんにちは、{name}さん！',
+    welcome: 'Fukict i18n デモへようこそ',
+    description: '軽量で型安全な国際化ライブラリ',
+    language: '言語',
+    features: {
+      title: '機能',
+      item1: '型安全な翻訳キー',
+      item2: 'リアクティブな言語切り替え',
+      item3: 'パラメータ補間',
+      item4: '数値と日付のフォーマット',
+    },
+    form: {
+      nameLabel: 'お名前：',
+      namePlaceholder: '名前を入力',
+      ageLabel: '年齢：',
+      itemsLabel: 'アイテム数：',
+      greeting: 'こんにちは、{name}さん！{age} 歳ですね。',
+      items: {
+        zero: 'アイテムなし',
+        one: '{count} 個のアイテム',
+        other: '{count} 個のアイテム',
+      },
+    },
+    formatting: {
+      title: 'フォーマット例',
+      number: '数値：{value}',
+      currency: '通貨：{value}',
+      date: '日付：{value}',
+      relativeTime: '相対時刻：{value}',
+    },
+  },
+} as const;
+
+// 创建 i18n 实例
+const demoI18n = createI18n({
+  defaultLocale: 'zh',
+  locale: 'zh',
+  fallbackLocale: 'en',
+  messages,
+});
+
+// 语言切换器组件
+class LanguageSwitcher extends Fukict {
+  private unsubscribe?: () => void;
+
+  mounted() {
+    this.unsubscribe = demoI18n.subscribe(() => {
+      this.update();
+    });
+  }
+
+  beforeUnmount() {
+    this.unsubscribe?.();
+  }
+
+  handleChange(e: Event) {
+    const select = e.target as HTMLSelectElement;
+    void demoI18n.changeLocale(select.value);
+  }
+
+  render() {
+    const currentLocale = demoI18n.locale;
+
+    return (
+      <div class="flex items-center gap-2">
+        <span class="text-sm text-gray-600">{demoI18n.t('language')}:</span>
+        <select
+          value={currentLocale}
+          on:change={e => this.handleChange(e)}
+          class="px-3 py-1.5 bg-white border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="zh">中文</option>
+          <option value="en">English</option>
+          <option value="ja">日本語</option>
+        </select>
+        <span class="text-xs text-gray-500">当前: {currentLocale}</span>
+      </div>
+    );
+  }
+}
+
+// 交互式表单组件
+class InteractiveForm extends Fukict {
+  private unsubscribe?: () => void;
+  private name = 'Alice';
+  private age = 25;
+  private itemCount = 3;
+
+  mounted() {
+    this.unsubscribe = demoI18n.subscribe(() => {
+      this.update();
+    });
+  }
+
+  beforeUnmount() {
+    this.unsubscribe?.();
+  }
+
   render() {
     return (
-      <div class="space-y-8">
-        {/* 页面头部 */}
-        <div class="border-b border-gray-200/80 pb-5">
-          <h1 class="text-2xl font-semibold text-gray-900">
-            国际化 (@fukict/i18n)
-          </h1>
-          <p class="mt-2 text-sm text-gray-600 leading-relaxed">
-            类型安全的国际化库,支持多语言、参数插值、语言切换等功能
-          </p>
+      <div class="space-y-4">
+        {/* 名字输入 */}
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-700">
+            {demoI18n.t('form.nameLabel')}
+          </label>
+          <input
+            type="text"
+            value={this.name}
+            on:input={(e: Event) => {
+              this.name = (e.target as HTMLInputElement).value;
+              this.update();
+            }}
+            placeholder={demoI18n.t('form.namePlaceholder')}
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
         </div>
 
-        {/* 创建 I18n 实例 */}
-        <div class="space-y-3">
-          <h2 class="text-xl font-semibold text-gray-900">创建 I18n 实例</h2>
-          <p class="text-sm text-gray-600 leading-relaxed">
-            定义多语言消息和配置
+        {/* 年龄输入 */}
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-700">
+            {demoI18n.t('form.ageLabel')}
+          </label>
+          <input
+            type="number"
+            value={this.age}
+            on:input={(e: Event) => {
+              this.age = parseInt(
+                (e.target as HTMLInputElement).value || '0',
+                10,
+              );
+              this.update();
+            }}
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        {/* 项目数量输入 */}
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-700">
+            {demoI18n.t('form.itemsLabel')}
+          </label>
+          <input
+            type="number"
+            value={this.itemCount}
+            on:input={(e: Event) => {
+              this.itemCount = parseInt(
+                (e.target as HTMLInputElement).value || '0',
+                10,
+              );
+              this.update();
+            }}
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        {/* 结果展示 */}
+        <div class="p-4 bg-green-50 border border-green-300 rounded-lg space-y-2">
+          <p class="text-sm text-green-900">
+            {demoI18n.t('form.greeting', { name: this.name, age: this.age })}
           </p>
-          <div class="bg-gray-50/50 rounded-lg p-4 border border-gray-200/60">
-            <pre class="text-xs text-gray-700 leading-relaxed">
-              {`import { createI18n } from '@fukict/i18n';
+          <p class="text-sm text-green-900">
+            {demoI18n.t('form.items', { count: this.itemCount })}
+          </p>
+        </div>
+      </div>
+    );
+  }
+}
+
+// 格式化演示组件
+class FormattingDemo extends Fukict {
+  private unsubscribe?: () => void;
+
+  mounted() {
+    this.unsubscribe = demoI18n.subscribe(() => {
+      this.update();
+    });
+  }
+
+  beforeUnmount() {
+    this.unsubscribe?.();
+  }
+
+  render() {
+    return (
+      <div class="space-y-3">
+        <h4 class="text-sm font-medium text-gray-900">
+          {demoI18n.t('formatting.title')}
+        </h4>
+        <div class="space-y-2">
+          <div class="p-3 bg-blue-50 border border-blue-200 rounded">
+            <p class="text-sm text-blue-900">
+              {demoI18n.t('formatting.number', {
+                value: demoI18n.n(1234567.89),
+              })}
+            </p>
+          </div>
+          <div class="p-3 bg-purple-50 border border-purple-200 rounded">
+            <p class="text-sm text-purple-900">
+              {demoI18n.t('formatting.currency', {
+                value: demoI18n.n(1234.56, {
+                  style: 'currency',
+                  currency: 'USD',
+                }),
+              })}
+            </p>
+          </div>
+          <div class="p-3 bg-orange-50 border border-orange-200 rounded">
+            <p class="text-sm text-orange-900">
+              {demoI18n.t('formatting.date', {
+                value: demoI18n.d(new Date(), { dateStyle: 'long' }),
+              })}
+            </p>
+          </div>
+          <div class="p-3 bg-pink-50 border border-pink-200 rounded">
+            <p class="text-sm text-pink-900">
+              {demoI18n.t('formatting.relativeTime', {
+                value: demoI18n.rt(-2, 'day'),
+              })}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+
+// 特性展示组件
+class FeaturesDisplay extends Fukict {
+  private unsubscribe?: () => void;
+
+  mounted() {
+    this.unsubscribe = demoI18n.subscribe(() => {
+      this.update();
+    });
+  }
+
+  beforeUnmount() {
+    this.unsubscribe?.();
+  }
+
+  render() {
+    return (
+      <div class="space-y-3">
+        <h4 class="text-sm font-medium text-gray-900">
+          {demoI18n.t('features.title')}
+        </h4>
+        <ul class="space-y-2">
+          <li class="flex items-start gap-2">
+            <span class="text-green-600 mt-1">✓</span>
+            <span class="text-sm text-gray-700">
+              {demoI18n.t('features.item1')}
+            </span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-green-600 mt-1">✓</span>
+            <span class="text-sm text-gray-700">
+              {demoI18n.t('features.item2')}
+            </span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-green-600 mt-1">✓</span>
+            <span class="text-sm text-gray-700">
+              {demoI18n.t('features.item3')}
+            </span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-green-600 mt-1">✓</span>
+            <span class="text-sm text-gray-700">
+              {demoI18n.t('features.item4')}
+            </span>
+          </li>
+        </ul>
+      </div>
+    );
+  }
+}
+
+/**
+ * I18n 完整示例页面
+ */
+export class I18nIndexPage extends RouteComponent {
+  private unsubscribe?: () => void;
+
+  mounted() {
+    this.unsubscribe = demoI18n.subscribe(() => {
+      this.update();
+    });
+  }
+
+  beforeUnmount() {
+    this.unsubscribe?.();
+  }
+
+  render() {
+    return (
+      <div class="space-y-12">
+        {/* 创建 I18n 实例 */}
+        <div class="space-y-4">
+          <div>
+            <h3 class="text-base font-medium text-gray-800 mb-1">
+              创建 I18n 实例
+            </h3>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              定义多语言消息和配置
+            </p>
+          </div>
+
+          <SplitView leftTitle="代码示例" rightTitle="运行效果">
+            <CodeBlock
+              fukict:slot="code"
+              code={`import { createI18n } from '@fukict/i18n';
 
 // 定义消息
 const messages = {
   en: {
     greeting: 'Hello, {name}!',
     welcome: 'Welcome to Fukict',
-    items: {
-      count: 'You have {count} item(s)',
+    features: {
+      item1: 'Type-safe keys',
+      item2: 'Reactive switching',
     },
   },
   zh: {
     greeting: '你好,{name}!',
     welcome: '欢迎使用 Fukict',
-    items: {
-      count: '你有 {count} 个项目',
+    features: {
+      item1: '类型安全的键',
+      item2: '响应式切换',
     },
   },
-};
+} as const;
 
 // 创建 i18n 实例
 const i18n = createI18n({
-  locale: 'zh',      // 默认语言
-  fallbackLocale: 'en',  // 回退语言
+  defaultLocale: 'zh',  // 必需
+  locale: 'zh',
+  fallbackLocale: 'en',
   messages,
 });`}
-            </pre>
-          </div>
+            />
+            <DemoBox fukict:slot="demo">
+              <div class="space-y-3">
+                <LanguageSwitcher />
+                <div class="p-3 bg-blue-50 border border-blue-200 rounded">
+                  <p class="text-sm text-blue-900 font-medium mb-1">
+                    {demoI18n.t('welcome')}
+                  </p>
+                  <p class="text-xs text-blue-700">
+                    {demoI18n.t('description')}
+                  </p>
+                </div>
+              </div>
+            </DemoBox>
+          </SplitView>
         </div>
 
         {/* 基础翻译 */}
-        <div class="space-y-3">
-          <h2 class="text-xl font-semibold text-gray-900">基础翻译</h2>
-          <p class="text-sm text-gray-600 leading-relaxed">
-            使用 t() 函数进行翻译
-          </p>
-          <div class="bg-gray-50/50 rounded-lg p-4 border border-gray-200/60">
-            <pre class="text-xs text-gray-700 leading-relaxed">
-              {`// 简单翻译
-const msg1 = i18n.t('welcome');
-// 中文: "欢迎使用 Fukict"
-// 英文: "Welcome to Fukict"
+        <div class="space-y-4">
+          <div>
+            <h3 class="text-base font-medium text-gray-800 mb-1">基础翻译</h3>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              使用 t() 函数进行翻译和参数插值
+            </p>
+          </div>
 
-// 嵌套键
-const msg2 = i18n.t('items.count', { count: 5 });
-// 中文: "你有 5 个项目"
-// 英文: "You have 5 item(s)"
+          <SplitView leftTitle="代码示例" rightTitle="运行效果">
+            <CodeBlock
+              fukict:slot="code"
+              code={`// 简单翻译
+const msg = i18n.t('welcome');
+// 中文: "欢迎使用 Fukict i18n 演示"
+// 英文: "Welcome to Fukict i18n Demo"
 
 // 参数插值
-const msg3 = i18n.t('greeting', { name: 'Alice' });
-// 中文: "你好,Alice!"
-// 英文: "Hello, Alice!"`}
-            </pre>
+const greeting = i18n.t('greeting', { name: 'Alice' });
+// 中文: "你好，Alice！"
+// 英文: "Hello, Alice!"
+
+// 嵌套键
+const feature = i18n.t('features.item1');
+// 中文: "类型安全的翻译键"
+// 英文: "Type-safe translation keys"`}
+            />
+            <DemoBox fukict:slot="demo">
+              <InteractiveForm />
+            </DemoBox>
+          </SplitView>
+        </div>
+
+        {/* 数字和日期格式化 */}
+        <div class="space-y-4">
+          <div>
+            <h3 class="text-base font-medium text-gray-800 mb-1">
+              数字和日期格式化
+            </h3>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              根据当前语言环境格式化数字、货币和日期
+            </p>
           </div>
+
+          <SplitView leftTitle="代码示例" rightTitle="运行效果">
+            <CodeBlock
+              fukict:slot="code"
+              code={`// 数字格式化
+const num = i18n.n(1234567.89);
+// 中文: "1,234,567.89"
+// 英文: "1,234,567.89"
+
+// 货币格式化
+const price = i18n.n(1234.56, {
+  style: 'currency',
+  currency: 'USD',
+});
+// 中文: "US$1,234.56"
+// 英文: "$1,234.56"
+
+// 日期格式化
+const date = i18n.d(new Date(), {
+  dateStyle: 'long',
+});
+// 中文: "2025年10月16日"
+// 英文: "October 16, 2025"
+
+// 相对时间
+const relative = i18n.rt(-2, 'day');
+// 中文: "2天前"
+// 英文: "2 days ago"`}
+            />
+            <DemoBox fukict:slot="demo">
+              <FormattingDemo />
+            </DemoBox>
+          </SplitView>
         </div>
 
         {/* 语言切换 */}
-        <div class="space-y-3">
-          <h2 class="text-xl font-semibold text-gray-900">语言切换</h2>
-          <p class="text-sm text-gray-600 leading-relaxed">动态切换应用语言</p>
-          <div class="bg-gray-50/50 rounded-lg p-4 border border-gray-200/60">
-            <pre class="text-xs text-gray-700 leading-relaxed">
-              {`// 获取当前语言
-const currentLocale = i18n.getCurrentLocale();  // 'zh'
-
-// 切换语言
-i18n.setLocale('en');
-
-// 监听语言变化
-const unsubscribe = i18n.subscribe(() => {
-  console.log('Language changed to:', i18n.getCurrentLocale());
-  // 重新渲染组件
-});
-
-// 取消监听
-unsubscribe();`}
-            </pre>
+        <div class="space-y-4">
+          <div>
+            <h3 class="text-base font-medium text-gray-800 mb-1">语言切换</h3>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              动态切换应用语言并订阅变化
+            </p>
           </div>
-        </div>
 
-        {/* 在组件中使用 */}
-        <div class="space-y-3">
-          <h2 class="text-xl font-semibold text-gray-900">在组件中使用</h2>
-          <p class="text-sm text-gray-600 leading-relaxed">
-            订阅语言变化并更新组件
-          </p>
-          <div class="bg-gray-50/50 rounded-lg p-4 border border-gray-200/60">
-            <pre class="text-xs text-gray-700 leading-relaxed">
-              {`import { Fukict } from '@fukict/basic';
-import { i18n } from './i18n';
-
-export class LanguageSwitcher extends Fukict {
+          <SplitView leftTitle="代码示例" rightTitle="特性说明">
+            <CodeBlock
+              fukict:slot="code"
+              code={`class LanguageSwitcher extends Fukict {
   private unsubscribe?: () => void;
 
   mounted() {
@@ -131,41 +536,89 @@ export class LanguageSwitcher extends Fukict {
     this.unsubscribe?.();
   }
 
+  handleChange(e: Event) {
+    const select = e.target as HTMLSelectElement;
+    // 异步切换语言
+    void i18n.changeLocale(select.value);
+  }
+
   render() {
-    const currentLang = i18n.getCurrentLocale();
+    // 获取当前语言
+    const currentLocale = i18n.locale;
 
     return (
       <div>
+        <select
+          value={currentLocale}
+          on:change={e => this.handleChange(e)}
+        >
+          <option value="zh">中文</option>
+          <option value="en">English</option>
+        </select>
         <p>{i18n.t('welcome')}</p>
-        <p>{i18n.t('greeting', { name: 'User' })}</p>
-
-        <button on:click={() => i18n.setLocale('zh')}>
-          中文
-        </button>
-        <button on:click={() => i18n.setLocale('en')}>
-          English
-        </button>
-
-        <p>Current Language: {currentLang}</p>
       </div>
     );
   }
 }`}
-            </pre>
-          </div>
+            />
+            <DemoBox fukict:slot="demo">
+              <FeaturesDisplay />
+            </DemoBox>
+          </SplitView>
         </div>
 
-        {/* 类型安全 */}
-        <div class="bg-gray-50/50 border border-gray-200/60 rounded-lg p-4">
-          <h3 class="text-base font-medium text-gray-900 mb-2">类型安全</h3>
-          <p class="text-sm text-gray-700 leading-relaxed">
-            @fukict/i18n 提供完整的 TypeScript 类型支持:
-          </p>
-          <ul class="text-sm text-gray-700 mt-2 space-y-1">
-            <li>翻译键自动补全</li>
-            <li>参数类型检查</li>
-            <li>编译时错误提示</li>
-          </ul>
+        {/* 关键概念 */}
+        <div class="space-y-4">
+          <div>
+            <h3 class="text-base font-medium text-gray-800 mb-1">关键概念</h3>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              理解 @fukict/i18n 的核心概念和使用模式
+            </p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <h4 class="text-sm font-medium text-blue-900 mb-2">类型安全</h4>
+              <ul class="text-xs text-blue-700 space-y-1">
+                <li>• 翻译键自动补全</li>
+                <li>• 参数类型检查</li>
+                <li>• 编译时错误提示</li>
+                <li>• 使用 as const 确保类型推断</li>
+              </ul>
+            </div>
+
+            <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
+              <h4 class="text-sm font-medium text-green-900 mb-2">
+                响应式切换
+              </h4>
+              <ul class="text-xs text-green-700 space-y-1">
+                <li>• subscribe() 订阅语言变化</li>
+                <li>• changeLocale() 异步切换语言</li>
+                <li>• 组件自动重新渲染</li>
+                <li>• 在 beforeUnmount 取消订阅</li>
+              </ul>
+            </div>
+
+            <div class="p-4 bg-purple-50 border border-purple-200 rounded-lg">
+              <h4 class="text-sm font-medium text-purple-900 mb-2">格式化</h4>
+              <ul class="text-xs text-purple-700 space-y-1">
+                <li>• n() 格式化数字</li>
+                <li>• d() 格式化日期</li>
+                <li>• rt() 相对时间</li>
+                <li>• 根据语言环境自动调整</li>
+              </ul>
+            </div>
+
+            <div class="p-4 bg-orange-50 border border-orange-200 rounded-lg">
+              <h4 class="text-sm font-medium text-orange-900 mb-2">最佳实践</h4>
+              <ul class="text-xs text-orange-700 space-y-1">
+                <li>• 必须设置 defaultLocale</li>
+                <li>• 使用 as const 定义消息</li>
+                <li>• 在 mounted 订阅变化</li>
+                <li>• 使用 fallbackLocale 作为后备</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     );

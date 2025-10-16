@@ -33,7 +33,7 @@ export class Sidebar extends Fukict<{ router: Router }> {
   }
 
   private isActive(path: string): boolean {
-    return this.props.router.currentRoute.path === path;
+    return this.props.router.currentRoute.path.startsWith(path);
   }
 
   render() {

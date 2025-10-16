@@ -8,7 +8,7 @@ import { SplitView } from '../../components/SplitView';
 /**
  * 路由配置演示
  */
-class RouteConfigDemo extends Fukict {
+class RouteConfigDemo extends Fukict<{ currentPath: string }> {
   render() {
     return (
       <div class="text-sm text-gray-700 space-y-3">

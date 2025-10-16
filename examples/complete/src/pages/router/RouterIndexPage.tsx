@@ -1,213 +1,433 @@
-import { RouteComponent } from '@fukict/router';
+import { Link, RouteComponent, RouterView } from '@fukict/router';
+
+import { CodeBlock } from '../../components/CodeBlock';
+import { DemoBox } from '../../components/DemoBox';
+import { SplitView } from '../../components/SplitView';
 
 /**
- * Router 模块页面
- * 单页面,不需要嵌套路由
+ * Router 完整示例页面
+ * 这是一个布局组件，包含导航和子路由出口
  */
 export class RouterIndexPage extends RouteComponent {
   render() {
     return (
-      <div class="space-y-8">
-        {/* 页面头部 */}
-        <div class="border-b border-gray-200/80 pb-5">
-          <h1 class="text-2xl font-semibold text-gray-900">
-            路由 (@fukict/router)
-          </h1>
-          <p class="mt-2 text-sm text-gray-600 leading-relaxed">
-            SPA 路由系统,支持嵌套路由、导航守卫、History/Hash 模式
-          </p>
-        </div>
-
+      <div class="space-y-12">
         {/* 路由配置 */}
-        <div class="space-y-3">
-          <h2 class="text-xl font-semibold text-gray-900">路由配置</h2>
-          <p class="text-sm text-gray-600 leading-relaxed">
-            定义路由规则,支持嵌套路由、重定向、路由守卫等功能
-          </p>
-          <div class="bg-gray-50/50 rounded-lg p-4 border border-gray-200/60">
-            <pre class="text-xs text-gray-700 leading-relaxed">
-              {`import { type RouteConfig } from '@fukict/router';
+        <div class="space-y-4">
+          <div>
+            <h3 class="text-base font-medium text-gray-800 mb-1">路由配置</h3>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              在 routes.ts 中配置嵌套路由和动态参数
+            </p>
+          </div>
 
-export const routes: RouteConfig[] = [
+          <SplitView leftTitle="代码示例" rightTitle="说明">
+            <CodeBlock
+              fukict:slot="code"
+              code={`// routes.ts
+export const routes = [
   {
-    path: '/',
-    component: LayoutPage,
-    redirect: '/home',
+    path: '/router/demo',
+    component: RouterIndexPage,
+    redirect: '/router/demo/home',
     children: [
       {
         path: '/home',
-        component: HomePage,
-        meta: { title: 'Home' },
+        component: DemoHomePage,
       },
       {
-        path: '/user/:id',
-        component: UserPage,
-        meta: { title: 'User' },
-        beforeEnter: (to, from, next) => {
-          // 路由守卫
-          console.log('Entering user page');
-          next();
-        },
+        path: '/about',
+        component: DemoAboutPage,
+      },
+      {
+        path: '/user/:id',  // 动态参数
+        component: DemoUserPage,
       },
       {
         path: '/dashboard',
-        component: DashboardPage,
-        redirect: '/dashboard/overview',
-        children: [
+        component: DemoDashboardLayout,
+        redirect: '/router/demo/dashboard/overview',
+        children: [  // 嵌套子路由
           {
             path: '/overview',
-            component: OverviewPage,
+            component: DemoOverviewPage,
+          },
+          {
+            path: '/stats',
+            component: DemoStatsPage,
+          },
+          {
+            path: '/settings',
+            component: DemoSettingsPage,
           },
         ],
       },
     ],
   },
 ];`}
-            </pre>
-          </div>
+            />
+            <DemoBox fukict:slot="demo">
+              <div class="space-y-3 text-sm text-gray-700">
+                <div class="p-3 bg-blue-50 border border-blue-200 rounded">
+                  <p class="font-medium text-blue-900 mb-1">嵌套路由</p>
+                  <p class="text-xs text-blue-700">
+                    使用 children 定义子路由，实现多层页面结构
+                  </p>
+                </div>
+                <div class="p-3 bg-green-50 border border-green-200 rounded">
+                  <p class="font-medium text-green-900 mb-1">动态参数</p>
+                  <p class="text-xs text-green-700">
+                    使用 :id 定义动态路由参数，在组件中通过 this.route.params
+                    访问
+                  </p>
+                </div>
+                <div class="p-3 bg-purple-50 border border-purple-200 rounded">
+                  <p class="font-medium text-purple-900 mb-1">重定向</p>
+                  <p class="text-xs text-purple-700">
+                    使用 redirect 自动重定向到默认子路由
+                  </p>
+                </div>
+              </div>
+            </DemoBox>
+          </SplitView>
         </div>
 
-        {/* 导航组件 */}
-        <div class="space-y-3">
-          <h2 class="text-xl font-semibold text-gray-900">导航组件</h2>
-
-          {/* Link */}
-          <div class="space-y-2">
-            <h3 class="text-base font-medium text-gray-800">Link 组件</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
-              声明式导航,支持激活状态样式
-            </p>
-            <div class="bg-gray-50/50 rounded-lg p-4 border border-gray-200/60">
-              <pre class="text-xs text-gray-700 leading-relaxed">
-                {`import { Link } from '@fukict/router';
-
-<Link
-  to="/home"
-  class="nav-link"
-  activeClass="active"
-  exactActiveClass="exact-active"
->
-  Home
-</Link>
-
-// activeClass: 路径匹配时应用(前缀匹配)
-// exactActiveClass: 路径完全匹配时应用`}
-              </pre>
-            </div>
-          </div>
-
-          {/* RouterView */}
-          <div class="space-y-2">
-            <h3 class="text-base font-medium text-gray-800">RouterView 组件</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
-              路由出口,渲染匹配的路由组件。嵌套路由时必须传递 router!
-            </p>
-            <div class="bg-gray-50/50 rounded-lg p-4 border border-gray-200/60">
-              <pre class="text-xs text-gray-700 leading-relaxed">
-                {`import { RouterView, RouteComponent } from '@fukict/router';
-
-// ❌ 错误 - 嵌套路由时不传递 router
-export class ParentPage extends RouteComponent {
-  render() {
-    return <RouterView />;  // 错误!
-  }
-}
-
-// ✅ 正确 - 必须传递 this.router
-export class ParentPage extends RouteComponent {
-  render() {
-    return <RouterView router={this.router} />;
-  }
-}`}
-              </pre>
-            </div>
-          </div>
-
-          {/* RouterProvider */}
-          <div class="space-y-2">
-            <h3 class="text-base font-medium text-gray-800">
-              RouterProvider 组件
+        {/* 布局组件 */}
+        <div class="space-y-4">
+          <div>
+            <h3 class="text-base font-medium text-gray-800 mb-1">
+              布局组件 (Layout Component)
             </h3>
             <p class="text-sm text-gray-600 leading-relaxed">
-              应用入口,初始化路由系统
+              使用 RouterView 创建包含导航的布局组件
             </p>
-            <div class="bg-gray-50/50 rounded-lg p-4 border border-gray-200/60">
-              <pre class="text-xs text-gray-700 leading-relaxed">
-                {`import { RouterProvider } from '@fukict/router';
-
-<RouterProvider
-  mode="history"  // 或 "hash"
-  routes={routes}
-  beforeEach={(to, from, next) => {
-    // 全局前置守卫
-    console.log('Navigation:', from.path, '->', to.path);
-    next();
-  }}
-  afterEach={(to, from) => {
-    // 全局后置守卫
-    document.title = to.meta?.title || 'App';
-  }}
-/>`}
-              </pre>
-            </div>
           </div>
-        </div>
 
-        {/* RouteComponent */}
-        <div class="space-y-3">
-          <h2 class="text-xl font-semibold text-gray-900">RouteComponent</h2>
-          <p class="text-sm text-gray-600 leading-relaxed">
-            路由组件基类,提供路由上下文和工具方法
-          </p>
-          <div class="bg-gray-50/50 rounded-lg p-4 border border-gray-200/60">
-            <pre class="text-xs text-gray-700 leading-relaxed">
-              {`import { RouteComponent } from '@fukict/router';
+          <SplitView leftTitle="代码示例" rightTitle="运行效果">
+            <CodeBlock
+              fukict:slot="code"
+              code={`import { Link, RouteComponent, RouterView } from '@fukict/router';
 
-export class MyPage extends RouteComponent {
+export class RouterIndexPage extends RouteComponent {
   render() {
-    // 访问路由信息
-    const path = this.route.path;
-    const params = this.route.params;      // { id: '123' }
-    const query = this.route.query;        // { page: '1' }
-    const meta = this.route.meta;
-
-    // 编程式导航
-    const goToHome = () => this.push('/home');
-    const goBack = () => this.back();
-
     return (
       <div>
-        <p>Current Path: {path}</p>
-        <p>User ID: {params.id}</p>
-        <button on:click={goToHome}>Go Home</button>
-        <button on:click={goBack}>Back</button>
+        {/* 导航栏 */}
+        <div>
+          <Link
+            to="/router/demo/home"
+            activeClass="ring-2 ring-blue-800"
+          >
+            主页
+          </Link>
+          <Link
+            to="/router/demo/about"
+            activeClass="ring-2 ring-blue-800"
+          >
+            关于
+          </Link>
+          <Link
+            to="/router/demo/user/123"
+            activeClass="ring-2 ring-blue-800"
+          >
+            用户(123)
+          </Link>
+          <Link
+            to="/router/demo/dashboard"
+            activeClass="ring-2 ring-blue-800"
+          >
+            仪表板
+          </Link>
+        </div>
+
+        {/* 当前路由信息 */}
+        <div>
+          <p>路径: {this.route.path}</p>
+          <p>参数: {JSON.stringify(this.route.params)}</p>
+          <p>查询: {JSON.stringify(this.route.query)}</p>
+        </div>
+
+        {/* 子路由出口 */}
+        <RouterView router={this.router} />
       </div>
     );
   }
 }`}
-            </pre>
-          </div>
+            />
+            <DemoBox fukict:slot="demo">
+              <div class="space-y-4">
+                {/* 导航栏 */}
+                <div class="space-y-2">
+                  <h4 class="text-xs font-medium text-gray-700">导航:</h4>
+                  <div class="flex gap-2 flex-wrap">
+                    <Link
+                      to="/router/demo/home"
+                      class="px-3 py-1.5 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
+                      activeClass="ring-2 ring-blue-800"
+                    >
+                      主页
+                    </Link>
+                    <Link
+                      to="/router/demo/about"
+                      class="px-3 py-1.5 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
+                      activeClass="ring-2 ring-blue-800"
+                    >
+                      关于
+                    </Link>
+                    <Link
+                      to="/router/demo/user/123"
+                      class="px-3 py-1.5 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
+                      activeClass="ring-2 ring-blue-800"
+                    >
+                      用户(123)
+                    </Link>
+                    <Link
+                      to="/router/demo/user/456"
+                      class="px-3 py-1.5 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
+                      activeClass="ring-2 ring-blue-800"
+                    >
+                      用户(456)
+                    </Link>
+                    <Link
+                      to="/router/demo/dashboard"
+                      class="px-3 py-1.5 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
+                      activeClass="ring-2 ring-blue-800"
+                    >
+                      仪表板
+                    </Link>
+                  </div>
+                </div>
+
+                {/* 当前路由信息 */}
+                <div class="p-3 bg-gray-100 border border-gray-300 rounded-lg">
+                  <h4 class="text-xs font-medium text-gray-700 mb-2">
+                    路由信息:
+                  </h4>
+                  <div class="text-xs text-gray-600 space-y-1">
+                    <p>
+                      <strong>路径:</strong> {this.route.path}
+                    </p>
+                    <p>
+                      <strong>参数:</strong> {JSON.stringify(this.route.params)}
+                    </p>
+                    <p>
+                      <strong>查询:</strong> {JSON.stringify(this.route.query)}
+                    </p>
+                    {this.route.hash && (
+                      <p>
+                        <strong>Hash:</strong> {this.route.hash}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* 子路由出口 */}
+                <div class="min-h-[150px] p-3 bg-white border border-gray-200 rounded-lg">
+                  <RouterView router={this.router} />
+                </div>
+              </div>
+            </DemoBox>
+          </SplitView>
         </div>
 
-        {/* 当前路由信息 */}
-        <div class="bg-gray-50/50 border border-gray-200/60 rounded-lg p-4">
-          <h3 class="text-base font-medium text-gray-800 mb-2">当前路由信息</h3>
-          <div class="space-y-1 text-sm text-gray-600">
-            <p>
-              <strong class="text-gray-800">路径:</strong> {this.route.path}
+        {/* 动态参数路由 */}
+        <div class="space-y-4">
+          <div>
+            <h3 class="text-base font-medium text-gray-800 mb-1">
+              动态参数路由
+            </h3>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              访问路由参数和查询字符串
             </p>
-            <p>
-              <strong class="text-gray-800">参数:</strong>{' '}
-              {JSON.stringify(this.route.params)}
+          </div>
+
+          <SplitView leftTitle="代码示例" rightTitle="说明">
+            <CodeBlock
+              fukict:slot="code"
+              code={`import { RouteComponent } from '@fukict/router';
+
+export class DemoUserPage extends RouteComponent {
+  render() {
+    // 获取路由参数
+    const userId = this.route.params.id;
+
+    // 获取查询参数
+    const tab = this.route.query.tab;
+
+    // 获取 hash
+    const hash = this.route.hash;
+
+    return (
+      <div>
+        <h4>用户页面</h4>
+        <p>用户 ID: {userId}</p>
+        <p>Tab: {tab}</p>
+        <p>Hash: {hash}</p>
+
+        {/* 编程式导航 */}
+        <button on:click={() =>
+          this.push('/router/demo/user/789?tab=profile#section-1')
+        }>
+          跳转到用户 789
+        </button>
+      </div>
+    );
+  }
+}`}
+            />
+            <DemoBox fukict:slot="demo">
+              <div class="space-y-3 text-sm text-gray-700">
+                <div class="p-3 bg-blue-50 border border-blue-200 rounded">
+                  <p class="font-medium text-blue-900 mb-1">
+                    this.route.params
+                  </p>
+                  <p class="text-xs text-blue-700">
+                    获取 URL 路径参数，如 /user/:id 中的 id
+                  </p>
+                </div>
+                <div class="p-3 bg-green-50 border border-green-200 rounded">
+                  <p class="font-medium text-green-900 mb-1">
+                    this.route.query
+                  </p>
+                  <p class="text-xs text-green-700">
+                    获取 URL 查询参数，如 ?tab=profile 中的 tab
+                  </p>
+                </div>
+                <div class="p-3 bg-purple-50 border border-purple-200 rounded">
+                  <p class="font-medium text-purple-900 mb-1">
+                    this.route.hash
+                  </p>
+                  <p class="text-xs text-purple-700">
+                    获取 URL hash，如 #section-1
+                  </p>
+                </div>
+                <div class="p-3 bg-orange-50 border border-orange-200 rounded">
+                  <p class="font-medium text-orange-900 mb-1">this.push()</p>
+                  <p class="text-xs text-orange-700">
+                    编程式导航，跳转到指定路由
+                  </p>
+                </div>
+              </div>
+            </DemoBox>
+          </SplitView>
+        </div>
+
+        {/* 嵌套路由 */}
+        <div class="space-y-4">
+          <div>
+            <h3 class="text-base font-medium text-gray-800 mb-1">嵌套路由</h3>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              在子路由中再次使用 RouterView 实现多层嵌套
             </p>
-            <p>
-              <strong class="text-gray-800">查询:</strong>{' '}
-              {JSON.stringify(this.route.query)}
+          </div>
+
+          <SplitView leftTitle="代码示例" rightTitle="说明">
+            <CodeBlock
+              fukict:slot="code"
+              code={`import { Link, RouteComponent, RouterView } from '@fukict/router';
+
+export class DemoDashboardLayout extends RouteComponent {
+  render() {
+    return (
+      <div>
+        {/* 仪表板导航 */}
+        <div>
+          <Link to="/router/demo/dashboard/overview">
+            总览
+          </Link>
+          <Link to="/router/demo/dashboard/stats">
+            统计
+          </Link>
+          <Link to="/router/demo/dashboard/settings">
+            设置
+          </Link>
+        </div>
+
+        {/* 嵌套的子路由出口 */}
+        <RouterView router={this.router} />
+      </div>
+    );
+  }
+}`}
+            />
+            <DemoBox fukict:slot="demo">
+              <div class="space-y-3 text-sm text-gray-700">
+                <div class="p-3 bg-blue-50 border border-blue-200 rounded">
+                  <p class="font-medium text-blue-900 mb-1">多层 RouterView</p>
+                  <p class="text-xs text-blue-700">
+                    父路由和子路由都可以使用 RouterView 创建嵌套结构
+                  </p>
+                </div>
+                <div class="p-3 bg-green-50 border border-green-200 rounded">
+                  <p class="font-medium text-green-900 mb-1">路由匹配</p>
+                  <p class="text-xs text-green-700">
+                    路由器自动匹配最深层的路由并渲染对应组件
+                  </p>
+                </div>
+                <div class="p-3 bg-purple-50 border border-purple-200 rounded">
+                  <p class="font-medium text-purple-900 mb-1">共享布局</p>
+                  <p class="text-xs text-purple-700">
+                    父组件提供共享的导航、侧边栏等布局元素
+                  </p>
+                </div>
+              </div>
+            </DemoBox>
+          </SplitView>
+        </div>
+
+        {/* 关键概念 */}
+        <div class="space-y-4">
+          <div>
+            <h3 class="text-base font-medium text-gray-800 mb-1">关键概念</h3>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              理解 @fukict/router 的核心概念和使用模式
             </p>
-            <p>
-              <strong class="text-gray-800">Hash:</strong>{' '}
-              {this.route.hash || '(无)'}
-            </p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <h4 class="text-sm font-medium text-blue-900 mb-2">
+                RouteComponent
+              </h4>
+              <ul class="text-xs text-blue-700 space-y-1">
+                <li>• 继承 RouteComponent 访问路由信息</li>
+                <li>• this.router 访问路由器实例</li>
+                <li>• this.route 访问当前路由信息</li>
+                <li>• this.push() 编程式导航</li>
+              </ul>
+            </div>
+
+            <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
+              <h4 class="text-sm font-medium text-green-900 mb-2">Link 组件</h4>
+              <ul class="text-xs text-green-700 space-y-1">
+                <li>• to 属性指定目标路由</li>
+                <li>• activeClass 激活时的样式</li>
+                <li>• 自动处理点击事件</li>
+                <li>• 阻止页面刷新</li>
+              </ul>
+            </div>
+
+            <div class="p-4 bg-purple-50 border border-purple-200 rounded-lg">
+              <h4 class="text-sm font-medium text-purple-900 mb-2">
+                RouterView
+              </h4>
+              <ul class="text-xs text-purple-700 space-y-1">
+                <li>• 渲染匹配的路由组件</li>
+                <li>• 必须传入 router 属性</li>
+                <li>• 支持多层嵌套</li>
+                <li>• 自动响应路由变化</li>
+              </ul>
+            </div>
+
+            <div class="p-4 bg-orange-50 border border-orange-200 rounded-lg">
+              <h4 class="text-sm font-medium text-orange-900 mb-2">最佳实践</h4>
+              <ul class="text-xs text-orange-700 space-y-1">
+                <li>• 使用 RouteComponent 作为页面基类</li>
+                <li>• 布局组件包含 RouterView</li>
+                <li>• Link 组件用于声明式导航</li>
+                <li>• push() 用于编程式导航</li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>

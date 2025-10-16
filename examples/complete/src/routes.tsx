@@ -32,6 +32,14 @@ import { RouterConfigPage } from './pages/router/RouterConfigPage';
 import { RouterIndexPage } from './pages/router/RouterIndexPage';
 // Router 模块
 import { RouterModuleIndexPage } from './pages/router/RouterModuleIndexPage';
+// Router Demo 子页面
+import { DemoAboutPage } from './pages/router/demo/DemoAboutPage';
+import { DemoDashboardLayout } from './pages/router/demo/DemoDashboardLayout';
+import { DemoHomePage } from './pages/router/demo/DemoHomePage';
+import { DemoOverviewPage } from './pages/router/demo/DemoOverviewPage';
+import { DemoSettingsPage } from './pages/router/demo/DemoSettingsPage';
+import { DemoStatsPage } from './pages/router/demo/DemoStatsPage';
+import { DemoUserPage } from './pages/router/demo/DemoUserPage';
 // Tooling 模块
 import { BabelPresetPage } from './pages/tooling/BabelPresetPage';
 
@@ -228,6 +236,40 @@ export const routes: AppRouteConfig[] = [
               description: '一个包含嵌套路由、导航守卫的完整路由示例',
               showInSidebar: true,
             },
+            redirect: '/router/demo/home',
+            children: [
+              {
+                path: '/home',
+                component: DemoHomePage,
+              },
+              {
+                path: '/about',
+                component: DemoAboutPage,
+              },
+              {
+                path: '/user/:id',
+                component: DemoUserPage,
+              },
+              {
+                path: '/dashboard',
+                component: DemoDashboardLayout,
+                redirect: '/router/demo/dashboard/overview',
+                children: [
+                  {
+                    path: '/overview',
+                    component: DemoOverviewPage,
+                  },
+                  {
+                    path: '/stats',
+                    component: DemoStatsPage,
+                  },
+                  {
+                    path: '/settings',
+                    component: DemoSettingsPage,
+                  },
+                ],
+              },
+            ],
           },
         ],
       },

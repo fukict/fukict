@@ -145,7 +145,7 @@ const asyncStore = createFlux({
         if (successLogs.length > 5) successLogs.pop();
 
         flux.setState({ user, logs: successLogs });
-      } catch (error) {
+      } catch (_error) {
         const currentState = flux.getState();
         const errorLogs = [
           `Failed to load user ${userId}`,
@@ -155,7 +155,6 @@ const asyncStore = createFlux({
 
         flux.setState({ logs: errorLogs });
       } finally {
-        const currentState = flux.getState();
         flux.setState({ loading: false });
       }
     },
