@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@fukict/basic": "workspace:*",
-    "typescript": "^5.0.0"
+    "typescript": "^5.6.3"
   },
   "peerDependencies": {
     "@fukict/basic": "workspace:*"
