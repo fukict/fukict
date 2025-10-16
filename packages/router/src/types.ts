@@ -30,7 +30,7 @@ export interface RouteConfig {
   /**
    * 路由元信息
    */
-  meta?: Record<string, any>;
+  meta?: RouteMeta;
 
   /**
    * 路由级别的导航守卫
@@ -69,6 +69,32 @@ export interface RouteMatch {
 }
 
 /**
+ * 路由元信息基础接口
+ *
+ * 这是一个空接口，允许用户通过模块扩展来定义项目特定的 meta 类型。
+ *
+ * @example 在项目的全局类型文件中扩展（例如 src/types/global.d.ts）：
+ * ```typescript
+ * declare module '@fukict/router' {
+ *   interface RouteMeta {
+ *     title?: string;
+ *     description?: string;
+ *     requiresAuth?: boolean;
+ *   }
+ * }
+ * ```
+ *
+ * 扩展后，所有路由的 meta 都会自动获得这些类型，无需手动导入。
+ */
+export interface RouteMeta {
+  /**
+   * 内部重定向标记（不应该由用户直接使用）
+   * @internal
+   */
+  __redirect__?: string;
+}
+
+/**
  * 当前路由对象
  */
 export interface Route {
@@ -90,7 +116,7 @@ export interface Route {
   /**
    * 路由元信息
    */
-  meta: Record<string, any>;
+  meta: RouteMeta;
 
   /**
    * 匹配的路由配置列表（从顶层到当前层级）
@@ -231,7 +257,7 @@ export interface RouteComponent {
   /**
    * 路由元信息
    */
-  meta: Record<string, any>;
+  meta: RouteMeta;
 
   /**
    * 导航到指定路径（添加历史记录）

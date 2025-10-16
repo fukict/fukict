@@ -3,9 +3,16 @@
  *
  * Create real DOM nodes from VNode (supports Node | Node[] return)
  */
+import { Fukict } from '../component-class/fukict.js';
 import { extractSlots } from '../component-class/slot.js';
+import type { FunctionComponent } from '../component-function/index.js';
 import * as dom from '../dom/index.js';
-import type { VNode, VNodeChild } from '../types/index.js';
+import type {
+  ClassComponentVNode,
+  FunctionComponentVNode,
+  VNode,
+  VNodeChild,
+} from '../types/index.js';
 import { VNodeType } from '../types/index.js';
 import { setAttributes } from './attributes.js';
 
@@ -24,7 +31,7 @@ import { setAttributes } from './attributes.js';
  */
 export function createRealNode(
   vnode: VNodeChild,
-  componentInstance?: any,
+  componentInstance?: Fukict,
 ): Node | Node[] | null {
   // Handle arrays (e.g., from slots)
   // Recursively flatten and render each item
@@ -70,7 +77,7 @@ export function createRealNode(
  */
 export function createElementFromVNode(
   vnode: VNode,
-  componentInstance?: any,
+  componentInstance?: Fukict,
 ): Node | Node[] | null {
   // Use discriminated union for type-safe rendering
   switch (vnode.__type__) {
@@ -95,7 +102,7 @@ export function createElementFromVNode(
  * Render Element VNode
  * Returns single DOM node
  */
-function renderElement(vnode: VNode, componentInstance?: any): Node {
+function renderElement(vnode: VNode, componentInstance?: Fukict): Node {
   // TypeScript now knows vnode is ElementVNode
   if (vnode.__type__ !== VNodeType.Element) {
     throw new Error('Expected ElementVNode');
@@ -137,7 +144,7 @@ function renderElement(vnode: VNode, componentInstance?: any): Node {
  * Render Fragment VNode
  * Returns array of DOM nodes
  */
-function renderFragment(vnode: VNode, componentInstance?: any): Node[] {
+function renderFragment(vnode: VNode, componentInstance?: Fukict): Node[] {
   // TypeScript now knows vnode is FragmentVNode
   if (vnode.__type__ !== VNodeType.Fragment) {
     throw new Error('Expected FragmentVNode');
@@ -175,14 +182,16 @@ function renderFragment(vnode: VNode, componentInstance?: any): Node[] {
  */
 function renderFunctionComponent(
   vnode: VNode,
-  componentInstance?: any,
+  componentInstance?: Fukict,
 ): Node | Node[] | null {
   // TypeScript now knows vnode is FunctionComponentVNode
   if (vnode.__type__ !== VNodeType.FunctionComponent) {
     throw new Error('Expected FunctionComponentVNode');
   }
 
-  const { type, props, children } = vnode;
+  // Type assertion after runtime check
+  const funcVNode = vnode as FunctionComponentVNode;
+  const { type, props, children } = funcVNode;
 
   // Merge children into props (like React)
   const propsWithChildren = {
@@ -190,12 +199,13 @@ function renderFunctionComponent(
     children: children.length === 1 ? children[0] : children,
   };
 
-  // Call function component
-  const rendered = type(propsWithChildren);
+  // Call function component with proper typing
+  const funcComponent = type as unknown as FunctionComponent;
+  const rendered = funcComponent(propsWithChildren);
 
   if (!rendered) {
-    vnode.__rendered__ = undefined;
-    vnode.__dom__ = null;
+    funcVNode.__rendered__ = undefined;
+    funcVNode.__dom__ = null;
     return null;
   }
 
@@ -203,8 +213,8 @@ function renderFunctionComponent(
   const domNode = createRealNode(rendered, componentInstance);
 
   // Save rendered VNode and DOM
-  vnode.__rendered__ = rendered;
-  vnode.__dom__ = domNode; // 可能是 Node 或 Node[]
+  funcVNode.__rendered__ = rendered;
+  funcVNode.__dom__ = domNode; // 可能是 Node 或 Node[]
 
   return domNode;
 }
@@ -213,27 +223,31 @@ function renderFunctionComponent(
  * Render Class Component VNode
  * Returns Comment node as placeholder
  */
-function renderClassComponent(vnode: VNode, componentInstance?: any): Node {
+function renderClassComponent(vnode: VNode, componentInstance?: Fukict): Node {
   // TypeScript now knows vnode is ClassComponentVNode
   if (vnode.__type__ !== VNodeType.ClassComponent) {
     throw new Error('Expected ClassComponentVNode');
   }
 
-  const { type, props, children } = vnode;
+  // Type assertion after runtime check
+  const classVNode = vnode as ClassComponentVNode;
+  const { type, props, children } = classVNode;
 
   // 1. Create instance (only props)
-  const instance = new (type as any)(props);
+  // Type assertion is safe here because we know it's a class constructor
+  const ComponentClass = type as new (props: Record<string, any>) => Fukict;
+  const instance = new ComponentClass(props ?? {});
 
   // 2. Extract and set slots from children
   if (children) {
-    instance.slots = extractSlots(children);
+    (instance as Fukict & { slots: any }).slots = extractSlots(children);
   }
 
   // 3. Handle fukict:ref for class components
   //    If parent is a class component and this component has fukict:ref,
   //    register this instance to parent's refs
   if (componentInstance && props && props['fukict:ref']) {
-    const refName = props['fukict:ref'];
+    const refName: unknown = props['fukict:ref'];
     if (typeof refName === 'string') {
       // Create or update ref in parent component
       if (!componentInstance.refs.has(refName)) {
@@ -247,14 +261,16 @@ function renderClassComponent(vnode: VNode, componentInstance?: any): Node {
   }
 
   // 4. Save instance to vnode
-  vnode.__instance__ = instance;
+  classVNode.__instance__ = instance;
 
   // 5. Save wrapper VNode to instance (for context traversal)
-  instance.__wrapper__ = vnode;
+  instance.__wrapper__ = classVNode;
 
   // 6. Save parent instance reference on wrapper VNode (for context chain)
   if (componentInstance) {
-    (vnode as any).__parentInstance__ = componentInstance;
+    (
+      classVNode as ClassComponentVNode & { __parentInstance__?: Fukict }
+    ).__parentInstance__ = componentInstance;
   }
 
   // 7. Create comment placeholder with instance ID and name
@@ -263,7 +279,7 @@ function renderClassComponent(vnode: VNode, componentInstance?: any): Node {
   );
 
   // 8. Save placeholder to vnode
-  vnode.__placeholder__ = placeholder;
+  classVNode.__placeholder__ = placeholder;
 
   return placeholder;
 }

@@ -1,7 +1,14 @@
 import { Fukict, type VNode } from '@fukict/basic';
 
 import type { Router } from './Router';
-import type { Location, Route, RouteConfig, RouteProps } from './types';
+import type {
+  Location,
+  Route,
+  RouteConfig,
+  RouteMatch,
+  RouteMeta,
+  RouteProps,
+} from './types';
 
 /**
  * 路由组件基类
@@ -20,7 +27,7 @@ export abstract class RouteComponent extends Fukict<RouteProps> {
    * 当前匹配的路由配置
    */
   get matched(): RouteConfig | null {
-    return this.router.matched;
+    return this.router.matched as RouteMatch;
   }
 
   /**
@@ -47,7 +54,7 @@ export abstract class RouteComponent extends Fukict<RouteProps> {
   /**
    * 路由元信息
    */
-  get meta(): Record<string, any> {
+  get meta(): RouteMeta {
     return this.route.meta;
   }
 

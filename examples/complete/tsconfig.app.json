@@ -14,5 +14,5 @@
     "jsxImportSource": "@fukict/basic"
   },
   "extends": "../../config/typescript/tsconfig.client.json",
-  "include": ["src"]
+  "include": ["src", "types"]
 }

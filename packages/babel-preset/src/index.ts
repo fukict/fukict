@@ -54,4 +54,4 @@ function fukictPreset(_api: any, options: FukictPresetOptions = {}) {
 // CommonJS export for Babel 7 compatibility
 module.exports = fukictPreset;
 // Also export as default for dual compatibility
-module.exports.default = fukictPreset;
+(module.exports as { default?: typeof fukictPreset }).default = fukictPreset;

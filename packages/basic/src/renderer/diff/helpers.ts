@@ -3,7 +3,15 @@
  *
  * Helper functions for diff operations
  */
-import type { VNode, VNodeChild } from '../../types/index.js';
+import type {
+  ClassComponentVNode,
+  ElementVNode,
+  FragmentVNode,
+  FukictComponent,
+  FunctionComponentVNode,
+  VNode,
+  VNodeChild,
+} from '../../types/index.js';
 import { VNodeType } from '../../types/index.js';
 import { createRealNode } from '../create.js';
 import { activate } from '../mount.js';
@@ -29,17 +37,21 @@ function getFirstDomNode(vnode: VNodeChild): Node | null {
 
     // Class Component - get DOM from instance
     if (vnodeObj.__type__ === VNodeType.ClassComponent) {
-      const instance = (vnodeObj as any).__instance__;
+      const classVNode = vnodeObj as ClassComponentVNode;
+      const instance = classVNode.__instance__ as FukictComponent | undefined;
 
       // Get from instance's rendered DOM
-      const dom = instance?.__vnode__?.__dom__;
-      if (dom) {
-        return Array.isArray(dom) ? dom[0] : dom;
+      const instanceVNode = instance?.__vnode__;
+      if (instanceVNode && '__dom__' in instanceVNode) {
+        const dom = instanceVNode.__dom__ as Node | Node[] | undefined;
+        if (dom) {
+          return Array.isArray(dom) ? dom[0] : dom;
+        }
       }
 
       // Fallback: if not mounted yet, check placeholder
-      const placeholder = (vnodeObj as any).__placeholder__;
-      if (placeholder && placeholder.parentNode) {
+      const placeholder = classVNode.__placeholder__;
+      if (placeholder?.parentNode) {
         return placeholder;
       }
 
@@ -47,7 +59,7 @@ function getFirstDomNode(vnode: VNodeChild): Node | null {
     }
 
     // Other types - get from __dom__
-    const dom = (vnodeObj as any).__dom__;
+    const dom = vnodeObj.__dom__;
     if (dom) {
       return Array.isArray(dom) ? dom[0] : dom;
     }
@@ -122,8 +134,9 @@ function unmountVNode(vnode: VNodeChild): void {
 
     // Class Component - call unmount (which will handle its own __vnode__)
     if (vnodeObj.__type__ === VNodeType.ClassComponent) {
-      const instance = (vnodeObj as any).__instance__;
-      if (instance && typeof instance.unmount === 'function') {
+      const classVNode = vnodeObj as ClassComponentVNode;
+      const instance = classVNode.__instance__ as FukictComponent | undefined;
+      if (instance?.unmount) {
         instance.unmount();
       }
       return;
@@ -131,7 +144,8 @@ function unmountVNode(vnode: VNodeChild): void {
 
     // Function Component - unmount its rendered vnode
     if (vnodeObj.__type__ === VNodeType.FunctionComponent) {
-      const renderedVNode = (vnodeObj as any).__renderedVNode__;
+      const funcVNode = vnodeObj as FunctionComponentVNode;
+      const renderedVNode = funcVNode.__rendered__;
       if (renderedVNode) {
         unmountVNode(renderedVNode);
       }
@@ -140,16 +154,18 @@ function unmountVNode(vnode: VNodeChild): void {
 
     // Fragment - unmount all children
     if (vnodeObj.__type__ === VNodeType.Fragment) {
-      if (vnodeObj.children && Array.isArray(vnodeObj.children)) {
-        vnodeObj.children.forEach(child => unmountVNode(child));
+      const fragmentVNode = vnodeObj as FragmentVNode;
+      if (fragmentVNode.children && Array.isArray(fragmentVNode.children)) {
+        fragmentVNode.children.forEach(child => unmountVNode(child));
       }
       return;
     }
 
     // Element - unmount all children recursively
     if (vnodeObj.__type__ === VNodeType.Element) {
-      if (vnodeObj.children && Array.isArray(vnodeObj.children)) {
-        vnodeObj.children.forEach(child => unmountVNode(child));
+      const elementVNode = vnodeObj as ElementVNode;
+      if (elementVNode.children && Array.isArray(elementVNode.children)) {
+        elementVNode.children.forEach(child => unmountVNode(child));
       }
       return;
     }
@@ -186,15 +202,16 @@ export function removeNode(vnode: VNodeChild, container: Element): void {
 
     // Class Component - remove placeholder if exists
     if (vnodeObj.__type__ === VNodeType.ClassComponent) {
-      const placeholder = (vnodeObj as any).__placeholder__;
-      if (placeholder && placeholder.parentNode) {
+      const classVNode = vnodeObj as ClassComponentVNode;
+      const placeholder = classVNode.__placeholder__;
+      if (placeholder?.parentNode) {
         placeholder.parentNode.removeChild(placeholder);
       }
       return;
     }
 
     // Other types - remove __dom__
-    const dom = (vnodeObj as any).__dom__;
+    const dom = vnodeObj.__dom__;
     if (dom) {
       if (Array.isArray(dom)) {
         dom.forEach((node: Node) => {
@@ -212,7 +229,10 @@ export function removeNode(vnode: VNodeChild, container: Element): void {
 /**
  * Shallow compare two objects
  */
-export function shallowEqual(a: any, b: any): boolean {
+export function shallowEqual(
+  a: Record<string, unknown> | null,
+  b: Record<string, unknown> | null,
+): boolean {
   if (a === b) return true;
   if (!a || !b) return false;
 

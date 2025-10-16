@@ -253,6 +253,7 @@ export interface SVGPresentationAttributes {
 export type SVGAttributes<T extends SVGElement = SVGElement> =
   RuntimeAttributes<T> &
     SVGPresentationAttributes & {
+      id?: string;
       // Override style to support both string and object
       style?: CSSProperties | string;
 

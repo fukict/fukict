@@ -10,10 +10,6 @@ import { routes } from './routes';
  * 所有 UI（Header、Footer）都移到 LayoutPage 中
  */
 export class App extends Fukict {
-  constructor(props: any) {
-    super(props);
-  }
-
   render() {
     return (
       <RouterProvider

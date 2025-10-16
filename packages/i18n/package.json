@@ -39,6 +39,7 @@
   "scripts": {
     "build": "tsx ../../scripts/build-package.ts --pkg-name i18n --no-watch",
     "dev": "tsx ../../scripts/build-package.ts --pkg-name i18n --watch",
+    "lint": "tsc --noEmit",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

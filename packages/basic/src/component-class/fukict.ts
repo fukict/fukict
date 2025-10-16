@@ -262,7 +262,9 @@ export abstract class Fukict<
 
     // If not found in own context chain, look in parent component
     if (this.__wrapper__) {
-      const parentInstance = (this.__wrapper__ as any).__parentInstance__;
+      const parentInstance = (
+        this.__wrapper__ as VNode & { __parentInstance__?: Fukict }
+      ).__parentInstance__;
       if (parentInstance) {
         // Recursively search in parent
         return parentInstance.getContext(key, defaultValue);

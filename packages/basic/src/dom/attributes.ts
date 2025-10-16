@@ -66,7 +66,11 @@ export function setClass(element: Element, value: ClassValue): void {
 /**
  * Set attribute on element
  */
-export function setAttribute(element: Element, key: string, value: any): void {
+export function setAttribute(
+  element: Element,
+  key: string,
+  value: unknown,
+): void {
   if (value == null || value === false) {
     element.removeAttribute(key);
   } else if (value === true) {
@@ -86,8 +90,12 @@ export function removeAttribute(element: Element, key: string): void {
 /**
  * Set property on element (for special properties like value, checked)
  */
-export function setProperty(element: Element, key: string, value: any): void {
-  (element as any)[key] = value;
+export function setProperty(
+  element: Element,
+  key: string,
+  value: unknown,
+): void {
+  (element as unknown as Record<string, unknown>)[key] = value;
 }
 
 /**
@@ -99,9 +107,9 @@ export function setStyle(
   value: string | number,
 ): void {
   if (typeof value === 'number' && !isUnitlessNumber(key)) {
-    (element.style as any)[key] = value + 'px';
+    (element.style as unknown as Record<string, string>)[key] = value + 'px';
   } else {
-    (element.style as any)[key] = value;
+    (element.style as unknown as Record<string, string | number>)[key] = value;
   }
 }
 

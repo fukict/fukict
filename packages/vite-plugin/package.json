@@ -37,6 +37,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
+    "lint": "tsc --noEmit",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

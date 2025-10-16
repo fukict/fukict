@@ -35,6 +35,7 @@
   "scripts": {
     "build": "tsx ../../scripts/build-package.ts --pkg-name babel-preset --no-watch",
     "dev": "tsx ../../scripts/build-package.ts --pkg-name babel-preset --watch",
+    "lint": "tsc --noEmit",
     "test": "node --test test/**/*.test.js",
     "typecheck": "tsc --noEmit"
   },

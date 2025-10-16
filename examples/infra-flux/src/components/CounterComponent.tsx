@@ -75,7 +75,7 @@ export class CounterComponent extends Fukict {
           <label class="text-sm text-gray-600">Step:</label>
           <input
             type="number"
-            value={state.step}
+            value={String(state.step)}
             class="w-20 rounded border px-2 py-1"
             on:input={(e: Event) => {
               const value = parseInt((e.target as HTMLInputElement).value) || 1;

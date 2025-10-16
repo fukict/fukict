@@ -360,7 +360,7 @@ export class I18nIndexPage extends RouteComponent {
 
   mounted() {
     this.unsubscribe = demoI18n.subscribe(() => {
-      this.update();
+      this.update(this.props);
     });
   }
 

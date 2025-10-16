@@ -49,6 +49,7 @@
   "scripts": {
     "build": "tsx ../../scripts/build-package.ts --pkg-name basic --no-watch",
     "dev": "tsx ../../scripts/build-package.ts --pkg-name basic --watch",
+    "lint": "tsc --noEmit",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

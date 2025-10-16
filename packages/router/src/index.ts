@@ -9,6 +9,7 @@ export type {
   RouteConfig,
   Route,
   RouteMatch,
+  RouteMeta,
   Location,
   NavigationGuard,
   RouterMode,

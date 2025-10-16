@@ -3,6 +3,7 @@
  *
  * Set attributes on elements
  */
+import type { Fukict } from '../component-class/fukict.js';
 import * as dom from '../dom/index.js';
 
 /**
@@ -14,8 +15,8 @@ import * as dom from '../dom/index.js';
  */
 export function setAttributes(
   element: Element,
-  props: Record<string, any>,
-  componentInstance?: any,
+  props: Record<string, unknown>,
+  componentInstance?: Fukict,
 ): void {
   for (const [key, value] of Object.entries(props)) {
     if (key === 'children') {
@@ -43,21 +44,25 @@ export function setAttributes(
 
     // Handle ref callback
     if (key === 'ref' && typeof value === 'function') {
-      value(element);
+      (value as (element: Element) => void)(element);
       continue;
     }
 
     // Handle events (on: prefix)
     if (key.startsWith('on:')) {
       const eventName = key.slice(3);
-      dom.addEventListener(element, eventName, value);
+      dom.addEventListener(element, eventName, value as EventListener);
       continue;
     }
 
     // Handle style object
-    if (key === 'style' && typeof value === 'object') {
+    if (key === 'style' && typeof value === 'object' && value !== null) {
       for (const [styleKey, styleValue] of Object.entries(value)) {
-        dom.setStyle(element as HTMLElement, styleKey, styleValue as any);
+        dom.setStyle(
+          element as HTMLElement,
+          styleKey,
+          styleValue as string | number,
+        );
       }
       continue;
     }
@@ -70,7 +75,10 @@ export function setAttributes(
 
     // Handle class with enhanced support
     if (key === 'class') {
-      dom.setClass(element, value);
+      dom.setClass(
+        element,
+        value as string | string[] | Record<string, boolean>,
+      );
       continue;
     }
 

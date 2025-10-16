@@ -44,26 +44,9 @@ import { DemoUserPage } from './pages/router/demo/DemoUserPage';
 import { BabelPresetPage } from './pages/tooling/BabelPresetPage';
 
 /**
- * 路由元数据
- */
-export interface RouteMeta {
-  title: string;
-  description?: string;
-  showInSidebar?: boolean;
-}
-
-/**
- * 扩展路由配置
- */
-export interface AppRouteConfig extends RouteConfig {
-  meta?: RouteMeta;
-  children?: AppRouteConfig[];
-}
-
-/**
  * 路由配置
  */
-export const routes: AppRouteConfig[] = [
+export const routes: RouteConfig[] = [
   {
     path: '/',
     component: LayoutPage,
@@ -382,14 +365,14 @@ export interface SidebarItem {
 /**
  * 从路由配置提取侧边栏数据
  */
-function extractSidebarItems(routes: AppRouteConfig[]): SidebarItem[] {
+function extractSidebarItems(routes: RouteConfig[]): SidebarItem[] {
   const items: SidebarItem[] = [];
 
   for (const route of routes) {
     if (route.meta?.showInSidebar) {
       const item: SidebarItem = {
         path: route.path,
-        title: route.meta.title,
+        title: route.meta.title || '',
       };
 
       // 如果有子路由,递归提取

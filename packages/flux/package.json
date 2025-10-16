@@ -38,6 +38,7 @@
   "scripts": {
     "build": "tsx ../../scripts/build-package.ts --pkg-name flux --no-watch",
     "dev": "tsx ../../scripts/build-package.ts --pkg-name flux --watch",
+    "lint": "tsc --noEmit",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
