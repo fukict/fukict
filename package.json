@@ -33,6 +33,7 @@
     "changeset:version": "changeset version",
     "clean": "premove packages/*/dist",
     "clear": "premove **/node_modules && premove pnpm-lock.yaml",
+    "commit": "git cz",
     "dev:no-build": "npx http-server -p 8080 -c-1 --cors",
     "extract-metadata": "tsx scripts/extract-metadata.ts",
     "format": "prettier --write .",
@@ -48,13 +49,22 @@
     "version:beta": "changeset version --snapshot beta && changeset publish --tag beta",
     "version:rc": "changeset version --snapshot rc && changeset publish --tag rc"
   },
+  "config": {
+    "commitizen": {
+      "path": "@commitlint/cz-commitlint"
+    }
+  },
   "devDependencies": {
     "@changesets/cli": "^2.29.4",
+    "@commitlint/cli": "^20.1.0",
+    "@commitlint/config-conventional": "^20.0.0",
+    "@commitlint/cz-commitlint": "^20.1.0",
     "@eslint/js": "^9.28.0",
     "@trivago/prettier-plugin-sort-imports": "5.2.2",
     "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "^8.33.1",
     "@typescript-eslint/parser": "^8.33.1",
+    "commitizen": "^4.3.0",
     "eslint": "^9.28.0",
     "eslint-config-prettier": "^10.1.5",
     "globals": "^16.4.0",
