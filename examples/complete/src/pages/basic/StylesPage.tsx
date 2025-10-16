@@ -28,7 +28,7 @@ class ClassBindingDemo extends Fukict {
         {/* 基础类名绑定 */}
         <div>
           <div
-            class={`px-4 py-2 rounded text-sm font-medium transition-colors ${
+            class={`rounded px-4 py-2 text-sm font-medium transition-colors ${
               this.isActive
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700'
@@ -37,7 +37,7 @@ class ClassBindingDemo extends Fukict {
             状态按钮
           </div>
           <button
-            class="mt-2 px-3 py-1 bg-gray-500 text-white text-xs rounded hover:bg-gray-600"
+            class="mt-2 rounded bg-gray-500 px-3 py-1 text-xs text-white hover:bg-gray-600"
             on:click={this.toggleActive}
           >
             切换激活状态
@@ -47,7 +47,7 @@ class ClassBindingDemo extends Fukict {
         {/* 多条件类名 */}
         <div>
           <div
-            class={`px-4 py-2 rounded text-sm font-medium ${
+            class={`rounded px-4 py-2 text-sm font-medium ${
               this.hasError
                 ? 'bg-red-500 text-white'
                 : 'bg-green-500 text-white'
@@ -56,7 +56,7 @@ class ClassBindingDemo extends Fukict {
             {this.hasError ? '错误状态' : '成功状态'}
           </div>
           <button
-            class="mt-2 px-3 py-1 bg-gray-500 text-white text-xs rounded hover:bg-gray-600"
+            class="mt-2 rounded bg-gray-500 px-3 py-1 text-xs text-white hover:bg-gray-600"
             on:click={this.toggleError}
           >
             切换错误状态
@@ -66,11 +66,7 @@ class ClassBindingDemo extends Fukict {
         {/* 复杂组合 */}
         <div>
           <div
-            class={`
-              px-4 py-2 rounded text-sm font-medium transition-all
-              ${this.isActive ? 'ring-2 ring-blue-400' : ''}
-              ${this.hasError ? 'bg-red-500 text-white' : 'bg-blue-500 text-white'}
-            `}
+            class={`rounded px-4 py-2 text-sm font-medium transition-all ${this.isActive ? 'ring-2 ring-blue-400' : ''} ${this.hasError ? 'bg-red-500 text-white' : 'bg-blue-500 text-white'} `}
           >
             复合状态按钮
           </div>
@@ -130,19 +126,19 @@ class StyleBindingDemo extends Fukict {
           </div>
           <div class="mt-2 space-x-2">
             <button
-              class="px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600"
+              class="rounded bg-blue-500 px-3 py-1 text-xs text-white hover:bg-blue-600"
               on:click={this.changeColor}
             >
               改变颜色
             </button>
             <button
-              class="px-3 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600"
+              class="rounded bg-green-500 px-3 py-1 text-xs text-white hover:bg-green-600"
               on:click={this.increaseFontSize}
             >
               增大字号
             </button>
             <button
-              class="px-3 py-1 bg-orange-500 text-white text-xs rounded hover:bg-orange-600"
+              class="rounded bg-orange-500 px-3 py-1 text-xs text-white hover:bg-orange-600"
               on:click={this.decreaseFontSize}
             >
               减小字号
@@ -171,7 +167,7 @@ class StyleBindingDemo extends Fukict {
             旋转盒子
           </div>
           <button
-            class="mt-2 px-3 py-1 bg-purple-500 text-white text-xs rounded hover:bg-purple-600"
+            class="mt-2 rounded bg-purple-500 px-3 py-1 text-xs text-white hover:bg-purple-600"
             on:click={this.rotate}
           >
             旋转 45°
@@ -235,7 +231,7 @@ class AnimatedBoxDemo extends Fukict {
     return (
       <div class="space-y-4">
         {/* 动画容器 */}
-        <div class="relative h-32 bg-gray-100 rounded border border-gray-300 overflow-hidden">
+        <div class="relative h-32 overflow-hidden rounded border border-gray-300 bg-gray-100">
           <div
             style={{
               position: 'absolute',
@@ -262,7 +258,7 @@ class AnimatedBoxDemo extends Fukict {
         {/* 控制按钮 */}
         <div class="space-x-2">
           <button
-            class={`px-3 py-1 text-white text-xs rounded ${
+            class={`rounded px-3 py-1 text-xs text-white ${
               this.isAnimating
                 ? 'bg-red-500 hover:bg-red-600'
                 : 'bg-green-500 hover:bg-green-600'
@@ -272,7 +268,7 @@ class AnimatedBoxDemo extends Fukict {
             {this.isAnimating ? '停止' : '开始'}
           </button>
           <button
-            class="px-3 py-1 bg-gray-500 text-white text-xs rounded hover:bg-gray-600"
+            class="rounded bg-gray-500 px-3 py-1 text-xs text-white hover:bg-gray-600"
             on:click={this.reset}
           >
             重置
@@ -297,8 +293,8 @@ export class StylesPage extends RouteComponent {
         {/* Class 绑定 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">Class 绑定</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">Class 绑定</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               动态绑定 CSS 类名，根据状态切换样式
             </p>
           </div>
@@ -347,8 +343,8 @@ export class MyComponent extends Fukict {
         {/* Style 绑定 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">Style 绑定</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">Style 绑定</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               动态绑定内联样式，使用对象或字符串形式
             </p>
           </div>
@@ -399,10 +395,10 @@ export class MyComponent extends Fukict {
         {/* 动态样式 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">
+            <h3 class="mb-1 text-base font-medium text-gray-800">
               动态样式动画
             </h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <p class="text-sm leading-relaxed text-gray-600">
               使用 requestAnimationFrame 创建平滑的样式动画
             </p>
           </div>

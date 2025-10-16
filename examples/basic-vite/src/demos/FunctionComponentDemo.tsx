@@ -12,22 +12,22 @@ export const FunctionComponentDemo = () => {
 
   return (
     <div>
-      <h2 class="text-3xl font-bold mb-4">函数组件 (defineFukict)</h2>
+      <h2 class="mb-4 text-3xl font-bold">函数组件 (defineFukict)</h2>
 
-      <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+      <div class="mb-6 border-l-4 border-blue-500 bg-blue-50 p-4">
         <p class="text-sm text-gray-700">
           <strong>自动包裹：</strong>大写开头的箭头函数会被 babel-preset
           自动识别并包裹{' '}
-          <code class="bg-blue-100 px-1 rounded">defineFukict()</code>
+          <code class="rounded bg-blue-100 px-1">defineFukict()</code>
         </p>
       </div>
 
-      <div class="bg-white rounded-lg shadow p-6">
-        <h3 class="text-xl font-semibold mb-4">交互示例</h3>
+      <div class="rounded-lg bg-white p-6 shadow">
+        <h3 class="mb-4 text-xl font-semibold">交互示例</h3>
         <div class="flex items-center gap-4">
           <button
             on:click={increment}
-            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+            class="rounded bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
           >
             点击 +1
           </button>
@@ -37,7 +37,7 @@ export const FunctionComponentDemo = () => {
         </div>
       </div>
 
-      <div class="mt-6 bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
+      <div class="mt-6 overflow-x-auto rounded-lg bg-gray-900 p-4 text-gray-100">
         <pre class="text-sm">
           <code>{`// 输入代码
 export const FunctionComponentDemo = () => {

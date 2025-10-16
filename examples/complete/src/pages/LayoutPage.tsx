@@ -20,7 +20,7 @@ export class LayoutPage extends RouteComponent {
 
         {/* 主内容区域 */}
         <main class="flex-1 overflow-y-auto">
-          <div class="max-w-[1800px] mx-auto px-12 py-10">
+          <div class="mx-auto max-w-[1800px] px-12 py-10">
             {/* 页面头部 */}
             {title && <PageHeader title={title} description={description} />}
 

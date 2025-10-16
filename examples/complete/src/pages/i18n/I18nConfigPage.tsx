@@ -54,7 +54,7 @@ class BasicConfigDemo extends Fukict {
   render() {
     return (
       <div class="space-y-4">
-        <div class="bg-gray-50 rounded p-4 space-y-2 text-sm">
+        <div class="space-y-2 rounded bg-gray-50 p-4 text-sm">
           <p class="text-gray-700">
             <strong>{demoI18n.t('currentLanguage')}:</strong> {demoI18n.locale}
           </p>
@@ -67,7 +67,7 @@ class BasicConfigDemo extends Fukict {
         </div>
         <div class="flex gap-2">
           <button
-            class={`px-4 py-2 text-sm rounded transition-colors ${
+            class={`rounded px-4 py-2 text-sm transition-colors ${
               demoI18n.locale === 'zh'
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -77,7 +77,7 @@ class BasicConfigDemo extends Fukict {
             中文
           </button>
           <button
-            class={`px-4 py-2 text-sm rounded transition-colors ${
+            class={`rounded px-4 py-2 text-sm transition-colors ${
               demoI18n.locale === 'en'
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -87,7 +87,7 @@ class BasicConfigDemo extends Fukict {
             English
           </button>
           <button
-            class={`px-4 py-2 text-sm rounded transition-colors ${
+            class={`rounded px-4 py-2 text-sm transition-colors ${
               demoI18n.locale === 'ja'
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -151,9 +151,9 @@ class NestedMessagesDemo extends Fukict {
   render() {
     return (
       <div class="space-y-4">
-        <div class="bg-gray-50 rounded p-4 space-y-3">
+        <div class="space-y-3 rounded bg-gray-50 p-4">
           <div class="border-b border-gray-200 pb-2">
-            <h4 class="font-medium text-gray-900 text-base">
+            <h4 class="text-base font-medium text-gray-900">
               {configI18n.t('app.title')}
             </h4>
             <p class="text-sm text-gray-600">
@@ -174,7 +174,7 @@ class NestedMessagesDemo extends Fukict {
         </div>
         <div class="flex gap-2">
           <button
-            class={`px-3 py-1.5 text-sm rounded transition-colors ${
+            class={`rounded px-3 py-1.5 text-sm transition-colors ${
               configI18n.locale === 'en'
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -184,7 +184,7 @@ class NestedMessagesDemo extends Fukict {
             EN
           </button>
           <button
-            class={`px-3 py-1.5 text-sm rounded transition-colors ${
+            class={`rounded px-3 py-1.5 text-sm transition-colors ${
               configI18n.locale === 'zh'
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -236,7 +236,7 @@ class FallbackDemo extends Fukict {
   render() {
     return (
       <div class="space-y-4">
-        <div class="bg-gray-50 rounded p-4 space-y-2 text-sm">
+        <div class="space-y-2 rounded bg-gray-50 p-4 text-sm">
           <p class="text-gray-700">
             <strong>hello:</strong> {fallbackI18n.t('hello')}
           </p>
@@ -252,7 +252,7 @@ class FallbackDemo extends Fukict {
         </div>
         <div class="flex gap-2">
           <button
-            class={`px-3 py-1.5 text-sm rounded transition-colors ${
+            class={`rounded px-3 py-1.5 text-sm transition-colors ${
               fallbackI18n.locale === 'zh'
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -262,7 +262,7 @@ class FallbackDemo extends Fukict {
             中文
           </button>
           <button
-            class={`px-3 py-1.5 text-sm rounded transition-colors ${
+            class={`rounded px-3 py-1.5 text-sm transition-colors ${
               fallbackI18n.locale === 'en'
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -272,7 +272,7 @@ class FallbackDemo extends Fukict {
             EN
           </button>
         </div>
-        <div class="bg-yellow-50 border border-yellow-200 rounded p-3">
+        <div class="rounded border border-yellow-200 bg-yellow-50 p-3">
           <p class="text-xs text-yellow-700">
             <strong>提示:</strong> 当前语言为中文时,"world" 翻译缺失,会自动使用
             fallbackLocale (en) 的翻译
@@ -293,10 +293,10 @@ export class I18nConfigPage extends RouteComponent {
         {/* 创建 I18n 实例 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">
+            <h3 class="mb-1 text-base font-medium text-gray-800">
               创建 I18n 实例
             </h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <p class="text-sm leading-relaxed text-gray-600">
               使用 createI18n 创建多语言实例,定义语言和翻译消息
             </p>
           </div>
@@ -348,8 +348,8 @@ const msg = i18n.t('greeting', { name: 'Alice' });`}
         {/* 消息格式 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">消息格式</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">消息格式</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               支持嵌套结构的翻译消息,便于组织和管理
             </p>
           </div>
@@ -401,10 +401,10 @@ i18n.t('nav.home')       // "首页" (zh) / "Home" (en)`}
         {/* Fallback 语言 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">
+            <h3 class="mb-1 text-base font-medium text-gray-800">
               Fallback 语言
             </h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <p class="text-sm leading-relaxed text-gray-600">
               当当前语言的翻译缺失时,自动使用 fallbackLocale 的翻译
             </p>
           </div>
@@ -443,8 +443,8 @@ i18n.t('greeting')  // "你好,世界!" (存在)`}
         {/* 配置选项 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">配置选项</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">配置选项</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               createI18n 支持的完整配置选项
             </p>
           </div>
@@ -479,10 +479,10 @@ i18n.d(date, options)          // 格式化日期
 i18n.rt(value, unit)           // 格式化相对时间`}
             />
             <DemoBox fukict:slot="demo">
-              <div class="text-sm text-gray-700 space-y-3">
-                <div class="bg-blue-50 border border-blue-200 rounded p-3">
-                  <p class="font-medium text-blue-900 mb-2">配置项:</p>
-                  <ul class="list-disc list-inside space-y-1 text-blue-800 text-xs">
+              <div class="space-y-3 text-sm text-gray-700">
+                <div class="rounded border border-blue-200 bg-blue-50 p-3">
+                  <p class="mb-2 font-medium text-blue-900">配置项:</p>
+                  <ul class="list-inside list-disc space-y-1 text-xs text-blue-800">
                     <li>
                       <strong>defaultLocale:</strong> 默认语言
                     </li>
@@ -497,9 +497,9 @@ i18n.rt(value, unit)           // 格式化相对时间`}
                     </li>
                   </ul>
                 </div>
-                <div class="bg-green-50 border border-green-200 rounded p-3">
-                  <p class="font-medium text-green-900 mb-2">API 方法:</p>
-                  <ul class="list-disc list-inside space-y-1 text-green-800 text-xs">
+                <div class="rounded border border-green-200 bg-green-50 p-3">
+                  <p class="mb-2 font-medium text-green-900">API 方法:</p>
+                  <ul class="list-inside list-disc space-y-1 text-xs text-green-800">
                     <li>
                       <strong>changeLocale(locale):</strong> 切换语言(异步)
                     </li>

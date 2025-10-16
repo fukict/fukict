@@ -56,7 +56,7 @@ class SyncDemo extends Fukict {
 
     return (
       <div class="space-y-4">
-        <div class="bg-gray-50 rounded p-4 space-y-2 text-sm">
+        <div class="space-y-2 rounded bg-gray-50 p-4 text-sm">
           <p class="text-gray-700">
             <strong>Count:</strong> {state.count}
           </p>
@@ -67,19 +67,19 @@ class SyncDemo extends Fukict {
         <div class="space-y-2">
           <div class="flex gap-2">
             <button
-              class="px-3 py-1.5 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
+              class="rounded bg-blue-500 px-3 py-1.5 text-sm text-white hover:bg-blue-600"
               on:click={() => increment()}
             >
               +1
             </button>
             <button
-              class="px-3 py-1.5 bg-green-500 text-white text-sm rounded hover:bg-green-600"
+              class="rounded bg-green-500 px-3 py-1.5 text-sm text-white hover:bg-green-600"
               on:click={() => incrementBy(5)}
             >
               +5
             </button>
             <button
-              class="px-3 py-1.5 bg-red-500 text-white text-sm rounded hover:bg-red-600"
+              class="rounded bg-red-500 px-3 py-1.5 text-sm text-white hover:bg-red-600"
               on:click={() => reset()}
             >
               Reset
@@ -88,7 +88,7 @@ class SyncDemo extends Fukict {
           <div class="flex gap-2">
             <input
               type="text"
-              class="flex-1 px-3 py-1.5 border border-gray-300 rounded text-sm"
+              class="flex-1 rounded border border-gray-300 px-3 py-1.5 text-sm"
               placeholder="Enter item name"
               value={this.inputValue}
               on:input={(e: Event) => {
@@ -97,7 +97,7 @@ class SyncDemo extends Fukict {
               }}
             />
             <button
-              class="px-3 py-1.5 bg-purple-500 text-white text-sm rounded hover:bg-purple-600"
+              class="rounded bg-purple-500 px-3 py-1.5 text-sm text-white hover:bg-purple-600"
               on:click={() => {
                 if (this.inputValue.trim()) {
                   addItem(this.inputValue.trim());
@@ -198,7 +198,7 @@ class AsyncDemo extends Fukict {
 
     return (
       <div class="space-y-4">
-        <div class="bg-gray-50 rounded p-4 space-y-2 text-sm">
+        <div class="space-y-2 rounded bg-gray-50 p-4 text-sm">
           <p class="text-gray-700">
             <strong>Loading:</strong> {state.loading ? 'Yes' : 'No'}
           </p>
@@ -211,30 +211,30 @@ class AsyncDemo extends Fukict {
         </div>
         <div class="flex gap-2">
           <button
-            class="px-3 py-1.5 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 disabled:opacity-50"
+            class="rounded bg-blue-500 px-3 py-1.5 text-sm text-white hover:bg-blue-600 disabled:opacity-50"
             disabled={state.loading}
             on:click={() => void loadUser(1)}
           >
             Load User 1
           </button>
           <button
-            class="px-3 py-1.5 bg-green-500 text-white text-sm rounded hover:bg-green-600 disabled:opacity-50"
+            class="rounded bg-green-500 px-3 py-1.5 text-sm text-white hover:bg-green-600 disabled:opacity-50"
             disabled={state.loading}
             on:click={() => void loadUser(2)}
           >
             Load User 2
           </button>
           <button
-            class="px-3 py-1.5 bg-red-500 text-white text-sm rounded hover:bg-red-600 disabled:opacity-50"
+            class="rounded bg-red-500 px-3 py-1.5 text-sm text-white hover:bg-red-600 disabled:opacity-50"
             disabled={state.loading}
             on:click={() => void logout()}
           >
             Logout
           </button>
         </div>
-        <div class="bg-gray-50 rounded p-3">
-          <p class="text-sm font-medium text-gray-900 mb-2">操作日志:</p>
-          <div class="space-y-1 text-xs text-gray-600 font-mono">
+        <div class="rounded bg-gray-50 p-3">
+          <p class="mb-2 text-sm font-medium text-gray-900">操作日志:</p>
+          <div class="space-y-1 font-mono text-xs text-gray-600">
             {state.logs.length === 0 ? (
               <p class="text-gray-400">点击按钮查看操作日志...</p>
             ) : (
@@ -257,8 +257,8 @@ export class ActionsMutationsPage extends RouteComponent {
         {/* 同步操作 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">同步操作</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">同步操作</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               在 actions 中直接修改状态
             </p>
           </div>
@@ -311,8 +311,8 @@ store.actions.addItem('New Item');`}
         {/* 异步操作 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">异步操作</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">异步操作</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               Actions 可以包含异步逻辑,如 API 调用
             </p>
           </div>
@@ -361,10 +361,10 @@ await store.actions.logout();`}
         {/* Actions 最佳实践 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">
+            <h3 class="mb-1 text-base font-medium text-gray-800">
               Actions 最佳实践
             </h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <p class="text-sm leading-relaxed text-gray-600">
               如何正确使用 Actions
             </p>
           </div>

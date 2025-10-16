@@ -7,29 +7,29 @@ export class DemoDashboardLayout extends RouteComponent {
   render() {
     return (
       <div class="space-y-3">
-        <div class="p-3 bg-yellow-50 border border-yellow-300 rounded-lg">
-          <h4 class="text-sm font-medium text-yellow-900 mb-2">仪表板布局</h4>
-          <p class="text-xs text-yellow-700 mb-2">
+        <div class="rounded-lg border border-yellow-300 bg-yellow-50 p-3">
+          <h4 class="mb-2 text-sm font-medium text-yellow-900">仪表板布局</h4>
+          <p class="mb-2 text-xs text-yellow-700">
             这是一个嵌套路由父组件，下方是子路由出口
           </p>
-          <div class="flex gap-2 mt-2">
+          <div class="mt-2 flex gap-2">
             <Link
               to="/router/demo/dashboard/overview"
-              class="px-2 py-1 text-xs bg-yellow-600 text-white rounded hover:bg-yellow-700"
+              class="rounded bg-yellow-600 px-2 py-1 text-xs text-white hover:bg-yellow-700"
               activeClass="ring-2 ring-yellow-800"
             >
               总览
             </Link>
             <Link
               to="/router/demo/dashboard/stats"
-              class="px-2 py-1 text-xs bg-yellow-600 text-white rounded hover:bg-yellow-700"
+              class="rounded bg-yellow-600 px-2 py-1 text-xs text-white hover:bg-yellow-700"
               activeClass="ring-2 ring-yellow-800"
             >
               统计
             </Link>
             <Link
               to="/router/demo/dashboard/settings"
-              class="px-2 py-1 text-xs bg-yellow-600 text-white rounded hover:bg-yellow-700"
+              class="rounded bg-yellow-600 px-2 py-1 text-xs text-white hover:bg-yellow-700"
               activeClass="ring-2 ring-yellow-800"
             >
               设置

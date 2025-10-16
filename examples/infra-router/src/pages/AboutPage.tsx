@@ -18,7 +18,7 @@ export class AboutPage extends RouteComponent {
             applications. It provides:
           </p>
 
-          <ul class="list-disc pl-6 space-y-2 mt-4 text-gray-700">
+          <ul class="mt-4 list-disc space-y-2 pl-6 text-gray-700">
             <li>Hash and Browser History modes</li>
             <li>Dynamic route parameters</li>
             <li>Nested routes and layouts</li>
@@ -28,8 +28,8 @@ export class AboutPage extends RouteComponent {
             <li>Active link detection</li>
           </ul>
 
-          <div class="mt-8 p-4 bg-blue-50 rounded-lg">
-            <h3 class="font-semibold text-blue-900 mb-2">Current Route Info</h3>
+          <div class="mt-8 rounded-lg bg-blue-50 p-4">
+            <h3 class="mb-2 font-semibold text-blue-900">Current Route Info</h3>
             <div class="space-y-1 text-sm">
               <p class="text-blue-800">
                 <strong>Path:</strong> {this.route.path}
@@ -45,13 +45,13 @@ export class AboutPage extends RouteComponent {
 
           <div class="mt-6 flex gap-4">
             <button
-              class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+              class="rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600"
               on:click={() => this.back()}
             >
               Go Back
             </button>
             <button
-              class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
               on:click={() => this.push('/')}
             >
               Back to Home

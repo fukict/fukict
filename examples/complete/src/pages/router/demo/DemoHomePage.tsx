@@ -6,12 +6,12 @@ import { RouteComponent } from '@fukict/router';
 export class DemoHomePage extends RouteComponent {
   render() {
     return (
-      <div class="p-4 bg-green-50 border border-green-300 rounded-lg">
-        <h4 class="text-sm font-medium text-green-900 mb-2">主页</h4>
+      <div class="rounded-lg border border-green-300 bg-green-50 p-4">
+        <h4 class="mb-2 text-sm font-medium text-green-900">主页</h4>
         <p class="text-xs text-green-700">
           欢迎来到路由演示！点击上方链接切换页面。
         </p>
-        <div class="mt-3 p-2 bg-green-100 rounded text-xs text-green-800">
+        <div class="mt-3 rounded bg-green-100 p-2 text-xs text-green-800">
           <p>当前路径: {this.route.path}</p>
         </div>
       </div>

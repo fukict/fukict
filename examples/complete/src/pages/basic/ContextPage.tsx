@@ -25,7 +25,7 @@ class ThemedButton extends Fukict {
 
     return (
       <button
-        class={`px-4 py-2 rounded text-sm font-medium ${
+        class={`rounded px-4 py-2 text-sm font-medium ${
           theme.mode === 'dark'
             ? 'bg-gray-800 text-white'
             : 'bg-blue-500 text-white'
@@ -61,7 +61,7 @@ class ContextDemo extends Fukict {
       <div class="space-y-4">
         <div class="flex gap-2">
           <button
-            class="px-4 py-2 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
+            class="rounded bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600"
             on:click={() => {
               this.theme = 'light';
               this.updateContext();
@@ -71,7 +71,7 @@ class ContextDemo extends Fukict {
             Light Mode
           </button>
           <button
-            class="px-4 py-2 bg-gray-800 text-white text-sm rounded hover:bg-gray-900"
+            class="rounded bg-gray-800 px-4 py-2 text-sm text-white hover:bg-gray-900"
             on:click={() => {
               this.theme = 'dark';
               this.updateContext();
@@ -82,7 +82,7 @@ class ContextDemo extends Fukict {
           </button>
         </div>
 
-        <div class="p-4 border border-gray-300 rounded bg-gray-50">
+        <div class="rounded border border-gray-300 bg-gray-50 p-4">
           <ThemedButton />
         </div>
       </div>
@@ -100,10 +100,10 @@ export class ContextPage extends RouteComponent {
         {/* Context 基础 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">
+            <h3 class="mb-1 text-base font-medium text-gray-800">
               Context 上下文
             </h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <p class="text-sm leading-relaxed text-gray-600">
               使用 Context 在组件树中共享数据,无需逐层传递 props
             </p>
           </div>

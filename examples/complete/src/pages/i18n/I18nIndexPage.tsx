@@ -142,7 +142,7 @@ class LanguageSwitcher extends Fukict {
         <select
           value={currentLocale}
           on:change={e => this.handleChange(e)}
-          class="px-3 py-1.5 bg-white border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          class="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
         >
           <option value="zh">中文</option>
           <option value="en">English</option>
@@ -187,7 +187,7 @@ class InteractiveForm extends Fukict {
               this.update();
             }}
             placeholder={demoI18n.t('form.namePlaceholder')}
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
         </div>
 
@@ -198,7 +198,7 @@ class InteractiveForm extends Fukict {
           </label>
           <input
             type="number"
-            value={this.age}
+            value={String(this.age)}
             on:input={(e: Event) => {
               this.age = parseInt(
                 (e.target as HTMLInputElement).value || '0',
@@ -206,7 +206,7 @@ class InteractiveForm extends Fukict {
               );
               this.update();
             }}
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
         </div>
 
@@ -217,7 +217,7 @@ class InteractiveForm extends Fukict {
           </label>
           <input
             type="number"
-            value={this.itemCount}
+            value={String(this.itemCount)}
             on:input={(e: Event) => {
               this.itemCount = parseInt(
                 (e.target as HTMLInputElement).value || '0',
@@ -225,12 +225,12 @@ class InteractiveForm extends Fukict {
               );
               this.update();
             }}
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
         </div>
 
         {/* 结果展示 */}
-        <div class="p-4 bg-green-50 border border-green-300 rounded-lg space-y-2">
+        <div class="space-y-2 rounded-lg border border-green-300 bg-green-50 p-4">
           <p class="text-sm text-green-900">
             {demoI18n.t('form.greeting', { name: this.name, age: this.age })}
           </p>
@@ -264,14 +264,14 @@ class FormattingDemo extends Fukict {
           {demoI18n.t('formatting.title')}
         </h4>
         <div class="space-y-2">
-          <div class="p-3 bg-blue-50 border border-blue-200 rounded">
+          <div class="rounded border border-blue-200 bg-blue-50 p-3">
             <p class="text-sm text-blue-900">
               {demoI18n.t('formatting.number', {
                 value: demoI18n.n(1234567.89),
               })}
             </p>
           </div>
-          <div class="p-3 bg-purple-50 border border-purple-200 rounded">
+          <div class="rounded border border-purple-200 bg-purple-50 p-3">
             <p class="text-sm text-purple-900">
               {demoI18n.t('formatting.currency', {
                 value: demoI18n.n(1234.56, {
@@ -281,14 +281,14 @@ class FormattingDemo extends Fukict {
               })}
             </p>
           </div>
-          <div class="p-3 bg-orange-50 border border-orange-200 rounded">
+          <div class="rounded border border-orange-200 bg-orange-50 p-3">
             <p class="text-sm text-orange-900">
               {demoI18n.t('formatting.date', {
                 value: demoI18n.d(new Date(), { dateStyle: 'long' }),
               })}
             </p>
           </div>
-          <div class="p-3 bg-pink-50 border border-pink-200 rounded">
+          <div class="rounded border border-pink-200 bg-pink-50 p-3">
             <p class="text-sm text-pink-900">
               {demoI18n.t('formatting.relativeTime', {
                 value: demoI18n.rt(-2, 'day'),
@@ -323,25 +323,25 @@ class FeaturesDisplay extends Fukict {
         </h4>
         <ul class="space-y-2">
           <li class="flex items-start gap-2">
-            <span class="text-green-600 mt-1">✓</span>
+            <span class="mt-1 text-green-600">✓</span>
             <span class="text-sm text-gray-700">
               {demoI18n.t('features.item1')}
             </span>
           </li>
           <li class="flex items-start gap-2">
-            <span class="text-green-600 mt-1">✓</span>
+            <span class="mt-1 text-green-600">✓</span>
             <span class="text-sm text-gray-700">
               {demoI18n.t('features.item2')}
             </span>
           </li>
           <li class="flex items-start gap-2">
-            <span class="text-green-600 mt-1">✓</span>
+            <span class="mt-1 text-green-600">✓</span>
             <span class="text-sm text-gray-700">
               {demoI18n.t('features.item3')}
             </span>
           </li>
           <li class="flex items-start gap-2">
-            <span class="text-green-600 mt-1">✓</span>
+            <span class="mt-1 text-green-600">✓</span>
             <span class="text-sm text-gray-700">
               {demoI18n.t('features.item4')}
             </span>
@@ -374,10 +374,10 @@ export class I18nIndexPage extends RouteComponent {
         {/* 创建 I18n 实例 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">
+            <h3 class="mb-1 text-base font-medium text-gray-800">
               创建 I18n 实例
             </h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <p class="text-sm leading-relaxed text-gray-600">
               定义多语言消息和配置
             </p>
           </div>
@@ -418,8 +418,8 @@ const i18n = createI18n({
             <DemoBox fukict:slot="demo">
               <div class="space-y-3">
                 <LanguageSwitcher />
-                <div class="p-3 bg-blue-50 border border-blue-200 rounded">
-                  <p class="text-sm text-blue-900 font-medium mb-1">
+                <div class="rounded border border-blue-200 bg-blue-50 p-3">
+                  <p class="mb-1 text-sm font-medium text-blue-900">
                     {demoI18n.t('welcome')}
                   </p>
                   <p class="text-xs text-blue-700">
@@ -434,8 +434,8 @@ const i18n = createI18n({
         {/* 基础翻译 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">基础翻译</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">基础翻译</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               使用 t() 函数进行翻译和参数插值
             </p>
           </div>
@@ -467,10 +467,10 @@ const feature = i18n.t('features.item1');
         {/* 数字和日期格式化 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">
+            <h3 class="mb-1 text-base font-medium text-gray-800">
               数字和日期格式化
             </h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <p class="text-sm leading-relaxed text-gray-600">
               根据当前语言环境格式化数字、货币和日期
             </p>
           </div>
@@ -512,8 +512,8 @@ const relative = i18n.rt(-2, 'day');
         {/* 语言切换 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">语言切换</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">语言切换</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               动态切换应用语言并订阅变化
             </p>
           </div>
@@ -570,16 +570,16 @@ const relative = i18n.rt(-2, 'day');
         {/* 关键概念 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">关键概念</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">关键概念</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               理解 @fukict/i18n 的核心概念和使用模式
             </p>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
-            <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <h4 class="text-sm font-medium text-blue-900 mb-2">类型安全</h4>
-              <ul class="text-xs text-blue-700 space-y-1">
+            <div class="rounded-lg border border-blue-200 bg-blue-50 p-4">
+              <h4 class="mb-2 text-sm font-medium text-blue-900">类型安全</h4>
+              <ul class="space-y-1 text-xs text-blue-700">
                 <li>• 翻译键自动补全</li>
                 <li>• 参数类型检查</li>
                 <li>• 编译时错误提示</li>
@@ -587,11 +587,11 @@ const relative = i18n.rt(-2, 'day');
               </ul>
             </div>
 
-            <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
-              <h4 class="text-sm font-medium text-green-900 mb-2">
+            <div class="rounded-lg border border-green-200 bg-green-50 p-4">
+              <h4 class="mb-2 text-sm font-medium text-green-900">
                 响应式切换
               </h4>
-              <ul class="text-xs text-green-700 space-y-1">
+              <ul class="space-y-1 text-xs text-green-700">
                 <li>• subscribe() 订阅语言变化</li>
                 <li>• changeLocale() 异步切换语言</li>
                 <li>• 组件自动重新渲染</li>
@@ -599,9 +599,9 @@ const relative = i18n.rt(-2, 'day');
               </ul>
             </div>
 
-            <div class="p-4 bg-purple-50 border border-purple-200 rounded-lg">
-              <h4 class="text-sm font-medium text-purple-900 mb-2">格式化</h4>
-              <ul class="text-xs text-purple-700 space-y-1">
+            <div class="rounded-lg border border-purple-200 bg-purple-50 p-4">
+              <h4 class="mb-2 text-sm font-medium text-purple-900">格式化</h4>
+              <ul class="space-y-1 text-xs text-purple-700">
                 <li>• n() 格式化数字</li>
                 <li>• d() 格式化日期</li>
                 <li>• rt() 相对时间</li>
@@ -609,9 +609,9 @@ const relative = i18n.rt(-2, 'day');
               </ul>
             </div>
 
-            <div class="p-4 bg-orange-50 border border-orange-200 rounded-lg">
-              <h4 class="text-sm font-medium text-orange-900 mb-2">最佳实践</h4>
-              <ul class="text-xs text-orange-700 space-y-1">
+            <div class="rounded-lg border border-orange-200 bg-orange-50 p-4">
+              <h4 class="mb-2 text-sm font-medium text-orange-900">最佳实践</h4>
+              <ul class="space-y-1 text-xs text-orange-700">
                 <li>• 必须设置 defaultLocale</li>
                 <li>• 使用 as const 定义消息</li>
                 <li>• 在 mounted 订阅变化</li>

@@ -14,7 +14,8 @@
   "plugins": [
     "@trivago/prettier-plugin-sort-imports",
     "prettier-plugin-sort-json",
-    "prettier-plugin-packagejson"
+    "prettier-plugin-packagejson",
+    "prettier-plugin-tailwindcss"
   ],
   "printWidth": 80,
   "semi": true,

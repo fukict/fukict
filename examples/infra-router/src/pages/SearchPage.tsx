@@ -22,16 +22,16 @@ export class SearchPage extends RouteComponent {
           <h1 class="text-3xl font-bold text-gray-900">Search Results</h1>
         </div>
 
-        <div class="bg-white border rounded-lg p-6">
+        <div class="rounded-lg border bg-white p-6">
           <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="mb-2 block text-sm font-medium text-gray-700">
               Search Query
             </label>
             <input
               type="text"
               value={q}
               placeholder="Enter search term..."
-              class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="w-full rounded-lg border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
               on:input={(e: Event) => {
                 const target = e.target as HTMLInputElement;
                 this.updateQuery({ q: target.value, page: '1' });
@@ -39,9 +39,9 @@ export class SearchPage extends RouteComponent {
             />
           </div>
 
-          <div class="p-4 bg-gray-50 rounded mb-4">
-            <h3 class="font-semibold mb-2">Current Query Parameters:</h3>
-            <div class="text-sm space-y-1">
+          <div class="mb-4 rounded bg-gray-50 p-4">
+            <h3 class="mb-2 font-semibold">Current Query Parameters:</h3>
+            <div class="space-y-1 text-sm">
               <p>
                 <strong>q:</strong> {q || '(empty)'}
               </p>
@@ -56,7 +56,7 @@ export class SearchPage extends RouteComponent {
               <h3 class="font-semibold">Results for "{q}":</h3>
               <div class="space-y-2">
                 {Array.from({ length: 5 }, (_, i) => (
-                  <div class="p-4 border rounded hover:bg-gray-50">
+                  <div class="rounded border p-4 hover:bg-gray-50">
                     <h4 class="font-semibold text-blue-600">
                       Result {(currentPage - 1) * 5 + i + 1}: {q} example
                     </h4>
@@ -67,9 +67,9 @@ export class SearchPage extends RouteComponent {
                 ))}
               </div>
 
-              <div class="flex items-center justify-center gap-2 mt-6 pt-6 border-t">
+              <div class="mt-6 flex items-center justify-center gap-2 border-t pt-6">
                 <button
-                  class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
+                  class="rounded bg-gray-200 px-4 py-2 hover:bg-gray-300 disabled:opacity-50"
                   disabled={currentPage <= 1}
                   on:click={() =>
                     this.updateQuery({ page: String(currentPage - 1) })
@@ -79,7 +79,7 @@ export class SearchPage extends RouteComponent {
                 </button>
                 <span class="px-4 py-2">Page {currentPage}</span>
                 <button
-                  class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                  class="rounded bg-gray-200 px-4 py-2 hover:bg-gray-300"
                   on:click={() =>
                     this.updateQuery({ page: String(currentPage + 1) })
                   }
@@ -89,7 +89,7 @@ export class SearchPage extends RouteComponent {
               </div>
             </div>
           ) : (
-            <div class="text-center py-8 text-gray-500">
+            <div class="py-8 text-center text-gray-500">
               Enter a search term to see results
             </div>
           )}
@@ -97,13 +97,13 @@ export class SearchPage extends RouteComponent {
 
         <div class="flex gap-4">
           <button
-            class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+            class="rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600"
             on:click={() => this.back()}
           >
             Go Back
           </button>
           <button
-            class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
             on:click={() => this.push('/')}
           >
             Back to Home

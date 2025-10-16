@@ -72,19 +72,19 @@ export class SubscriptionMonitor extends Fukict {
 
   render(): VNode {
     return (
-      <div class="border rounded-lg p-6 bg-gradient-to-br from-purple-50 to-pink-50 shadow-sm">
-        <h2 class="text-2xl font-bold mb-4">Subscription Monitor</h2>
-        <p class="text-gray-600 mb-4">
+      <div class="rounded-lg border bg-gradient-to-br from-purple-50 to-pink-50 p-6 shadow-sm">
+        <h2 class="mb-4 text-2xl font-bold">Subscription Monitor</h2>
+        <p class="mb-4 text-gray-600">
           Real-time tracking of all store updates (demonstrates cross-store
           subscriptions)
         </p>
 
         <div class="space-y-3">
           {/* Counter Store Monitor */}
-          <div class="bg-white rounded p-3 border-l-4 border-green-500">
-            <div class="flex justify-between items-start mb-1">
+          <div class="rounded border-l-4 border-green-500 bg-white p-3">
+            <div class="mb-1 flex items-start justify-between">
               <span class="font-semibold text-green-700">Counter Store</span>
-              <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">
+              <span class="rounded bg-green-100 px-2 py-1 text-xs text-green-700">
                 {this.counterUpdateCount} updates
               </span>
             </div>
@@ -92,10 +92,10 @@ export class SubscriptionMonitor extends Fukict {
           </div>
 
           {/* Todo Store Monitor */}
-          <div class="bg-white rounded p-3 border-l-4 border-blue-500">
-            <div class="flex justify-between items-start mb-1">
+          <div class="rounded border-l-4 border-blue-500 bg-white p-3">
+            <div class="mb-1 flex items-start justify-between">
               <span class="font-semibold text-blue-700">Todo Store</span>
-              <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
+              <span class="rounded bg-blue-100 px-2 py-1 text-xs text-blue-700">
                 {this.todoUpdateCount} updates
               </span>
             </div>
@@ -103,10 +103,10 @@ export class SubscriptionMonitor extends Fukict {
           </div>
 
           {/* User Store Monitor */}
-          <div class="bg-white rounded p-3 border-l-4 border-purple-500">
-            <div class="flex justify-between items-start mb-1">
+          <div class="rounded border-l-4 border-purple-500 bg-white p-3">
+            <div class="mb-1 flex items-start justify-between">
               <span class="font-semibold text-purple-700">User Store</span>
-              <span class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded">
+              <span class="rounded bg-purple-100 px-2 py-1 text-xs text-purple-700">
                 {this.userUpdateCount} updates
               </span>
             </div>
@@ -114,7 +114,7 @@ export class SubscriptionMonitor extends Fukict {
           </div>
         </div>
 
-        <div class="mt-4 pt-4 border-t border-purple-200">
+        <div class="mt-4 border-t border-purple-200 pt-4">
           <p class="text-xs text-gray-500">
             💡 This component subscribes to all three stores simultaneously.
             Notice how each store update is independent and doesn't trigger

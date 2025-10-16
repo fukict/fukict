@@ -11,7 +11,7 @@ export class Sidebar extends Fukict<{ router: Router }> {
   private sidebarItems: SidebarItem[] = [];
   private expandedGroups: Set<string> = new Set();
 
-  constructor(props: any) {
+  constructor(props: { router: Router }) {
     super(props);
     this.sidebarItems = getSidebarItems();
 
@@ -38,12 +38,12 @@ export class Sidebar extends Fukict<{ router: Router }> {
 
   render() {
     return (
-      <aside class="w-64 bg-gray-300 border-r border-gray-300 overflow-y-auto flex-shrink-0">
+      <aside class="w-64 flex-shrink-0 overflow-y-auto border-r border-gray-300 bg-gray-300">
         <div class="p-5">
           {/* Logo */}
           <div class="mb-8 px-2">
             <h1 class="text-base font-semibold text-gray-900">Fukict</h1>
-            <p class="text-xs text-gray-500 mt-0.5">Complete Examples</p>
+            <p class="mt-0.5 text-xs text-gray-500">Complete Examples</p>
           </div>
 
           {/* Navigation */}
@@ -57,12 +57,12 @@ export class Sidebar extends Fukict<{ router: Router }> {
                   <div class="mb-4">
                     {/* 分组标题 */}
                     <button
-                      class="w-full flex items-center justify-between px-2 py-1.5 text-xs font-medium text-gray-700 hover:text-gray-900 rounded transition-colors"
+                      class="flex w-full items-center justify-between rounded px-2 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:text-gray-900"
                       on:click={() => this.toggleGroup(item.path)}
                     >
                       <span class="tracking-wide">{item.title}</span>
                       <svg
-                        class={`w-3.5 h-3.5 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                        class={`h-3.5 w-3.5 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -87,7 +87,7 @@ export class Sidebar extends Fukict<{ router: Router }> {
                                 ? 'bg-gray-200 text-gray-900 font-medium'
                                 : 'text-gray-700 hover:text-gray-900 hover:bg-gray-200'
                             }
-                            class={`block px-2 py-1.5 text-xs rounded transition-all`}
+                            class={`block rounded px-2 py-1.5 text-xs transition-all`}
                           >
                             {child.title}
                           </Link>
@@ -107,7 +107,7 @@ export class Sidebar extends Fukict<{ router: Router }> {
                       ? 'bg-gray-200 text-gray-900'
                       : 'text-gray-700 hover:text-gray-900 hover:bg-gray-200'
                   }
-                  class={`block px-2 py-1.5 text-xs font-medium rounded transition-all`}
+                  class={`block rounded px-2 py-1.5 text-xs font-medium transition-all`}
                 >
                   {item.title}
                 </Link>

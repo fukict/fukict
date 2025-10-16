@@ -11,9 +11,9 @@ import { SplitView } from '../../components/SplitView';
 class RouteConfigDemo extends Fukict<{ currentPath: string }> {
   render() {
     return (
-      <div class="text-sm text-gray-700 space-y-3">
-        <div class="bg-blue-50 border border-blue-200 rounded p-3">
-          <p class="font-medium text-blue-900 mb-2">当前路由信息:</p>
+      <div class="space-y-3 text-sm text-gray-700">
+        <div class="rounded border border-blue-200 bg-blue-50 p-3">
+          <p class="mb-2 font-medium text-blue-900">当前路由信息:</p>
           <p>
             <strong>Path:</strong> {this.props.currentPath || '/router/config'}
           </p>
@@ -40,10 +40,10 @@ class DynamicRouteDemo extends Fukict {
 
   render() {
     return (
-      <div class="text-sm text-gray-700 space-y-3">
+      <div class="space-y-3 text-sm text-gray-700">
         <div class="space-y-2">
           <p class="font-medium text-gray-900">示例路由参数:</p>
-          <div class="bg-gray-50 rounded p-3 space-y-1">
+          <div class="space-y-1 rounded bg-gray-50 p-3">
             <p>
               <strong>User ID:</strong> {this.userId}
             </p>
@@ -55,8 +55,8 @@ class DynamicRouteDemo extends Fukict {
             </p>
           </div>
         </div>
-        <div class="bg-yellow-50 border border-yellow-200 rounded p-3 text-xs">
-          <p class="font-medium text-yellow-900 mb-1">提示:</p>
+        <div class="rounded border border-yellow-200 bg-yellow-50 p-3 text-xs">
+          <p class="mb-1 font-medium text-yellow-900">提示:</p>
           <p class="text-yellow-700">
             在组件中通过 this.route.params 访问动态参数
           </p>
@@ -72,23 +72,23 @@ class DynamicRouteDemo extends Fukict {
 class MetaDemo extends Fukict {
   render() {
     return (
-      <div class="text-sm text-gray-700 space-y-3">
+      <div class="space-y-3 text-sm text-gray-700">
         <p class="font-medium text-gray-900">常见 meta 用途:</p>
         <div class="space-y-2">
-          <div class="bg-gray-50 rounded p-3">
-            <p class="font-medium text-gray-900 mb-1">页面标题</p>
+          <div class="rounded bg-gray-50 p-3">
+            <p class="mb-1 font-medium text-gray-900">页面标题</p>
             <code class="text-xs">meta: {'{ title: "管理后台" }'}</code>
           </div>
-          <div class="bg-gray-50 rounded p-3">
-            <p class="font-medium text-gray-900 mb-1">权限控制</p>
+          <div class="rounded bg-gray-50 p-3">
+            <p class="mb-1 font-medium text-gray-900">权限控制</p>
             <code class="text-xs">meta: {'{ requiresAuth: true }'}</code>
           </div>
-          <div class="bg-gray-50 rounded p-3">
-            <p class="font-medium text-gray-900 mb-1">角色限制</p>
+          <div class="rounded bg-gray-50 p-3">
+            <p class="mb-1 font-medium text-gray-900">角色限制</p>
             <code class="text-xs">meta: {'{ roles: ["admin"] }'}</code>
           </div>
         </div>
-        <p class="text-gray-600 text-xs mt-2">
+        <p class="mt-2 text-xs text-gray-600">
           可以在导航守卫中检查 meta 信息来实现权限控制
         </p>
       </div>
@@ -106,8 +106,8 @@ export class RouterConfigPage extends RouteComponent {
         {/* 基础配置 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">基础配置</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">基础配置</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               定义路由规则,支持嵌套路由、重定向、路由守卫等功能
             </p>
           </div>
@@ -146,8 +146,8 @@ export const routes: RouteConfig[] = [
         {/* 嵌套路由 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">嵌套路由</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">嵌套路由</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               通过 children 配置嵌套路由
             </p>
           </div>
@@ -186,9 +186,9 @@ export class DashboardPage extends RouteComponent {
 }`}
             />
             <DemoBox fukict:slot="demo">
-              <div class="text-sm text-gray-700 space-y-2">
+              <div class="space-y-2 text-sm text-gray-700">
                 <p class="font-medium text-gray-900">关键点:</p>
-                <ul class="list-disc list-inside space-y-1 ml-2">
+                <ul class="ml-2 list-inside list-disc space-y-1">
                   <li>父路由组件需要包含 RouterView</li>
                   <li>子路由路径会拼接到父路径后</li>
                   <li>redirect 可以设置默认子路由</li>
@@ -202,8 +202,8 @@ export class DashboardPage extends RouteComponent {
         {/* 动态路由 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">动态路由</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">动态路由</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               使用 :param 语法定义动态参数
             </p>
           </div>
@@ -239,8 +239,8 @@ export class UserPage extends RouteComponent {
         {/* 路由元信息 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">路由元信息</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">路由元信息</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               使用 meta 字段存储路由相关的额外信息
             </p>
           </div>

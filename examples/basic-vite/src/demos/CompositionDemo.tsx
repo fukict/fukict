@@ -70,7 +70,7 @@ const Alert = ({ type = 'info', title, children }: AlertProps) => {
   const style = typeStyles[type];
 
   return (
-    <div class={`${style.bg} border-l-4 ${style.border} p-4 rounded`}>
+    <div class={`${style.bg} border-l-4 ${style.border} rounded p-4`}>
       <div class="flex items-start gap-3">
         <span class="text-2xl">{style.icon}</span>
         <div class="flex-1">
@@ -89,9 +89,9 @@ export const CompositionDemo = () => {
 
   return (
     <div>
-      <h2 class="text-3xl font-bold mb-4">组件组合</h2>
+      <h2 class="mb-4 text-3xl font-bold">组件组合</h2>
 
-      <div class="bg-violet-50 border-l-4 border-violet-500 p-4 mb-6">
+      <div class="mb-6 border-l-4 border-violet-500 bg-violet-50 p-4">
         <p class="text-sm text-gray-700">
           <strong>组件组合：</strong>
           通过组合小的、专注的组件来构建复杂的用户界面
@@ -100,8 +100,8 @@ export const CompositionDemo = () => {
 
       <div class="space-y-6">
         {/* Button 组件 */}
-        <div class="bg-white rounded-lg shadow p-6">
-          <h3 class="text-xl font-semibold mb-4">1. Button 组件</h3>
+        <div class="rounded-lg bg-white p-6 shadow">
+          <h3 class="mb-4 text-xl font-semibold">1. Button 组件</h3>
           <div class="space-y-3">
             <div class="flex gap-2">
               <Button onClick={() => handleButtonClick('主要按钮')}>
@@ -120,7 +120,7 @@ export const CompositionDemo = () => {
                 危险按钮
               </Button>
             </div>
-            <div class="flex gap-2 items-center">
+            <div class="flex items-center gap-2">
               <Button size="sm" onClick={() => handleButtonClick('小按钮')}>
                 小按钮
               </Button>
@@ -132,7 +132,7 @@ export const CompositionDemo = () => {
               </Button>
             </div>
           </div>
-          <pre class="mt-4 bg-gray-900 text-gray-100 p-3 rounded text-sm overflow-x-auto">
+          <pre class="mt-4 overflow-x-auto rounded bg-gray-900 p-3 text-sm text-gray-100">
             <code>{`<Button variant="primary" size="md">
   主要按钮
 </Button>`}</code>
@@ -140,8 +140,8 @@ export const CompositionDemo = () => {
         </div>
 
         {/* Alert 组件 */}
-        <div class="bg-white rounded-lg shadow p-6">
-          <h3 class="text-xl font-semibold mb-4">2. Alert 组件</h3>
+        <div class="rounded-lg bg-white p-6 shadow">
+          <h3 class="mb-4 text-xl font-semibold">2. Alert 组件</h3>
           <div class="space-y-3">
             <Alert type="info" title="提示信息">
               这是一条普通的提示信息，用于向用户展示一般性的内容。
@@ -156,7 +156,7 @@ export const CompositionDemo = () => {
               操作失败，请检查输入并重试。
             </Alert>
           </div>
-          <pre class="mt-4 bg-gray-900 text-gray-100 p-3 rounded text-sm overflow-x-auto">
+          <pre class="mt-4 overflow-x-auto rounded bg-gray-900 p-3 text-sm text-gray-100">
             <code>{`<Alert type="success" title="操作成功">
   你的操作已成功完成！
 </Alert>`}</code>
@@ -164,8 +164,8 @@ export const CompositionDemo = () => {
         </div>
 
         {/* 组合使用 */}
-        <div class="bg-white rounded-lg shadow p-6">
-          <h3 class="text-xl font-semibold mb-4">3. 组合使用</h3>
+        <div class="rounded-lg bg-white p-6 shadow">
+          <h3 class="mb-4 text-xl font-semibold">3. 组合使用</h3>
           <Alert type="info" title="确认操作">
             <p class="mb-3">你确定要执行此操作吗？此操作不可撤销。</p>
             <div class="flex gap-2">
@@ -184,7 +184,7 @@ export const CompositionDemo = () => {
         </div>
       </div>
 
-      <div class="mt-6 bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
+      <div class="mt-6 overflow-x-auto rounded-lg bg-gray-900 p-4 text-gray-100">
         <pre class="text-sm">
           <code>{`// 定义小组件
 const Button = ({ variant, children, onClick }) => {

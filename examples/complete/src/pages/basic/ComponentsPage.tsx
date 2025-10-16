@@ -10,7 +10,7 @@ import { SplitView } from '../../components/SplitView';
  */
 const HelloWorld = () => {
   return (
-    <div class="text-gray-700 text-sm">
+    <div class="text-sm text-gray-700">
       <p>Hello World from Function Component!</p>
     </div>
   );
@@ -25,9 +25,9 @@ class CounterDemo extends Fukict {
   render() {
     return (
       <div class="space-y-3">
-        <p class="text-gray-700 text-lg">Count: {this.count}</p>
+        <p class="text-lg text-gray-700">Count: {this.count}</p>
         <button
-          class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+          class="rounded bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-600"
           on:click={() => {
             this.count++;
             this.update();
@@ -58,8 +58,8 @@ class LifecycleDemo extends Fukict {
   render() {
     return (
       <div class="space-y-2">
-        <p class="text-gray-700 text-sm font-medium">Lifecycle Logs:</p>
-        <div class="bg-gray-50 rounded p-3 text-xs text-gray-600 space-y-1">
+        <p class="text-sm font-medium text-gray-700">Lifecycle Logs:</p>
+        <div class="space-y-1 rounded bg-gray-50 p-3 text-xs text-gray-600">
           {this.logs.length === 0 ? (
             <p>No logs yet...</p>
           ) : (
@@ -82,10 +82,10 @@ export class ComponentsPage extends RouteComponent {
         {/* 函数组件示例 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">
+            <h3 class="mb-1 text-base font-medium text-gray-800">
               函数组件 (defineFukict)
             </h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <p class="text-sm leading-relaxed text-gray-600">
               使用 defineFukict 创建函数组件的方法和最佳实践
             </p>
           </div>
@@ -112,10 +112,10 @@ const HelloWorld = defineFukict(() => {
         {/* 类组件示例 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">
+            <h3 class="mb-1 text-base font-medium text-gray-800">
               类组件 (Fukict)
             </h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <p class="text-sm leading-relaxed text-gray-600">
               使用 Fukict 类创建组件的方法,支持状态管理和更新
             </p>
           </div>
@@ -152,8 +152,8 @@ export class Counter extends Fukict {
         {/* 生命周期 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">生命周期</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">生命周期</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               组件生命周期钩子: mounted, beforeUnmount 等
             </p>
           </div>

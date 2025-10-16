@@ -14,10 +14,10 @@ export class InstallationPage extends RouteComponent {
         {/* TypeScript 配置 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">
+            <h3 class="mb-1 text-base font-medium text-gray-800">
               TypeScript 配置
             </h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <p class="text-sm leading-relaxed text-gray-600">
               配置 tsconfig.json 以支持 JSX
             </p>
           </div>
@@ -41,17 +41,17 @@ export class InstallationPage extends RouteComponent {
 }`}
             />
             <DemoBox fukict:slot="demo">
-              <div class="text-sm text-gray-700 space-y-2">
+              <div class="space-y-2 text-sm text-gray-700">
                 <p>
                   <strong class="text-gray-900">jsx: "preserve"</strong>
                 </p>
                 <p class="ml-3">保持 JSX 语法,让 Vite 插件处理</p>
                 <p>
-                  <strong class="text-gray-900 mt-2">jsxImportSource</strong>
+                  <strong class="mt-2 text-gray-900">jsxImportSource</strong>
                 </p>
                 <p class="ml-3">指定 JSX 运行时来源为 @fukict/basic</p>
                 <p>
-                  <strong class="text-gray-900 mt-2">strict: true</strong>
+                  <strong class="mt-2 text-gray-900">strict: true</strong>
                 </p>
                 <p class="ml-3">启用严格类型检查(推荐)</p>
               </div>
@@ -62,8 +62,8 @@ export class InstallationPage extends RouteComponent {
         {/* Babel 配置 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">Babel 配置</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">Babel 配置</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               如果不使用 Vite,可以配置 Babel 来编译 JSX
             </p>
           </div>
@@ -88,9 +88,9 @@ module.exports = {
 };`}
             />
             <DemoBox fukict:slot="demo">
-              <div class="text-sm text-gray-700 space-y-2">
+              <div class="space-y-2 text-sm text-gray-700">
                 <p>@fukict/babel-preset 提供:</p>
-                <ul class="list-disc list-inside space-y-1 ml-2">
+                <ul class="ml-2 list-inside list-disc space-y-1">
                   <li>JSX 到 hyperscript 转换</li>
                   <li>事件处理器分离 (on: 前缀)</li>
                   <li>Children 数组化</li>
@@ -105,8 +105,8 @@ module.exports = {
         {/* 环境要求 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">环境要求</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">环境要求</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               运行 Fukict 所需的最低环境要求
             </p>
           </div>
@@ -128,11 +128,11 @@ Node.js >= 16.0
 TypeScript >= 5.0`}
             />
             <DemoBox fukict:slot="demo">
-              <div class="text-sm text-gray-700 space-y-2">
+              <div class="space-y-2 text-sm text-gray-700">
                 <p>
                   <strong class="text-gray-900">推荐使用:</strong>
                 </p>
-                <ul class="list-disc list-inside space-y-1 ml-2">
+                <ul class="ml-2 list-inside list-disc space-y-1">
                   <li>Node.js 18+ (LTS)</li>
                   <li>TypeScript 5.3+</li>
                   <li>Vite 5+</li>
@@ -146,8 +146,8 @@ TypeScript >= 5.0`}
         {/* 包管理器 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">包管理器</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">包管理器</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               Fukict 支持所有主流包管理器
             </p>
           </div>
@@ -168,21 +168,21 @@ yarn add @fukict/basic
 bun add @fukict/basic`}
             />
             <DemoBox fukict:slot="demo">
-              <div class="text-sm text-gray-700 space-y-2">
+              <div class="space-y-2 text-sm text-gray-700">
                 <p>
                   <strong class="text-gray-900">pnpm</strong> - 推荐使用
                 </p>
                 <p class="ml-3">快速、节省磁盘空间</p>
                 <p>
-                  <strong class="text-gray-900 mt-2">npm</strong> - 默认选择
+                  <strong class="mt-2 text-gray-900">npm</strong> - 默认选择
                 </p>
                 <p class="ml-3">Node.js 自带,兼容性好</p>
                 <p>
-                  <strong class="text-gray-900 mt-2">yarn</strong> - 备选方案
+                  <strong class="mt-2 text-gray-900">yarn</strong> - 备选方案
                 </p>
                 <p class="ml-3">稳定可靠</p>
                 <p>
-                  <strong class="text-gray-900 mt-2">bun</strong> - 实验性
+                  <strong class="mt-2 text-gray-900">bun</strong> - 实验性
                 </p>
                 <p class="ml-3">极速安装,新兴工具</p>
               </div>
@@ -193,8 +193,8 @@ bun add @fukict/basic`}
         {/* CDN 使用 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">CDN 使用</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">CDN 使用</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               也可以通过 CDN 直接使用(不推荐生产环境)
             </p>
           </div>
@@ -215,11 +215,11 @@ bun add @fukict/basic`}
 </script>`}
             />
             <DemoBox fukict:slot="demo">
-              <div class="text-sm text-gray-700 space-y-2">
+              <div class="space-y-2 text-sm text-gray-700">
                 <p>
                   <strong class="text-yellow-700">注意事项:</strong>
                 </p>
-                <ul class="list-disc list-inside space-y-1 ml-2">
+                <ul class="ml-2 list-inside list-disc space-y-1">
                   <li>仅适用于原型开发或演示</li>
                   <li>生产环境应使用构建工具</li>
                   <li>CDN 方式无法使用 JSX</li>

@@ -54,7 +54,7 @@ class BasicTranslationDemo extends Fukict {
   render() {
     return (
       <div class="space-y-4">
-        <div class="bg-gray-50 rounded p-4 space-y-2 text-sm">
+        <div class="space-y-2 rounded bg-gray-50 p-4 text-sm">
           <p class="text-gray-700">
             <strong>hello:</strong> {basicI18n.t('hello')}
           </p>
@@ -70,7 +70,7 @@ class BasicTranslationDemo extends Fukict {
         </div>
         <div class="flex gap-2">
           <button
-            class={`px-3 py-1.5 text-sm rounded transition-colors ${
+            class={`rounded px-3 py-1.5 text-sm transition-colors ${
               basicI18n.locale === 'zh'
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -80,7 +80,7 @@ class BasicTranslationDemo extends Fukict {
             中文
           </button>
           <button
-            class={`px-3 py-1.5 text-sm rounded transition-colors ${
+            class={`rounded px-3 py-1.5 text-sm transition-colors ${
               basicI18n.locale === 'en'
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -139,15 +139,15 @@ class ParamsDemo extends Fukict {
   render() {
     return (
       <div class="space-y-4">
-        <div class="bg-gray-50 rounded p-4 space-y-3 text-sm">
+        <div class="space-y-3 rounded bg-gray-50 p-4 text-sm">
           <div>
-            <p class="text-gray-600 text-xs mb-1">Single parameter:</p>
+            <p class="mb-1 text-xs text-gray-600">Single parameter:</p>
             <p class="text-gray-800">
               {paramsI18n.t('greeting', { name: this.userName })}
             </p>
           </div>
           <div>
-            <p class="text-gray-600 text-xs mb-1">Multiple parameters:</p>
+            <p class="mb-1 text-xs text-gray-600">Multiple parameters:</p>
             <p class="text-gray-800">
               {paramsI18n.t('welcome', {
                 user: this.userName,
@@ -156,7 +156,7 @@ class ParamsDemo extends Fukict {
             </p>
           </div>
           <div>
-            <p class="text-gray-600 text-xs mb-1">Product info:</p>
+            <p class="mb-1 text-xs text-gray-600">Product info:</p>
             <p class="text-gray-800">
               {paramsI18n.t('productInfo', {
                 name: this.productName,
@@ -167,7 +167,7 @@ class ParamsDemo extends Fukict {
         </div>
         <div class="flex gap-2">
           <button
-            class={`px-3 py-1.5 text-sm rounded transition-colors ${
+            class={`rounded px-3 py-1.5 text-sm transition-colors ${
               paramsI18n.locale === 'zh'
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -177,7 +177,7 @@ class ParamsDemo extends Fukict {
             中文
           </button>
           <button
-            class={`px-3 py-1.5 text-sm rounded transition-colors ${
+            class={`rounded px-3 py-1.5 text-sm transition-colors ${
               paramsI18n.locale === 'en'
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -250,13 +250,13 @@ class PluralDemo extends Fukict {
   render() {
     return (
       <div class="space-y-4">
-        <div class="bg-gray-50 rounded p-4 space-y-3 text-sm">
+        <div class="space-y-3 rounded bg-gray-50 p-4 text-sm">
           <div>
-            <p class="text-gray-600 text-xs mb-1">Item count with plural:</p>
-            <p class="text-gray-800 font-medium">{this.getItemsMessage()}</p>
-            <div class="flex gap-2 mt-2">
+            <p class="mb-1 text-xs text-gray-600">Item count with plural:</p>
+            <p class="font-medium text-gray-800">{this.getItemsMessage()}</p>
+            <div class="mt-2 flex gap-2">
               <button
-                class="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
+                class="rounded bg-blue-500 px-2 py-1 text-xs text-white hover:bg-blue-600"
                 on:click={() => {
                   this.itemCount = 0;
                   this.update();
@@ -265,7 +265,7 @@ class PluralDemo extends Fukict {
                 0
               </button>
               <button
-                class="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
+                class="rounded bg-blue-500 px-2 py-1 text-xs text-white hover:bg-blue-600"
                 on:click={() => {
                   this.itemCount = 1;
                   this.update();
@@ -274,7 +274,7 @@ class PluralDemo extends Fukict {
                 1
               </button>
               <button
-                class="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
+                class="rounded bg-blue-500 px-2 py-1 text-xs text-white hover:bg-blue-600"
                 on:click={() => {
                   this.itemCount = 5;
                   this.update();
@@ -285,13 +285,13 @@ class PluralDemo extends Fukict {
             </div>
           </div>
           <div class="border-t border-gray-300 pt-3">
-            <p class="text-gray-600 text-xs mb-1">File count:</p>
-            <p class="text-gray-800 font-medium">
+            <p class="mb-1 text-xs text-gray-600">File count:</p>
+            <p class="font-medium text-gray-800">
               {pluralI18n.t('files', { count: this.fileCount })}
             </p>
-            <div class="flex gap-2 mt-2">
+            <div class="mt-2 flex gap-2">
               <button
-                class="px-2 py-1 text-xs bg-green-500 text-white rounded hover:bg-green-600"
+                class="rounded bg-green-500 px-2 py-1 text-xs text-white hover:bg-green-600"
                 on:click={() => {
                   this.fileCount = Math.max(0, this.fileCount - 1);
                   this.update();
@@ -299,11 +299,11 @@ class PluralDemo extends Fukict {
               >
                 -
               </button>
-              <span class="px-3 py-1 text-xs bg-gray-200 rounded">
+              <span class="rounded bg-gray-200 px-3 py-1 text-xs">
                 {this.fileCount}
               </span>
               <button
-                class="px-2 py-1 text-xs bg-green-500 text-white rounded hover:bg-green-600"
+                class="rounded bg-green-500 px-2 py-1 text-xs text-white hover:bg-green-600"
                 on:click={() => {
                   this.fileCount++;
                   this.update();
@@ -316,7 +316,7 @@ class PluralDemo extends Fukict {
         </div>
         <div class="flex gap-2">
           <button
-            class={`px-3 py-1.5 text-sm rounded transition-colors ${
+            class={`rounded px-3 py-1.5 text-sm transition-colors ${
               pluralI18n.locale === 'zh'
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -326,7 +326,7 @@ class PluralDemo extends Fukict {
             中文
           </button>
           <button
-            class={`px-3 py-1.5 text-sm rounded transition-colors ${
+            class={`rounded px-3 py-1.5 text-sm transition-colors ${
               pluralI18n.locale === 'en'
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -384,15 +384,15 @@ class ComponentUsageDemo extends Fukict {
   render() {
     return (
       <div class="space-y-4">
-        <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6 shadow-sm">
-          <h4 class="text-lg font-bold text-gray-800 mb-2">
+        <div class="rounded-lg bg-gradient-to-r from-blue-50 to-purple-50 p-6 shadow-sm">
+          <h4 class="mb-2 text-lg font-bold text-gray-800">
             {componentI18n.t('title')}
           </h4>
-          <p class="text-sm text-gray-600 mb-4">
+          <p class="mb-4 text-sm text-gray-600">
             {componentI18n.t('description')}
           </p>
           <button
-            class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors shadow"
+            class="rounded-lg bg-blue-500 px-4 py-2 text-white shadow transition-colors hover:bg-blue-600"
             on:click={() => {
               this.clickCount++;
               this.update();
@@ -400,13 +400,13 @@ class ComponentUsageDemo extends Fukict {
           >
             {componentI18n.t('button')}
           </button>
-          <p class="text-xs text-gray-500 mt-3">
+          <p class="mt-3 text-xs text-gray-500">
             {componentI18n.t('clickCount', { count: this.clickCount })}
           </p>
         </div>
         <div class="flex gap-2">
           <button
-            class={`px-3 py-1.5 text-sm rounded transition-colors ${
+            class={`rounded px-3 py-1.5 text-sm transition-colors ${
               componentI18n.locale === 'zh'
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -416,7 +416,7 @@ class ComponentUsageDemo extends Fukict {
             中文
           </button>
           <button
-            class={`px-3 py-1.5 text-sm rounded transition-colors ${
+            class={`rounded px-3 py-1.5 text-sm transition-colors ${
               componentI18n.locale === 'en'
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -441,8 +441,8 @@ export class TranslationPage extends RouteComponent {
         {/* 基础翻译 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">基础翻译</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">基础翻译</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               使用 t() 函数进行基础翻译,支持嵌套键
             </p>
           </div>
@@ -491,8 +491,8 @@ const msg2 = i18n.t('user.profile');
         {/* 参数插值 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">参数插值</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">参数插值</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               在翻译中使用动态参数,使用 {'{name}'} 语法
             </p>
           </div>
@@ -537,8 +537,8 @@ i18n.t('productInfo', { name: 'Widget', price: 99 });
         {/* 复数形式 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">复数形式</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">复数形式</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               根据数量显示不同的翻译,需要在代码中处理复数逻辑
             </p>
           </div>
@@ -592,10 +592,10 @@ i18n.t('files', { count: 3 });
         {/* 在组件中使用 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">
+            <h3 class="mb-1 text-base font-medium text-gray-800">
               在组件中使用
             </h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <p class="text-sm leading-relaxed text-gray-600">
               在 Fukict 组件中使用翻译,订阅语言变化实现响应式更新
             </p>
           </div>

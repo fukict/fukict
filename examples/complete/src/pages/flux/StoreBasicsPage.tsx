@@ -47,7 +47,7 @@ class CounterDemo extends Fukict {
 
     return (
       <div class="space-y-4">
-        <div class="bg-gray-50 rounded p-4 space-y-2">
+        <div class="space-y-2 rounded bg-gray-50 p-4">
           <p class="text-gray-700">
             <strong>Count:</strong> {state.count}
           </p>
@@ -57,13 +57,13 @@ class CounterDemo extends Fukict {
         </div>
         <div class="flex gap-2">
           <button
-            class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
             on:click={() => increment()}
           >
             +1
           </button>
           <button
-            class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+            class="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
             on:click={() => decrement()}
           >
             -1
@@ -136,7 +136,7 @@ class GettersDemo extends Fukict {
 
     return (
       <div class="space-y-4">
-        <div class="bg-gray-50 rounded p-4 space-y-2 text-sm">
+        <div class="space-y-2 rounded bg-gray-50 p-4 text-sm">
           <p class="text-gray-700">
             <strong>Product Count:</strong> {stats.count}
           </p>
@@ -152,7 +152,7 @@ class GettersDemo extends Fukict {
           <div class="flex gap-2">
             {[1, 2, 3].map(id => (
               <button
-                class={`px-3 py-1.5 rounded text-sm ${
+                class={`rounded px-3 py-1.5 text-sm ${
                   this.selectedId === id
                     ? 'bg-blue-500 text-white'
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -167,7 +167,7 @@ class GettersDemo extends Fukict {
             ))}
           </div>
           {selectedProduct && (
-            <div class="bg-blue-50 border border-blue-200 rounded p-3 text-sm">
+            <div class="rounded border border-blue-200 bg-blue-50 p-3 text-sm">
               <p class="text-blue-900">
                 <strong>Name:</strong> {selectedProduct.name}
               </p>
@@ -192,8 +192,8 @@ export class StoreBasicsPage extends RouteComponent {
         {/* 创建 Store */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">创建 Store</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">创建 Store</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               使用 createFlux 创建状态管理 Store
             </p>
           </div>
@@ -252,10 +252,10 @@ class Counter extends Fukict {
         {/* State */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">
+            <h3 class="mb-1 text-base font-medium text-gray-800">
               State (状态)
             </h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <p class="text-sm leading-relaxed text-gray-600">
               存储应用的状态数据,通过 getState() 访问
             </p>
           </div>
@@ -284,15 +284,15 @@ console.log(state.user);
 console.log(state.cart.items);`}
             />
             <DemoBox fukict:slot="demo">
-              <div class="text-sm text-gray-700 space-y-2">
+              <div class="space-y-2 text-sm text-gray-700">
                 <p class="font-medium text-gray-900">State 特点:</p>
-                <ul class="list-disc list-inside space-y-1 ml-2">
+                <ul class="ml-2 list-inside list-disc space-y-1">
                   <li>存储应用的全局状态</li>
                   <li>支持任意类型的数据</li>
                   <li>通过 store.getState() 访问</li>
                   <li>只能通过 actions 中的 setState 修改</li>
                 </ul>
-                <div class="bg-yellow-50 border border-yellow-200 rounded p-3 mt-3">
+                <div class="mt-3 rounded border border-yellow-200 bg-yellow-50 p-3">
                   <p class="text-xs text-yellow-700">
                     <strong>提示:</strong> 不要直接修改 state,应该使用 actions
                   </p>
@@ -305,10 +305,10 @@ console.log(state.cart.items);`}
         {/* Selectors (计算值) */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">
+            <h3 class="mb-1 text-base font-medium text-gray-800">
               Selectors (计算属性)
             </h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <p class="text-sm leading-relaxed text-gray-600">
               基于 state 派生的计算值,使用纯函数实现
             </p>
           </div>

@@ -32,14 +32,14 @@ class NativeAttributesDemo extends Fukict {
         <div>
           <input
             type="text"
-            class="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:bg-gray-200 disabled:text-gray-500"
             value={this.inputValue}
             placeholder={this.placeholder}
             disabled={this.isDisabled}
             on:input={this.handleInput}
           />
           <button
-            class="mt-2 px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600"
+            class="mt-2 rounded bg-blue-500 px-3 py-1 text-xs text-white hover:bg-blue-600"
             on:click={this.toggleDisabled}
           >
             {this.isDisabled ? '启用输入' : '禁用输入'}
@@ -52,7 +52,7 @@ class NativeAttributesDemo extends Fukict {
             href={this.linkUrl}
             target="_blank"
             rel="noopener noreferrer"
-            class="text-blue-600 hover:text-blue-800 underline text-sm"
+            class="text-sm text-blue-600 underline hover:text-blue-800"
           >
             访问 GitHub (新窗口打开)
           </a>
@@ -61,7 +61,7 @@ class NativeAttributesDemo extends Fukict {
         {/* 图片属性 */}
         <div>
           <img
-            src="https://via.placeholder.com/100x100/3b82f6/ffffff?text=Logo"
+            src="https://avatars.githubusercontent.com/u/18474625"
             alt="示例图片"
             width={100}
             height={100}
@@ -117,7 +117,7 @@ class BooleanAttributesDemo extends Fukict {
         <div class="flex items-center space-x-2">
           <input
             type="checkbox"
-            class="w-4 h-4"
+            class="h-4 w-4"
             checked={this.isChecked}
             disabled={this.isDisabled}
             on:change={this.toggleCheck}
@@ -131,9 +131,9 @@ class BooleanAttributesDemo extends Fukict {
         <div>
           <input
             type="text"
-            class="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
             placeholder="文本输入框"
-            readonly={this.isReadonly}
+            readOnly={this.isReadonly}
             required={this.isRequired}
             value={this.textValue}
             on:input={(e: Event) => {
@@ -150,7 +150,7 @@ class BooleanAttributesDemo extends Fukict {
         {/* Button */}
         <div>
           <button
-            class="px-4 py-2 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+            class="rounded bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-gray-300"
             disabled={this.isDisabled}
           >
             提交按钮
@@ -160,7 +160,7 @@ class BooleanAttributesDemo extends Fukict {
         {/* Select */}
         <div>
           <select
-            class="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
             multiple={this.isMultiple}
             size={this.isMultiple ? 3 : 1}
           >
@@ -174,27 +174,27 @@ class BooleanAttributesDemo extends Fukict {
         </div>
 
         {/* 控制按钮 */}
-        <div class="pt-2 border-t border-gray-200 space-x-2">
+        <div class="space-x-2 border-t border-gray-200 pt-2">
           <button
-            class="px-3 py-1 bg-gray-500 text-white text-xs rounded hover:bg-gray-600"
+            class="rounded bg-gray-500 px-3 py-1 text-xs text-white hover:bg-gray-600"
             on:click={this.toggleDisabled}
           >
             切换禁用
           </button>
           <button
-            class="px-3 py-1 bg-gray-500 text-white text-xs rounded hover:bg-gray-600"
+            class="rounded bg-gray-500 px-3 py-1 text-xs text-white hover:bg-gray-600"
             on:click={this.toggleReadonly}
           >
             切换只读
           </button>
           <button
-            class="px-3 py-1 bg-gray-500 text-white text-xs rounded hover:bg-gray-600"
+            class="rounded bg-gray-500 px-3 py-1 text-xs text-white hover:bg-gray-600"
             on:click={this.toggleRequired}
           >
             切换必填
           </button>
           <button
-            class="px-3 py-1 bg-gray-500 text-white text-xs rounded hover:bg-gray-600"
+            class="rounded bg-gray-500 px-3 py-1 text-xs text-white hover:bg-gray-600"
             on:click={this.toggleMultiple}
           >
             切换多选
@@ -239,25 +239,25 @@ class DataAttributesDemo extends Fukict {
         <div class="space-y-2">
           {this.users.map(user => (
             <button
-              class="w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded text-left text-sm transition-colors"
+              class="w-full rounded bg-gray-100 px-4 py-2 text-left text-sm transition-colors hover:bg-gray-200"
               data-user-id={user.id}
               data-user-name={user.name}
               data-user-role={user.role}
               on:click={this.handleUserClick}
             >
               <span class="font-medium">{user.name}</span>
-              <span class="text-gray-500 ml-2">({user.role})</span>
+              <span class="ml-2 text-gray-500">({user.role})</span>
             </button>
           ))}
         </div>
 
         {/* 显示选中的用户 */}
         {this.selectedUser ? (
-          <div class="p-4 bg-blue-50 rounded border border-blue-200">
-            <h4 class="text-sm font-medium text-blue-900 mb-2">
+          <div class="rounded border border-blue-200 bg-blue-50 p-4">
+            <h4 class="mb-2 text-sm font-medium text-blue-900">
               选中的用户信息:
             </h4>
-            <div class="text-xs text-blue-800 space-y-1">
+            <div class="space-y-1 text-xs text-blue-800">
               <p>
                 <span class="font-medium">ID:</span> {this.selectedUser.id}
               </p>
@@ -270,7 +270,7 @@ class DataAttributesDemo extends Fukict {
             </div>
           </div>
         ) : (
-          <div class="p-4 bg-gray-50 rounded border border-gray-200 text-sm text-gray-600">
+          <div class="rounded border border-gray-200 bg-gray-50 p-4 text-sm text-gray-600">
             点击上方按钮查看用户信息
           </div>
         )}
@@ -314,7 +314,10 @@ class AriaAttributesDemo extends Fukict {
         {/* 可展开区域 */}
         <div>
           <button
-            class="px-4 py-2 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
+            class={[
+              'rounded bg-blue-500 px-4 py-2 text-sm text-white',
+              'hover:bg-blue-600',
+            ]}
             aria-label="切换展开状态"
             aria-expanded={this.isExpanded}
             aria-controls="expandable-content"
@@ -329,11 +332,11 @@ class AriaAttributesDemo extends Fukict {
               role="region"
               aria-labelledby="section-title"
               aria-live="polite"
-              class="mt-3 p-4 bg-gray-100 rounded border border-gray-300"
+              class="mt-3 rounded border border-gray-300 bg-gray-100 p-4"
             >
               <h4
                 id="section-title"
-                class="text-sm font-medium text-gray-800 mb-2"
+                class="mb-2 text-sm font-medium text-gray-800"
               >
                 展开的内容区域
               </h4>
@@ -347,12 +350,12 @@ class AriaAttributesDemo extends Fukict {
 
         {/* 表单验证 */}
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">
+          <label class="mb-1 block text-sm font-medium text-gray-700">
             带验证的输入框 <span class="text-red-500">*</span>
           </label>
           <input
             type="text"
-            class={`w-full px-3 py-2 border rounded text-sm focus:outline-none focus:ring-2 ${
+            class={`w-full rounded border px-3 py-2 text-sm focus:ring-2 focus:outline-none ${
               this.hasError
                 ? 'border-red-500 focus:ring-red-500'
                 : 'border-gray-300 focus:ring-blue-500'
@@ -379,7 +382,7 @@ class AriaAttributesDemo extends Fukict {
         <div
           role="status"
           aria-live="polite"
-          class="p-3 bg-blue-50 rounded border border-blue-200"
+          class="rounded border border-blue-200 bg-blue-50 p-3"
         >
           <p class="text-sm text-blue-800">
             当前输入长度: {this.inputValue.length} 字符
@@ -401,8 +404,8 @@ export class AttributesPage extends RouteComponent {
         {/* 原生属性 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">原生属性</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">原生属性</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               绑定标准 HTML 属性，如 value, placeholder, href 等
             </p>
           </div>
@@ -454,10 +457,10 @@ export class MyComponent extends Fukict {
         {/* Boolean 属性 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">
+            <h3 class="mb-1 text-base font-medium text-gray-800">
               Boolean 属性
             </h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <p class="text-sm leading-relaxed text-gray-600">
               处理布尔类型的 HTML 属性，如 checked, disabled, readonly 等
             </p>
           </div>
@@ -514,8 +517,8 @@ export class FormComponent extends Fukict {
         {/* Data 属性 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">Data 属性</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">Data 属性</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               使用 data-* 自定义属性在 DOM 元素上存储额外信息
             </p>
           </div>
@@ -570,8 +573,8 @@ export class MyComponent extends Fukict {
         {/* ARIA 属性 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">ARIA 属性</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">ARIA 属性</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               提升无障碍访问性的 ARIA 属性，帮助屏幕阅读器理解页面结构
             </p>
           </div>

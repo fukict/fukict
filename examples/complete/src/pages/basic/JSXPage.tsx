@@ -22,12 +22,12 @@ class BasicSyntaxDemo extends Fukict {
         <div>
           <input
             type="text"
-            class="border border-gray-300 rounded px-3 py-2 w-full"
+            class="w-full rounded border border-gray-300 px-3 py-2"
             value={this.inputValue}
           />
         </div>
         <div
-          class="container p-3 bg-gray-50 rounded"
+          class="container rounded bg-gray-50 p-3"
           style={{ color: 'red', fontWeight: 'bold' }}
         >
           样式绑定示例
@@ -43,7 +43,6 @@ class BasicSyntaxDemo extends Fukict {
 class ConditionalDemo extends Fukict {
   private isLoggedIn = false;
   private showMessage = true;
-  private status: 'loading' | 'error' | 'success' = 'success';
 
   render() {
     return (
@@ -60,7 +59,7 @@ class ConditionalDemo extends Fukict {
             />
             <span>已登录</span>
           </label>
-          <div class="p-3 bg-gray-50 rounded">
+          <div class="rounded bg-gray-50 p-3">
             {this.isLoggedIn ? (
               <span class="text-green-600">欢迎回来!</span>
             ) : (
@@ -81,7 +80,7 @@ class ConditionalDemo extends Fukict {
             />
             <span>显示消息</span>
           </label>
-          <div class="p-3 bg-gray-50 rounded">
+          <div class="rounded bg-gray-50 p-3">
             {this.showMessage && (
               <span class="text-blue-600">这是一条消息</span>
             )}
@@ -107,8 +106,8 @@ class ListRenderDemo extends Fukict {
     return (
       <div class="space-y-4 text-sm">
         <div>
-          <h4 class="font-medium text-gray-700 mb-2">简单列表:</h4>
-          <ul class="list-disc list-inside space-y-1 text-gray-600">
+          <h4 class="mb-2 font-medium text-gray-700">简单列表:</h4>
+          <ul class="list-inside list-disc space-y-1 text-gray-600">
             {this.items.map((item, index) => (
               <li key={index}>{item}</li>
             ))}
@@ -116,10 +115,10 @@ class ListRenderDemo extends Fukict {
         </div>
 
         <div>
-          <h4 class="font-medium text-gray-700 mb-2">对象数组:</h4>
+          <h4 class="mb-2 font-medium text-gray-700">对象数组:</h4>
           <ul class="space-y-1">
             {this.users.map(user => (
-              <li key={user.id} class="p-2 bg-gray-50 rounded text-gray-700">
+              <li key={user.id} class="rounded bg-gray-50 p-2 text-gray-700">
                 #{user.id} - {user.name}
               </li>
             ))}
@@ -140,8 +139,8 @@ export class JSXPage extends RouteComponent {
         {/* 基础语法 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">基础语法</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">基础语法</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               JSX 的基本用法和语法规则
             </p>
           </div>
@@ -170,8 +169,8 @@ const name = 'World';
         {/* 条件渲染 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">条件渲染</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">条件渲染</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               使用 if/else、三元运算符进行条件渲染
             </p>
           </div>
@@ -205,8 +204,8 @@ const name = 'World';
         {/* 列表渲染 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">列表渲染</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">列表渲染</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               使用数组映射渲染列表,key 属性的使用
             </p>
           </div>

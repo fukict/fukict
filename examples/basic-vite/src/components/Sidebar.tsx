@@ -19,9 +19,9 @@ const demos = [
 
 export const Sidebar = ({ currentDemo, onSelect }: SidebarProps) => {
   return (
-    <aside class="fixed left-0 top-0 h-screen w-64 bg-gray-900 text-white p-6 overflow-y-auto">
-      <h1 class="text-2xl font-bold mb-2">Fukict</h1>
-      <p class="text-gray-400 text-sm mb-8">基础功能演示</p>
+    <aside class="fixed top-0 left-0 h-screen w-64 overflow-y-auto bg-gray-900 p-6 text-white">
+      <h1 class="mb-2 text-2xl font-bold">Fukict</h1>
+      <p class="mb-8 text-sm text-gray-400">基础功能演示</p>
 
       <nav>
         <ul class="space-y-2">
@@ -29,7 +29,7 @@ export const Sidebar = ({ currentDemo, onSelect }: SidebarProps) => {
             <li key={demo.id}>
               <button
                 on:click={() => onSelect(demo.id)}
-                class={`w-full text-left px-4 py-2 rounded transition-colors ${
+                class={`w-full rounded px-4 py-2 text-left transition-colors ${
                   currentDemo === demo.id
                     ? 'bg-blue-600 text-white'
                     : 'hover:bg-gray-800'
@@ -42,8 +42,8 @@ export const Sidebar = ({ currentDemo, onSelect }: SidebarProps) => {
         </ul>
       </nav>
 
-      <div class="mt-8 pt-8 border-t border-gray-700">
-        <h3 class="text-sm font-semibold text-gray-400 mb-2">关于</h3>
+      <div class="mt-8 border-t border-gray-700 pt-8">
+        <h3 class="mb-2 text-sm font-semibold text-gray-400">关于</h3>
         <p class="text-xs text-gray-500">
           这个演示展示了 Fukict 框架的核心功能和设计理念。
         </p>

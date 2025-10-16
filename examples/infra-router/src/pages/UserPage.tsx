@@ -22,9 +22,9 @@ export class UserPage extends RouteComponent {
           <p class="mt-2 text-gray-600">Dynamic route parameter: {id}</p>
         </div>
 
-        <div class="bg-white border rounded-lg p-6 shadow-sm">
-          <div class="flex items-center space-x-4 mb-6">
-            <div class="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+        <div class="rounded-lg border bg-white p-6 shadow-sm">
+          <div class="mb-6 flex items-center space-x-4">
+            <div class="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-2xl font-bold text-white">
               {id}
             </div>
             <div>
@@ -34,24 +34,24 @@ export class UserPage extends RouteComponent {
           </div>
 
           <div class="space-y-3">
-            <div class="p-3 bg-gray-50 rounded">
+            <div class="rounded bg-gray-50 p-3">
               <span class="font-semibold">Role:</span> Developer
             </div>
-            <div class="p-3 bg-gray-50 rounded">
+            <div class="rounded bg-gray-50 p-3">
               <span class="font-semibold">Joined:</span> January 2025
             </div>
-            <div class="p-3 bg-gray-50 rounded">
+            <div class="rounded bg-gray-50 p-3">
               <span class="font-semibold">Route Param:</span> {id}
             </div>
           </div>
         </div>
 
         <div class="border-t pt-4">
-          <h3 class="font-semibold mb-3">Navigate to other users:</h3>
+          <h3 class="mb-3 font-semibold">Navigate to other users:</h3>
           <div class="flex gap-2">
             {['100', '200', '300', '999'].map(userId => (
               <button
-                class={`px-4 py-2 rounded ${
+                class={`rounded px-4 py-2 ${
                   userId === id
                     ? 'bg-blue-500 text-white'
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -66,13 +66,13 @@ export class UserPage extends RouteComponent {
 
         <div class="flex gap-4">
           <button
-            class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+            class="rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600"
             on:click={() => this.back()}
           >
             Go Back
           </button>
           <button
-            class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
             on:click={() => this.push('/')}
           >
             Back to Home

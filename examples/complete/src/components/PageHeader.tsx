@@ -14,10 +14,10 @@ export class PageHeader extends Fukict<PageHeaderProps> {
     const { title, description } = this.props;
 
     return (
-      <div class="border-b border-gray-400 pb-5 mb-4">
+      <div class="mb-4 border-b border-gray-400 pb-5">
         <h1 class="text-2xl font-semibold text-gray-900">{title}</h1>
         {description && (
-          <p class="mt-2 text-sm text-gray-600 leading-relaxed">
+          <p class="mt-2 text-sm leading-relaxed text-gray-600">
             {description}
           </p>
         )}

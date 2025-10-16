@@ -7,12 +7,12 @@ class Card extends Fukict<{ title?: string }> {
     const { header, default: defaultSlot, footer } = this.slots;
 
     return (
-      <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <div class="overflow-hidden rounded-lg bg-white shadow-md">
         {/* 如果有 header 插槽就使用，否则用默认的标题栏 */}
         {header ? (
           <div class="px-6 py-4">{header}</div>
         ) : (
-          <div class="bg-gradient-to-r from-teal-500 to-teal-600 text-white px-6 py-4">
+          <div class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4 text-white">
             <h3 class="text-xl font-semibold">{title}</h3>
           </div>
         )}
@@ -22,7 +22,7 @@ class Card extends Fukict<{ title?: string }> {
 
         {/* 底部插槽 */}
         {footer && (
-          <div class="bg-gray-50 px-6 py-4 border-t border-gray-200">
+          <div class="border-t border-gray-200 bg-gray-50 px-6 py-4">
             {footer}
           </div>
         )}
@@ -34,14 +34,14 @@ class Card extends Fukict<{ title?: string }> {
 export const SlotsDemo = () => {
   return (
     <div>
-      <h2 class="text-3xl font-bold mb-4">Slots (fukict:slot)</h2>
+      <h2 class="mb-4 text-3xl font-bold">Slots (fukict:slot)</h2>
 
-      <div class="bg-teal-50 border-l-4 border-teal-500 p-4 mb-6">
+      <div class="mb-6 border-l-4 border-teal-500 bg-teal-50 p-4">
         <p class="text-sm text-gray-700">
           <strong>Slots 插槽：</strong>在 Class Component 中通过{' '}
-          <code class="bg-teal-100 px-1 rounded">fukict:slot</code>{' '}
+          <code class="rounded bg-teal-100 px-1">fukict:slot</code>{' '}
           属性命名插槽，通过{' '}
-          <code class="bg-teal-100 px-1 rounded">this.slots</code>{' '}
+          <code class="rounded bg-teal-100 px-1">this.slots</code>{' '}
           访问插槽内容，实现灵活的组件组合
         </p>
       </div>
@@ -52,7 +52,7 @@ export const SlotsDemo = () => {
           <p class="text-gray-700">
             这是通过默认插槽传递的内容（没有 fukict:slot 属性）。
           </p>
-          <p class="text-gray-700 mt-2">
+          <p class="mt-2 text-gray-700">
             可以包含任意的 JSX 内容，包括文本、元素、组件等。
           </p>
         </Card>
@@ -63,10 +63,10 @@ export const SlotsDemo = () => {
             这个卡片同时使用了默认插槽和具名插槽（footer）。
           </p>
           <div fukict:slot="footer" class="flex justify-end gap-2">
-            <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
+            <button class="rounded bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300">
               取消
             </button>
-            <button class="px-4 py-2 bg-teal-600 text-white rounded hover:bg-teal-700">
+            <button class="rounded bg-teal-600 px-4 py-2 text-white hover:bg-teal-700">
               确认
             </button>
           </div>
@@ -76,7 +76,7 @@ export const SlotsDemo = () => {
         <Card>
           <div
             fukict:slot="header"
-            class="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-6 py-4"
+            class="bg-gradient-to-r from-purple-500 to-purple-600 px-6 py-4 text-white"
           >
             <h3 class="text-xl font-semibold">📊 自定义标题插槽</h3>
             <p class="text-sm opacity-90">
@@ -86,7 +86,7 @@ export const SlotsDemo = () => {
 
           <div class="space-y-3">
             <div class="flex items-center gap-3">
-              <div class="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center">
+              <div class="flex h-12 w-12 items-center justify-center rounded-full bg-teal-100">
                 <span class="text-2xl">📊</span>
               </div>
               <div>
@@ -116,7 +116,7 @@ export const SlotsDemo = () => {
         </Card>
       </div>
 
-      <div class="mt-6 bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
+      <div class="mt-6 overflow-x-auto rounded-lg bg-gray-900 p-4 text-gray-100">
         <pre class="text-sm">
           <code>{`import { Fukict } from '@fukict/basic';
 

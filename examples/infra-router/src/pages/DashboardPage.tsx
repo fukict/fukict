@@ -21,21 +21,21 @@ export class DashboardPage extends RouteComponent {
             <nav class="space-y-2">
               <Link
                 to="/dashboard/overview"
-                class="block px-4 py-2 rounded hover:bg-gray-100"
+                class="block rounded px-4 py-2 hover:bg-gray-100"
                 exactActiveClass="bg-blue-100 text-blue-600 font-semibold"
               >
                 Overview
               </Link>
               <Link
                 to="/dashboard/analytics"
-                class="block px-4 py-2 rounded hover:bg-gray-100"
+                class="block rounded px-4 py-2 hover:bg-gray-100"
                 exactActiveClass="bg-blue-100 text-blue-600 font-semibold"
               >
                 Analytics
               </Link>
               <Link
                 to="/dashboard/settings"
-                class="block px-4 py-2 rounded hover:bg-gray-100"
+                class="block rounded px-4 py-2 hover:bg-gray-100"
                 exactActiveClass="bg-blue-100 text-blue-600 font-semibold"
               >
                 Settings
@@ -44,20 +44,20 @@ export class DashboardPage extends RouteComponent {
           </div>
 
           {/* Content Area - Nested RouterView */}
-          <div class="col-span-3 border rounded-lg p-6 bg-white">
+          <div class="col-span-3 rounded-lg border bg-white p-6">
             <RouterView router={this.router} />
           </div>
         </div>
 
-        <div class="flex gap-4 pt-4 border-t">
+        <div class="flex gap-4 border-t pt-4">
           <button
-            class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+            class="rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600"
             on:click={() => this.back()}
           >
             Go Back
           </button>
           <button
-            class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
             on:click={() => this.push('/')}
           >
             Back to Home

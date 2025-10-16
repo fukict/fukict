@@ -46,19 +46,19 @@ export class TodoComponent extends Fukict {
       todoStore.actions;
 
     return (
-      <div class="border rounded-lg p-6 bg-white shadow-sm">
-        <h2 class="text-2xl font-bold mb-4">Todo List Example</h2>
-        <p class="text-gray-600 mb-4">
+      <div class="rounded-lg border bg-white p-6 shadow-sm">
+        <h2 class="mb-4 text-2xl font-bold">Todo List Example</h2>
+        <p class="mb-4 text-gray-600">
           Complex state management with arrays and selectors
         </p>
 
         {/* Input Form */}
-        <form on:submit={this.handleSubmit} class="flex gap-2 mb-4">
+        <form on:submit={this.handleSubmit} class="mb-4 flex gap-2">
           <input
             type="text"
             value={this.inputText}
             placeholder="What needs to be done?"
-            class="flex-1 px-3 py-2 border rounded"
+            class="flex-1 rounded border px-3 py-2"
             on:input={(e: Event) => {
               this.inputText = (e.target as HTMLInputElement).value;
               this.update();
@@ -66,17 +66,17 @@ export class TodoComponent extends Fukict {
           />
           <button
             type="submit"
-            class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
           >
             Add
           </button>
         </form>
 
         {/* Filter Tabs */}
-        <div class="flex gap-2 mb-4">
+        <div class="mb-4 flex gap-2">
           {(['all', 'active', 'completed'] as const).map(filter => (
             <button
-              class={`px-3 py-1 rounded ${
+              class={`rounded px-3 py-1 ${
                 state.filter === filter
                   ? 'bg-blue-500 text-white'
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -89,28 +89,28 @@ export class TodoComponent extends Fukict {
         </div>
 
         {/* Todo List */}
-        <div class="space-y-2 mb-4">
+        <div class="mb-4 space-y-2">
           {filteredTodos.length === 0 ? (
-            <p class="text-gray-400 text-center py-4">No todos</p>
+            <p class="py-4 text-center text-gray-400">No todos</p>
           ) : (
             filteredTodos.map((todo: Todo) => (
               <div
                 key={todo.id}
-                class="flex items-center gap-2 p-2 border rounded hover:bg-gray-50"
+                class="flex items-center gap-2 rounded border p-2 hover:bg-gray-50"
               >
                 <input
                   type="checkbox"
                   checked={todo.completed}
-                  class="w-4 h-4"
+                  class="h-4 w-4"
                   on:change={() => toggleTodo(todo.id)}
                 />
                 <span
-                  class={`flex-1 ${todo.completed ? 'line-through text-gray-400' : ''}`}
+                  class={`flex-1 ${todo.completed ? 'text-gray-400 line-through' : ''}`}
                 >
                   {todo.text}
                 </span>
                 <button
-                  class="px-2 py-1 text-red-500 hover:bg-red-50 rounded"
+                  class="rounded px-2 py-1 text-red-500 hover:bg-red-50"
                   on:click={() => deleteTodo(todo.id)}
                 >
                   Delete
@@ -121,7 +121,7 @@ export class TodoComponent extends Fukict {
         </div>
 
         {/* Stats and Actions */}
-        <div class="flex justify-between items-center text-sm text-gray-600">
+        <div class="flex items-center justify-between text-sm text-gray-600">
           <span>
             {stats.active} active / {stats.total} total
           </span>

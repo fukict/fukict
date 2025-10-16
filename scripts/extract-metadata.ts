@@ -63,7 +63,7 @@ function extractMetadata(packageName: string): boolean {
 
   const packageJson: PackageJson = JSON.parse(
     readFileSync(packageJsonPath, 'utf-8'),
-  );
+  ) as PackageJson;
 
   // Ensure src directory exists
   if (!existsSync(srcPath)) {

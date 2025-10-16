@@ -10,7 +10,7 @@ import { SplitView } from '../../components/SplitView';
  */
 class HelloFukict extends Fukict {
   render() {
-    return <div class="text-gray-700 text-lg font-medium">Hello Fukict!</div>;
+    return <div class="text-lg font-medium text-gray-700">Hello Fukict!</div>;
   }
 }
 
@@ -24,8 +24,8 @@ export class QuickStartPage extends RouteComponent {
         {/* 安装 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">安装</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">安装</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               使用 npm、pnpm 或 yarn 安装 Fukict 相关包
             </p>
           </div>
@@ -49,7 +49,7 @@ npm install @fukict/i18n
 npm install -D @fukict/vite-plugin`}
             />
             <DemoBox fukict:slot="demo">
-              <div class="text-sm text-gray-700 space-y-2">
+              <div class="space-y-2 text-sm text-gray-700">
                 <p>
                   <strong class="text-gray-900">@fukict/basic</strong> -
                   核心渲染引擎
@@ -76,10 +76,10 @@ npm install -D @fukict/vite-plugin`}
         {/* Hello World */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">
+            <h3 class="mb-1 text-base font-medium text-gray-800">
               Hello World
             </h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <p class="text-sm leading-relaxed text-gray-600">
               创建你的第一个 Fukict 应用
             </p>
           </div>
@@ -109,8 +109,8 @@ if (root) {
         {/* 使用 Vite */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">使用 Vite</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">使用 Vite</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               配置 Vite 以支持 JSX 编译
             </p>
           </div>
@@ -127,9 +127,9 @@ export default defineConfig({
 });`}
             />
             <DemoBox fukict:slot="demo">
-              <div class="text-sm text-gray-700 space-y-2">
+              <div class="space-y-2 text-sm text-gray-700">
                 <p>Vite 插件会自动处理:</p>
-                <ul class="list-disc list-inside space-y-1 ml-2">
+                <ul class="ml-2 list-inside list-disc space-y-1">
                   <li>JSX 到 hyperscript 的转换</li>
                   <li>事件处理器优化 (on: 前缀)</li>
                   <li>Children 数组规范化</li>
@@ -143,8 +143,8 @@ export default defineConfig({
         {/* 项目结构 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">项目结构</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">项目结构</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               推荐的项目目录结构
             </p>
           </div>
@@ -166,7 +166,7 @@ export default defineConfig({
 └── vite.config.ts`}
             />
             <DemoBox fukict:slot="demo">
-              <div class="text-sm text-gray-700 space-y-2">
+              <div class="space-y-2 text-sm text-gray-700">
                 <p>
                   <strong class="text-gray-900">components/</strong> -
                   可复用组件

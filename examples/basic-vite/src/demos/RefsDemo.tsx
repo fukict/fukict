@@ -1,4 +1,4 @@
-import { Fukict } from '@fukict/basic';
+import { Fukict, type Ref } from '@fukict/basic';
 
 // 一个可以被 ref 引用的 Counter 组件
 class Counter extends Fukict {
@@ -26,18 +26,18 @@ class Counter extends Fukict {
 
   render() {
     return (
-      <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg p-6 text-center">
-        <div class="text-4xl font-bold mb-3">{this.state.count}</div>
-        <div class="flex gap-2 justify-center">
+      <div class="rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 p-6 text-center text-white">
+        <div class="mb-3 text-4xl font-bold">{this.state.count}</div>
+        <div class="flex justify-center gap-2">
           <button
             on:click={() => this.decrement()}
-            class="px-4 py-2 bg-white/20 rounded hover:bg-white/30 transition-colors"
+            class="rounded bg-white/20 px-4 py-2 transition-colors hover:bg-white/30"
           >
             -1
           </button>
           <button
             on:click={() => this.increment()}
-            class="px-4 py-2 bg-white/20 rounded hover:bg-white/30 transition-colors"
+            class="rounded bg-white/20 px-4 py-2 transition-colors hover:bg-white/30"
           >
             +1
           </button>
@@ -49,6 +49,9 @@ class Counter extends Fukict {
 
 // 使用 Class Component 和 fukict:ref
 class ParentWithRefs extends Fukict {
+  // 声明 refs 的类型
+  declare readonly refs: Map<'counter1' | 'counter2', Ref<Counter>>;
+
   mounted() {
     console.log('ParentWithRefs mounted, refs:', this.refs);
   }
@@ -83,38 +86,38 @@ class ParentWithRefs extends Fukict {
 
   render() {
     return (
-      <div class="bg-white rounded-lg shadow p-6">
-        <h3 class="text-xl font-semibold mb-4">
+      <div class="rounded-lg bg-white p-6 shadow">
+        <h3 class="mb-4 text-xl font-semibold">
           3. Class Component Refs（组件实例引用）
         </h3>
 
-        <div class="grid grid-cols-2 gap-4 mb-4">
+        <div class="mb-4 grid grid-cols-2 gap-4">
           <Counter fukict:ref="counter1" />
           <Counter fukict:ref="counter2" />
         </div>
 
-        <div class="flex gap-2 flex-wrap">
+        <div class="flex flex-wrap gap-2">
           <button
             on:click={() => this.handleIncrementAll()}
-            class="px-4 py-2 bg-pink-600 text-white rounded hover:bg-pink-700 transition-colors"
+            class="rounded bg-pink-600 px-4 py-2 text-white transition-colors hover:bg-pink-700"
           >
             全部 +1
           </button>
           <button
             on:click={() => this.handleResetAll()}
-            class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
+            class="rounded bg-gray-600 px-4 py-2 text-white transition-colors hover:bg-gray-700"
           >
             全部重置
           </button>
           <button
             on:click={() => this.handleShowCounts()}
-            class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+            class="rounded bg-green-600 px-4 py-2 text-white transition-colors hover:bg-green-700"
           >
             显示计数总和
           </button>
         </div>
 
-        <pre class="mt-4 bg-gray-900 text-gray-100 p-3 rounded text-sm overflow-x-auto">
+        <pre class="mt-4 overflow-x-auto rounded bg-gray-900 p-3 text-sm text-gray-100">
           <code>{`class Counter extends Fukict {
   increment() { /* ... */ }
   getCount() { return this.state.count; }
@@ -184,35 +187,35 @@ export const RefsDemo = () => {
 
   return (
     <div>
-      <h2 class="text-3xl font-bold mb-4">Refs (fukict:ref)</h2>
+      <h2 class="mb-4 text-3xl font-bold">Refs (fukict:ref)</h2>
 
-      <div class="bg-pink-50 border-l-4 border-pink-500 p-4 mb-6">
+      <div class="mb-6 border-l-4 border-pink-500 bg-pink-50 p-4">
         <p class="text-sm text-gray-700">
           <strong>Refs 引用：</strong>使用{' '}
-          <code class="bg-pink-100 px-1 rounded">fukict:ref</code> 属性获取 DOM
+          <code class="rounded bg-pink-100 px-1">fukict:ref</code> 属性获取 DOM
           元素引用或 Class Component 实例引用，用于直接操作 DOM 或调用组件方法
         </p>
       </div>
 
       <div class="space-y-6">
         {/* Input Ref */}
-        <div class="bg-white rounded-lg shadow p-6">
-          <h3 class="text-xl font-semibold mb-3">1. DOM Ref - 聚焦输入框</h3>
+        <div class="rounded-lg bg-white p-6 shadow">
+          <h3 class="mb-3 text-xl font-semibold">1. DOM Ref - 聚焦输入框</h3>
           <div class="space-y-3">
             <input
               ref={el => (inputRef = el)}
               type="text"
               placeholder="点击按钮聚焦到这里"
-              class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+              class="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-pink-500 focus:outline-none"
             />
             <button
               on:click={focusInput}
-              class="px-4 py-2 bg-pink-600 text-white rounded hover:bg-pink-700 transition-colors"
+              class="rounded bg-pink-600 px-4 py-2 text-white transition-colors hover:bg-pink-700"
             >
               聚焦输入框
             </button>
           </div>
-          <pre class="mt-3 bg-gray-900 text-gray-100 p-3 rounded text-sm overflow-x-auto">
+          <pre class="mt-3 overflow-x-auto rounded bg-gray-900 p-3 text-sm text-gray-100">
             <code>{`let inputRef: HTMLInputElement | null = null;
 
 const focusInput = () => {
@@ -227,29 +230,29 @@ const focusInput = () => {
         </div>
 
         {/* Div Ref */}
-        <div class="bg-white rounded-lg shadow p-6">
-          <h3 class="text-xl font-semibold mb-3">2. DOM Ref - 操作样式</h3>
+        <div class="rounded-lg bg-white p-6 shadow">
+          <h3 class="mb-3 text-xl font-semibold">2. DOM Ref - 操作样式</h3>
           <div
             ref={el => (divRef = el)}
-            class="mb-3 p-6 bg-blue-100 rounded-lg text-center transition-colors duration-300"
+            class="mb-3 rounded-lg bg-blue-100 p-6 text-center transition-colors duration-300"
           >
             <p class="text-lg font-semibold">动态改变背景色</p>
           </div>
           <div class="flex gap-2">
             <button
               on:click={changeBackground}
-              class="px-4 py-2 bg-pink-600 text-white rounded hover:bg-pink-700 transition-colors"
+              class="rounded bg-pink-600 px-4 py-2 text-white transition-colors hover:bg-pink-700"
             >
               随机改变颜色
             </button>
             <button
               on:click={scrollToElement}
-              class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
+              class="rounded bg-gray-600 px-4 py-2 text-white transition-colors hover:bg-gray-700"
             >
               滚动到此元素
             </button>
           </div>
-          <pre class="mt-3 bg-gray-900 text-gray-100 p-3 rounded text-sm overflow-x-auto">
+          <pre class="mt-3 overflow-x-auto rounded bg-gray-900 p-3 text-sm text-gray-100">
             <code>{`let divRef: HTMLDivElement | null = null;
 
 const changeBackground = () => {

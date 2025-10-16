@@ -32,18 +32,18 @@ const FunctionRefDemo = defineFukict(() => {
         ref={el => (inputRef = el)}
         type="text"
         placeholder="点击按钮聚焦"
-        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
       />
       <div class="flex gap-2">
         <button
           on:click={focusInput}
-          class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
+          class="rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700"
         >
           聚焦输入框
         </button>
         <button
           on:click={clearInput}
-          class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 text-sm"
+          class="rounded-md bg-gray-600 px-4 py-2 text-sm text-white hover:bg-gray-700"
         >
           清空输入框
         </button>
@@ -82,19 +82,19 @@ class CounterComponent extends Fukict {
         <div class="flex gap-2">
           <button
             on:click={() => this.increment()}
-            class="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700"
+            class="rounded bg-green-600 px-3 py-1 text-sm text-white hover:bg-green-700"
           >
             +1
           </button>
           <button
             on:click={() => this.decrement()}
-            class="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
+            class="rounded bg-red-600 px-3 py-1 text-sm text-white hover:bg-red-700"
           >
             -1
           </button>
           <button
             on:click={() => this.reset()}
-            class="px-3 py-1 bg-gray-600 text-white rounded text-sm hover:bg-gray-700"
+            class="rounded bg-gray-600 px-3 py-1 text-sm text-white hover:bg-gray-700"
           >
             重置
           </button>
@@ -151,30 +151,30 @@ class ParentWithRef extends Fukict {
       <div class="space-y-4">
         <CounterComponent fukict:ref="myCounter" />
 
-        <div class="flex gap-2 flex-wrap">
+        <div class="flex flex-wrap gap-2">
           <button
             on:click={() => this.handleIncrement()}
-            class="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-xs"
+            class="rounded-md bg-blue-600 px-3 py-2 text-xs text-white hover:bg-blue-700"
           >
             外部控制 +1
           </button>
           <button
             on:click={() => this.handleGetValue()}
-            class="px-3 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 text-xs"
+            class="rounded-md bg-purple-600 px-3 py-2 text-xs text-white hover:bg-purple-700"
           >
             获取值
           </button>
           <button
             on:click={() => this.handleReset()}
-            class="px-3 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 text-xs"
+            class="rounded-md bg-orange-600 px-3 py-2 text-xs text-white hover:bg-orange-700"
           >
             外部重置
           </button>
         </div>
 
         {this.logs.length > 0 && (
-          <div class="p-3 bg-gray-50 border border-gray-200 rounded-lg">
-            <div class="flex justify-between items-center mb-2">
+          <div class="rounded-lg border border-gray-200 bg-gray-50 p-3">
+            <div class="mb-2 flex items-center justify-between">
               <h4 class="text-xs font-medium text-gray-900">操作日志:</h4>
               <button
                 on:click={() => this.clearLogs()}
@@ -183,7 +183,7 @@ class ParentWithRef extends Fukict {
                 清空
               </button>
             </div>
-            <ul class="text-xs text-gray-600 space-y-1">
+            <ul class="space-y-1 text-xs text-gray-600">
               {this.logs.map((log, index) => (
                 <li>
                   [{index + 1}] {log}
@@ -204,11 +204,11 @@ class ExpensiveComponent extends Fukict {
   render() {
     this.renderCount++;
     return (
-      <div class="p-3 bg-yellow-50 border border-yellow-300 rounded-lg text-sm">
-        <p class="text-yellow-900 font-medium">
+      <div class="rounded-lg border border-yellow-300 bg-yellow-50 p-3 text-sm">
+        <p class="font-medium text-yellow-900">
           昂贵的组件 (渲染次数: {this.renderCount})
         </p>
-        <p class="text-xs text-yellow-700 mt-1">
+        <p class="mt-1 text-xs text-yellow-700">
           使用 fukict:detach，只渲染一次
         </p>
       </div>
@@ -222,11 +222,11 @@ class NormalComponent extends Fukict {
   render() {
     this.renderCount++;
     return (
-      <div class="p-3 bg-blue-50 border border-blue-300 rounded-lg text-sm">
-        <p class="text-blue-900 font-medium">
+      <div class="rounded-lg border border-blue-300 bg-blue-50 p-3 text-sm">
+        <p class="font-medium text-blue-900">
           普通组件 (渲染次数: {this.renderCount})
         </p>
-        <p class="text-xs text-blue-700 mt-1">会随父组件更新而重新渲染</p>
+        <p class="mt-1 text-xs text-blue-700">会随父组件更新而重新渲染</p>
       </div>
     );
   }
@@ -245,7 +245,7 @@ class ParentWithDetach extends Fukict {
               this.count++;
               this.update();
             }}
-            class="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-xs"
+            class="rounded-md bg-blue-600 px-3 py-2 text-xs text-white hover:bg-blue-700"
           >
             更新父组件
           </button>
@@ -270,10 +270,10 @@ export class RefsPage extends RouteComponent {
         {/* 函数组件中的 ref */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">
+            <h3 class="mb-1 text-base font-medium text-gray-800">
               函数组件中的 ref
             </h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <p class="text-sm leading-relaxed text-gray-600">
               在函数组件中使用 ref 获取 DOM 元素的引用
             </p>
           </div>
@@ -315,10 +315,10 @@ const MyComponent = defineFukict(() => {
         {/* Class 组件中的 fukict:ref */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">
+            <h3 class="mb-1 text-base font-medium text-gray-800">
               Class 组件中的 fukict:ref
             </h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <p class="text-sm leading-relaxed text-gray-600">
               在 Class 组件中使用 fukict:ref 获取子组件实例的引用
             </p>
           </div>
@@ -382,10 +382,10 @@ class Parent extends Fukict {
         {/* fukict:detach */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">
+            <h3 class="mb-1 text-base font-medium text-gray-800">
               fukict:detach
             </h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <p class="text-sm leading-relaxed text-gray-600">
               阻止组件在父组件更新时被重新渲染（性能优化）
             </p>
           </div>

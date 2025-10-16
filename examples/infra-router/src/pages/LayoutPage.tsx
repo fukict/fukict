@@ -9,15 +9,15 @@ import { Link, RouteComponent, RouterView } from '@fukict/router';
 export class LayoutPage extends RouteComponent {
   render(): VNode {
     return (
-      <div class="min-h-screen flex flex-col bg-gray-50">
+      <div class="flex min-h-screen flex-col bg-gray-50">
         {/* Header Navigation */}
-        <header class="bg-white shadow-sm border-b sticky top-0 z-10">
+        <header class="sticky top-0 z-10 border-b bg-white shadow-sm">
           <div class="container mx-auto px-4">
-            <div class="flex items-center justify-between h-16">
+            <div class="flex h-16 items-center justify-between">
               {/* Logo */}
               <div class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-                  <span class="text-white font-bold text-lg">F</span>
+                <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-600">
+                  <span class="text-lg font-bold text-white">F</span>
                 </div>
                 <h1 class="text-xl font-bold text-gray-900">Fukict Router</h1>
               </div>
@@ -26,21 +26,21 @@ export class LayoutPage extends RouteComponent {
               <nav class="flex items-center gap-1">
                 <Link
                   to="/home"
-                  class="px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+                  class="rounded-lg px-4 py-2 text-gray-700 transition-colors hover:bg-gray-100"
                   exactActiveClass="bg-blue-100 text-blue-600 font-semibold"
                 >
                   Home
                 </Link>
                 <Link
                   to="/about"
-                  class="px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+                  class="rounded-lg px-4 py-2 text-gray-700 transition-colors hover:bg-gray-100"
                   exactActiveClass="bg-blue-100 text-blue-600 font-semibold"
                 >
                   About
                 </Link>
                 <Link
                   to="/user/123"
-                  class="px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+                  class="rounded-lg px-4 py-2 text-gray-700 transition-colors hover:bg-gray-100"
                   activeClass="bg-blue-50 text-blue-600 font-semibold"
                 >
                   User
@@ -54,7 +54,7 @@ export class LayoutPage extends RouteComponent {
                 </Link>
                 <Link
                   to="/dashboard/overview"
-                  class="px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+                  class="rounded-lg px-4 py-2 text-gray-700 transition-colors hover:bg-gray-100"
                   activeClass="bg-blue-50 text-blue-600 font-semibold"
                 >
                   Dashboard
@@ -65,14 +65,14 @@ export class LayoutPage extends RouteComponent {
         </header>
 
         {/* Main Content Area */}
-        <main class="flex-1 container mx-auto px-4 py-8">
-          <div class="bg-white rounded-lg shadow-sm border p-8">
+        <main class="container mx-auto flex-1 px-4 py-8">
+          <div class="rounded-lg border bg-white p-8 shadow-sm">
             <RouterView router={this.router} />
           </div>
         </main>
 
         {/* Footer */}
-        <footer class="bg-white border-t mt-auto">
+        <footer class="mt-auto border-t bg-white">
           <div class="container mx-auto px-4 py-6">
             <div class="flex items-center justify-between text-sm text-gray-600">
               <p>
@@ -88,7 +88,7 @@ export class LayoutPage extends RouteComponent {
               </p>
               <p>
                 Current Route:{' '}
-                <code class="px-2 py-1 bg-gray-100 rounded text-xs">
+                <code class="rounded bg-gray-100 px-2 py-1 text-xs">
                   {this.route.path}
                 </code>
               </p>

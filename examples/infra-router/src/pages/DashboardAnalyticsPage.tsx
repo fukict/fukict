@@ -11,7 +11,7 @@ export class DashboardAnalyticsPage extends RouteComponent {
         <h2 class="text-2xl font-bold">Analytics</h2>
         <p class="text-gray-600">Detailed analytics and performance metrics.</p>
 
-        <div class="space-y-4 mt-6">
+        <div class="mt-6 space-y-4">
           <div class="border-l-4 border-blue-500 pl-4">
             <h3 class="font-semibold">Page Views</h3>
             <p class="text-2xl font-bold text-gray-800">45,678</p>

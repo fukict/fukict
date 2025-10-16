@@ -29,7 +29,7 @@ class NativeEventsDemo extends Fukict {
         {/* Click 事件示例 */}
         <div>
           <button
-            class="px-4 py-2 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors"
+            class="rounded bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-600"
             on:click={this.handleClick}
           >
             点击我
@@ -41,7 +41,7 @@ class NativeEventsDemo extends Fukict {
         <div>
           <input
             type="text"
-            class="px-3 py-2 border border-gray-300 rounded w-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
             placeholder="输入文字..."
             value={this.inputValue}
             on:input={this.handleInput}
@@ -70,7 +70,7 @@ class EventObjectDemo extends Fukict {
         {/* 访问事件对象 */}
         <div>
           <button
-            class="px-4 py-2 bg-green-500 text-white text-sm rounded hover:bg-green-600 transition-colors"
+            class="rounded bg-green-500 px-4 py-2 text-sm text-white transition-colors hover:bg-green-600"
             on:click={(e: MouseEvent) => {
               this.lastClickPos = { x: e.clientX, y: e.clientY };
               this.update();
@@ -85,17 +85,17 @@ class EventObjectDemo extends Fukict {
 
         {/* 阻止事件冒泡 */}
         <div
-          class="p-4 bg-gray-100 rounded border border-gray-300"
+          class="rounded border border-gray-300 bg-gray-100 p-4"
           on:click={() => {
             this.outerClicked++;
             this.update();
           }}
         >
-          <p class="text-sm text-gray-700 mb-2">
+          <p class="mb-2 text-sm text-gray-700">
             外层点击次数: {this.outerClicked}
           </p>
           <button
-            class="px-4 py-2 bg-purple-500 text-white text-sm rounded hover:bg-purple-600 transition-colors"
+            class="rounded bg-purple-500 px-4 py-2 text-sm text-white transition-colors hover:bg-purple-600"
             on:click={(e: MouseEvent) => {
               e.stopPropagation();
               this.innerClicked++;
@@ -120,8 +120,8 @@ export class EventsPage extends RouteComponent {
         {/* 原生事件 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">原生事件</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">原生事件</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               使用 on:click, on:input 等处理原生 DOM 事件
             </p>
           </div>
@@ -168,8 +168,8 @@ export class EventsPage extends RouteComponent {
         {/* 事件对象 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">事件对象</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">事件对象</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               访问和使用事件对象参数
             </p>
           </div>

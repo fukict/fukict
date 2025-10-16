@@ -23,10 +23,10 @@ export class HomePage extends Fukict {
 
   render() {
     return (
-      <div class="max-w-4xl mx-auto space-y-8">
+      <div class="mx-auto max-w-4xl space-y-8">
         {/* Welcome Section */}
-        <section class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
-          <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+        <section class="rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
+          <h2 class="mb-4 text-3xl font-bold text-gray-900 dark:text-white">
             {i18n.t('home.welcome')}
           </h2>
           <p class="text-lg text-gray-600 dark:text-gray-300">
@@ -35,31 +35,31 @@ export class HomePage extends Fukict {
         </section>
 
         {/* Features Section */}
-        <section class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
-          <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+        <section class="rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
+          <h3 class="mb-6 text-2xl font-bold text-gray-900 dark:text-white">
             {i18n.t('home.features.title')}
           </h3>
-          <ul class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <ul class="grid grid-cols-1 gap-4 md:grid-cols-2">
             <li class="flex items-start gap-3">
-              <span class="text-blue-600 dark:text-blue-400 text-xl">✓</span>
+              <span class="text-xl text-blue-600 dark:text-blue-400">✓</span>
               <span class="text-gray-700 dark:text-gray-300">
                 {i18n.t('home.features.typeSafe')}
               </span>
             </li>
             <li class="flex items-start gap-3">
-              <span class="text-blue-600 dark:text-blue-400 text-xl">✓</span>
+              <span class="text-xl text-blue-600 dark:text-blue-400">✓</span>
               <span class="text-gray-700 dark:text-gray-300">
                 {i18n.t('home.features.reactive')}
               </span>
             </li>
             <li class="flex items-start gap-3">
-              <span class="text-blue-600 dark:text-blue-400 text-xl">✓</span>
+              <span class="text-xl text-blue-600 dark:text-blue-400">✓</span>
               <span class="text-gray-700 dark:text-gray-300">
                 {i18n.t('home.features.formatting')}
               </span>
             </li>
             <li class="flex items-start gap-3">
-              <span class="text-blue-600 dark:text-blue-400 text-xl">✓</span>
+              <span class="text-xl text-blue-600 dark:text-blue-400">✓</span>
               <span class="text-gray-700 dark:text-gray-300">
                 {i18n.t('home.features.plurals')}
               </span>
@@ -68,8 +68,8 @@ export class HomePage extends Fukict {
         </section>
 
         {/* Interactive Demo Section */}
-        <section class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
-          <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+        <section class="rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
+          <h3 class="mb-6 text-2xl font-bold text-gray-900 dark:text-white">
             {i18n.t('demo.title')}
           </h3>
 
@@ -84,7 +84,7 @@ export class HomePage extends Fukict {
                 value={this.name}
                 on:input={this.handleNameChange}
                 placeholder={i18n.t('demo.namePlaceholder')}
-                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
               />
               <p class="text-xl text-gray-800 dark:text-gray-200">
                 {i18n.t('demo.greeting', { name: this.name })}
@@ -101,7 +101,7 @@ export class HomePage extends Fukict {
                 value={String(this.itemCount)}
                 on:input={this.handleItemCountChange}
                 min="0"
-                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
               />
               <p class="text-xl text-gray-800 dark:text-gray-200">
                 {i18n.t('demo.items', { count: this.itemCount })}
@@ -109,7 +109,7 @@ export class HomePage extends Fukict {
             </div>
 
             {/* Formatting Demo */}
-            <div class="space-y-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <div class="space-y-3 border-t border-gray-200 pt-4 dark:border-gray-700">
               <h4 class="font-semibold text-gray-900 dark:text-white">
                 Formatting Examples
               </h4>
@@ -144,44 +144,44 @@ export class HomePage extends Fukict {
         </section>
 
         {/* About Section */}
-        <section class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
-          <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+        <section class="rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
+          <h3 class="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
             {i18n.t('about.title')}
           </h3>
-          <p class="text-gray-600 dark:text-gray-300 mb-6">
+          <p class="mb-6 text-gray-600 dark:text-gray-300">
             {i18n.t('about.description')}
           </p>
 
-          <h4 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+          <h4 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
             {i18n.t('about.features.title')}
           </h4>
           <ul class="space-y-3">
             <li class="flex items-start gap-3">
-              <span class="text-blue-600 dark:text-blue-400 mt-1">•</span>
+              <span class="mt-1 text-blue-600 dark:text-blue-400">•</span>
               <span class="text-gray-700 dark:text-gray-300">
                 {i18n.t('about.features.item1')}
               </span>
             </li>
             <li class="flex items-start gap-3">
-              <span class="text-blue-600 dark:text-blue-400 mt-1">•</span>
+              <span class="mt-1 text-blue-600 dark:text-blue-400">•</span>
               <span class="text-gray-700 dark:text-gray-300">
                 {i18n.t('about.features.item2')}
               </span>
             </li>
             <li class="flex items-start gap-3">
-              <span class="text-blue-600 dark:text-blue-400 mt-1">•</span>
+              <span class="mt-1 text-blue-600 dark:text-blue-400">•</span>
               <span class="text-gray-700 dark:text-gray-300">
                 {i18n.t('about.features.item3')}
               </span>
             </li>
             <li class="flex items-start gap-3">
-              <span class="text-blue-600 dark:text-blue-400 mt-1">•</span>
+              <span class="mt-1 text-blue-600 dark:text-blue-400">•</span>
               <span class="text-gray-700 dark:text-gray-300">
                 {i18n.t('about.features.item4')}
               </span>
             </li>
             <li class="flex items-start gap-3">
-              <span class="text-blue-600 dark:text-blue-400 mt-1">•</span>
+              <span class="mt-1 text-blue-600 dark:text-blue-400">•</span>
               <span class="text-gray-700 dark:text-gray-300">
                 {i18n.t('about.features.item5')}
               </span>

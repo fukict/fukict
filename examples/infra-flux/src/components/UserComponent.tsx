@@ -52,25 +52,25 @@ export class UserComponent extends Fukict {
     const { logout, updateSettings } = userStore.actions;
 
     return (
-      <div class="border rounded-lg p-6 bg-white shadow-sm">
-        <h2 class="text-2xl font-bold mb-4">User Example</h2>
-        <p class="text-gray-600 mb-4">
+      <div class="rounded-lg border bg-white p-6 shadow-sm">
+        <h2 class="mb-4 text-2xl font-bold">User Example</h2>
+        <p class="mb-4 text-gray-600">
           Nested objects, async actions, and selector subscriptions
         </p>
 
         {state.isLoading ? (
-          <div class="text-center py-8">
-            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+          <div class="py-8 text-center">
+            <div class="inline-block h-8 w-8 animate-spin rounded-full border-b-2 border-blue-500"></div>
             <p class="mt-2 text-gray-600">Loading...</p>
           </div>
         ) : state.user ? (
           <div>
             {/* User Profile */}
-            <div class="flex items-center gap-4 mb-4 p-4 bg-gray-50 rounded">
+            <div class="mb-4 flex items-center gap-4 rounded bg-gray-50 p-4">
               <img
                 src={state.user.avatar}
                 alt="Avatar"
-                class="w-16 h-16 rounded-full"
+                class="h-16 w-16 rounded-full"
               />
               <div>
                 <h3 class="font-bold">{state.user.name}</h3>
@@ -79,13 +79,13 @@ export class UserComponent extends Fukict {
             </div>
 
             {/* Settings */}
-            <div class="space-y-3 mb-4">
+            <div class="mb-4 space-y-3">
               <div class="flex items-center justify-between">
                 <span class="text-sm text-gray-600">Theme:</span>
                 <div class="flex gap-2">
                   {(['light', 'dark'] as const).map(theme => (
                     <button
-                      class={`px-3 py-1 rounded text-sm ${
+                      class={`rounded px-3 py-1 text-sm ${
                         state.settings.theme === theme
                           ? 'bg-blue-500 text-white'
                           : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -103,7 +103,7 @@ export class UserComponent extends Fukict {
                 <div class="flex gap-2">
                   {(['en', 'zh'] as const).map(lang => (
                     <button
-                      class={`px-3 py-1 rounded text-sm ${
+                      class={`rounded px-3 py-1 text-sm ${
                         state.settings.language === lang
                           ? 'bg-blue-500 text-white'
                           : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -119,7 +119,7 @@ export class UserComponent extends Fukict {
               <div class="flex items-center justify-between">
                 <span class="text-sm text-gray-600">Notifications:</span>
                 <button
-                  class={`px-3 py-1 rounded text-sm ${
+                  class={`rounded px-3 py-1 text-sm ${
                     state.settings.notifications
                       ? 'bg-green-500 text-white'
                       : 'bg-gray-200 text-gray-700'
@@ -136,7 +136,7 @@ export class UserComponent extends Fukict {
             </div>
 
             <button
-              class="w-full px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+              class="w-full rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
               on:click={() => logout()}
             >
               Logout
@@ -145,12 +145,12 @@ export class UserComponent extends Fukict {
         ) : (
           <form on:submit={this.handleLogin} class="space-y-4">
             <div>
-              <label class="block text-sm text-gray-600 mb-1">Email:</label>
+              <label class="mb-1 block text-sm text-gray-600">Email:</label>
               <input
                 type="email"
                 value={this.email}
                 placeholder="your@email.com"
-                class="w-full px-3 py-2 border rounded"
+                class="w-full rounded border px-3 py-2"
                 on:input={(e: Event) => {
                   this.email = (e.target as HTMLInputElement).value;
                   this.update();
@@ -159,7 +159,7 @@ export class UserComponent extends Fukict {
             </div>
             <button
               type="submit"
-              class="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              class="w-full rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
             >
               Login
             </button>

@@ -13,22 +13,22 @@ export class DashboardOverviewPage extends RouteComponent {
           Dashboard overview with key metrics and statistics.
         </p>
 
-        <div class="grid grid-cols-2 gap-4 mt-6">
-          <div class="p-4 bg-blue-50 rounded-lg">
+        <div class="mt-6 grid grid-cols-2 gap-4">
+          <div class="rounded-lg bg-blue-50 p-4">
             <h3 class="font-semibold text-blue-900">Total Users</h3>
-            <p class="text-3xl font-bold text-blue-600 mt-2">1,234</p>
+            <p class="mt-2 text-3xl font-bold text-blue-600">1,234</p>
           </div>
-          <div class="p-4 bg-green-50 rounded-lg">
+          <div class="rounded-lg bg-green-50 p-4">
             <h3 class="font-semibold text-green-900">Active Sessions</h3>
-            <p class="text-3xl font-bold text-green-600 mt-2">567</p>
+            <p class="mt-2 text-3xl font-bold text-green-600">567</p>
           </div>
-          <div class="p-4 bg-purple-50 rounded-lg">
+          <div class="rounded-lg bg-purple-50 p-4">
             <h3 class="font-semibold text-purple-900">Total Revenue</h3>
-            <p class="text-3xl font-bold text-purple-600 mt-2">$89,012</p>
+            <p class="mt-2 text-3xl font-bold text-purple-600">$89,012</p>
           </div>
-          <div class="p-4 bg-orange-50 rounded-lg">
+          <div class="rounded-lg bg-orange-50 p-4">
             <h3 class="font-semibold text-orange-900">Conversion Rate</h3>
-            <p class="text-3xl font-bold text-orange-600 mt-2">3.4%</p>
+            <p class="mt-2 text-3xl font-bold text-orange-600">3.4%</p>
           </div>
         </div>
       </div>

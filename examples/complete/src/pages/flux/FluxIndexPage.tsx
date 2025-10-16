@@ -96,14 +96,14 @@ class ProductList extends Fukict {
         <h4 class="text-sm font-medium text-gray-900">可选商品</h4>
         <div class="space-y-2">
           {availableProducts.map(product => (
-            <div class="flex items-center justify-between p-3 bg-white border border-gray-300 rounded-lg hover:border-blue-400 transition">
+            <div class="flex items-center justify-between rounded-lg border border-gray-300 bg-white p-3 transition hover:border-blue-400">
               <div>
                 <p class="text-sm font-medium text-gray-900">{product.name}</p>
                 <p class="text-xs text-gray-600">¥{product.price}</p>
               </div>
               <button
                 on:click={() => cartStore.actions.addItem(product)}
-                class="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
+                class="rounded bg-blue-600 px-3 py-1 text-xs text-white hover:bg-blue-700"
               >
                 加入购物车
               </button>
@@ -152,13 +152,13 @@ class ShoppingCart extends Fukict {
         </div>
 
         {items.length === 0 ? (
-          <div class="p-6 bg-gray-50 border border-gray-200 rounded-lg text-center">
+          <div class="rounded-lg border border-gray-200 bg-gray-50 p-6 text-center">
             <p class="text-sm text-gray-500">购物车是空的</p>
           </div>
         ) : (
           <div class="space-y-2">
             {items.map(item => (
-              <div class="flex items-center justify-between p-3 bg-green-50 border border-green-300 rounded-lg">
+              <div class="flex items-center justify-between rounded-lg border border-green-300 bg-green-50 p-3">
                 <div class="flex-1">
                   <p class="text-sm font-medium text-gray-900">{item.name}</p>
                   <p class="text-xs text-gray-600">¥{item.price}</p>
@@ -171,11 +171,11 @@ class ShoppingCart extends Fukict {
                         item.quantity - 1,
                       )
                     }
-                    class="w-6 h-6 flex items-center justify-center bg-gray-200 text-gray-700 rounded hover:bg-gray-300 text-sm"
+                    class="flex h-6 w-6 items-center justify-center rounded bg-gray-200 text-sm text-gray-700 hover:bg-gray-300"
                   >
                     -
                   </button>
-                  <span class="text-sm font-medium text-gray-900 w-8 text-center">
+                  <span class="w-8 text-center text-sm font-medium text-gray-900">
                     {item.quantity}
                   </span>
                   <button
@@ -185,13 +185,13 @@ class ShoppingCart extends Fukict {
                         item.quantity + 1,
                       )
                     }
-                    class="w-6 h-6 flex items-center justify-center bg-gray-200 text-gray-700 rounded hover:bg-gray-300 text-sm"
+                    class="flex h-6 w-6 items-center justify-center rounded bg-gray-200 text-sm text-gray-700 hover:bg-gray-300"
                   >
                     +
                   </button>
                   <button
                     on:click={() => cartStore.actions.removeItem(item.id)}
-                    class="ml-2 px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700"
+                    class="ml-2 rounded bg-red-600 px-2 py-1 text-xs text-white hover:bg-red-700"
                   >
                     删除
                   </button>
@@ -199,17 +199,17 @@ class ShoppingCart extends Fukict {
               </div>
             ))}
 
-            <div class="pt-3 border-t border-gray-300">
-              <div class="flex items-center justify-between mb-3">
+            <div class="border-t border-gray-300 pt-3">
+              <div class="mb-3 flex items-center justify-between">
                 <p class="text-base font-semibold text-gray-900">总计:</p>
                 <p class="text-lg font-bold text-green-600">¥{total}</p>
               </div>
               <button
                 on:click={() => void cartStore.actions.checkout()}
                 disabled={loading}
-                class={`w-full px-4 py-2 text-sm font-medium text-white rounded ${
+                class={`w-full rounded px-4 py-2 text-sm font-medium text-white ${
                   loading
-                    ? 'bg-gray-400 cursor-not-allowed'
+                    ? 'cursor-not-allowed bg-gray-400'
                     : 'bg-green-600 hover:bg-green-700'
                 }`}
               >
@@ -233,8 +233,8 @@ export class FluxIndexPage extends RouteComponent {
         {/* 创建 Store */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">创建 Store</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">创建 Store</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               使用 createFlux 创建状态管理 Store,定义 state 和 actions
             </p>
           </div>
@@ -298,26 +298,26 @@ const cartStore = createFlux({
             />
             <DemoBox fukict:slot="demo">
               <div class="space-y-3 text-sm text-gray-700">
-                <div class="p-3 bg-blue-50 border border-blue-200 rounded">
-                  <p class="font-medium text-blue-900 mb-1">状态 (state)</p>
+                <div class="rounded border border-blue-200 bg-blue-50 p-3">
+                  <p class="mb-1 font-medium text-blue-900">状态 (state)</p>
                   <p class="text-xs text-blue-700">定义应用的状态数据结构</p>
                 </div>
-                <div class="p-3 bg-green-50 border border-green-200 rounded">
-                  <p class="font-medium text-green-900 mb-1">操作 (actions)</p>
+                <div class="rounded border border-green-200 bg-green-50 p-3">
+                  <p class="mb-1 font-medium text-green-900">操作 (actions)</p>
                   <p class="text-xs text-green-700">
                     定义修改状态的方法,可以是同步或异步
                   </p>
                 </div>
-                <div class="p-3 bg-purple-50 border border-purple-200 rounded">
-                  <p class="font-medium text-purple-900 mb-1">
+                <div class="rounded border border-purple-200 bg-purple-50 p-3">
+                  <p class="mb-1 font-medium text-purple-900">
                     获取状态 (getState)
                   </p>
                   <p class="text-xs text-purple-700">
                     使用 flux.getState() 读取当前状态
                   </p>
                 </div>
-                <div class="p-3 bg-orange-50 border border-orange-200 rounded">
-                  <p class="font-medium text-orange-900 mb-1">
+                <div class="rounded border border-orange-200 bg-orange-50 p-3">
+                  <p class="mb-1 font-medium text-orange-900">
                     更新状态 (setState)
                   </p>
                   <p class="text-xs text-orange-700">
@@ -332,10 +332,10 @@ const cartStore = createFlux({
         {/* 在组件中使用 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">
+            <h3 class="mb-1 text-base font-medium text-gray-800">
               在组件中使用
             </h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <p class="text-sm leading-relaxed text-gray-600">
               订阅 Store 状态变化并在组件中响应更新
             </p>
           </div>
@@ -405,16 +405,16 @@ class ShoppingCart extends Fukict {
         {/* 关键概念 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">关键概念</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">关键概念</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               理解 @fukict/flux 的核心概念和使用模式
             </p>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
-            <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <h4 class="text-sm font-medium text-blue-900 mb-2">订阅模式</h4>
-              <ul class="text-xs text-blue-700 space-y-1">
+            <div class="rounded-lg border border-blue-200 bg-blue-50 p-4">
+              <h4 class="mb-2 text-sm font-medium text-blue-900">订阅模式</h4>
+              <ul class="space-y-1 text-xs text-blue-700">
                 <li>• 使用 subscribe() 订阅状态变化</li>
                 <li>• 状态更新时自动通知所有订阅者</li>
                 <li>• 在 mounted 订阅,beforeUnmount 取消订阅</li>
@@ -422,11 +422,11 @@ class ShoppingCart extends Fukict {
               </ul>
             </div>
 
-            <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
-              <h4 class="text-sm font-medium text-green-900 mb-2">
+            <div class="rounded-lg border border-green-200 bg-green-50 p-4">
+              <h4 class="mb-2 text-sm font-medium text-green-900">
                 响应式更新
               </h4>
-              <ul class="text-xs text-green-700 space-y-1">
+              <ul class="space-y-1 text-xs text-green-700">
                 <li>• setState() 触发所有订阅者回调</li>
                 <li>• 组件在回调中调用 this.update()</li>
                 <li>• 实现自动重新渲染</li>
@@ -434,9 +434,9 @@ class ShoppingCart extends Fukict {
               </ul>
             </div>
 
-            <div class="p-4 bg-purple-50 border border-purple-200 rounded-lg">
-              <h4 class="text-sm font-medium text-purple-900 mb-2">异步操作</h4>
-              <ul class="text-xs text-purple-700 space-y-1">
+            <div class="rounded-lg border border-purple-200 bg-purple-50 p-4">
+              <h4 class="mb-2 text-sm font-medium text-purple-900">异步操作</h4>
+              <ul class="space-y-1 text-xs text-purple-700">
                 <li>• Actions 支持异步函数</li>
                 <li>• 可以包含 API 调用</li>
                 <li>• 使用 loading 状态跟踪进度</li>
@@ -444,9 +444,9 @@ class ShoppingCart extends Fukict {
               </ul>
             </div>
 
-            <div class="p-4 bg-orange-50 border border-orange-200 rounded-lg">
-              <h4 class="text-sm font-medium text-orange-900 mb-2">最佳实践</h4>
-              <ul class="text-xs text-orange-700 space-y-1">
+            <div class="rounded-lg border border-orange-200 bg-orange-50 p-4">
+              <h4 class="mb-2 text-sm font-medium text-orange-900">最佳实践</h4>
+              <ul class="space-y-1 text-xs text-orange-700">
                 <li>• 不要直接修改 state 对象</li>
                 <li>• 总是通过 setState 更新状态</li>
                 <li>• Actions 中使用不可变更新模式</li>

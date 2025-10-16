@@ -12,7 +12,7 @@ export class BabelPresetPage extends RouteComponent {
           <h3 class="text-base font-medium text-gray-800">
             什么是 @fukict/babel-preset
           </h3>
-          <p class="text-sm text-gray-600 leading-relaxed">
+          <p class="text-sm leading-relaxed text-gray-600">
             Fukict 的 Babel 预设，用于将 JSX 编译为 Fukict 可识别的 hyperscript
             调用。 提供编译时优化，减少运行时开销。
           </p>
@@ -21,8 +21,8 @@ export class BabelPresetPage extends RouteComponent {
         {/* 安装 */}
         <div class="space-y-3">
           <h3 class="text-base font-medium text-gray-800">安装</h3>
-          <div class="bg-gray-50/50 rounded-lg p-4 border border-gray-200/60">
-            <pre class="text-xs text-gray-700 leading-relaxed">
+          <div class="rounded-lg border border-gray-200/60 bg-gray-50/50 p-4">
+            <pre class="text-xs leading-relaxed text-gray-700">
               {`npm install -D @fukict/babel-preset @babel/core`}
             </pre>
           </div>
@@ -31,11 +31,11 @@ export class BabelPresetPage extends RouteComponent {
         {/* 配置 */}
         <div class="space-y-3">
           <h3 class="text-base font-medium text-gray-800">配置</h3>
-          <p class="text-sm text-gray-600 leading-relaxed">
+          <p class="text-sm leading-relaxed text-gray-600">
             在项目根目录创建 babel.config.js
           </p>
-          <div class="bg-gray-50/50 rounded-lg p-4 border border-gray-200/60">
-            <pre class="text-xs text-gray-700 leading-relaxed">
+          <div class="rounded-lg border border-gray-200/60 bg-gray-50/50 p-4">
+            <pre class="text-xs leading-relaxed text-gray-700">
               {`// babel.config.js
 module.exports = {
   presets: [
@@ -49,11 +49,11 @@ module.exports = {
         {/* 工作原理 */}
         <div class="space-y-3">
           <h3 class="text-base font-medium text-gray-800">工作原理</h3>
-          <p class="text-sm text-gray-600 leading-relaxed">
+          <p class="text-sm leading-relaxed text-gray-600">
             babel-preset 将 JSX 语法转换为 hyperscript 函数调用
           </p>
-          <div class="bg-gray-50/50 rounded-lg p-4 border border-gray-200/60">
-            <pre class="text-xs text-gray-700 leading-relaxed">
+          <div class="rounded-lg border border-gray-200/60 bg-gray-50/50 p-4">
+            <pre class="text-xs leading-relaxed text-gray-700">
               {`// 输入 (JSX)
 <div class="container">
   <h1>Hello</h1>
@@ -76,8 +76,8 @@ hyperscript('div', {
         {/* 关键特性 */}
         <div class="space-y-3">
           <h3 class="text-base font-medium text-gray-800">关键特性</h3>
-          <div class="bg-gray-50/50 rounded-lg p-4 border border-gray-200/60">
-            <ul class="text-sm text-gray-700 space-y-2">
+          <div class="rounded-lg border border-gray-200/60 bg-gray-50/50 p-4">
+            <ul class="space-y-2 text-sm text-gray-700">
               <li>
                 <strong class="text-gray-900">事件分离</strong>: 自动识别 on:
                 前缀的事件属性
@@ -104,22 +104,22 @@ hyperscript('div', {
             Babel Preset vs Vite Plugin
           </h3>
           <div class="grid grid-cols-2 gap-4">
-            <div class="bg-gray-50/50 border border-gray-200/60 rounded-lg p-4">
-              <h4 class="text-sm font-medium text-gray-900 mb-2">
+            <div class="rounded-lg border border-gray-200/60 bg-gray-50/50 p-4">
+              <h4 class="mb-2 text-sm font-medium text-gray-900">
                 @fukict/babel-preset
               </h4>
-              <ul class="text-xs text-gray-700 space-y-1">
+              <ul class="space-y-1 text-xs text-gray-700">
                 <li>适用于任何构建工具</li>
                 <li>需要配置 Babel</li>
                 <li>更灵活的配置选项</li>
                 <li>适合 Webpack、Rollup 等</li>
               </ul>
             </div>
-            <div class="bg-gray-50/50 border border-gray-200/60 rounded-lg p-4">
-              <h4 class="text-sm font-medium text-gray-900 mb-2">
+            <div class="rounded-lg border border-gray-200/60 bg-gray-50/50 p-4">
+              <h4 class="mb-2 text-sm font-medium text-gray-900">
                 @fukict/vite-plugin
               </h4>
-              <ul class="text-xs text-gray-700 space-y-1">
+              <ul class="space-y-1 text-xs text-gray-700">
                 <li>专为 Vite 设计</li>
                 <li>零配置开箱即用</li>
                 <li>更好的 HMR 支持</li>
@@ -132,8 +132,8 @@ hyperscript('div', {
         {/* 高级配置 */}
         <div class="space-y-3">
           <h3 class="text-base font-medium text-gray-800">高级配置</h3>
-          <div class="bg-gray-50/50 rounded-lg p-4 border border-gray-200/60">
-            <pre class="text-xs text-gray-700 leading-relaxed">
+          <div class="rounded-lg border border-gray-200/60 bg-gray-50/50 p-4">
+            <pre class="text-xs leading-relaxed text-gray-700">
               {`// babel.config.js
 module.exports = {
   presets: [

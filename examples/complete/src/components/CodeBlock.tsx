@@ -17,8 +17,8 @@ export class CodeBlock extends Fukict<CodeBlockProps> {
     return (
       <div class="space-y-2">
         {title && <h4 class="text-sm font-medium text-gray-700">{title}</h4>}
-        <div class="bg-gray-50/50 rounded-lg p-4 border border-gray-200/60 overflow-x-auto">
-          <pre class="text-xs text-gray-700 leading-relaxed">
+        <div class="overflow-x-auto rounded-lg border border-gray-200/60 bg-gray-50/50 p-4">
+          <pre class="text-xs leading-relaxed text-gray-700">
             <code class={`language-${language}`}>{code}</code>
           </pre>
         </div>

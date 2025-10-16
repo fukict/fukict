@@ -89,9 +89,92 @@ export interface RuntimeAttributes<T extends Element = Element>
  */
 export type HTMLAttributes<T extends HTMLElement = HTMLElement> =
   RuntimeAttributes<T> &
-    Omit<Partial<T>, keyof Element | 'style'> & {
+    Omit<
+      Partial<T>,
+      | keyof Element
+      | keyof Node
+      | keyof EventTarget
+      | keyof GlobalEventHandlers
+      | 'style'
+      | 'children'
+      | 'innerHTML'
+      | 'innerText'
+      | 'textContent'
+      | 'addEventListener'
+      | 'removeEventListener'
+      | 'dispatchEvent'
+    > & {
+      // Re-add commonly used Element properties that should be allowed
+      id?: string;
+      className?: never; // Explicitly forbid (use class instead)
+      classList?: never; // Explicitly forbid (use class instead)
+      // ARIA and role attributes
+      role?: string;
+      'aria-label'?: string;
+      'aria-labelledby'?: string;
+      'aria-describedby'?: string;
+      'aria-expanded'?: boolean | 'true' | 'false';
+      'aria-hidden'?: boolean | 'true' | 'false';
+      'aria-disabled'?: boolean | 'true' | 'false';
+      'aria-controls'?: string;
+      'aria-live'?: 'off' | 'polite' | 'assertive';
+      'aria-required'?: boolean | 'true' | 'false';
+      'aria-invalid'?: boolean | 'true' | 'false';
+      'aria-current'?:
+        | boolean
+        | 'page'
+        | 'step'
+        | 'location'
+        | 'date'
+        | 'time'
+        | 'true'
+        | 'false';
+      'aria-selected'?: boolean | 'true' | 'false';
+      'aria-checked'?: boolean | 'true' | 'false' | 'mixed';
+      'aria-pressed'?: boolean | 'true' | 'false' | 'mixed';
+      'aria-valuenow'?: number;
+      'aria-valuemin'?: number;
+      'aria-valuemax'?: number;
+      'aria-valuetext'?: string;
+      'aria-orientation'?: 'horizontal' | 'vertical';
+      'aria-sort'?: 'none' | 'ascending' | 'descending' | 'other';
+      'aria-atomic'?: boolean | 'true' | 'false';
+      'aria-busy'?: boolean | 'true' | 'false';
+      'aria-relevant'?:
+        | 'additions'
+        | 'removals'
+        | 'text'
+        | 'all'
+        | 'additions text';
+      'aria-autocomplete'?: 'none' | 'inline' | 'list' | 'both';
+      'aria-multiline'?: boolean | 'true' | 'false';
+      'aria-multiselectable'?: boolean | 'true' | 'false';
+      'aria-readonly'?: boolean | 'true' | 'false';
+      'aria-placeholder'?: string;
+      'aria-haspopup'?:
+        | boolean
+        | 'true'
+        | 'false'
+        | 'menu'
+        | 'listbox'
+        | 'tree'
+        | 'grid'
+        | 'dialog';
+      'aria-posinset'?: number;
+      'aria-setsize'?: number;
+      'aria-level'?: number;
+      'aria-owns'?: string;
+      'aria-activedescendant'?: string;
+      'aria-colcount'?: number;
+      'aria-colindex'?: number;
+      'aria-colspan'?: number;
+      'aria-rowcount'?: number;
+      'aria-rowindex'?: number;
+      'aria-rowspan'?: number;
       // Override style to support both string and object
       style?: CSSProperties | string;
+      // Key attribute for list reconciliation
+      key?: string | number;
     };
 
 /**

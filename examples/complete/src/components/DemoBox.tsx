@@ -15,7 +15,7 @@ export class DemoBox extends Fukict<DemoBoxProps> {
     return (
       <div class="space-y-2">
         {title && <h4 class="text-sm font-medium text-gray-700">{title}</h4>}
-        <div class="bg-white rounded-lg p-6 border border-gray-200/60 shadow-sm">
+        <div class="rounded-lg border border-gray-200/60 bg-white p-6 shadow-sm">
           {this.slots.default}
         </div>
       </div>

@@ -11,8 +11,8 @@ import { SplitView } from '../../components/SplitView';
 class Card extends Fukict {
   render() {
     return (
-      <div class="border border-gray-300 rounded-lg overflow-hidden">
-        <div class="p-4 bg-white">{this.slots.default}</div>
+      <div class="overflow-hidden rounded-lg border border-gray-300">
+        <div class="bg-white p-4">{this.slots.default}</div>
       </div>
     );
   }
@@ -25,7 +25,7 @@ class DefaultSlotDemo extends Fukict {
   render() {
     return (
       <Card>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">卡片标题</h3>
+        <h3 class="mb-2 text-lg font-semibold text-gray-900">卡片标题</h3>
         <p class="text-sm text-gray-600">
           这是卡片的主要内容，通过默认插槽传递进来。
         </p>
@@ -44,20 +44,20 @@ interface CardWithSlotsProps {
 class CardWithSlots extends Fukict<CardWithSlotsProps> {
   render() {
     return (
-      <div class="border border-gray-300 rounded-lg overflow-hidden">
+      <div class="overflow-hidden rounded-lg border border-gray-300">
         {/* Header 插槽 */}
         {this.slots.header && (
-          <div class="px-4 py-3 bg-gray-50 border-b border-gray-300">
+          <div class="border-b border-gray-300 bg-gray-50 px-4 py-3">
             {this.slots.header}
           </div>
         )}
 
         {/* 默认插槽 */}
-        <div class="p-4 bg-white">{this.slots.default}</div>
+        <div class="bg-white p-4">{this.slots.default}</div>
 
         {/* Footer 插槽 */}
         {this.slots.footer && (
-          <div class="px-4 py-3 bg-gray-50 border-t border-gray-300">
+          <div class="border-t border-gray-300 bg-gray-50 px-4 py-3">
             {this.slots.footer}
           </div>
         )}
@@ -77,11 +77,11 @@ class NamedSlotsDemo extends Fukict {
           <h3 class="text-base font-semibold text-gray-900">卡片标题</h3>
         </div>
 
-        <p class="text-sm text-gray-600 mb-3">这是卡片的主要内容区域。</p>
+        <p class="mb-3 text-sm text-gray-600">这是卡片的主要内容区域。</p>
         <p class="text-sm text-gray-600">支持多个子元素。</p>
 
         <div fukict:slot="footer">
-          <button class="px-4 py-2 bg-blue-500 text-white text-sm rounded hover:bg-blue-600">
+          <button class="rounded bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600">
             确定
           </button>
         </div>
@@ -124,7 +124,7 @@ class ScopedSlotDemo extends Fukict {
         items={this.items}
         renderItem={(item, index) => (
           <div class="flex items-center gap-2">
-            <span class="w-6 h-6 flex items-center justify-center bg-blue-500 text-white text-xs rounded-full">
+            <span class="flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-xs text-white">
               {index + 1}
             </span>
             <span class="text-sm text-gray-700">{item}</span>
@@ -145,8 +145,8 @@ export class SlotsPage extends RouteComponent {
         {/* 默认插槽 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">默认插槽</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">默认插槽</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               使用 this.slots.default 访问子内容
             </p>
           </div>
@@ -190,8 +190,8 @@ export class MyPage extends Fukict {
         {/* 具名插槽 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">具名插槽</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">具名插槽</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               使用 fukict:slot 属性指定插槽名称
             </p>
           </div>
@@ -243,8 +243,8 @@ export class MyPage extends Fukict {
         {/* 插槽作用域 */}
         <div class="space-y-4">
           <div>
-            <h3 class="text-base font-medium text-gray-800 mb-1">插槽作用域</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <h3 class="mb-1 text-base font-medium text-gray-800">插槽作用域</h3>
+            <p class="text-sm leading-relaxed text-gray-600">
               通过 renderItem 等函数 prop 实现作用域插槽
             </p>
           </div>

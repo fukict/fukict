@@ -36,30 +36,30 @@ export class LifecycleDemo extends Fukict<{}> {
   render() {
     return (
       <div>
-        <h2 class="text-3xl font-bold mb-4">生命周期</h2>
+        <h2 class="mb-4 text-3xl font-bold">生命周期</h2>
 
-        <div class="bg-indigo-50 border-l-4 border-indigo-500 p-4 mb-6">
+        <div class="mb-6 border-l-4 border-indigo-500 bg-indigo-50 p-4">
           <p class="text-sm text-gray-700">
             <strong>类组件生命周期：</strong>mounted → updated → beforeUnmount
           </p>
         </div>
 
-        <div class="bg-white rounded-lg shadow p-6">
-          <h3 class="text-xl font-semibold mb-4">生命周期日志</h3>
+        <div class="rounded-lg bg-white p-6 shadow">
+          <h3 class="mb-4 text-xl font-semibold">生命周期日志</h3>
 
-          <div class="mb-4 p-4 bg-gray-50 rounded-lg max-h-64 overflow-y-auto">
+          <div class="mb-4 max-h-64 overflow-y-auto rounded-lg bg-gray-50 p-4">
             <div ref={el => (this.logContainer = el)}></div>
           </div>
 
           <button
             on:click={() => this.update(this.props)}
-            class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors"
+            class="rounded bg-indigo-600 px-4 py-2 text-white transition-colors hover:bg-indigo-700"
           >
             触发 update()
           </button>
         </div>
 
-        <div class="mt-6 bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
+        <div class="mt-6 overflow-x-auto rounded-lg bg-gray-900 p-4 text-gray-100">
           <pre class="text-sm">
             <code>{`export class LifecycleDemo extends Fukict<{}> {
   mounted() {

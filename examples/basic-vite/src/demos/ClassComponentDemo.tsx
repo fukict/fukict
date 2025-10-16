@@ -22,19 +22,19 @@ export class ClassComponentDemo extends Fukict<{}> {
   render() {
     return (
       <div>
-        <h2 class="text-3xl font-bold mb-4">类组件 (Fukict)</h2>
+        <h2 class="mb-4 text-3xl font-bold">类组件 (Fukict)</h2>
 
-        <div class="bg-purple-50 border-l-4 border-purple-500 p-4 mb-6">
+        <div class="mb-6 border-l-4 border-purple-500 bg-purple-50 p-4">
           <p class="text-sm text-gray-700">
             <strong>类组件：</strong>继承自{' '}
-            <code class="bg-purple-100 px-1 rounded">Fukict</code>{' '}
+            <code class="rounded bg-purple-100 px-1">Fukict</code>{' '}
             基类，支持完整的生命周期和状态管理
           </p>
         </div>
 
-        <div class="bg-white rounded-lg shadow p-6">
-          <h3 class="text-xl font-semibold mb-4">自动计时器</h3>
-          <p class="text-gray-600 mb-4">
+        <div class="rounded-lg bg-white p-6 shadow">
+          <h3 class="mb-4 text-xl font-semibold">自动计时器</h3>
+          <p class="mb-4 text-gray-600">
             这个计数器会在组件挂载后自动开始，每秒递增
           </p>
           <div class="text-4xl font-bold text-purple-600">
@@ -42,7 +42,7 @@ export class ClassComponentDemo extends Fukict<{}> {
           </div>
         </div>
 
-        <div class="mt-6 bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
+        <div class="mt-6 overflow-x-auto rounded-lg bg-gray-900 p-4 text-gray-100">
           <pre class="text-sm">
             <code>{`export class ClassComponentDemo extends Fukict<{}> {
   private count = 0;

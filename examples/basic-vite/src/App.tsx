@@ -48,8 +48,8 @@ export class App extends Fukict {
         <Sidebar currentDemo={currentDemo} onSelect={this.handleDemoChange} />
 
         <main class="ml-64 p-8">
-          <div class="max-w-4xl mx-auto">
-            <div class="bg-white rounded-lg shadow-lg p-8">
+          <div class="mx-auto max-w-4xl">
+            <div class="rounded-lg bg-white p-8 shadow-lg">
               <DemoComponent />
             </div>
           </div>

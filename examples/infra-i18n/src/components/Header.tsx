@@ -8,9 +8,9 @@ import { i18n } from '../i18n';
 export class Header extends Fukict {
   render() {
     return (
-      <header class="bg-white dark:bg-gray-800 shadow">
+      <header class="bg-white shadow dark:bg-gray-800">
         <div class="container mx-auto px-4">
-          <div class="flex items-center justify-between h-16">
+          <div class="flex h-16 items-center justify-between">
             <div class="flex-1">
               <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
                 {i18n.t('app.title')}
@@ -62,7 +62,7 @@ class LanguageSelector extends Fukict {
         <select
           value={currentLocale}
           on:change={this.handleChange}
-          class="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          class="rounded-md border border-gray-300 bg-gray-100 px-3 py-1.5 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
         >
           <option value="en">English</option>
           <option value="zh">中文</option>

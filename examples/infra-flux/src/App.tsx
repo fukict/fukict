@@ -14,10 +14,10 @@ export class App extends Fukict {
   render(): VNode {
     return (
       <div class="min-h-screen bg-gray-50 py-8">
-        <div class="max-w-7xl mx-auto px-4">
+        <div class="mx-auto max-w-7xl px-4">
           {/* Header */}
           <header class="mb-8">
-            <h1 class="text-4xl font-bold text-gray-900 mb-2">
+            <h1 class="mb-2 text-4xl font-bold text-gray-900">
               Fukict Flux Examples
             </h1>
             <p class="text-gray-600">
@@ -31,7 +31,7 @@ export class App extends Fukict {
           </div>
 
           {/* Examples Grid */}
-          <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
             <CounterComponent />
             <TodoComponent />
             <UserComponent />
