@@ -42,6 +42,7 @@ export function defineFukict<P = {}>(
   fn: FunctionComponent<P>,
 ): FunctionComponent<P> {
   // Add component type marker for Babel plugin
-  (fn as any).__COMPONENT_TYPE__ = 'function';
+  (fn as unknown as { __COMPONENT_TYPE__?: string }).__COMPONENT_TYPE__ =
+    'function';
   return fn;
 }

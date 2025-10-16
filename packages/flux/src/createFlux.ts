@@ -1,11 +1,5 @@
 import { Flux } from './Flux';
-import type {
-  CreateFluxConfig,
-  FluxListener,
-  FluxSelector,
-  FluxStore,
-  Unsubscribe,
-} from './types';
+import type { CreateFluxConfig, FluxStore } from './types';
 
 /**
  * Factory function to create Flux Store
@@ -48,21 +42,7 @@ export function createFlux<T, A = {}>(
     getState: () => flux.getState(),
     setState: newState => flux.setState(newState),
 
-    // subscribe method overload
-    subscribe: ((
-      selectorOrListener: FluxSelector<T, any> | FluxListener<T>,
-      listener?: FluxListener<any>,
-    ): Unsubscribe => {
-      if (listener) {
-        // Selector subscription
-        return flux.subscribe(
-          selectorOrListener as FluxSelector<T, any>,
-          listener,
-        );
-      } else {
-        // Normal subscription
-        return flux.subscribe(selectorOrListener as FluxListener<T>);
-      }
-    }) as any,
+    // subscribe method - TypeScript will infer the correct overload from FluxStore<T, A>
+    subscribe: flux.subscribe.bind(flux),
   };
 }

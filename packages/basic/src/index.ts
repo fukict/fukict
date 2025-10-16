@@ -14,6 +14,10 @@ export const VERSION = METADATA.version;
 export type {
   VNode,
   VNodeChild,
+  ElementVNode,
+  FragmentVNode,
+  FunctionComponentVNode,
+  ClassComponentVNode,
   UnregisterFn,
   RefCallback,
   CSSProperties,

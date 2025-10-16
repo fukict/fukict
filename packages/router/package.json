@@ -41,12 +41,11 @@
     "dev": "tsx ../../scripts/build-package.ts --pkg-name router --watch",
     "typecheck": "tsc --noEmit"
   },
-  "devDependencies": {
-    "@fukict/basic": "workspace:*",
-    "typescript": "^5.6.3"
-  },
-  "peerDependencies": {
+  "dependencies": {
     "@fukict/basic": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
   },
   "engines": {
     "node": ">=16.0.0"

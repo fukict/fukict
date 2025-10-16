@@ -9,7 +9,7 @@ import { VNodeType } from '../types/index.js';
 /**
  * Check if __dom__ is an array (Fragment or multi-node)
  */
-export function isDomArray(dom: any): dom is Node[] {
+export function isDomArray(dom: unknown): dom is Node[] {
   return Array.isArray(dom);
 }
 
@@ -59,6 +59,6 @@ export function getAllDomNodes(vnode: VNode): Node[] {
 /**
  * Check if vnode is a valid VNode object
  */
-export function isVNode(value: any): value is VNode {
-  return value && typeof value === 'object' && '__type__' in value;
+export function isVNode(value: unknown): value is VNode {
+  return typeof value === 'object' && value !== null && '__type__' in value;
 }

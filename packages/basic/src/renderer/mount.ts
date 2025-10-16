@@ -3,7 +3,15 @@
  *
  * Mount DOM nodes and trigger lifecycle hooks at mounting moment
  */
-import type { VNode, VNodeChild } from '../types/index.js';
+import type {
+  ClassComponentVNode,
+  ElementVNode,
+  FragmentVNode,
+  FukictComponent,
+  FunctionComponentVNode,
+  VNode,
+  VNodeChild,
+} from '../types/index.js';
 import { VNodeType } from '../types/index.js';
 
 type ActivateOptions =
@@ -18,20 +26,33 @@ type ActivateOptions =
       onMounted?: () => void;
     };
 
-/**
- * Context for activation strategy
- */
-interface ActivateContext {
-  vnode: VNode;
+interface ElementActivateContext {
+  vnode: ElementVNode;
   container?: Element;
   placeholder?: Comment;
   onMounted?: () => void;
 }
 
-/**
- * Strategy function type
- */
-type ActivateStrategy = (ctx: ActivateContext) => void;
+interface FragmentActivateContext {
+  vnode: FragmentVNode;
+  container?: Element;
+  placeholder?: Comment;
+  onMounted?: () => void;
+}
+
+interface FunctionComponentActivateContext {
+  vnode: FunctionComponentVNode;
+  container?: Element;
+  placeholder?: Comment;
+  onMounted?: () => void;
+}
+
+interface ClassComponentActivateContext {
+  vnode: ClassComponentVNode;
+  container?: Element;
+  placeholder?: Comment;
+  onMounted?: () => void;
+}
 
 /**
  * Helper: Auto-activate ClassComponents in VNode tree
@@ -46,7 +67,7 @@ function autoActivateClassComponentsInTree(
 ): void {
   // Special handling for FunctionComponent: use __rendered__ instead of children
   if (vnode.__type__ === VNodeType.FunctionComponent) {
-    const rendered = (vnode as any).__rendered__;
+    const rendered = vnode.__rendered__;
     if (rendered && typeof rendered === 'object' && '__type__' in rendered) {
       autoActivateClassComponentsInTree(rendered as VNode, _container);
     }
@@ -61,8 +82,8 @@ function autoActivateClassComponentsInTree(
 
         // If child is a ClassComponent, activate it and stop recursion
         if (childVNode.__type__ === VNodeType.ClassComponent) {
-          const instance = (childVNode as any).__instance__;
-          const placeholder = (childVNode as any).__placeholder__;
+          const instance = childVNode.__instance__ as FukictComponent;
+          const placeholder = childVNode.__placeholder__;
 
           // Placeholder is already in DOM (from parent's createRealNode)
           // Use placeholder replacement mounting
@@ -86,9 +107,9 @@ function autoActivateClassComponentsInTree(
  * - container mode: for manual mounting via attach()
  * - placeholder mode: for diff/replace operations
  */
-function activateClassComponent(ctx: ActivateContext): void {
+function activateClassComponent(ctx: ClassComponentActivateContext): void {
   const { vnode, container, placeholder, onMounted } = ctx;
-  const instance = (vnode as any).__instance__;
+  const instance = vnode.__instance__ as FukictComponent;
 
   if (!instance) return;
 
@@ -107,9 +128,9 @@ function activateClassComponent(ctx: ActivateContext): void {
 /**
  * Strategy: Activate Element
  */
-function activateElement(ctx: ActivateContext): void {
+function activateElement(ctx: ElementActivateContext): void {
   const { vnode, container, placeholder, onMounted } = ctx;
-  const dom = (vnode as any).__dom__;
+  const dom = vnode.__dom__;
   const actualContainer = container || placeholder?.parentNode;
 
   if (!actualContainer) return;
@@ -132,9 +153,9 @@ function activateElement(ctx: ActivateContext): void {
 /**
  * Strategy: Activate Fragment
  */
-function activateFragment(ctx: ActivateContext): void {
+function activateFragment(ctx: FragmentActivateContext): void {
   const { vnode, container, placeholder, onMounted } = ctx;
-  const domArray = (vnode as any).__dom__;
+  const domArray = vnode.__dom__;
   const actualContainer = container || placeholder?.parentNode;
 
   if (!actualContainer) return;
@@ -162,9 +183,11 @@ function activateFragment(ctx: ActivateContext): void {
 /**
  * Strategy: Activate FunctionComponent
  */
-function activateFunctionComponent(ctx: ActivateContext): void {
+function activateFunctionComponent(
+  ctx: FunctionComponentActivateContext,
+): void {
   const { vnode, container, placeholder, onMounted } = ctx;
-  const dom = (vnode as any).__dom__;
+  const dom = vnode.__dom__;
   const actualContainer = container || placeholder?.parentNode;
 
   if (!actualContainer) return;
@@ -194,7 +217,7 @@ function activateFunctionComponent(ctx: ActivateContext): void {
   onMounted?.();
 
   // Auto-activate all ClassComponents in __rendered__ tree
-  const rendered = (vnode as any).__rendered__;
+  const rendered = vnode.__rendered__;
   if (rendered && typeof rendered === 'object' && '__type__' in rendered) {
     autoActivateClassComponentsInTree(
       rendered as VNode,
@@ -206,12 +229,12 @@ function activateFunctionComponent(ctx: ActivateContext): void {
 /**
  * Strategy registry
  */
-const strategies: Record<VNodeType, ActivateStrategy> = {
-  [VNodeType.ClassComponent]: activateClassComponent,
-  [VNodeType.Element]: activateElement,
-  [VNodeType.Fragment]: activateFragment,
-  [VNodeType.FunctionComponent]: activateFunctionComponent,
-};
+// const strategies: Record<VNodeType, ActivateStrategy> = {
+//   [VNodeType.ClassComponent]: activateClassComponent,
+//   [VNodeType.Element]: activateElement,
+//   [VNodeType.Fragment]: activateFragment,
+//   [VNodeType.FunctionComponent]: activateFunctionComponent,
+// };
 
 /**
  * Activate VNode: mount DOM and trigger lifecycle at mounting moment
@@ -234,14 +257,31 @@ export function activate(options: ActivateOptions): void {
   }
 
   const vnodeObj = vnode as VNode;
-  const strategy = strategies[vnodeObj.__type__];
 
-  if (strategy) {
-    strategy({
-      vnode: vnodeObj,
-      container,
-      placeholder,
-      onMounted,
-    });
+  switch (vnodeObj.__type__) {
+    case VNodeType.ClassComponent:
+      activateClassComponent({
+        vnode: vnodeObj,
+        container,
+        placeholder,
+        onMounted,
+      });
+      break;
+    case VNodeType.Element:
+      activateElement({ vnode: vnodeObj, container, placeholder, onMounted });
+      break;
+    case VNodeType.Fragment:
+      activateFragment({ vnode: vnodeObj, container, placeholder, onMounted });
+      break;
+    case VNodeType.FunctionComponent:
+      activateFunctionComponent({
+        vnode: vnodeObj,
+        container,
+        placeholder,
+        onMounted,
+      });
+      break;
+    default:
+      break;
   }
 }

@@ -31,13 +31,13 @@ export function diffClassComponent(
   }
 
   // Reuse instance
-  const instance = (oldVNode as any).__instance__;
-  (newVNode as any).__instance__ = instance;
+  const instance = oldVNode.__instance__;
+  newVNode.__instance__ = instance;
 
   // Check detached mode
   if (newVNode.props && newVNode.props['fukict:detach']) {
     // Detached mode: only update props, skip update()
-    (instance.props as any) = newVNode.props;
+    instance.props = newVNode.props;
     return;
   }
 

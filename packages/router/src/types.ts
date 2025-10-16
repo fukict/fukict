@@ -355,6 +355,11 @@ export interface LinkProps {
   replace?: boolean;
 
   /**
+   * CSS 类名
+   */
+  class?: string;
+
+  /**
    * 激活时的 CSS 类名
    */
   activeClass?: string;

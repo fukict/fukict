@@ -34,14 +34,14 @@ export function diffElement(
   }
 
   // Reuse DOM element
-  const element = (oldVNode as any).__dom__ as Element;
+  const element = oldVNode.__dom__ as Element;
   if (!element) {
     // DOM doesn't exist, replace node
     replaceNode(oldVNode, newVNode, container);
     return;
   }
 
-  (newVNode as any).__dom__ = element;
+  newVNode.__dom__ = element;
 
   // Patch props
   patchProps(element, oldVNode.props, newVNode.props);

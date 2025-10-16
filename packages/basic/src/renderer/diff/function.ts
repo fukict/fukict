@@ -35,8 +35,8 @@ export function diffFunctionComponent(
   // Shallow compare props
   if (shallowEqual(oldVNode.props, newVNode.props)) {
     // Props unchanged - reuse rendered result
-    (newVNode as any).__rendered__ = (oldVNode as any).__rendered__;
-    (newVNode as any).__dom__ = (oldVNode as any).__dom__;
+    newVNode.__rendered__ = oldVNode.__rendered__;
+    newVNode.__dom__ = oldVNode.__dom__;
     return;
   }
 
@@ -48,14 +48,14 @@ export function diffFunctionComponent(
       newVNode.children.length === 1 ? newVNode.children[0] : newVNode.children,
   };
   const rendered = (newVNode.type as Function)(propsWithChildren);
-  (newVNode as any).__rendered__ = rendered;
+  newVNode.__rendered__ = rendered;
 
   // Diff old and new rendered result
-  const oldRendered = (oldVNode as any).__rendered__;
+  const oldRendered = oldVNode.__rendered__;
   diff(oldRendered, rendered, container);
 
   // Update __dom__ reference
   if (rendered && typeof rendered === 'object' && '__dom__' in rendered) {
-    (newVNode as any).__dom__ = (rendered as any).__dom__;
+    newVNode.__dom__ = rendered.__dom__;
   }
 }

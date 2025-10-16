@@ -5,7 +5,7 @@
  * 交互式发布工具，支持正式发布和预发布版本
  */
 import { exec, execSync, spawn } from 'child_process';
-import { existsSync, readdirSync } from 'fs';
+import { existsSync, readFileSync, readdirSync } from 'fs';
 import { dirname, resolve } from 'path';
 import { createInterface } from 'readline';
 import { fileURLToPath } from 'url';
@@ -71,9 +71,15 @@ async function runCommand(
     return true;
   } catch (error) {
     log('error', `${description} 失败`);
-    if (error instanceof Error && 'stdout' in error) {
-      console.error((error as any).stdout);
-      console.error((error as any).stderr);
+    if (
+      error &&
+      typeof error === 'object' &&
+      'stdout' in error &&
+      'stderr' in error
+    ) {
+      const execError = error as { stdout: string; stderr: string };
+      console.error(execError.stdout);
+      console.error(execError.stderr);
     }
     return false;
   }
@@ -208,9 +214,11 @@ async function createAndPushTags(): Promise<boolean> {
     if (!existsSync(packageJsonPath)) continue;
 
     try {
-      const packageJson = JSON.parse(
-        require('fs').readFileSync(packageJsonPath, 'utf-8'),
-      );
+      const packageJsonContent = readFileSync(packageJsonPath, 'utf-8');
+      const packageJson = JSON.parse(packageJsonContent) as {
+        name: string;
+        version: string;
+      };
       const tagName = `${packageJson.name}@${packageJson.version}`;
 
       // 检查标签是否已存在
@@ -503,7 +511,9 @@ process.on('SIGINT', () => {
 });
 
 // 启动
-main().catch(error => {
-  log('error', `发布失败: ${error.message}`);
+main().catch((error: unknown) => {
+  const errorMessage =
+    error instanceof Error ? error.message : String(error || 'Unknown error');
+  log('error', `发布失败: ${errorMessage}`);
   process.exit(1);
 });

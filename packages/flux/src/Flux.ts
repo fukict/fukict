@@ -54,12 +54,12 @@ export class Flux<T> implements FluxInstance<T> {
   private createReadonlyProxy(state: T): T {
     return new Proxy(state as object, {
       get(target, prop, receiver) {
-        const value = Reflect.get(target, prop, receiver);
+        const value = Reflect.get(target, prop, receiver) as unknown;
 
         // If value is an object, wrap it in readonly proxy too
         if (value !== null && typeof value === 'object') {
-          return new Proxy(value, {
-            get: (t, p, r) => Reflect.get(t, p, r),
+          return new Proxy(value as object, {
+            get: (t, p, r) => Reflect.get(t, p, r) as unknown,
             set: () => {
               if (process.env.NODE_ENV !== 'production') {
                 console.warn(
@@ -176,7 +176,7 @@ export class Flux<T> implements FluxInstance<T> {
     for (const subscription of this.subscriptions) {
       if (subscription.selector) {
         // Selector subscription: compare old and new values
-        const newValue = subscription.selector(this.internalState);
+        const newValue: unknown = subscription.selector(this.internalState);
         if (!this.shallowEqual(subscription.lastValue, newValue)) {
           subscription.lastValue = newValue;
           subscription.listener(newValue);
@@ -202,7 +202,7 @@ export class Flux<T> implements FluxInstance<T> {
   /**
    * Shallow compare two values for equality
    */
-  private shallowEqual<S>(a: S, b: S): boolean {
+  private shallowEqual<S>(a?: S, b?: S): boolean {
     // Primitive type comparison
     if (Object.is(a, b)) {
       return true;
@@ -223,7 +223,12 @@ export class Flux<T> implements FluxInstance<T> {
       }
 
       for (const key of keysA) {
-        if (!Object.is((a as any)[key], (b as any)[key])) {
+        if (
+          !Object.is(
+            (a as Record<string, unknown>)[key],
+            (b as Record<string, unknown>)[key],
+          )
+        ) {
           return false;
         }
       }

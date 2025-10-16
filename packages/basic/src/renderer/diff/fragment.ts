@@ -31,7 +31,7 @@ export function diffFragment(
   const newNodes: Node[] = [];
   for (const child of newVNode.children) {
     if (child && typeof child === 'object' && '__dom__' in child) {
-      const dom = (child as any).__dom__;
+      const dom = child.__dom__;
       if (dom) {
         if (Array.isArray(dom)) {
           newNodes.push(...dom);
@@ -41,5 +41,5 @@ export function diffFragment(
       }
     }
   }
-  (newVNode as any).__dom__ = newNodes;
+  newVNode.__dom__ = newNodes;
 }

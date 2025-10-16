@@ -67,7 +67,12 @@
       "Bash(export:*)",
       "Bash(chmod:*)",
       "Read(//Volumes/Projects/ikun-kit/react/.husky/**)",
-      "Read(//Volumes/Projects/ikun-kit/react/**)"
+      "Read(//Volumes/Projects/ikun-kit/react/**)",
+      "Bash(do echo \"=== $file ===\")",
+      "Bash(test:*)",
+      "Bash(xargs:*)",
+      "Bash(do [ -f \"$dir/package.json\" ])",
+      "Bash(jq:*)"
     ],
     "deny": [],
     "ask": []

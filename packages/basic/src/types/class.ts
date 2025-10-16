@@ -85,7 +85,7 @@ export interface FukictComponent<
    * Mount method (called by renderer after instance creation)
    * @internal
    */
-  mount(container: Element): void;
+  mount(container: Element, placeholder?: Comment): void;
 
   /** Unmount method (internal, framework use) */
   unmount(): void;

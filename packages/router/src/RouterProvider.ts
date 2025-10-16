@@ -1,4 +1,4 @@
-import { Fukict, type VNode, h } from '@fukict/basic';
+import { Fukict, type VNode, VNodeType } from '@fukict/basic';
 
 import { Router } from './Router';
 import { RouterView } from './RouterView';
@@ -92,19 +92,25 @@ export class RouterProvider extends Fukict<RouterProviderProps> {
   render(): VNode {
     if (!this.router) {
       // Router 未初始化，渲染空 div
-      return h('div', { class: 'router-provider' }, []);
+      return {
+        type: 'element',
+        __type__: VNodeType.Element,
+        props: {
+          class: 'router-provider',
+        },
+        children: [],
+      };
     }
 
     // 依赖框架的 diff 机制，router 作为 props 传递给 RouterView
-    return h('div', { class: 'router-provider' }, [
-      h(
-        RouterView,
-        {
-          router: this.router,
-          fallback: this.props.fallback,
-        },
-        [],
-      ),
-    ]);
+    return {
+      type: RouterView,
+      __type__: VNodeType.ClassComponent,
+      props: {
+        router: this.router,
+        fallback: this.props.fallback,
+      },
+      children: [],
+    };
   }
 }

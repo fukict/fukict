@@ -3,8 +3,17 @@
  *
  * Utility functions for Context system
  */
+import type { FukictComponent } from '../types/class.js';
 import type { ContextData } from '../types/context.js';
-import type { VNode } from '../types/core.js';
+import type { ClassComponentVNode, VNode } from '../types/core.js';
+
+/**
+ * Internal component instance with wrapper and parent
+ */
+interface ComponentInstanceInternal extends FukictComponent {
+  __wrapper__?: VNode;
+  __parentInstance__?: ComponentInstanceInternal;
+}
 
 /**
  * Create immutable proxy for context values
@@ -28,7 +37,7 @@ export function createImmutableProxy<T>(value: T): T {
     return value;
   }
 
-  return new Proxy(value as any, {
+  return new Proxy(value as object, {
     set() {
       console.warn(
         '[Fukict] Context values are immutable and cannot be modified',
@@ -42,7 +51,7 @@ export function createImmutableProxy<T>(value: T): T {
       return false;
     },
     get(target, prop) {
-      const result = Reflect.get(target, prop);
+      const result = Reflect.get(target, prop) as unknown;
       // Deep proxy for nested objects
       if (typeof result === 'object' && result !== null) {
         return createImmutableProxy(result);
@@ -64,7 +73,10 @@ export function createImmutableProxy<T>(value: T): T {
  */
 export function getParentContext(vnode: VNode): ContextData | undefined {
   // Get instance from ClassComponentVNode
-  const instance = (vnode as any).__instance__;
+  const vnodeWithInstance = vnode as ClassComponentVNode;
+  const instance = vnodeWithInstance.__instance__ as
+    | ComponentInstanceInternal
+    | undefined;
   if (!instance) {
     return undefined;
   }
@@ -90,7 +102,7 @@ export function getParentContext(vnode: VNode): ContextData | undefined {
   // we should store parent instance reference on the child's wrapper VNode
   // Let's add __parentInstance__ field during createRealNode
 
-  const parentInstance = (wrapper as any).__parentInstance__;
+  const parentInstance = instance.__parentInstance__;
   if (parentInstance && parentInstance.__vnode__) {
     return parentInstance.__vnode__.__context__;
   }

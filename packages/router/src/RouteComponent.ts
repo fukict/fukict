@@ -136,12 +136,12 @@ export abstract class RouteComponent extends Fukict<RouteProps> {
   /**
    * 重写 update 方法，添加参数变化检测
    */
-  update(props?: Partial<RouteProps>): void {
+  update(props: RouteProps): void {
     const oldParams = this.params;
     const oldQuery = this.query;
 
     // 调用父类的 update
-    super.update(props as any);
+    super.update(props);
 
     // 检测参数变化
     const newParams = this.params;

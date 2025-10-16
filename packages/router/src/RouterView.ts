@@ -1,4 +1,4 @@
-import { Fukict, type VNode, h } from '@fukict/basic';
+import { Fukict, type VNode, VNodeType, h } from '@fukict/basic';
 
 import type { Router } from './Router';
 import type { RouteConfig, RouterViewProps } from './types';
@@ -55,15 +55,22 @@ export class RouterView extends Fukict<RouterViewProps> {
     const RouteComp = matched.component;
     const childRouter = this.getRouterForChild(matched);
 
-    // 使用 path 作为 key，确保路径变化时组件重新创建
-    return h('div', { class: 'router-view' }, [
-      h(
-        RouteComp,
+    return {
+      type: 'div',
+      __type__: VNodeType.Element,
+      props: {
+        class: 'router-view',
+      },
+      children: [
         {
-          router: childRouter,
-        } as any,
-        [],
-      ),
-    ]);
+          type: RouteComp,
+          __type__: VNodeType.ClassComponent,
+          props: {
+            router: childRouter,
+          },
+          children: [],
+        },
+      ],
+    };
   }
 }

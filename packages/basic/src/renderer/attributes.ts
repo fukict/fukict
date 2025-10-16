@@ -39,6 +39,8 @@ export function setAttributes(
       continue;
     }
 
+    // TODO: dom 应该统一处理流程
+
     // Handle ref callback
     if (key === 'ref' && typeof value === 'function') {
       value(element);

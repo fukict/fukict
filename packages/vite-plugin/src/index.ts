@@ -110,6 +110,7 @@ export default function fukict(options: FukictPluginOptions = {}): Plugin {
       }
 
       try {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment
         const result = transformSync(code, {
           presets: [
             [
@@ -126,20 +127,23 @@ export default function fukict(options: FukictPluginOptions = {}): Plugin {
           babelrc: false,
         });
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         if (!result || !result.code) {
           return null;
         }
 
         return {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
           code: result.code,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
           map: result.map,
         };
-      } catch (error) {
+      } catch (error: unknown) {
         console.error(`[fukict] Transform error in ${id}:`);
         console.error(error);
         this.error({
           message: `Failed to transform ${id}: ${error instanceof Error ? error.message : String(error)}`,
-          cause: error as Error,
+          cause: error instanceof Error ? error : new Error(String(error)),
         });
       }
     },

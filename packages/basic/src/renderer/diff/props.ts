@@ -4,14 +4,20 @@
  * Patch element properties
  */
 import * as dom from '../../dom/index.js';
+import type { ClassValue } from '../../types/dom-attributes.js';
+
+/**
+ * Prop value types
+ */
+type PropValue = unknown;
 
 /**
  * Patch element props
  */
 export function patchProps(
   element: Element,
-  oldProps: Record<string, any> | null,
-  newProps: Record<string, any> | null,
+  oldProps: Record<string, PropValue> | null,
+  newProps: Record<string, PropValue> | null,
 ): void {
   const old = oldProps || {};
   const newP = newProps || {};
@@ -40,12 +46,12 @@ export function patchProps(
 export function setProp(
   element: Element,
   key: string,
-  value: any,
-  oldValue?: any,
+  value: PropValue,
+  oldValue?: PropValue,
 ): void {
   // Handle ref callback
   if (key === 'ref' && typeof value === 'function') {
-    value(element);
+    (value as (el: Element) => void)(element);
     return;
   }
 
@@ -54,21 +60,20 @@ export function setProp(
     const eventName = key.slice(3);
     // Remove old listener if exists
     if (oldValue && typeof oldValue === 'function') {
-      dom.removeEventListener(element, eventName, oldValue);
+      dom.removeEventListener(element, eventName, oldValue as EventListener);
     }
     // Add new listener
     if (value && typeof value === 'function') {
-      dom.addEventListener(element, eventName, value);
+      dom.addEventListener(element, eventName, value as EventListener);
     }
     return;
   }
 
   // Handle style object
-  if (key === 'style' && typeof value === 'object') {
-    const oldStyle = (typeof oldValue === 'object' ? oldValue : {}) as Record<
-      string,
-      string
-    >;
+  if (key === 'style' && typeof value === 'object' && value !== null) {
+    const oldStyle = (
+      typeof oldValue === 'object' && oldValue !== null ? oldValue : {}
+    ) as Record<string, string>;
     const newStyle = value as Record<string, string>;
 
     // Remove old styles not in new
@@ -93,7 +98,7 @@ export function setProp(
 
   // Handle class with enhanced support
   if (key === 'class') {
-    dom.setClass(element, value);
+    dom.setClass(element, value as ClassValue);
     return;
   }
 
@@ -104,12 +109,16 @@ export function setProp(
 /**
  * Remove single prop
  */
-export function removeProp(element: Element, key: string, oldValue: any): void {
+export function removeProp(
+  element: Element,
+  key: string,
+  oldValue: PropValue,
+): void {
   // Handle events (on: prefix)
   if (key.startsWith('on:')) {
     const eventName = key.slice(3);
     if (typeof oldValue === 'function') {
-      dom.removeEventListener(element, eventName, oldValue);
+      dom.removeEventListener(element, eventName, oldValue as EventListener);
     }
     return;
   }

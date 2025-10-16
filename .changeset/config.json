@@ -6,11 +6,11 @@
   "commit": false,
   "fixed": [],
   "ignore": [
-    "babel-transform-demo",
-    "fukict-rsbuild-demo",
-    "fukict-vite-demo",
-    "fukict-webpack-demo",
-    "widget-demo"
+    "basic-vite",
+    "complete",
+    "infra-flux",
+    "infra-i18n",
+    "infra-router"
   ],
   "linked": [],
   "updateInternalDependencies": "patch"

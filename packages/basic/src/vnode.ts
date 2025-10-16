@@ -61,7 +61,7 @@ export function hyperscript(
 
   // If __type__ not set by babel-plugin, detect it at runtime
   if (!('__type__' in vnode)) {
-    (vnode as any).__type__ = detectVNodeType(type);
+    (vnode as VNode).__type__ = detectVNodeType(type);
   }
 
   return vnode;

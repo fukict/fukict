@@ -75,7 +75,7 @@ export class I18n<Messages extends Record<string, any>>
   /**
    * Translate text
    */
-  t(key: string, params?: Record<string, any>): string {
+  t(key: string, params?: Record<string, string | number>): string {
     // Check cache
     const cacheKey = `${this.currentLocale}:${key as string}:${JSON.stringify(params || {})}`;
     if (this.translationCache.has(cacheKey)) {
@@ -94,9 +94,15 @@ export class I18n<Messages extends Record<string, any>>
   /**
    * Internal translate function
    */
-  private translate(key: string, params?: Record<string, any>): string {
+  private translate(
+    key: string,
+    params?: Record<string, string | number>,
+  ): string {
     // Try current locale
-    let text = this.getTextByKey(key, this.currentLocale);
+    let text: string | Record<string, string> | undefined = this.getTextByKey(
+      key,
+      this.currentLocale,
+    );
 
     // Try fallback locale
     if (text === undefined && this.options.fallbackLocale) {
@@ -124,29 +130,41 @@ export class I18n<Messages extends Record<string, any>>
   /**
    * Get text by key from locale
    */
-  private getTextByKey(key: string, locale: string): any {
+  private getTextByKey(
+    key: string,
+    locale: string,
+  ): string | Record<string, string> | undefined {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const messages = this.messages[locale];
     if (!messages) return undefined;
 
     // Support dot notation: 'user.name'
     const keys = key.split('.');
-    let current: any = messages;
+    let current: unknown = messages;
 
     for (const k of keys) {
-      if (current && typeof current === 'object' && k in current) {
-        current = current[k];
+      if (
+        current &&
+        typeof current === 'object' &&
+        k in current &&
+        current !== null
+      ) {
+        current = (current as Record<string, unknown>)[k];
       } else {
         return undefined;
       }
     }
 
-    return current;
+    return current as string | Record<string, string>;
   }
 
   /**
    * Get plural form based on count
    */
-  private getPluralForm(pluralObj: any, count: number): string {
+  private getPluralForm(
+    pluralObj: Record<string, string>,
+    count: number,
+  ): string {
     // Use Intl.PluralRules to determine plural category
     const rules = new Intl.PluralRules(this.currentLocale);
     const category = rules.select(count);
@@ -168,8 +186,11 @@ export class I18n<Messages extends Record<string, any>>
   /**
    * Interpolate variables in text
    */
-  private interpolate(text: string, params: Record<string, any>): string {
-    return text.replace(/\{(\w+)\}/g, (match, key) => {
+  private interpolate(
+    text: string,
+    params: Record<string, string | number>,
+  ): string {
+    return text.replace(/\{(\w+)\}/g, (match, key: string) => {
       return key in params ? String(params[key]) : match;
     });
   }
@@ -186,7 +207,7 @@ export class I18n<Messages extends Record<string, any>>
 
     if (handler === 'fallback' && this.options.fallbackLocale) {
       const fallbackText = this.getTextByKey(key, this.options.fallbackLocale);
-      if (fallbackText !== undefined) {
+      if (fallbackText !== undefined && typeof fallbackText === 'string') {
         return fallbackText;
       }
     }
@@ -283,6 +304,7 @@ export class I18n<Messages extends Record<string, any>>
    * Get current locale messages
    */
   getMessages(): Messages[keyof Messages] {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this.messages[this.currentLocale];
   }
 
@@ -297,7 +319,10 @@ export class I18n<Messages extends Record<string, any>>
    * Add messages for a locale
    */
   addMessages(locale: string, messages: Messages[keyof Messages]): void {
-    (this.messages as any)[locale] = messages;
+    this.messages = {
+      ...this.messages,
+      [locale]: messages,
+    } as Messages;
     this.loadedLocales.add(locale);
   }
 

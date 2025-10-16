@@ -125,7 +125,11 @@ async function buildPackage(
     return false;
   }
 
-  const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
+  const packageJsonContent = readFileSync(packageJsonPath, 'utf-8');
+  const packageJson = JSON.parse(packageJsonContent) as {
+    name: string;
+    version: string;
+  };
   const packageInfo = `${packageJson.name}@${packageJson.version}`;
 
   log('blue', `🚀 ${watch ? 'Watching' : 'Building'} package: ${packageName}`);
@@ -229,7 +233,9 @@ async function main(): Promise<void> {
   await buildPackages(options);
 }
 
-main().catch(error => {
-  log('red', `❌ 构建失败: ${error.message}`);
+main().catch((error: unknown) => {
+  const errorMessage =
+    error instanceof Error ? error.message : String(error || 'Unknown error');
+  log('red', `❌ 构建失败: ${errorMessage}`);
   process.exit(1);
 });

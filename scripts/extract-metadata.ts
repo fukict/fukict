@@ -153,7 +153,9 @@ async function main(): Promise<void> {
   }
 }
 
-main().catch(error => {
-  log('red', `❌ Error: ${error.message}`);
+main().catch((error: unknown) => {
+  const errorMessage =
+    error instanceof Error ? error.message : String(error || 'Unknown error');
+  log('red', `❌ Error: ${errorMessage}`);
   process.exit(1);
 });
