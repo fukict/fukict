@@ -68,13 +68,11 @@ class RouterView extends Fukict<RouterViewProps> {
     const childRouter = this.getRouterForChild(matched);
 
     return (
-      <div class="router-view">
-        <RouteComp
-          fukict:detach={true}
-          fukict:ref={matched.path}  {/* 使用 path 作为 ref 名称 */}
-          router={childRouter}
-        />
-      </div>
+      <RouteComp
+        fukict:detach={true}
+        fukict:ref={matched.path}  {/* 使用 path 作为 ref 名称 */}
+        router={childRouter}
+      />
     );
   }
 }

@@ -1,4 +1,4 @@
-import { Fukict, type VNode, VNodeType, h } from '@fukict/basic';
+import { Fukict, type VNode, VNodeType } from '@fukict/basic';
 
 import type { Router } from './Router';
 import type { RouteConfig, RouterViewProps } from './types';
@@ -49,28 +49,28 @@ export class RouterView extends Fukict<RouterViewProps> {
 
     // 没有匹配的路由，渲染 fallback
     if (!matched || !matched.component) {
-      return this.props.fallback || h('div', { class: 'router-view' }, []);
+      return (
+        this.props.fallback || {
+          type: 'div',
+          __type__: VNodeType.Element,
+          props: {
+            class: 'router-view',
+          },
+          children: [],
+        }
+      );
     }
 
     const RouteComp = matched.component;
     const childRouter = this.getRouterForChild(matched);
 
     return {
-      type: 'div',
-      __type__: VNodeType.Element,
+      type: RouteComp,
+      __type__: VNodeType.ClassComponent,
       props: {
-        class: 'router-view',
+        router: childRouter,
       },
-      children: [
-        {
-          type: RouteComp,
-          __type__: VNodeType.ClassComponent,
-          props: {
-            router: childRouter,
-          },
-          children: [],
-        },
-      ],
+      children: [],
     };
   }
 }
