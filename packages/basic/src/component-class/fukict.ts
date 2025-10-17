@@ -76,12 +76,6 @@ export abstract class Fukict<
   S extends Slots = Slots,
 > {
   /**
-   * Component type marker for Babel plugin
-   * @internal
-   */
-  static readonly __COMPONENT_TYPE__ = 'class' as const;
-
-  /**
    * Unique component instance ID (for debugging)
    * @internal
    */

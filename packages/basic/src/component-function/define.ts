@@ -36,13 +36,10 @@ export type FunctionComponent<P = {}> = (
  * ```
  *
  * @param fn - Function component
- * @returns The same function with better types and __COMPONENT_TYPE__ marker
+ * @returns The same function with better types
  */
 export function defineFukict<P = {}>(
   fn: FunctionComponent<P>,
 ): FunctionComponent<P> {
-  // Add component type marker for Babel plugin
-  (fn as unknown as { __COMPONENT_TYPE__?: string }).__COMPONENT_TYPE__ =
-    'function';
   return fn;
 }

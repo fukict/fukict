@@ -51,7 +51,7 @@ const Greeting = defineFukict(({ name }) => <div>Hello {name}</div>);
 
 ### JSX Transform
 
-Transforms JSX to hyperscript calls:
+Transforms JSX to hyperscript calls with proper children arrays:
 
 ```tsx
 // Input
@@ -60,13 +60,22 @@ Transforms JSX to hyperscript calls:
 </div>;
 
 // Output
-hyperscript(
-  'div',
-  { class: 'container', 'on:click': handleClick },
+hyperscript('div', { class: 'container', 'on:click': handleClick }, [
   'Hello ',
   name,
-);
+]);
 ```
+
+**Component Type Detection:**
+
+The preset generates simple `hyperscript()` calls. Component type detection (`__type__` field) is handled automatically at runtime by the `hyperscript` function:
+
+- **Class components** (extends `Fukict`) → detected as `'class'`
+- **Function components** → detected as `'function'`
+- **DOM elements** (string tags) → detected as `'element'`
+- **Fragment** → detected as `'fragment'`
+
+This runtime detection ensures accurate type identification without compile-time analysis.
 
 ### Development Mode
 

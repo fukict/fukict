@@ -131,7 +131,6 @@ const Greeting = defineFukict(({ name }) =>
   hyperscript('div', null, ['Hello ', name])
 );
 Greeting.displayName = 'Greeting'; // in development mode
-Greeting.__COMPONENT_TYPE__ = 'function';
 ```
 
 ## TypeScript Configuration

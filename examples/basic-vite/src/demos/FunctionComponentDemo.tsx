@@ -52,8 +52,7 @@ export const FunctionComponentDemo = defineFukict(() => {
   let count = 0;
   return hyperscript('div', null, [count]);
 });
-FunctionComponentDemo.displayName = 'FunctionComponentDemo';
-FunctionComponentDemo.__COMPONENT_TYPE__ = 'function';`}</code>
+FunctionComponentDemo.displayName = 'FunctionComponentDemo';`}</code>
         </pre>
       </div>
     </div>

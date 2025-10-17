@@ -18,6 +18,6 @@ export default {
         'revert',
       ],
     ],
-    'subject-max-length': [2, 'always', 50],
+    'subject-max-length': [2, 'always', 100],
   },
 };

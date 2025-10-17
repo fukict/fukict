@@ -102,7 +102,6 @@ export default declare<PluginOptions>(api => {
 
           // Get element type
           let elementType: t.Expression;
-          let vnodeTypeHint: string | null = null;
 
           if (t.isJSXIdentifier(openingElement.name)) {
             const name = openingElement.name.name;
@@ -110,27 +109,18 @@ export default declare<PluginOptions>(api => {
             // Check if it's Fragment
             if (name === 'Fragment') {
               elementType = t.identifier('Fragment');
-              vnodeTypeHint = 'fragment';
             } else if (name[0] === name[0].toUpperCase()) {
-              // Component (uppercase) - try to determine type at compile time
+              // Component (uppercase)
               elementType = t.identifier(name);
-
-              // Check if we can determine component type via __COMPONENT_TYPE__
-              // This will be a runtime check: ComponentName.__COMPONENT_TYPE__ || 'function'
-              // For now, we'll generate code that reads __COMPONENT_TYPE__ at runtime
-              vnodeTypeHint = 'component'; // Special marker for component
             } else {
               // Native element (lowercase) - use string literal for tag name
               elementType = t.stringLiteral(name);
-              vnodeTypeHint = 'element';
             }
           } else if (t.isJSXMemberExpression(openingElement.name)) {
             elementType = convertJSXMemberExpression(
               openingElement.name,
               t,
             ) as t.Expression;
-            // Member expressions are components
-            vnodeTypeHint = 'component';
           } else {
             throw path.buildCodeFrameError('Unsupported JSX element type');
           }
@@ -196,63 +186,27 @@ export default declare<PluginOptions>(api => {
             t.arrayExpression(children),
           ]);
 
-          // Build assignments: __type__ and optionally __slot_name__
-          const vnodeId = path.scope.generateUidIdentifier('vnode');
-          const assignments: t.Expression[] = [];
-
-          // Add __type__ based on what we know at compile time
-          if (vnodeTypeHint === 'element' || vnodeTypeHint === 'fragment') {
-            // For element and fragment, we know the exact type
-            assignments.push(
-              t.assignmentExpression(
-                '=',
-                t.memberExpression(vnodeId, t.identifier('__type__')),
-                t.stringLiteral(vnodeTypeHint),
-              ),
-            );
-          } else if (vnodeTypeHint === 'component') {
-            // For components, read __COMPONENT_TYPE__ at runtime
-            assignments.push(
-              t.assignmentExpression(
-                '=',
-                t.memberExpression(vnodeId, t.identifier('__type__')),
-                // Read __COMPONENT_TYPE__ from component function, default to runtime detection
-                t.logicalExpression(
-                  '||',
-                  t.memberExpression(
-                    elementType,
-                    t.identifier('__COMPONENT_TYPE__'),
-                  ),
-                  // Fallback: let runtime detect (class vs function)
-                  t.stringLiteral('function'),
-                ),
-              ),
-            );
-          }
-
-          // Add __slot_name__ if fukict:slot is present
+          // Only handle fukict:slot if present
           if (slotName) {
-            assignments.push(
-              t.assignmentExpression(
-                '=',
-                t.memberExpression(vnodeId, t.identifier('__slot_name__')),
-                t.stringLiteral(slotName),
-              ),
-            );
-          }
-
-          // Wrap with IIFE if we have assignments
-          if (assignments.length > 0) {
+            // Wrap with IIFE to add __slot_name__
+            const vnodeId = path.scope.generateUidIdentifier('vnode');
             const wrappedCall = t.callExpression(
               t.arrowFunctionExpression(
                 [vnodeId],
-                t.sequenceExpression([...assignments, vnodeId]),
+                t.sequenceExpression([
+                  t.assignmentExpression(
+                    '=',
+                    t.memberExpression(vnodeId, t.identifier('__slot_name__')),
+                    t.stringLiteral(slotName),
+                  ),
+                  vnodeId,
+                ]),
               ),
               [call],
             );
             path.replaceWith(wrappedCall);
           } else {
-            // No optimization possible
+            // No slot, just use hyperscript call directly
             path.replaceWith(call);
           }
         },
@@ -318,24 +272,8 @@ export default declare<PluginOptions>(api => {
             t.arrayExpression(children),
           ]);
 
-          // Add __type__ for Fragment
-          const vnodeId = path.scope.generateUidIdentifier('vnode');
-          const wrappedCall = t.callExpression(
-            t.arrowFunctionExpression(
-              [vnodeId],
-              t.sequenceExpression([
-                t.assignmentExpression(
-                  '=',
-                  t.memberExpression(vnodeId, t.identifier('__type__')),
-                  t.stringLiteral('fragment'),
-                ),
-                vnodeId,
-              ]),
-            ),
-            [call],
-          );
-
-          path.replaceWith(wrappedCall);
+          // Fragment doesn't need IIFE wrapper, hyperscript will detect it
+          path.replaceWith(call);
         },
       },
     },

@@ -98,30 +98,6 @@ export default declare<PluginOptions>(api => {
         ]);
 
         path.node.init = wrappedInit;
-
-        // Add __COMPONENT_TYPE__ marker after variable declaration
-        // This allows JSX transform to know it's a function component at compile time
-        const parentPath = path.parentPath;
-        if (parentPath && parentPath.isVariableDeclaration()) {
-          const grandParentPath = parentPath.parentPath;
-          // Only add type marker if we're in a valid statement context
-          if (
-            grandParentPath &&
-            (grandParentPath.isProgram() || grandParentPath.isBlockStatement())
-          ) {
-            const typeMarker = t.expressionStatement(
-              t.assignmentExpression(
-                '=',
-                t.memberExpression(
-                  t.identifier(id.name),
-                  t.identifier('__COMPONENT_TYPE__'),
-                ),
-                t.stringLiteral('function'),
-              ),
-            );
-            parentPath.insertAfter(typeMarker);
-          }
-        }
       },
 
       ExportDefaultDeclaration(path) {
@@ -164,23 +140,10 @@ export default declare<PluginOptions>(api => {
           t.variableDeclarator(tempId, wrappedComponent),
         ]);
 
-        // Add __COMPONENT_TYPE__ marker
-        const typeMarker = t.expressionStatement(
-          t.assignmentExpression(
-            '=',
-            t.memberExpression(tempId, t.identifier('__COMPONENT_TYPE__')),
-            t.stringLiteral('function'),
-          ),
-        );
-
         // Export the temp variable
         const exportDeclaration = t.exportDefaultDeclaration(tempId);
 
-        path.replaceWithMultiple([
-          varDeclaration,
-          typeMarker,
-          exportDeclaration,
-        ]);
+        path.replaceWithMultiple([varDeclaration, exportDeclaration]);
       },
 
       // Handle class components
@@ -196,36 +159,8 @@ export default declare<PluginOptions>(api => {
           return;
         }
 
-        // Add __COMPONENT_TYPE__ marker after class declaration
-        const parentPath = path.parentPath;
-        if (
-          parentPath &&
-          (parentPath.isProgram() ||
-            parentPath.isBlockStatement() ||
-            parentPath.isExportNamedDeclaration() ||
-            parentPath.isExportDefaultDeclaration())
-        ) {
-          const typeMarker = t.expressionStatement(
-            t.assignmentExpression(
-              '=',
-              t.memberExpression(
-                t.identifier(id.name),
-                t.identifier('__COMPONENT_TYPE__'),
-              ),
-              t.stringLiteral('class'),
-            ),
-          );
-
-          // Insert after the class or after the export statement
-          if (
-            parentPath.isExportNamedDeclaration() ||
-            parentPath.isExportDefaultDeclaration()
-          ) {
-            parentPath.insertAfter(typeMarker);
-          } else {
-            path.insertAfter(typeMarker);
-          }
-        }
+        // Class components don't need any transformation
+        // Just checking for Fukict extension is enough
       },
     },
   } as PluginObj;

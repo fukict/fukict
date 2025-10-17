@@ -29,16 +29,15 @@ describe('JSX Transform', () => {
     assert.ok(output.includes('hyperscript'));
     assert.ok(output.includes('"div"'));
     assert.ok(output.includes('Hello'));
-    assert.ok(output.includes('__type__'));
-    assert.ok(output.includes('element'));
+    // __type__ is now set at runtime by hyperscript, not at compile time
   });
 
   test('transforms element with props', () => {
     const input = `const el = <div class="container" id="main">Content</div>;`;
     const output = transform(input);
 
-    assert.ok(output.includes('class: "container"'));
-    assert.ok(output.includes('id: "main"'));
+    assert.ok(output.includes('"class": "container"'));
+    assert.ok(output.includes('"id": "main"'));
     assert.ok(output.includes('Content'));
   });
 
@@ -83,8 +82,7 @@ describe('JSX Transform', () => {
     const output = transform(input);
 
     assert.ok(output.includes('Fragment'));
-    assert.ok(output.includes('__type__'));
-    assert.ok(output.includes('fragment'));
+    // __type__ is set at runtime
   });
 
   test('transforms children expressions', () => {
@@ -109,8 +107,6 @@ describe('Auto defineFukict', () => {
 
     assert.ok(output.includes('defineFukict'));
     assert.ok(output.includes('import { defineFukict'));
-    assert.ok(output.includes('__COMPONENT_TYPE__'));
-    assert.ok(output.includes('function'));
   });
 
   test('wraps function expression component', () => {
@@ -118,7 +114,6 @@ describe('Auto defineFukict', () => {
     const output = transform(input);
 
     assert.ok(output.includes('defineFukict'));
-    assert.ok(output.includes('__COMPONENT_TYPE__'));
   });
 
   test('does not wrap lowercase function', () => {
@@ -145,7 +140,6 @@ describe('Auto defineFukict', () => {
     const output = transform(input);
 
     assert.ok(output.includes('defineFukict'));
-    assert.ok(output.includes('__COMPONENT_TYPE__'));
     assert.ok(output.includes('export default'));
   });
 
@@ -161,31 +155,34 @@ describe('Auto defineFukict', () => {
 });
 
 describe('Component __type__ optimization', () => {
-  test('adds __type__ for element VNode', () => {
+  test('no compile-time __type__ for elements', () => {
     const input = `const el = <div>Test</div>;`;
     const output = transform(input);
 
-    assert.ok(output.includes('__type__'));
-    assert.ok(output.includes('"element"'));
+    // __type__ is set at runtime by hyperscript
+    assert.ok(output.includes('hyperscript'));
+    assert.ok(!output.includes('__type__'));
   });
 
-  test('adds __type__ for Fragment VNode', () => {
+  test('no compile-time __type__ for Fragment', () => {
     const input = `const el = <><div>Test</div></>;`;
     const output = transform(input);
 
-    assert.ok(output.includes('__type__'));
-    assert.ok(output.includes('"fragment"'));
+    // __type__ is set at runtime by hyperscript
+    assert.ok(output.includes('hyperscript'));
+    assert.ok(!output.includes('__type__'));
   });
 
-  test('reads __COMPONENT_TYPE__ for component VNode', () => {
+  test('no compile-time __type__ for components', () => {
     const input = `
       const Greeting = ({ name }) => <div>Hello {name}</div>;
       const App = () => <Greeting name="World" />;
     `;
     const output = transform(input);
 
-    assert.ok(output.includes('Greeting.__COMPONENT_TYPE__'));
-    assert.ok(output.includes('__type__'));
+    // __type__ is set at runtime by hyperscript
+    assert.ok(output.includes('hyperscript'));
+    assert.ok(!output.includes('__type__'));
   });
 });
 
@@ -227,11 +224,10 @@ describe('Integration tests', () => {
 
     // Should have all features
     assert.ok(output.includes('defineFukict'));
-    assert.ok(output.includes('__COMPONENT_TYPE__'));
     assert.ok(output.includes('displayName'));
     assert.ok(output.includes('hyperscript'));
-    assert.ok(output.includes('__type__'));
     assert.ok(output.includes('"on:click"'));
+    // __type__ is set at runtime
   });
 
   test('nested components', () => {
@@ -245,7 +241,7 @@ describe('Integration tests', () => {
     `;
     const output = transform(input);
 
-    assert.ok(output.includes('Button.__COMPONENT_TYPE__'));
-    assert.ok(output.includes('__type__'));
+    // __type__ is set at runtime
+    assert.ok(output.includes('hyperscript'));
   });
 });
