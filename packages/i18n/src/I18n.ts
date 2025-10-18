@@ -75,7 +75,7 @@ export class I18n<Messages extends Record<string, any>>
   /**
    * Translate text
    */
-  t(key: string, params?: Record<string, string | number>): string {
+  t = (key: string, params?: Record<string, string | number>): string => {
     // Check cache
     const cacheKey = `${this.currentLocale}:${key as string}:${JSON.stringify(params || {})}`;
     if (this.translationCache.has(cacheKey)) {
@@ -89,15 +89,15 @@ export class I18n<Messages extends Record<string, any>>
     this.translationCache.set(cacheKey, result);
 
     return result;
-  }
+  };
 
   /**
    * Internal translate function
    */
-  private translate(
+  private translate = (
     key: string,
     params?: Record<string, string | number>,
-  ): string {
+  ): string => {
     // Try current locale
     let text: string | Record<string, string> | undefined = this.getTextByKey(
       key,
@@ -125,15 +125,15 @@ export class I18n<Messages extends Record<string, any>>
     }
 
     return text as string;
-  }
+  };
 
   /**
    * Get text by key from locale
    */
-  private getTextByKey(
+  private getTextByKey = (
     key: string,
     locale: string,
-  ): string | Record<string, string> | undefined {
+  ): string | Record<string, string> | undefined => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const messages = this.messages[locale];
     if (!messages) return undefined;
@@ -156,7 +156,7 @@ export class I18n<Messages extends Record<string, any>>
     }
 
     return current as string | Record<string, string>;
-  }
+  };
 
   /**
    * Get plural form based on count

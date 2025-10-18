@@ -4,17 +4,24 @@
  * Create real DOM nodes from VNode (supports Node | Node[] return)
  */
 import { Fukict } from '../component-class/fukict.js';
-import { extractSlots } from '../component-class/slot.js';
 import type { FunctionComponent } from '../component-function/index.js';
 import * as dom from '../dom/index.js';
 import type {
   ClassComponentVNode,
+  ElementVNode,
+  FragmentVNode,
   FunctionComponentVNode,
   VNode,
   VNodeChild,
 } from '../types/index.js';
 import { VNodeType } from '../types/index.js';
 import { setAttributes } from './attributes.js';
+import { setupClassComponentVNode } from './class-helpers.js';
+import {
+  setupElementVNode,
+  setupFragmentVNode,
+  setupFunctionComponentVNode,
+} from './vnode-helpers.js';
 
 /**
  * Create real DOM node(s) from VNode
@@ -108,7 +115,8 @@ function renderElement(vnode: VNode, componentInstance?: Fukict): Node {
     throw new Error('Expected ElementVNode');
   }
 
-  const { type, props, children } = vnode;
+  const elementVNode = vnode as ElementVNode;
+  const { type, props, children } = elementVNode;
   const element = dom.createElement(type);
 
   // Set attributes and events
@@ -134,8 +142,8 @@ function renderElement(vnode: VNode, componentInstance?: Fukict): Node {
     console.warn('Element vnode children is not an array:', vnode);
   }
 
-  // 保存单个节点到 __dom__
-  vnode.__dom__ = element;
+  // Setup ElementVNode: save DOM reference
+  setupElementVNode(elementVNode, element);
 
   return element;
 }
@@ -150,7 +158,8 @@ function renderFragment(vnode: VNode, componentInstance?: Fukict): Node[] {
     throw new Error('Expected FragmentVNode');
   }
 
-  const { children } = vnode;
+  const fragmentVNode = vnode as FragmentVNode;
+  const { children } = fragmentVNode;
   const nodes: Node[] = [];
 
   if (Array.isArray(children)) {
@@ -170,8 +179,8 @@ function renderFragment(vnode: VNode, componentInstance?: Fukict): Node[] {
     console.warn('Element vnode children is not an array:', vnode);
   }
 
-  // 保存所有节点到 __dom__
-  vnode.__dom__ = nodes;
+  // Setup FragmentVNode: save DOM nodes array reference
+  setupFragmentVNode(fragmentVNode, nodes);
 
   return nodes;
 }
@@ -204,17 +213,16 @@ function renderFunctionComponent(
   const rendered = funcComponent(propsWithChildren);
 
   if (!rendered) {
-    funcVNode.__rendered__ = undefined;
-    funcVNode.__dom__ = null;
+    // Setup FunctionComponentVNode with empty result
+    setupFunctionComponentVNode(funcVNode, undefined, null);
     return null;
   }
 
   // Render result (pass component instance for nested fukict:ref)
   const domNode = createRealNode(rendered, componentInstance);
 
-  // Save rendered VNode and DOM
-  funcVNode.__rendered__ = rendered;
-  funcVNode.__dom__ = domNode; // 可能是 Node 或 Node[]
+  // Setup FunctionComponentVNode: save rendered VNode and DOM reference
+  setupFunctionComponentVNode(funcVNode, rendered, domNode);
 
   return domNode;
 }
@@ -231,54 +239,22 @@ function renderClassComponent(vnode: VNode, componentInstance?: Fukict): Node {
 
   // Type assertion after runtime check
   const classVNode = vnode as ClassComponentVNode;
-  const { type, props, children } = classVNode;
+  const { type, props } = classVNode;
 
   // 1. Create instance (only props)
   // Type assertion is safe here because we know it's a class constructor
   const ComponentClass = type as new (props: Record<string, any>) => Fukict;
   const instance = new ComponentClass(props ?? {});
 
-  // 2. Extract and set slots from children
-  if (children) {
-    (instance as Fukict & { slots: any }).slots = extractSlots(children);
-  }
+  // 2. Setup ClassComponentVNode: instance, slots, refs, wrapper, parent reference
+  setupClassComponentVNode(classVNode, instance, componentInstance);
 
-  // 3. Handle fukict:ref for class components
-  //    If parent is a class component and this component has fukict:ref,
-  //    register this instance to parent's refs
-  if (componentInstance && props && props['fukict:ref']) {
-    const refName: unknown = props['fukict:ref'];
-    if (typeof refName === 'string') {
-      // Create or update ref in parent component
-      if (!componentInstance.refs.has(refName)) {
-        componentInstance.refs.set(refName, { current: null });
-      }
-      const ref = componentInstance.refs.get(refName);
-      if (ref) {
-        ref.current = instance;
-      }
-    }
-  }
-
-  // 4. Save instance to vnode
-  classVNode.__instance__ = instance;
-
-  // 5. Save wrapper VNode to instance (for context traversal)
-  instance.__wrapper__ = classVNode;
-
-  // 6. Save parent instance reference on wrapper VNode (for context chain)
-  if (componentInstance) {
-    (
-      classVNode as ClassComponentVNode & { __parentInstance__?: Fukict }
-    ).__parentInstance__ = componentInstance;
-  }
-
-  // 7. Create comment placeholder with instance ID and name
+  // 3. Create comment placeholder with instance ID and name
   const placeholder = dom.createComment(
     `fukict:${instance.__name__}#${instance.__id__}`,
   );
 
-  // 8. Save placeholder to vnode
+  // 4. Save placeholder to vnode
   classVNode.__placeholder__ = placeholder;
 
   return placeholder;

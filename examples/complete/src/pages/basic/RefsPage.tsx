@@ -260,6 +260,131 @@ class ParentWithDetach extends Fukict {
   }
 }
 
+// 演示 update 时动态切换 ref
+class DynamicCounter extends Fukict<{ color: string }> {
+  state = { count: 0 };
+
+  increment() {
+    this.state.count++;
+    this.update(this.props);
+  }
+
+  getCount() {
+    return this.state.count;
+  }
+
+  render() {
+    const { color } = this.props;
+    const bgColor = color === 'blue' ? 'bg-blue-100' : 'bg-green-100';
+    const textColor = color === 'blue' ? 'text-blue-900' : 'text-green-900';
+    const btnColor =
+      color === 'blue'
+        ? 'bg-blue-600 hover:bg-blue-700'
+        : 'bg-green-600 hover:bg-green-700';
+
+    return (
+      <div class={`rounded-lg border ${bgColor} p-3`}>
+        <p class={`text-lg font-bold ${textColor}`}>
+          {color === 'blue' ? '蓝色' : '绿色'}计数器: {this.state.count}
+        </p>
+        <button
+          on:click={() => this.increment()}
+          class={`mt-2 rounded ${btnColor} px-3 py-1 text-sm text-white`}
+        >
+          +1
+        </button>
+      </div>
+    );
+  }
+}
+
+class ParentWithDynamicRef extends Fukict {
+  private useBlue = true;
+  private logs: string[] = [];
+
+  toggleCounter() {
+    this.useBlue = !this.useBlue;
+    this.logs.push(`切换到 ${this.useBlue ? '蓝色' : '绿色'} 计数器`);
+    this.update();
+  }
+
+  incrementActive() {
+    const counter = this.refs.get('activeCounter')?.current as
+      | DynamicCounter
+      | undefined;
+    if (counter) {
+      counter.increment();
+      const count = counter.getCount();
+      const color = this.useBlue ? '蓝色' : '绿色';
+      this.logs.push(
+        `通过 ref 调用 ${color}计数器的 increment(), 当前值: ${count}`,
+      );
+      this.update();
+    }
+  }
+
+  clearLogs() {
+    this.logs = [];
+    this.update();
+  }
+
+  render() {
+    return (
+      <div class="space-y-4">
+        <div class="flex gap-2">
+          <button
+            on:click={() => this.toggleCounter()}
+            class="rounded-md bg-purple-600 px-3 py-2 text-xs text-white hover:bg-purple-700"
+          >
+            切换计数器 (当前: {this.useBlue ? '蓝色' : '绿色'})
+          </button>
+          <button
+            on:click={() => this.incrementActive()}
+            class="rounded-md bg-orange-600 px-3 py-2 text-xs text-white hover:bg-orange-700"
+          >
+            通过 ref 增加当前计数器
+          </button>
+        </div>
+
+        {this.useBlue ? (
+          <DynamicCounter color="blue" fukict:ref="activeCounter" />
+        ) : (
+          <DynamicCounter color="green" fukict:ref="activeCounter" />
+        )}
+
+        {this.logs.length > 0 && (
+          <div class="rounded-lg border border-gray-200 bg-gray-50 p-3">
+            <div class="mb-2 flex items-center justify-between">
+              <h4 class="text-xs font-medium text-gray-900">操作日志:</h4>
+              <button
+                on:click={() => this.clearLogs()}
+                class="text-xs text-gray-600 hover:text-gray-900"
+              >
+                清空
+              </button>
+            </div>
+            <ul class="space-y-1 text-xs text-gray-600">
+              {this.logs.map((log, index) => (
+                <li>
+                  [{index + 1}] {log}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <div class="rounded-md bg-blue-50 p-3 text-xs text-blue-800">
+          <p class="font-medium">💡 说明:</p>
+          <p class="mt-1">
+            当父组件 update 时，会重新调用 setupClassComponentVNode， 确保
+            fukict:ref 始终指向当前渲染的组件实例。
+          </p>
+        </div>
+      </div>
+    );
+  }
+}
+
 /**
  * Refs 页面
  */
@@ -425,6 +550,63 @@ class ExpensiveComponent extends Fukict {
             />
             <DemoBox fukict:slot="demo">
               <ParentWithDetach />
+            </DemoBox>
+          </SplitView>
+        </div>
+
+        {/* 动态 ref 更新 */}
+        <div class="space-y-4">
+          <div>
+            <h3 class="mb-1 text-base font-medium text-gray-800">
+              Update 时动态更新 Ref
+            </h3>
+            <p class="text-sm leading-relaxed text-gray-600">
+              当父组件 update 重新渲染时，fukict:ref 会自动更新为新的组件实例
+            </p>
+          </div>
+
+          <SplitView leftTitle="代码示例" rightTitle="运行效果">
+            <CodeBlock
+              fukict:slot="code"
+              code={`class Parent extends Fukict {
+  private useBlue = true;
+
+  toggleCounter() {
+    this.useBlue = !this.useBlue;
+    this.update();
+  }
+
+  incrementActive() {
+    // ref 会自动指向当前渲染的计数器
+    const counter = this.refs.get('activeCounter')?.current;
+    if (counter) {
+      counter.increment();
+    }
+  }
+
+  render() {
+    return (
+      <div>
+        <button on:click={() => this.toggleCounter()}>
+          切换计数器
+        </button>
+        <button on:click={() => this.incrementActive()}>
+          增加当前计数器
+        </button>
+
+        {/* 条件渲染不同组件，但都使用相同的 ref 名称 */}
+        {this.useBlue ? (
+          <Counter color="blue" fukict:ref="activeCounter" />
+        ) : (
+          <Counter color="green" fukict:ref="activeCounter" />
+        )}
+      </div>
+    );
+  }
+}`}
+            />
+            <DemoBox fukict:slot="demo">
+              <ParentWithDynamicRef />
             </DemoBox>
           </SplitView>
         </div>

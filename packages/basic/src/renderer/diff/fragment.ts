@@ -3,8 +3,9 @@
  *
  * Diff fragment VNodes
  */
-import type { VNode } from '../../types/index.js';
+import type { FragmentVNode, VNode } from '../../types/index.js';
 import { VNodeType } from '../../types/index.js';
+import { setupFragmentVNode } from '../vnode-helpers.js';
 import { diffChildren } from './children.js';
 
 /**
@@ -24,12 +25,14 @@ export function diffFragment(
     throw new Error('Expected FragmentVNode');
   }
 
+  const newFragmentVNode = newVNode as FragmentVNode;
+
   // Diff children
-  diffChildren(oldVNode.children, newVNode.children, container);
+  diffChildren(oldVNode.children, newFragmentVNode.children, container);
 
   // Update __dom__ reference (collect all current child nodes)
   const newNodes: Node[] = [];
-  for (const child of newVNode.children) {
+  for (const child of newFragmentVNode.children) {
     if (child && typeof child === 'object' && '__dom__' in child) {
       const dom = child.__dom__;
       if (dom) {
@@ -41,5 +44,7 @@ export function diffFragment(
       }
     }
   }
-  newVNode.__dom__ = newNodes;
+
+  // Setup FragmentVNode: save DOM nodes array reference
+  setupFragmentVNode(newFragmentVNode, newNodes);
 }

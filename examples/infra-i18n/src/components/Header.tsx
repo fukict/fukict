@@ -34,18 +34,6 @@ export class Header extends Fukict {
  * Language Selector Component (detached, subscribes to i18n itself)
  */
 class LanguageSelector extends Fukict {
-  private unsubscribe?: () => void;
-
-  mounted() {
-    this.unsubscribe = i18n.subscribe(() => {
-      this.update();
-    });
-  }
-
-  beforeUnmount() {
-    this.unsubscribe?.();
-  }
-
   handleChange(e: Event) {
     const select = e.target as HTMLSelectElement;
     void i18n.changeLocale(select.value);

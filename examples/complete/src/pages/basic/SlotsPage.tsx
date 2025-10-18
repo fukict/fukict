@@ -136,6 +136,107 @@ class ScopedSlotDemo extends Fukict {
 }
 
 /**
+ * 动态 slots 更新演示
+ */
+class DynamicCard extends Fukict {
+  render() {
+    return (
+      <div class="overflow-hidden rounded-lg border border-gray-300">
+        {/* Header 插槽 */}
+        {this.slots.header && (
+          <div class="border-b border-gray-300 bg-gray-50 px-4 py-3">
+            {this.slots.header}
+          </div>
+        )}
+
+        {/* 默认插槽 */}
+        <div class="bg-white p-4">{this.slots.default}</div>
+
+        {/* Footer 插槽 */}
+        {this.slots.footer && (
+          <div class="border-t border-gray-300 bg-gray-50 px-4 py-3">
+            {this.slots.footer}
+          </div>
+        )}
+      </div>
+    );
+  }
+}
+
+class DynamicSlotsDemo extends Fukict {
+  private mode: 'simple' | 'full' = 'simple';
+  private content = '这是默认内容';
+  private count = 0;
+
+  toggleMode() {
+    this.mode = this.mode === 'simple' ? 'full' : 'simple';
+    this.update();
+  }
+
+  updateContent() {
+    this.count++;
+    this.content = `内容已更新 ${this.count} 次`;
+    this.update();
+  }
+
+  render() {
+    return (
+      <div class="space-y-4">
+        <div class="flex gap-2">
+          <button
+            on:click={() => this.toggleMode()}
+            class="rounded-md bg-purple-600 px-3 py-2 text-xs text-white hover:bg-purple-700"
+          >
+            切换模式 (当前: {this.mode === 'simple' ? '简单' : '完整'})
+          </button>
+          <button
+            on:click={() => this.updateContent()}
+            class="rounded-md bg-blue-600 px-3 py-2 text-xs text-white hover:bg-blue-700"
+          >
+            更新内容
+          </button>
+        </div>
+
+        {this.mode === 'simple' ? (
+          <DynamicCard>
+            <p class="text-sm text-gray-700">{this.content}</p>
+          </DynamicCard>
+        ) : (
+          <DynamicCard>
+            <div fukict:slot="header">
+              <h3 class="text-base font-semibold text-gray-900">
+                完整模式标题
+              </h3>
+            </div>
+
+            <div class="space-y-2">
+              <p class="text-sm font-medium text-gray-900">{this.content}</p>
+              <p class="text-xs text-gray-600">
+                这是完整模式，包含 header 和 footer 插槽
+              </p>
+            </div>
+
+            <div fukict:slot="footer">
+              <button class="rounded bg-green-500 px-4 py-2 text-sm text-white hover:bg-green-600">
+                操作按钮
+              </button>
+            </div>
+          </DynamicCard>
+        )}
+
+        <div class="rounded-md bg-green-50 p-3 text-xs text-green-800">
+          <p class="font-medium">💡 说明:</p>
+          <p class="mt-1">
+            当父组件 update 时，会重新调用 setupClassComponentVNode， 确保
+            this.slots 始终包含最新的子内容。
+          </p>
+        </div>
+      </div>
+    );
+  }
+}
+
+/**
  * Slots 插槽页面
  */
 export class SlotsPage extends RouteComponent {
@@ -280,6 +381,79 @@ class List extends Fukict<ListProps> {
             />
             <DemoBox fukict:slot="demo">
               <ScopedSlotDemo />
+            </DemoBox>
+          </SplitView>
+        </div>
+
+        {/* 动态 slots 更新 */}
+        <div class="space-y-4">
+          <div>
+            <h3 class="mb-1 text-base font-medium text-gray-800">
+              Update 时动态更新 Slots
+            </h3>
+            <p class="text-sm leading-relaxed text-gray-600">
+              当父组件 update 重新渲染时，子组件的 this.slots
+              会自动更新为最新的内容
+            </p>
+          </div>
+
+          <SplitView leftTitle="代码示例" rightTitle="运行效果">
+            <CodeBlock
+              fukict:slot="code"
+              code={`class Card extends Fukict {
+  render() {
+    return (
+      <div>
+        {this.slots.header && (
+          <div class="header">{this.slots.header}</div>
+        )}
+        <div class="body">{this.slots.default}</div>
+        {this.slots.footer && (
+          <div class="footer">{this.slots.footer}</div>
+        )}
+      </div>
+    );
+  }
+}
+
+class Parent extends Fukict {
+  private mode: 'simple' | 'full' = 'simple';
+
+  toggleMode() {
+    this.mode = this.mode === 'simple' ? 'full' : 'simple';
+    this.update();
+  }
+
+  render() {
+    return (
+      <div>
+        <button on:click={() => this.toggleMode()}>
+          切换模式
+        </button>
+
+        {/* 条件渲染不同的 slots 内容 */}
+        {this.mode === 'simple' ? (
+          <Card>
+            <p>简单内容</p>
+          </Card>
+        ) : (
+          <Card>
+            <div fukict:slot="header">
+              <h3>完整模式标题</h3>
+            </div>
+            <p>详细内容</p>
+            <div fukict:slot="footer">
+              <button>操作</button>
+            </div>
+          </Card>
+        )}
+      </div>
+    );
+  }
+}`}
+            />
+            <DemoBox fukict:slot="demo">
+              <DynamicSlotsDemo />
             </DemoBox>
           </SplitView>
         </div>

@@ -3,8 +3,9 @@
  *
  * Diff element VNodes
  */
-import type { VNode } from '../../types/index.js';
+import type { ElementVNode, VNode } from '../../types/index.js';
 import { VNodeType } from '../../types/index.js';
+import { setupElementVNode } from '../vnode-helpers.js';
 import { diffChildren } from './children.js';
 import { replaceNode } from './helpers.js';
 import { patchProps } from './props.js';
@@ -27,25 +28,29 @@ export function diffElement(
     throw new Error('Expected ElementVNode');
   }
 
+  const oldElementVNode = oldVNode as ElementVNode;
+  const newElementVNode = newVNode as ElementVNode;
+
   // Tag name changed - replace entire element
-  if (oldVNode.type !== newVNode.type) {
-    replaceNode(oldVNode, newVNode, container);
+  if (oldElementVNode.type !== newElementVNode.type) {
+    replaceNode(oldElementVNode, newElementVNode, container);
     return;
   }
 
   // Reuse DOM element
-  const element = oldVNode.__dom__ as Element;
+  const element = oldElementVNode.__dom__ as Element;
   if (!element) {
     // DOM doesn't exist, replace node
-    replaceNode(oldVNode, newVNode, container);
+    replaceNode(oldElementVNode, newElementVNode, container);
     return;
   }
 
-  newVNode.__dom__ = element;
+  // Setup ElementVNode: save DOM reference
+  setupElementVNode(newElementVNode, element);
 
   // Patch props
-  patchProps(element, oldVNode.props, newVNode.props);
+  patchProps(element, oldElementVNode.props, newElementVNode.props);
 
   // Diff children
-  diffChildren(oldVNode.children, newVNode.children, element);
+  diffChildren(oldElementVNode.children, newElementVNode.children, element);
 }

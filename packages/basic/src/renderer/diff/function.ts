@@ -10,6 +10,7 @@ import type {
   VNodeChild,
 } from '../../types/index.js';
 import { VNodeType } from '../../types/index.js';
+import { setupFunctionComponentVNode } from '../vnode-helpers.js';
 import { replaceNode, shallowEqual } from './helpers.js';
 import { diff } from './index.js';
 
@@ -44,8 +45,12 @@ export function diffFunctionComponent(
   // Shallow compare props
   if (shallowEqual(oldFuncVNode.props, newFuncVNode.props)) {
     // Props unchanged - reuse rendered result
-    newFuncVNode.__rendered__ = oldFuncVNode.__rendered__;
-    newFuncVNode.__dom__ = oldFuncVNode.__dom__;
+    // Setup FunctionComponentVNode with reused data
+    setupFunctionComponentVNode(
+      newFuncVNode,
+      oldFuncVNode.__rendered__,
+      oldFuncVNode.__dom__ ?? null,
+    );
     return;
   }
 
@@ -64,23 +69,25 @@ export function diffFunctionComponent(
   const rendered: VNodeChild = funcComponent(propsWithChildren);
 
   // Store rendered VNode (only if it's a VNode object)
-  if (rendered && typeof rendered === 'object' && '__type__' in rendered) {
-    newFuncVNode.__rendered__ = rendered as VNode;
-  }
+  const renderedVNode =
+    rendered && typeof rendered === 'object' && '__type__' in rendered
+      ? (rendered as VNode)
+      : undefined;
 
   // Diff old and new rendered result
   const oldRendered = oldFuncVNode.__rendered__;
   diff(oldRendered, rendered, container);
 
   // Update __dom__ reference (only for non-ClassComponent VNodes)
-  if (rendered && typeof rendered === 'object' && '__type__' in rendered) {
-    const renderedVNode = rendered as VNode;
-    // ClassComponentVNode doesn't have __dom__, skip for that type
-    if (
-      renderedVNode.__type__ !== VNodeType.ClassComponent &&
-      '__dom__' in renderedVNode
-    ) {
-      newFuncVNode.__dom__ = renderedVNode.__dom__;
-    }
+  let domNode: Node | Node[] | null = null;
+  if (
+    renderedVNode &&
+    renderedVNode.__type__ !== VNodeType.ClassComponent &&
+    '__dom__' in renderedVNode
+  ) {
+    domNode = renderedVNode.__dom__ ?? null;
   }
+
+  // Setup FunctionComponentVNode: save rendered VNode and DOM reference
+  setupFunctionComponentVNode(newFuncVNode, renderedVNode, domNode);
 }
