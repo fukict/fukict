@@ -11,32 +11,20 @@ import * as dom from '../dom/index.js';
  *
  * @param element - DOM element
  * @param props - Props object
- * @param componentInstance - Optional component instance for fukict:ref
+ * @param _componentInstance - (Unused) Component instance, kept for compatibility
  */
 export function setAttributes(
   element: Element,
   props: Record<string, unknown>,
-  componentInstance?: Fukict,
+  _componentInstance?: Fukict,
 ): void {
   for (const [key, value] of Object.entries(props)) {
     if (key === 'children') {
       continue;
     }
 
-    // Handle fukict:ref (class component refs)
-    if (
-      key === 'fukict:ref' &&
-      typeof value === 'string' &&
-      componentInstance
-    ) {
-      // Register ref in component's refs Map
-      if (!componentInstance.refs.has(value)) {
-        componentInstance.refs.set(value, { current: null });
-      }
-      const ref = componentInstance.refs.get(value);
-      if (ref) {
-        ref.current = element;
-      }
+    // Skip fukict:ref (handled in class-helpers.ts)
+    if (key === 'fukict:ref') {
       continue;
     }
 

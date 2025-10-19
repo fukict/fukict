@@ -28,6 +28,7 @@ export type {
   SVGAttributes,
   Slots,
   Ref,
+  Refs,
   FukictLifecycle,
   FukictComponent,
   FukictProps,

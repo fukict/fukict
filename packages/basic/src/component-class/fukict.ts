@@ -4,7 +4,7 @@
 import { createRealNode } from '../renderer/create.js';
 import { diff, removeNode } from '../renderer/diff/index.js';
 import { activate } from '../renderer/mount.js';
-import type { Ref, Slots } from '../types/class.js';
+import type { Refs, Slots } from '../types/class.js';
 import type { ContextData } from '../types/context.js';
 import type { VNode, VNodeChild } from '../types/core.js';
 import type {
@@ -102,9 +102,10 @@ export abstract class Fukict<
   protected slots: S;
 
   /**
-   * Refs map (shared with framework and user)
+   * Refs object (shared with framework and user)
+   * Can be extended by subclasses with specific ref types
    */
-  readonly refs: Map<string | symbol, Ref>;
+  readonly refs: Refs;
 
   /**
    * Current rendered VNode (component's internal render result)
@@ -149,7 +150,7 @@ export abstract class Fukict<
     this.slots = {} as S;
 
     // Initialize instance fields (avoid field initializers for better memory efficiency)
-    this.refs = new Map();
+    this.refs = {};
     this.__vnode__ = null;
     this.__wrapper__ = null;
     this.__container__ = null;
@@ -380,10 +381,10 @@ export abstract class Fukict<
 
     removeNode(this.__vnode__, this.__container__ as Element);
 
-    for (const ref of this.refs.values()) {
-      ref.current = null;
+    // Clear all refs (refs now store instances directly, not Ref wrappers)
+    for (const key in this.refs) {
+      delete this.refs[key];
     }
-    this.refs.clear();
 
     this.__vnode__ = null;
     this.__container__ = null;

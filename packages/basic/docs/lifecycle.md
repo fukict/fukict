@@ -126,24 +126,19 @@ class MyComponent extends Fukict<{ userId: string }> {
 Refs are automatically cleaned up on unmount.
 
 ```typescript
-class MyComponent extends Fukict<{}> {
-  constructor(props, children) {
-    super(props, children);
-
-    // Store refs in this.refs Map
-    this.refs.set('input', { current: null });
-  }
+class MyComponent extends Fukict {
+  // Type-safe refs declaration
+  declare readonly refs: {
+    input: HTMLInputElement;
+  };
 
   mounted() {
-    // Use refs
-    const inputRef = this.refs.get('input');
-    if (inputRef?.current) {
-      inputRef.current.focus();
-    }
+    // Access DOM element directly
+    this.refs.input?.focus();
   }
 
   render() {
-    return <input ref={this.refs.get('input')} />;
+    return <input fukict:ref="input" />;
   }
 
   // Refs automatically cleaned on unmount
@@ -156,7 +151,8 @@ class MyComponent extends Fukict<{}> {
 
 - Clean up in `beforeUnmount()`
 - Use `updated()` to react to prop changes
-- Store refs in `this.refs` Map
+- Use `fukict:ref` for component/element references
+- Declare refs type with `declare readonly refs`
 
 ### DON'T
 

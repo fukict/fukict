@@ -157,14 +157,17 @@ Use `on:` prefix for event handlers:
 
 ```tsx
 class Parent extends Fukict {
-  private childRef?: ChildComponent;
+  // Type-safe refs declaration
+  declare readonly refs: {
+    child: ChildComponent;
+  };
 
   mounted() {
-    console.log('Child instance:', this.childRef);
+    console.log('Child instance:', this.refs.child);
   }
 
   render() {
-    return <ChildComponent fukict:ref={el => (this.childRef = el)} />;
+    return <ChildComponent fukict:ref="child" />;
   }
 }
 ```

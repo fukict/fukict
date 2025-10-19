@@ -15,10 +15,34 @@ export type Slots = Record<string, VNodeChild | VNodeChild[]>;
 /**
  * Ref object type
  * Holds a reference to a DOM element or component instance
+ *
+ * @deprecated Direct instance assignment is preferred. Use `refs: { myRef: MyComponent }` instead.
  */
 export interface Ref<T = any> {
   current: T | null;
 }
+
+/**
+ * Refs object type (for class components)
+ * Maps ref names to component instances or DOM elements directly (no wrapper)
+ *
+ * @example
+ * ```ts
+ * class Parent extends Fukict {
+ *   // Type-safe refs
+ *   declare readonly refs: {
+ *     counter: Counter;
+ *     input: HTMLInputElement;
+ *   };
+ *
+ *   handleClick() {
+ *     this.refs.counter.increment();
+ *     this.refs.input.focus();
+ *   }
+ * }
+ * ```
+ */
+export type Refs = Record<string, any>;
 
 /**
  * Lifecycle hooks interface for Fukict class components
@@ -60,8 +84,8 @@ export interface FukictComponent<
   /** Extracted slots from children */
   readonly slots: S;
 
-  /** Refs map (shared with framework and user) */
-  readonly refs: Map<string | symbol, Ref>;
+  /** Refs object (can be extended by subclasses) */
+  readonly refs: Refs;
 
   /** Current rendered VNode (internal, framework use) */
   __vnode__: VNode | null;

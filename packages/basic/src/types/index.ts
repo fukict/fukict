@@ -21,6 +21,7 @@ export { Fragment, VNodeType } from './core.js';
 export type {
   Slots,
   Ref,
+  Refs,
   FukictLifecycle,
   FukictComponent,
   FukictProps,

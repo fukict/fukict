@@ -125,8 +125,8 @@
         }
 
         addTodo() {
-          const inputRef = this.refs.get('todoInput');
-          const text = inputRef?.current?.value.trim();
+          const inputRef = this.refs.todoInput;
+          const text = inputRef?.value.trim();
 
           if (text) {
             this.todos.push({
@@ -134,7 +134,7 @@
               text,
               completed: false,
             });
-            inputRef.current.value = '';
+            inputRef.value = '';
             this.update(this.props);
           }
         }
@@ -224,8 +224,8 @@
 
         mounted() {
           console.log('TodoList mounted!');
-          const inputRef = this.refs.get('todoInput');
-          inputRef?.current?.focus();
+          const inputRef = this.refs.todoInput;
+          inputRef?.focus();
         }
       }
 

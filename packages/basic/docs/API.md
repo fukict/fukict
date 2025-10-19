@@ -96,7 +96,7 @@ constructor(props: P)
 
 - `props: P` - Component props (readonly)
 - `slots: S` - Component slots (extracted from children)
-- `refs: Map<string | symbol, Ref>` - Refs map
+- `refs: Refs` - Refs object (type: `Record<string, any>`, can be extended by subclasses)
 
 **Methods:**
 
@@ -839,30 +839,51 @@ isVNode(value: unknown): boolean
 
 ### `fukict:ref`
 
-Class component ref for accessing DOM elements.
+Class component ref for accessing child component instances or DOM elements.
 
 **Type:** `string`
 
 **Usage:**
 
 ```typescript
-class MyComponent extends Fukict<{}> {
+class Counter extends Fukict {
+  state = { count: 0 };
+  increment() {
+    this.state.count++;
+    this.update(this.props);
+  }
+}
+
+class Parent extends Fukict {
+  // Type-safe refs declaration
+  declare readonly refs: {
+    myCounter: Counter;
+    myInput: HTMLInputElement;
+  };
+
   mounted() {
-    const inputRef = this.refs.get('myInput');
-    inputRef?.current?.focus();
+    // Access child component instance
+    this.refs.myCounter?.increment();
+
+    // Access DOM element
+    this.refs.myInput?.focus();
   }
 
   render() {
-    return h('input', { 'fukict:ref': 'myInput' }, []);
+    return h('div', null, [
+      h(Counter, { 'fukict:ref': 'myCounter' }, []),
+      h('input', { 'fukict:ref': 'myInput' }, []),
+    ]);
   }
 }
 ```
 
 **How it works:**
 
-1. Add `fukict:ref="name"` to element props
-2. Framework automatically creates/updates `this.refs.get('name')` with `{ current: element }`
-3. Access via `this.refs.get('name')?.current`
+1. Add `fukict:ref="name"` to element/component props
+2. Framework automatically assigns the instance/element to `this.refs[name]`
+3. Access directly via `this.refs.refName` (no `.current` needed)
+4. Use `declare readonly refs` to declare type-safe refs interface
 
 **Note:** Only works in Class Components. Function components should use ref callbacks.
 

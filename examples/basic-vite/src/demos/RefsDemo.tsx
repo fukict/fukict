@@ -1,4 +1,4 @@
-import { Fukict, type Ref } from '@fukict/basic';
+import { Fukict } from '@fukict/basic';
 
 // 一个可以被 ref 引用的 Counter 组件
 class Counter extends Fukict {
@@ -49,33 +49,30 @@ class Counter extends Fukict {
 
 // 使用 Class Component 和 fukict:ref
 class ParentWithRefs extends Fukict {
-  // 声明 refs 的类型
-  declare readonly refs: Map<'counter1' | 'counter2', Ref<Counter>>;
+  // 声明 refs 的类型（直接是组件实例，不需要 Ref 包装）
+  declare readonly refs: {
+    counter1: Counter;
+    counter2: Counter;
+  };
 
   mounted() {
     console.log('ParentWithRefs mounted, refs:', this.refs);
   }
 
   handleIncrementAll() {
-    // 通过 ref 访问子组件实例并调用方法
-    const counter1 = this.refs.get('counter1')?.current;
-    const counter2 = this.refs.get('counter2')?.current;
-
-    if (counter1) counter1.increment();
-    if (counter2) counter2.increment();
+    // 直接访问子组件实例并调用方法
+    this.refs.counter1?.increment();
+    this.refs.counter2?.increment();
   }
 
   handleResetAll() {
-    const counter1 = this.refs.get('counter1')?.current;
-    const counter2 = this.refs.get('counter2')?.current;
-
-    if (counter1) counter1.reset();
-    if (counter2) counter2.reset();
+    this.refs.counter1?.reset();
+    this.refs.counter2?.reset();
   }
 
   handleShowCounts() {
-    const counter1 = this.refs.get('counter1')?.current;
-    const counter2 = this.refs.get('counter2')?.current;
+    const counter1 = this.refs.counter1;
+    const counter2 = this.refs.counter2;
 
     if (counter1 && counter2) {
       alert(
@@ -124,13 +121,15 @@ class ParentWithRefs extends Fukict {
 }
 
 class Parent extends Fukict {
+  // 类型安全的 refs 声明
+  declare readonly refs: {
+    myCounter: Counter;
+  };
+
   handleClick() {
-    // 通过 ref 访问子组件实例
-    const counter = this.refs.get('myCounter')?.current;
-    if (counter) {
-      counter.increment();
-      console.log(counter.getCount());
-    }
+    // 直接访问子组件实例（不需要 .current）
+    this.refs.myCounter?.increment();
+    console.log(this.refs.myCounter?.getCount());
   }
 
   render() {

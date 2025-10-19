@@ -41,6 +41,8 @@ function fukictPreset(_api: any, options: FukictPresetOptions = {}) {
         isTSX: true,
         // Treat all files as modules
         allExtensions: true,
+        // Allow 'declare' keyword for type-only field declarations
+        allowDeclareFields: true,
       },
     ]);
   }

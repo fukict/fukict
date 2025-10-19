@@ -4,7 +4,6 @@
  * Shared logic for creating and updating class components
  */
 import { extractSlots } from '../component-class/slot.js';
-import type { Ref } from '../types/class.js';
 import type { ClassComponentVNode, VNode } from '../types/index.js';
 
 /**
@@ -13,7 +12,7 @@ import type { ClassComponentVNode, VNode } from '../types/index.js';
  */
 interface ComponentInstanceInternal {
   slots: any;
-  refs: Map<string | symbol, Ref>;
+  refs: Record<string, any>;
   __wrapper__: VNode | null;
 }
 
@@ -56,14 +55,8 @@ export function setupClassComponentVNode(
     if (typeof refName === 'string') {
       const parentInternal = parentInstance as ComponentInstanceInternal;
 
-      // Create or update ref in parent component
-      if (!parentInternal.refs.has(refName)) {
-        parentInternal.refs.set(refName, { current: null });
-      }
-      const ref = parentInternal.refs.get(refName);
-      if (ref) {
-        ref.current = instance;
-      }
+      // Directly assign instance to parent's refs (no Ref wrapper)
+      parentInternal.refs[refName] = instance;
     }
   }
 

@@ -182,18 +182,21 @@ class Form extends Fukict {
 
 ```tsx
 class Parent extends Fukict {
-  private childRef?: Counter;
+  // Type-safe refs declaration
+  declare readonly refs: {
+    child: Counter;
+  };
 
   mounted() {
-    // Access child component instance
-    console.log('Child count:', this.childRef?.count);
+    // Access child component instance directly
+    console.log('Child count:', this.refs.child?.count);
   }
 
   render() {
     return (
       <div>
-        <Counter fukict:ref={el => (this.childRef = el)} />
-        <button on:click={() => this.childRef?.increment()}>
+        <Counter fukict:ref="child" />
+        <button on:click={() => this.refs.child?.increment()}>
           Increment from parent
         </button>
       </div>
@@ -202,7 +205,7 @@ class Parent extends Fukict {
 }
 ```
 
-**DOM Refs** with `ref`:
+**DOM Refs** with `ref` callback:
 
 ```tsx
 class AutoFocusInput extends Fukict {
@@ -214,6 +217,24 @@ class AutoFocusInput extends Fukict {
 
   render() {
     return <input ref={el => (this.inputRef = el)} />;
+  }
+}
+```
+
+**Or use `fukict:ref` for DOM elements:**
+
+```tsx
+class AutoFocusInput extends Fukict {
+  declare readonly refs: {
+    input: HTMLInputElement;
+  };
+
+  mounted() {
+    this.refs.input?.focus();
+  }
+
+  render() {
+    return <input fukict:ref="input" />;
   }
 }
 ```
