@@ -3,6 +3,7 @@ import { Fukict } from '@fukict/basic';
 import { Sidebar } from './components/Sidebar';
 import { ClassComponentDemo } from './demos/ClassComponentDemo';
 import { CompositionDemo } from './demos/CompositionDemo';
+import { ConditionalRenderingDemo } from './demos/ConditionalRenderingDemo';
 import { ContextDemo } from './demos/ContextDemo';
 import { EventHandlingDemo } from './demos/EventHandlingDemo';
 import { FragmentDemo } from './demos/FragmentDemo';
@@ -30,6 +31,7 @@ export class App extends Fukict {
     fragment: FragmentDemo,
     composition: CompositionDemo,
     context: ContextDemo,
+    'conditional-rendering': ConditionalRenderingDemo,
   };
 
   handleDemoChange = (demo: string) => {
