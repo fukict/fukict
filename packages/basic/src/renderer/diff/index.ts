@@ -13,6 +13,7 @@ import { diffElement } from './element.js';
 import { diffFragment } from './fragment.js';
 import { diffFunctionComponent } from './function.js';
 import { removeNode, replaceNode } from './helpers.js';
+import { diffPrimitive } from './primitive.js';
 
 // Re-export for external use
 export { replaceNode, removeNode, shallowEqual } from './helpers.js';
@@ -127,6 +128,10 @@ export function diff(
 
     case VNodeType.ClassComponent:
       diffClassComponent(oldVN, newVN, container);
+      break;
+
+    case VNodeType.Primitive:
+      diffPrimitive(oldVN, newVN, container);
       break;
   }
 }

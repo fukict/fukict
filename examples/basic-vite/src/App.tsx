@@ -16,7 +16,7 @@ import { SvgElementDemo } from './demos/SvgElement';
 
 export class App extends Fukict {
   state = {
-    currentDemo: 'function-component',
+    currentDemo: 'conditional-rendering',
   };
 
   demos = {

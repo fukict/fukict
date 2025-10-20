@@ -1,81 +1,57 @@
 import { Fukict } from '@fukict/basic';
 
-// 第一个条件组件 - 结果显示
-class CalculatorResult extends Fukict<{
-  title: string;
-  days: number;
-  isAuthenticated: boolean;
-  onSave: () => void;
-}> {
+// 测试组件 A - 红色
+class ComponentA extends Fukict {
   render() {
     return (
-      <div class="rounded-lg border-2 border-green-500 bg-green-50 p-6">
-        <h3 class="mb-2 text-lg font-semibold text-green-900">
-          {this.props.title}
-        </h3>
-        <div class="mb-4 text-4xl font-bold text-green-700">
-          {this.props.days} 天
-        </div>
-        {this.props.isAuthenticated ? (
-          <button
-            on:click={this.props.onSave}
-            class="rounded bg-green-600 px-4 py-2 text-white transition-colors hover:bg-green-700"
-          >
-            保存到记忆
-          </button>
-        ) : (
-          <p class="text-sm text-green-700">登录后可保存计算结果</p>
-        )}
-      </div>
-    );
-  }
-}
-
-// 第二个条件组件 - 记忆列表
-class MemoryList extends Fukict<{
-  memories: Array<{ id: number; title: string; days: number }>;
-  onItemClick: (id: number) => void;
-}> {
-  render() {
-    return (
-      <div class="rounded-lg border-2 border-blue-500 bg-blue-50 p-6">
-        <h3 class="mb-4 text-lg font-semibold text-blue-900">历史记忆</h3>
-        <ul class="space-y-2">
-          {this.props.memories.map(memory => (
-            <li
-              key={memory.id}
-              on:click={() => this.props.onItemClick(memory.id)}
-              class="cursor-pointer rounded bg-white p-3 shadow transition-all hover:scale-105 hover:shadow-md"
-            >
-              <div class="font-medium text-blue-900">{memory.title}</div>
-              <div class="text-sm text-blue-700">{memory.days} 天</div>
-            </li>
-          ))}
-        </ul>
-      </div>
-    );
-  }
-}
-
-// 第三个条件组件 - 警告提示
-class WarningMessage extends Fukict<{ message: string }> {
-  render() {
-    return (
-      <div class="rounded-lg border-2 border-yellow-500 bg-yellow-50 p-4">
+      <div class="rounded-lg border-2 border-red-500 bg-red-50 p-4">
         <div class="flex items-center gap-2">
-          <svg
-            class="h-5 w-5 text-yellow-700"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-              clip-rule="evenodd"
-            />
-          </svg>
-          <span class="font-medium text-yellow-900">{this.props.message}</span>
+          <div class="flex h-8 w-8 items-center justify-center rounded-full bg-red-500 font-bold text-white">
+            A
+          </div>
+          <span class="font-semibold text-red-900">Component A</span>
         </div>
+        <p class="mt-2 text-sm text-red-700">
+          我应该始终在 Marker 1 和 Marker 2 之间（槽位 #1）
+        </p>
+      </div>
+    );
+  }
+}
+
+// 测试组件 B - 蓝色
+class ComponentB extends Fukict {
+  render() {
+    return (
+      <div class="rounded-lg border-2 border-blue-500 bg-blue-50 p-4">
+        <div class="flex items-center gap-2">
+          <div class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 font-bold text-white">
+            B
+          </div>
+          <span class="font-semibold text-blue-900">Component B</span>
+        </div>
+        <p class="mt-2 text-sm text-blue-700">
+          我应该始终在 Marker 2 和 Marker 3 之间（槽位 #3）
+        </p>
+      </div>
+    );
+  }
+}
+
+// 测试组件 C - 绿色
+class ComponentC extends Fukict {
+  render() {
+    return (
+      <div class="rounded-lg border-2 border-green-500 bg-green-50 p-4">
+        <div class="flex items-center gap-2">
+          <div class="flex h-8 w-8 items-center justify-center rounded-full bg-green-500 font-bold text-white">
+            C
+          </div>
+          <span class="font-semibold text-green-900">Component C</span>
+        </div>
+        <p class="mt-2 text-sm text-green-700">
+          我应该始终在 Marker 3 之后（槽位 #5）
+        </p>
       </div>
     );
   }
@@ -83,267 +59,401 @@ class WarningMessage extends Fukict<{ message: string }> {
 
 // 主演示组件
 export class ConditionalRenderingDemo extends Fukict {
-  private calculatedDays: number | null = null;
-  private calculatedTitle: string = '';
-  private isAuthenticated: boolean = false;
-  private memories: Array<{ id: number; title: string; days: number }> = [];
-  private showWarning: boolean = false;
-  private warningMessage: string = '';
-  private nextMemoryId: number = 1;
+  private showA: boolean = false;
+  private showB: boolean = false;
+  private showC: boolean = false;
+  private autoPlayInterval: number | null = null;
+  private testSequence: Array<{ a: boolean; b: boolean; c: boolean }> = [
+    { a: true, b: false, c: false },
+    { a: false, b: true, c: false },
+    { a: false, b: false, c: true },
+    { a: true, b: true, c: false },
+    { a: false, b: true, c: true },
+    { a: true, b: false, c: true },
+    { a: true, b: true, c: true },
+    { a: false, b: false, c: false },
+  ];
+  private currentTestIndex: number = 0;
 
-  // 模拟计算天数
-  calculate() {
-    const days = Math.floor(Math.random() * 365) + 1;
-    this.calculatedDays = days;
-    this.calculatedTitle = '计算结果';
-    this.showWarning = false;
+  beforeUnmount() {
+    this.stopAutoPlay();
+  }
+
+  // 切换 A
+  toggleA() {
+    this.showA = !this.showA;
     this.update(this.props);
   }
 
-  // 清除结果
-  clearResult() {
-    this.calculatedDays = null;
-    this.calculatedTitle = '';
+  // 切换 B
+  toggleB() {
+    this.showB = !this.showB;
     this.update(this.props);
   }
 
-  // 保存记忆
-  saveMemory() {
-    if (this.calculatedDays !== null) {
-      this.memories.push({
-        id: this.nextMemoryId++,
-        title: this.calculatedTitle,
-        days: this.calculatedDays,
-      });
-      this.showWarning = false;
+  // 切换 C
+  toggleC() {
+    this.showC = !this.showC;
+    this.update(this.props);
+  }
+
+  // 显示全部
+  showAll() {
+    this.showA = true;
+    this.showB = true;
+    this.showC = true;
+    this.update(this.props);
+  }
+
+  // 隐藏全部
+  hideAll() {
+    this.showA = false;
+    this.showB = false;
+    this.showC = false;
+    this.update(this.props);
+  }
+
+  // 运行测试序列
+  nextTest() {
+    const test = this.testSequence[this.currentTestIndex];
+    this.showA = test.a;
+    this.showB = test.b;
+    this.showC = test.c;
+    this.currentTestIndex =
+      (this.currentTestIndex + 1) % this.testSequence.length;
+    this.update(this.props);
+  }
+
+  // 自动播放测试序列
+  startAutoPlay() {
+    if (this.autoPlayInterval !== null) return;
+
+    this.autoPlayInterval = window.setInterval(() => {
+      this.nextTest();
+    }, 1500);
+  }
+
+  stopAutoPlay() {
+    if (this.autoPlayInterval !== null) {
+      window.clearInterval(this.autoPlayInterval);
+      this.autoPlayInterval = null;
       this.update(this.props);
     }
   }
 
-  // 切换认证状态
-  toggleAuth() {
-    this.isAuthenticated = !this.isAuthenticated;
-    this.update(this.props);
-  }
-
-  // 清空记忆
-  clearMemories() {
-    this.memories = [];
-    this.update(this.props);
-  }
-
-  // 显示警告
-  showWarningMessage() {
-    this.showWarning = true;
-    this.warningMessage = '请先进行计算后再保存！';
-    this.update(this.props);
-  }
-
-  // 点击记忆项
-  handleMemoryClick(id: number) {
-    const memory = this.memories.find(m => m.id === id);
-    if (memory) {
-      alert(`记忆 #${id}: ${memory.title} = ${memory.days} 天`);
-    }
-  }
-
-  // 同时显示/隐藏所有组件
-  toggleAll() {
-    if (this.calculatedDays === null && this.memories.length === 0) {
-      // 全部显示
-      this.calculate();
-      this.memories = [
-        { id: this.nextMemoryId++, title: '示例记忆 1', days: 100 },
-        { id: this.nextMemoryId++, title: '示例记忆 2', days: 200 },
-      ];
-      this.showWarning = true;
-      this.warningMessage = '所有组件已显示';
+  toggleAutoPlay() {
+    if (this.autoPlayInterval !== null) {
+      this.stopAutoPlay();
     } else {
-      // 全部隐藏
-      this.calculatedDays = null;
-      this.memories = [];
-      this.showWarning = false;
+      this.startAutoPlay();
     }
-    this.update(this.props);
   }
 
   render() {
+    const isAutoPlaying = this.autoPlayInterval !== null;
+
     return (
       <div>
-        <h2 class="mb-4 text-3xl font-bold">条件渲染 Bug 测试</h2>
+        <h2 class="mb-4 text-3xl font-bold">条件渲染顺序测试</h2>
 
-        <div class="mb-6 border-l-4 border-red-500 bg-red-50 p-4">
+        <div class="mb-6 space-y-3 border-l-4 border-blue-500 bg-blue-50 p-4">
           <p class="text-sm text-gray-700">
-            <strong>Bug 描述：</strong>当多个 Class Component
-            使用条件渲染（&&）时，
-            <code class="rounded bg-red-100 px-1">
-              &lt;!--fukict:ComponentName#id--&gt;
-            </code>{' '}
-            注释占位符没有被正确替换，且顺序可能混乱。
+            <strong class="text-blue-900">测试目标：</strong>
+            验证使用 PrimitiveVNode 后，条件渲染的组件始终保持在正确的 DOM
+            槽位，不会因为条件变化而乱序。
           </p>
-          <p class="mt-2 text-sm text-gray-700">
-            <strong>测试方法：</strong>打开开发者工具查看 DOM
-            结构，观察注释节点是否被正确替换。
+          <p class="text-sm text-gray-700">
+            <strong class="text-blue-900">测试方法：</strong>
           </p>
+          <ol class="ml-6 list-decimal space-y-1 text-sm text-gray-700">
+            <li>打开浏览器开发者工具（F12）→ Elements 面板</li>
+            <li>定位到下方 "条件渲染区域" 的 DOM 结构</li>
+            <li>点击控制按钮切换组件显示/隐藏</li>
+            <li>
+              <strong>观察重点：</strong>
+              <ul class="mt-1 ml-4 list-disc space-y-1">
+                <li>
+                  组件 A 应该始终在{' '}
+                  <code class="rounded bg-blue-100 px-1">Marker 1</code> 和{' '}
+                  <code class="rounded bg-blue-100 px-1">Marker 2</code>{' '}
+                  之间（槽位 #1）
+                </li>
+                <li>
+                  组件 B 应该始终在{' '}
+                  <code class="rounded bg-blue-100 px-1">Marker 2</code> 和{' '}
+                  <code class="rounded bg-blue-100 px-1">Marker 3</code>{' '}
+                  之间（槽位 #3）
+                </li>
+                <li>
+                  组件 C 应该始终在{' '}
+                  <code class="rounded bg-blue-100 px-1">Marker 3</code>{' '}
+                  之后（槽位 #5）
+                </li>
+                <li>
+                  条件为 false 时，应该看到{' '}
+                  <code class="rounded bg-blue-100 px-1">
+                    &lt;!--fukict:primitive:false--&gt;
+                  </code>{' '}
+                  占位符
+                </li>
+                <li>
+                  <strong class="text-red-600">不应该看到</strong>{' '}
+                  <code class="rounded bg-red-100 px-1">
+                    &lt;!--fukict-replace--&gt;
+                  </code>{' '}
+                  残留节点
+                </li>
+              </ul>
+            </li>
+          </ol>
         </div>
 
-        {/* 控制按钮 */}
-        <div class="mb-6 flex flex-wrap gap-3 rounded-lg bg-white p-4 shadow">
-          <button
-            on:click={() => this.calculate()}
-            class="rounded bg-green-600 px-4 py-2 text-white transition-colors hover:bg-green-700"
-          >
-            计算天数
-          </button>
-          <button
-            on:click={() => this.clearResult()}
-            class="rounded bg-gray-600 px-4 py-2 text-white transition-colors hover:bg-gray-700"
-          >
-            清除结果
-          </button>
-          <button
-            on:click={() => this.toggleAuth()}
-            class={`rounded px-4 py-2 text-white transition-colors ${
-              this.isAuthenticated
-                ? 'bg-blue-600 hover:bg-blue-700'
-                : 'bg-gray-400 hover:bg-gray-500'
-            }`}
-          >
-            {this.isAuthenticated ? '已登录 ✓' : '未登录'}
-          </button>
-          <button
-            on:click={() => this.clearMemories()}
-            class="rounded bg-orange-600 px-4 py-2 text-white transition-colors hover:bg-orange-700"
-          >
-            清空记忆
-          </button>
-          <button
-            on:click={() => this.showWarningMessage()}
-            class="rounded bg-yellow-600 px-4 py-2 text-white transition-colors hover:bg-yellow-700"
-          >
-            显示警告
-          </button>
-          <button
-            on:click={() => this.toggleAll()}
-            class="rounded bg-purple-600 px-4 py-2 text-white transition-colors hover:bg-purple-700"
-          >
-            切换全部
-          </button>
-        </div>
+        {/* 控制面板 */}
+        <div class="mb-6 rounded-lg bg-white p-4 shadow">
+          <h3 class="mb-3 font-semibold text-gray-900">控制面板</h3>
 
-        {/* 状态显示 */}
-        <div class="mb-6 rounded-lg bg-gray-100 p-4">
-          <h3 class="mb-2 font-semibold">当前状态：</h3>
-          <ul class="space-y-1 text-sm text-gray-700">
-            <li>
-              计算结果显示：
-              <span
-                class={
-                  this.calculatedDays !== null
-                    ? 'font-semibold text-green-600'
-                    : 'text-red-600'
-                }
+          {/* 单独控制 */}
+          <div class="mb-4">
+            <p class="mb-2 text-sm text-gray-600">单独切换：</p>
+            <div class="flex flex-wrap gap-2">
+              <button
+                on:click={() => this.toggleA()}
+                class={`rounded px-4 py-2 font-medium transition-colors ${
+                  this.showA
+                    ? 'bg-red-500 text-white hover:bg-red-600'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
               >
-                {this.calculatedDays !== null ? '是' : '否'}
-              </span>
-            </li>
-            <li>
-              记忆列表显示：
-              <span
-                class={
-                  this.memories.length > 0
-                    ? 'font-semibold text-green-600'
-                    : 'text-red-600'
-                }
+                {this.showA ? '✓ 隐藏 A' : '显示 A'}
+              </button>
+              <button
+                on:click={() => this.toggleB()}
+                class={`rounded px-4 py-2 font-medium transition-colors ${
+                  this.showB
+                    ? 'bg-blue-500 text-white hover:bg-blue-600'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
               >
-                {this.memories.length > 0
-                  ? `是 (${this.memories.length} 项)`
-                  : '否'}
-              </span>
-            </li>
-            <li>
-              警告消息显示：
-              <span
-                class={
-                  this.showWarning
-                    ? 'font-semibold text-green-600'
-                    : 'text-red-600'
-                }
+                {this.showB ? '✓ 隐藏 B' : '显示 B'}
+              </button>
+              <button
+                on:click={() => this.toggleC()}
+                class={`rounded px-4 py-2 font-medium transition-colors ${
+                  this.showC
+                    ? 'bg-green-500 text-white hover:bg-green-600'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
               >
-                {this.showWarning ? '是' : '否'}
+                {this.showC ? '✓ 隐藏 C' : '显示 C'}
+              </button>
+            </div>
+          </div>
+
+          {/* 批量控制 */}
+          <div class="mb-4">
+            <p class="mb-2 text-sm text-gray-600">批量操作：</p>
+            <div class="flex flex-wrap gap-2">
+              <button
+                on:click={() => this.showAll()}
+                class="rounded bg-purple-500 px-4 py-2 font-medium text-white transition-colors hover:bg-purple-600"
+              >
+                全部显示
+              </button>
+              <button
+                on:click={() => this.hideAll()}
+                class="rounded bg-gray-500 px-4 py-2 font-medium text-white transition-colors hover:bg-gray-600"
+              >
+                全部隐藏
+              </button>
+              <button
+                on:click={() => this.nextTest()}
+                class="rounded bg-indigo-500 px-4 py-2 font-medium text-white transition-colors hover:bg-indigo-600"
+              >
+                下一个测试场景
+              </button>
+            </div>
+          </div>
+
+          {/* 自动测试 */}
+          <div>
+            <p class="mb-2 text-sm text-gray-600">自动化测试：</p>
+            <button
+              on:click={() => this.toggleAutoPlay()}
+              class={`rounded px-4 py-2 font-medium text-white transition-colors ${
+                isAutoPlaying
+                  ? 'bg-orange-500 hover:bg-orange-600'
+                  : 'bg-teal-500 hover:bg-teal-600'
+              }`}
+            >
+              {isAutoPlaying ? '⏸ 停止自动切换' : '▶ 自动切换场景 (1.5s间隔)'}
+            </button>
+            {isAutoPlaying && (
+              <span class="ml-2 text-sm text-orange-600">
+                正在自动测试中... 场景 {this.currentTestIndex}/
+                {this.testSequence.length}
               </span>
-            </li>
-          </ul>
-        </div>
-
-        {/* 条件渲染区域 - 这里会出现 Bug */}
-        <div class="space-y-4">
-          <div class="rounded border-2 border-dashed border-gray-300 p-4">
-            <p class="mb-3 text-sm font-medium text-gray-600">
-              ⬇️ 条件渲染组件区域（打开 DevTools 检查 DOM）
-            </p>
-
-            <div> 计算结果: </div>
-            {/* Bug 场景 1: 计算结果 */}
-            {this.calculatedDays !== null && (
-              <CalculatorResult
-                title={this.calculatedTitle}
-                days={this.calculatedDays}
-                isAuthenticated={this.isAuthenticated}
-                onSave={() => this.saveMemory()}
-              />
-            )}
-            <div> 记忆列表: </div>
-            {/* Bug 场景 2: 记忆列表 */}
-            {this.memories.length > 0 && (
-              <MemoryList
-                memories={this.memories}
-                onItemClick={id => this.handleMemoryClick(id)}
-              />
-            )}
-
-            {/* Bug 场景 3: 警告消息 */}
-            {this.showWarning && (
-              <WarningMessage message={this.warningMessage} />
             )}
           </div>
         </div>
 
-        {/* 说明代码 */}
+        {/* 当前状态 */}
+        <div class="mb-6 rounded-lg bg-gray-100 p-4">
+          <h3 class="mb-2 font-semibold text-gray-900">当前显示状态：</h3>
+          <div class="flex gap-4">
+            <div class="flex items-center gap-2">
+              <div
+                class={`h-4 w-4 rounded-full ${this.showA ? 'bg-red-500' : 'bg-gray-300'}`}
+              ></div>
+              <span class="text-sm">
+                组件 A: {this.showA ? '显示' : '隐藏'}
+              </span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div
+                class={`h-4 w-4 rounded-full ${this.showB ? 'bg-blue-500' : 'bg-gray-300'}`}
+              ></div>
+              <span class="text-sm">
+                组件 B: {this.showB ? '显示' : '隐藏'}
+              </span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div
+                class={`h-4 w-4 rounded-full ${this.showC ? 'bg-green-500' : 'bg-gray-300'}`}
+              ></div>
+              <span class="text-sm">
+                组件 C: {this.showC ? '显示' : '隐藏'}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* 预期 DOM 结构 */}
+        <div class="mb-6 rounded-lg bg-yellow-50 p-4">
+          <h3 class="mb-2 font-semibold text-yellow-900">
+            预期 DOM 结构（在 DevTools 中验证）：
+          </h3>
+          <pre class="overflow-x-auto rounded bg-yellow-100 p-3 text-xs text-yellow-900">
+            <code>{`<div class="...条件渲染区域...">
+  <div>📍 Marker 1</div>           <!-- 固定槽位 #0 -->
+  ${this.showA ? '<div>🔴 Component A</div>     <!-- 槽位 #1 -->' : '<!--fukict:primitive:false-->  <!-- 槽位 #1 -->'}
+  <div>📍 Marker 2</div>           <!-- 固定槽位 #2 -->
+  ${this.showB ? '<div>🔵 Component B</div>     <!-- 槽位 #3 -->' : '<!--fukict:primitive:false-->  <!-- 槽位 #3 -->'}
+  <div>📍 Marker 3</div>           <!-- 固定槽位 #4 -->
+  ${this.showC ? '<div>🟢 Component C</div>     <!-- 槽位 #5 -->' : '<!--fukict:primitive:false-->  <!-- 槽位 #5 -->'}
+</div>`}</code>
+          </pre>
+          <p class="mt-2 text-xs text-yellow-800">
+            ✅ 关键点：无论组件显示还是隐藏，Marker 的位置始终不变
+          </p>
+        </div>
+
+        {/* 条件渲染区域 */}
+        <div class="space-y-3 rounded border-2 border-dashed border-purple-300 bg-purple-50 p-6">
+          <h3 class="mb-4 text-center text-lg font-bold text-purple-900">
+            ⬇️ 条件渲染区域 ⬇️
+          </h3>
+
+          {/* 槽位 #0 */}
+          <div class="rounded bg-gray-200 px-4 py-2 font-mono text-sm text-gray-700">
+            📍 Marker 1 (槽位 #0 - 固定)
+          </div>
+
+          {/* 槽位 #1 - Component A */}
+          {this.showA && <ComponentA />}
+
+          {/* 槽位 #2 */}
+          <div class="rounded bg-gray-200 px-4 py-2 font-mono text-sm text-gray-700">
+            📍 Marker 2 (槽位 #2 - 固定)
+          </div>
+
+          {/* 槽位 #3 - Component B */}
+          {this.showB && <ComponentB />}
+
+          {/* 槽位 #4 */}
+          <div class="rounded bg-gray-200 px-4 py-2 font-mono text-sm text-gray-700">
+            📍 Marker 3 (槽位 #4 - 固定)
+          </div>
+
+          {/* 槽位 #5 - Component C */}
+          {this.showC && <ComponentC />}
+        </div>
+
+        {/* JSX 代码展示 */}
         <div class="mt-6 overflow-x-auto rounded-lg bg-gray-900 p-4 text-gray-100">
           <pre class="text-xs">
-            <code>{`// 条件渲染的关键代码：
-{this.calculatedDays !== null && (
-  <CalculatorResult
-    title={this.calculatedTitle}
-    days={this.calculatedDays}
-    isAuthenticated={this.isAuthenticated}
-    onSave={() => this.saveMemory()}
-  />
-)}
+            <code>{`// 关键代码结构：
+<div>
+  <div>📍 Marker 1</div>           {/* 槽位 #0 */}
+  {this.showA && <ComponentA />}    {/* 槽位 #1 */}
+  <div>📍 Marker 2</div>           {/* 槽位 #2 */}
+  {this.showB && <ComponentB />}    {/* 槽位 #3 */}
+  <div>📍 Marker 3</div>           {/* 槽位 #4 */}
+  {this.showC && <ComponentC />}    {/* 槽位 #5 */}
+</div>
 
-{this.memories.length > 0 && (
-  <MemoryList
-    memories={this.memories}
-    onItemClick={this.handleMemoryClick}
-  />
-)}
+// PrimitiveVNode 优化后的 children 数组：
+[
+  ElementVNode(Marker1),              // 槽位 #0
+  PrimitiveVNode(false) | ComponentA, // 槽位 #1 (稳定)
+  ElementVNode(Marker2),              // 槽位 #2
+  PrimitiveVNode(false) | ComponentB, // 槽位 #3 (稳定)
+  ElementVNode(Marker3),              // 槽位 #4
+  PrimitiveVNode(false) | ComponentC, // 槽位 #5 (稳定)
+]
 
-{this.showWarning && (
-  <WarningMessage message={this.warningMessage} />
-)}
+// 优化前的问题：
+// - children 数组长度不固定
+// - diff 时槽位对应错乱
+// - DOM 操作错误导致顺序混乱
 
-// 预期行为：
-// - 条件为 false 时，组件不渲染（无 DOM 节点）
-// - 条件为 true 时，渲染完整的组件 DOM
-// - 组件顺序应该保持一致
-
-// Bug 症状：
-// - 可能会看到 <!--fukict:CalculatorResult#xx--> 注释节点
-// - 可能会看到 <!--fukict:MemoryList#xx--> 注释节点
-// - 注释节点顺序可能与预期不符
-// - 注释节点没有被实际组件 DOM 替换`}</code>
+// 优化后的效果：
+// ✅ children 数组长度固定为 6
+// ✅ 每个槽位始终对应同一个位置
+// ✅ false 被包装为 PrimitiveVNode，保持结构稳定`}</code>
           </pre>
+        </div>
+
+        {/* 测试检查清单 */}
+        <div class="mt-6 rounded-lg border-2 border-green-500 bg-green-50 p-4">
+          <h3 class="mb-3 font-semibold text-green-900">✅ 测试检查清单：</h3>
+          <ul class="space-y-2 text-sm text-gray-700">
+            <li class="flex items-start gap-2">
+              <span class="mt-0.5 text-green-600">□</span>
+              <span>切换组件 A 时，Marker 1 和 Marker 2 的位置保持不变</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="mt-0.5 text-green-600">□</span>
+              <span>切换组件 B 时，Marker 2 和 Marker 3 的位置保持不变</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="mt-0.5 text-green-600">□</span>
+              <span>切换组件 C 时，Marker 3 的位置保持不变</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="mt-0.5 text-green-600">□</span>
+              <span>
+                组件隐藏时，对应位置有{' '}
+                <code class="rounded bg-green-100 px-1">
+                  &lt;!--fukict:primitive:false--&gt;
+                </code>{' '}
+                占位符
+              </span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="mt-0.5 text-green-600">□</span>
+              <span>
+                运行自动测试，DOM 中没有多余的{' '}
+                <code class="rounded bg-red-100 px-1">
+                  &lt;!--fukict-replace--&gt;
+                </code>{' '}
+                节点
+              </span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="mt-0.5 text-green-600">□</span>
+              <span>快速切换多次后，组件始终出现在正确的槽位</span>
+            </li>
+          </ul>
         </div>
       </div>
     );

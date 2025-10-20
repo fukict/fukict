@@ -14,6 +14,8 @@ export type {
   FragmentVNode,
   FunctionComponentVNode,
   ClassComponentVNode,
+  PrimitiveVNode,
+  PrimitiveValue,
 } from './core.js';
 export { Fragment, VNodeType } from './core.js';
 

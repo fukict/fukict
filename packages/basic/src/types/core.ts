@@ -6,7 +6,13 @@
 import type { ContextData } from './context.js';
 
 /**
- * VNode child types - supports primitives, VNodes, and nested arrays
+ * Primitive value types that can be rendered
+ */
+export type PrimitiveValue = string | number | boolean | null | undefined;
+
+/**
+ * VNode child types - now primarily VNodes (primitives are wrapped in PrimitiveVNode)
+ * Keep primitive types for backward compatibility during transition
  */
 export type VNodeChild =
   | VNode
@@ -25,6 +31,7 @@ export enum VNodeType {
   Fragment = 'fragment',
   FunctionComponent = 'function',
   ClassComponent = 'class',
+  Primitive = 'primitive',
 }
 
 /**
@@ -107,6 +114,24 @@ export interface ClassComponentVNode extends VNodeBase {
 }
 
 /**
+ * Primitive VNode
+ * - type: 'primitive'
+ * - value: string | number | boolean | null | undefined
+ * - __dom__: Text | Comment | null
+ * - Wraps primitive values to maintain stable VNode tree structure
+ */
+export interface PrimitiveVNode extends VNodeBase {
+  __type__: VNodeType.Primitive;
+  type: 'primitive';
+  value: PrimitiveValue;
+  __dom__?: Text | Comment | null;
+
+  // PrimitiveVNode doesn't use props and children
+  props: null;
+  children: [];
+}
+
+/**
  * VNode - Discriminated Union
  *
  * Use __type__ to narrow down to specific VNode type:
@@ -124,6 +149,9 @@ export interface ClassComponentVNode extends VNodeBase {
  * } else if (vnode.__type__ === VNodeType.ClassComponent) {
  *   // vnode is ClassComponentVNode
  *   const instance = vnode.__instance__;
+ * } else if (vnode.__type__ === VNodeType.Primitive) {
+ *   // vnode is PrimitiveVNode
+ *   const value = vnode.value;
  * }
  * ```
  */
@@ -131,7 +159,8 @@ export type VNode =
   | ElementVNode
   | FragmentVNode
   | FunctionComponentVNode
-  | ClassComponentVNode;
+  | ClassComponentVNode
+  | PrimitiveVNode;
 
 /**
  * Fragment symbol for multiple root elements

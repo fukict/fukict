@@ -9,6 +9,7 @@ import type {
   FragmentVNode,
   FukictComponent,
   FunctionComponentVNode,
+  PrimitiveVNode,
   VNode,
   VNodeChild,
 } from '../../types/index.js';
@@ -169,6 +170,11 @@ function unmountVNode(vnode: VNodeChild): void {
       }
       return;
     }
+
+    // Primitive - nothing to unmount
+    if (vnodeObj.__type__ === VNodeType.Primitive) {
+      return;
+    }
   }
 }
 
@@ -206,6 +212,16 @@ export function removeNode(vnode: VNodeChild, container: Element): void {
       const placeholder = classVNode.__placeholder__;
       if (placeholder?.parentNode) {
         placeholder.parentNode.removeChild(placeholder);
+      }
+      return;
+    }
+
+    // Primitive VNode - remove text or comment node
+    if (vnodeObj.__type__ === VNodeType.Primitive) {
+      const primitiveVNode = vnodeObj as PrimitiveVNode;
+      const dom = primitiveVNode.__dom__;
+      if (dom?.parentNode) {
+        dom.parentNode.removeChild(dom);
       }
       return;
     }

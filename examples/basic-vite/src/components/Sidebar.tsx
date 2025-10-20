@@ -15,7 +15,7 @@ const demos = [
   { id: 'fragment', label: 'Fragment' },
   { id: 'composition', label: '组件组合' },
   { id: 'context', label: 'Context 上下文' },
-  { id: 'conditional-rendering', label: '🐛 条件渲染 Bug' },
+  { id: 'conditional-rendering', label: '条件渲染' },
 ];
 
 export const Sidebar = ({ currentDemo, onSelect }: SidebarProps) => {

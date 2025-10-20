@@ -9,6 +9,7 @@ import type {
   FragmentVNode,
   FukictComponent,
   FunctionComponentVNode,
+  PrimitiveVNode,
   VNode,
   VNodeChild,
 } from '../types/index.js';
@@ -49,6 +50,13 @@ interface FunctionComponentActivateContext {
 
 interface ClassComponentActivateContext {
   vnode: ClassComponentVNode;
+  container?: Element;
+  placeholder?: Comment;
+  onMounted?: () => void;
+}
+
+interface PrimitiveActivateContext {
+  vnode: PrimitiveVNode;
   container?: Element;
   placeholder?: Comment;
   onMounted?: () => void;
@@ -227,6 +235,34 @@ function activateFunctionComponent(
 }
 
 /**
+ * Strategy: Activate Primitive
+ */
+function activatePrimitive(ctx: PrimitiveActivateContext): void {
+  const { vnode, container, placeholder, onMounted } = ctx;
+  const dom = vnode.__dom__;
+  const actualContainer = container || placeholder?.parentNode;
+
+  if (!actualContainer) return;
+
+  // Mount or replace DOM (Text or Comment node)
+  if (dom) {
+    if (placeholder && placeholder.parentNode) {
+      // Replace mode: replace placeholder with primitive node
+      placeholder.parentNode.replaceChild(dom, placeholder);
+    } else {
+      // Mount mode: append to container
+      actualContainer.appendChild(dom);
+    }
+  } else if (placeholder && placeholder.parentNode) {
+    // No DOM but has placeholder - remove placeholder
+    // This handles cases where primitive value doesn't create a DOM node
+    placeholder.parentNode.removeChild(placeholder);
+  }
+
+  onMounted?.();
+}
+
+/**
  * Strategy registry
  */
 // const strategies: Record<VNodeType, ActivateStrategy> = {
@@ -280,6 +316,9 @@ export function activate(options: ActivateOptions): void {
         placeholder,
         onMounted,
       });
+      break;
+    case VNodeType.Primitive:
+      activatePrimitive({ vnode: vnodeObj, container, placeholder, onMounted });
       break;
     default:
       break;

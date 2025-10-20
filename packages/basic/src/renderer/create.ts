@@ -11,6 +11,7 @@ import type {
   ElementVNode,
   FragmentVNode,
   FunctionComponentVNode,
+  PrimitiveVNode,
   VNode,
   VNodeChild,
 } from '../types/index.js';
@@ -21,6 +22,7 @@ import {
   setupElementVNode,
   setupFragmentVNode,
   setupFunctionComponentVNode,
+  setupPrimitiveVNode,
 } from './vnode-helpers.js';
 
 /**
@@ -99,6 +101,9 @@ export function createElementFromVNode(
 
     case VNodeType.ClassComponent:
       return renderClassComponent(vnode, componentInstance);
+
+    case VNodeType.Primitive:
+      return renderPrimitive(vnode);
 
     default:
       return null;
@@ -258,4 +263,37 @@ function renderClassComponent(vnode: VNode, componentInstance?: Fukict): Node {
   classVNode.__placeholder__ = placeholder;
 
   return placeholder;
+}
+
+/**
+ * Render Primitive VNode
+ * Returns Text node for renderable values, Comment node for non-renderable values
+ */
+function renderPrimitive(vnode: VNode): Text | Comment | null {
+  // TypeScript now knows vnode is PrimitiveVNode
+  if (vnode.__type__ !== VNodeType.Primitive) {
+    throw new Error('Expected PrimitiveVNode');
+  }
+
+  const primitiveVNode = vnode as PrimitiveVNode;
+  const { value } = primitiveVNode;
+
+  // Renderable values: string, number
+  if (typeof value === 'string' || typeof value === 'number') {
+    const textNode = dom.createTextNode(String(value));
+    setupPrimitiveVNode(primitiveVNode, textNode);
+    return textNode;
+  }
+
+  // Non-renderable values: boolean, null, undefined
+  // Use comment node as placeholder to maintain structure
+  if (typeof value === 'boolean' || value === null || value === undefined) {
+    const comment = dom.createComment(
+      `fukict:primitive:${value === null ? 'null' : value === undefined ? 'undefined' : value}`,
+    );
+    setupPrimitiveVNode(primitiveVNode, comment);
+    return comment;
+  }
+
+  return null;
 }

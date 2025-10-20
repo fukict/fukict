@@ -7,6 +7,7 @@ import type {
   ElementVNode,
   FragmentVNode,
   FunctionComponentVNode,
+  PrimitiveVNode,
   VNode,
 } from '../types/index.js';
 
@@ -50,4 +51,19 @@ export function setupFunctionComponentVNode(
 ): void {
   vnode.__rendered__ = rendered;
   vnode.__dom__ = domNode;
+}
+
+/**
+ * Setup PrimitiveVNode with DOM reference
+ *
+ * Used by both renderPrimitive (create) and diffPrimitive (update).
+ *
+ * @param vnode - The PrimitiveVNode to setup
+ * @param node - The Text or Comment node
+ */
+export function setupPrimitiveVNode(
+  vnode: PrimitiveVNode,
+  node: Text | Comment,
+): void {
+  vnode.__dom__ = node;
 }
