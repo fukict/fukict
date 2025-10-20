@@ -1,5 +1,17 @@
 # @fukict/vite-plugin
 
+## 0.1.2
+
+### Patch Changes
+
+- b96873c: refactor refs to use plain object instead of Map
+- 7a57283: resolve conditional rendering order issues with PrimitiveVNode
+- f7cbbd3: support render() returning null/undefined via PrimitiveVNode wrapping
+- Updated dependencies [b96873c]
+- Updated dependencies [7a57283]
+- Updated dependencies [f7cbbd3]
+  - @fukict/babel-preset@0.1.2
+
 ## 0.1.1
 
 ### Patch Changes
