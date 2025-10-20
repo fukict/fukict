@@ -57,11 +57,38 @@ class ComponentC extends Fukict {
   }
 }
 
+// 测试组件 D - 紫色（测试 render 返回 null）
+class ComponentD extends Fukict<{ shouldRender: boolean }> {
+  render() {
+    // 测试 render() 可以返回 null
+    if (!this.props.shouldRender) {
+      return null;
+    }
+
+    return (
+      <div class="rounded-lg border-2 border-purple-500 bg-purple-50 p-4">
+        <div class="flex items-center gap-2">
+          <div class="flex h-8 w-8 items-center justify-center rounded-full bg-purple-500 font-bold text-white">
+            D
+          </div>
+          <span class="font-semibold text-purple-900">
+            Component D (Null Test)
+          </span>
+        </div>
+        <p class="mt-2 text-sm text-purple-700">
+          这个组件测试 render() 返回 null 的情况
+        </p>
+      </div>
+    );
+  }
+}
+
 // 主演示组件
 export class ConditionalRenderingDemo extends Fukict {
   private showA: boolean = false;
   private showB: boolean = false;
   private showC: boolean = false;
+  private showD: boolean = false;
   private autoPlayInterval: number | null = null;
   private testSequence: Array<{ a: boolean; b: boolean; c: boolean }> = [
     { a: true, b: false, c: false },
@@ -94,6 +121,12 @@ export class ConditionalRenderingDemo extends Fukict {
   // 切换 C
   toggleC() {
     this.showC = !this.showC;
+    this.update(this.props);
+  }
+
+  // 切换 D (测试 render 返回 null)
+  toggleD() {
+    this.showD = !this.showD;
     this.update(this.props);
   }
 
@@ -246,6 +279,16 @@ export class ConditionalRenderingDemo extends Fukict {
               >
                 {this.showC ? '✓ 隐藏 C' : '显示 C'}
               </button>
+              <button
+                on:click={() => this.toggleD()}
+                class={`rounded px-4 py-2 font-medium transition-colors ${
+                  this.showD
+                    ? 'bg-purple-500 text-white hover:bg-purple-600'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                {this.showD ? '✓ 隐藏 D (Null Test)' : '显示 D (Null Test)'}
+              </button>
             </div>
           </div>
 
@@ -376,6 +419,17 @@ export class ConditionalRenderingDemo extends Fukict {
 
           {/* 槽位 #5 - Component C */}
           {this.showC && <ComponentC />}
+
+          {/* 测试区域：render() 返回 null */}
+          <div class="mt-6 rounded bg-yellow-100 px-4 py-2">
+            <h4 class="mb-2 font-semibold text-yellow-900">
+              🧪 Null Render Test (render() 返回 null 测试)
+            </h4>
+            <p class="mb-2 text-xs text-yellow-800">
+              ComponentD 的 render() 方法会根据 props 返回 null 或 VNode
+            </p>
+            <ComponentD shouldRender={this.showD} />
+          </div>
         </div>
 
         {/* JSX 代码展示 */}

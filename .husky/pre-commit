@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 # Run linter
-pnpm lint:fix
+pnpm lint
 
 # Run formatter
 pnpm format

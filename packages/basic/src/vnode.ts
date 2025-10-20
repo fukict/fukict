@@ -10,14 +10,28 @@ import { Fragment, VNodeType } from './types/index.js';
 /**
  * Create a PrimitiveVNode from a primitive value
  */
-function createPrimitiveVNode(value: PrimitiveValue): PrimitiveVNode {
+export function createPrimitiveVNode(value: PrimitiveValue): PrimitiveVNode {
   return {
     __type__: VNodeType.Primitive,
     type: 'primitive',
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     value,
     props: null,
     children: [],
   };
+}
+
+/**
+ * Type guard for primitive values
+ */
+function isPrimitiveValue(value: any): value is PrimitiveValue {
+  return (
+    typeof value === 'string' ||
+    typeof value === 'number' ||
+    typeof value === 'boolean' ||
+    value === null ||
+    value === undefined
+  );
 }
 
 /**
@@ -31,14 +45,10 @@ function normalizeChild(child: any): VNode | null {
   }
 
   // Primitive values -> PrimitiveVNode
-  if (
-    typeof child === 'string' ||
-    typeof child === 'number' ||
-    typeof child === 'boolean' ||
-    child === null ||
-    child === undefined
-  ) {
-    return createPrimitiveVNode(child);
+  if (isPrimitiveValue(child)) {
+    // Type guard ensures child is PrimitiveValue
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return createPrimitiveVNode(child as PrimitiveValue);
   }
 
   // Arrays should be flattened before this point

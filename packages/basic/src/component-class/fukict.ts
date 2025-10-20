@@ -13,6 +13,7 @@ import type {
   FukictSlotAttribute,
 } from '../types/dom-attributes.js';
 import { createImmutableProxy, getParentContext } from '../utils/context.js';
+import { createPrimitiveVNode } from '../vnode.js';
 
 // Global component instance counter for unique IDs
 let componentIdCounter = 0;
@@ -165,8 +166,10 @@ export abstract class Fukict<
 
   /**
    * Render method (must be implemented by subclass)
+   *
+   * @returns VNode to render, or null/undefined to render nothing
    */
-  abstract render(): VNode;
+  abstract render(): VNode | null | undefined;
 
   /**
    * Provide context value at current component level
@@ -299,14 +302,20 @@ export abstract class Fukict<
     }
 
     // Re-render
-    const newVNode = this.render();
+    const rawVNode = this.render();
+
+    // Wrap null/undefined as PrimitiveVNode for consistent diff handling
+    const newVNode: VNode =
+      rawVNode === null || rawVNode === undefined
+        ? (createPrimitiveVNode(rawVNode) as VNode)
+        : rawVNode;
 
     // Preserve context from old VNode to new VNode
     if (this.__vnode__?.__context__) {
       newVNode.__context__ = this.__vnode__.__context__;
     }
 
-    // Built-in diff and patch
+    // Diff and patch (let diff handle all cases including PrimitiveVNode)
     if (this.__vnode__ && this.__container__) {
       diff(this.__vnode__, newVNode, this.__container__);
     }
@@ -347,24 +356,24 @@ export abstract class Fukict<
 
     // First render (if not already rendered)
     if (!this.__vnode__) {
-      this.__vnode__ = this.render();
+      const rawVNode = this.render();
+      // Wrap null/undefined as PrimitiveVNode
+      this.__vnode__ =
+        rawVNode === null || rawVNode === undefined
+          ? (createPrimitiveVNode(rawVNode) as VNode)
+          : rawVNode;
     }
 
-    if (!this.__vnode__) {
-      this.__inMounting__ = false;
-      return;
-    }
-
-    // 1. Create real DOM for instance.__vnode__ (pass this for fukict:ref)
+    // Create real DOM for instance.__vnode__ (pass this for fukict:ref)
     createRealNode(this.__vnode__, this);
 
-    // 2. Recursively activate nested components in instance.__vnode__
+    // Recursively activate nested components in instance.__vnode__
     activate({
       vnode: this.__vnode__,
       ...(placeholder ? { placeholder } : { container }),
       onMounted: () => {
         this.__inMounting__ = false;
-        // 3. Trigger mounted() hook (protected from re-entry)
+        // Trigger mounted() hook (protected from re-entry)
         this.mounted?.();
       },
     });
