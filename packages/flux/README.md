@@ -64,7 +64,7 @@ class Counter extends Fukict {
 
   render() {
     const state = counterFlux.getState();
-    const actions = counterFlux.getActions();
+    const actions = counterFlux.actions;
 
     return (
       <div>
@@ -425,9 +425,9 @@ const appFlux = createAppFlux();
 
 // Use in components
 appFlux.user.getState();
-appFlux.user.getActions().setUser(...);
+appFlux.user.actions.setUser(...);
 appFlux.todo.getState();
-appFlux.todo.getActions().addTodo(...);
+appFlux.todo.actions.addTodo(...);
 ```
 
 ## API Reference
@@ -465,12 +465,12 @@ Updates state with partial state object.
 flux.setState({ count: 10 });
 ```
 
-### flux.getActions()
+### flux.actions
 
-Returns actions object.
+Actions object defined in createFlux config.
 
 ```typescript
-const actions = flux.getActions();
+const actions = flux.actions;
 actions.increment();
 ```
 
