@@ -7,9 +7,10 @@
 /**
  * Event handler type with on: prefix
  * Maps all HTMLElementEventMap events to on: prefixed handlers
+ * Supports both synchronous and asynchronous handlers
  */
 export type EventHandlers = {
   [K in keyof HTMLElementEventMap as `on:${K}`]?: (
     event: HTMLElementEventMap[K],
-  ) => void;
+  ) => void | Promise<void>;
 };

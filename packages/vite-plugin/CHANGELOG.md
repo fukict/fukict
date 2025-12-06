@@ -1,5 +1,13 @@
 # @fukict/vite-plugin
 
+## 0.1.3
+
+### Patch Changes
+
+- dom event support async function
+- Updated dependencies
+  - @fukict/babel-preset@0.1.3
+
 ## 0.1.2
 
 ### Patch Changes

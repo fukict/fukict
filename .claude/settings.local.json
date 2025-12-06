@@ -73,7 +73,8 @@
       "Bash(xargs:*)",
       "Bash(do [ -f \"$dir/package.json\" ])",
       "Bash(jq:*)",
-      "WebFetch(domain:lucide.dev)"
+      "WebFetch(domain:lucide.dev)",
+      "WebFetch(domain:stackoverflow.com)"
     ],
     "deny": [],
     "ask": []
