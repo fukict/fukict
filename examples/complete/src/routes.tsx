@@ -3,8 +3,9 @@ import { type RouteConfig } from '@fukict/router';
 // 导入页面组件
 import { HomePage } from './pages/HomePage';
 import { LayoutPage } from './pages/LayoutPage';
-import { AttributesPage } from './pages/basic/AttributesPage';
 // Basic 模块
+import { AsyncEventHandlerPage } from './pages/basic/AsyncEventHandlerPage';
+import { AttributesPage } from './pages/basic/AttributesPage';
 import { BasicIndexPage } from './pages/basic/BasicIndexPage';
 import { ComponentsPage } from './pages/basic/ComponentsPage';
 import { ContextPage } from './pages/basic/ContextPage';
@@ -186,6 +187,15 @@ export const routes: RouteConfig[] = [
             meta: {
               title: 'Lucide Icons',
               description: '在 Fukict 中集成和使用 Lucide 图标库',
+              showInSidebar: true,
+            },
+          },
+          {
+            path: '/async-event-handler',
+            component: AsyncEventHandlerPage,
+            meta: {
+              title: '异步事件处理器',
+              description: '在事件处理器中使用异步函数',
               showInSidebar: true,
             },
           },

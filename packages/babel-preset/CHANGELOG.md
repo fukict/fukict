@@ -1,5 +1,11 @@
 # @fukict/babel-preset
 
+## 0.1.3
+
+### Patch Changes
+
+- dom event support async function
+
 ## 0.1.2
 
 ### Patch Changes

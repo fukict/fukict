@@ -213,21 +213,21 @@ class AsyncDemo extends Fukict {
           <button
             class="rounded bg-blue-500 px-3 py-1.5 text-sm text-white hover:bg-blue-600 disabled:opacity-50"
             disabled={state.loading}
-            on:click={() => void loadUser(1)}
+            on:click={() => loadUser(1)}
           >
             Load User 1
           </button>
           <button
             class="rounded bg-green-500 px-3 py-1.5 text-sm text-white hover:bg-green-600 disabled:opacity-50"
             disabled={state.loading}
-            on:click={() => void loadUser(2)}
+            on:click={() => loadUser(2)}
           >
             Load User 2
           </button>
           <button
             class="rounded bg-red-500 px-3 py-1.5 text-sm text-white hover:bg-red-600 disabled:opacity-50"
             disabled={state.loading}
-            on:click={() => void logout()}
+            on:click={() => logout()}
           >
             Logout
           </button>
