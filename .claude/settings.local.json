@@ -72,7 +72,8 @@
       "Bash(test:*)",
       "Bash(xargs:*)",
       "Bash(do [ -f \"$dir/package.json\" ])",
-      "Bash(jq:*)"
+      "Bash(jq:*)",
+      "WebFetch(domain:lucide.dev)"
     ],
     "deny": [],
     "ask": []

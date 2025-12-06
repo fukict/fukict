@@ -28,6 +28,12 @@ export function setAttributes(
       continue;
     }
 
+    // Handle fukict:html (innerHTML setter)
+    if (key === 'fukict:html') {
+      dom.setProperty(element, 'innerHTML', value ?? '');
+      continue;
+    }
+
     // TODO: dom 应该统一处理流程
 
     // Handle ref callback

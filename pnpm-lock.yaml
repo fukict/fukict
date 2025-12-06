@@ -108,6 +108,9 @@ importers:
       '@fukict/router':
         specifier: workspace:*
         version: link:../../packages/router
+      lucide:
+        specifier: ^0.556.0
+        version: 0.556.0
     devDependencies:
       '@fukict/vite-plugin':
         specifier: workspace:*
@@ -1919,6 +1922,9 @@ packages:
 
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
+
+  lucide@0.556.0:
+    resolution: {integrity: sha512-sJ6NrZ+Q2Fv0Uardg7nsgjoKZ3r70wp3n30fvfbxMt5Fi1fQy1deS99z1g3xQpObok+LT1LjjcCyojUKGIHo7A==}
 
   magic-string@0.30.19:
     resolution: {integrity: sha512-2N21sPY9Ws53PZvsEpVtNuSW+ScYbQdp4b9qUaL+9QkHUrGFKo56Lg9Emg5s9V/qrtNBmiR01sYhUOwu3H+VOw==}
@@ -4270,6 +4276,8 @@ snapshots:
   lru-cache@5.1.1:
     dependencies:
       yallist: 3.1.1
+
+  lucide@0.556.0: {}
 
   magic-string@0.30.19:
     dependencies:

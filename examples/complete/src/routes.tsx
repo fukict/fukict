@@ -10,6 +10,7 @@ import { ComponentsPage } from './pages/basic/ComponentsPage';
 import { ContextPage } from './pages/basic/ContextPage';
 import { EventsPage } from './pages/basic/EventsPage';
 import { JSXPage } from './pages/basic/JSXPage';
+import { LucideIconsPage } from './pages/basic/LucideIconsPage';
 import { RefsPage } from './pages/basic/RefsPage';
 import { SlotsPage } from './pages/basic/SlotsPage';
 import { StylesPage } from './pages/basic/StylesPage';
@@ -176,6 +177,15 @@ export const routes: RouteConfig[] = [
             meta: {
               title: '属性绑定',
               description: '绑定 HTML 属性和自定义属性到 DOM 元素',
+              showInSidebar: true,
+            },
+          },
+          {
+            path: '/lucide-icons',
+            component: LucideIconsPage,
+            meta: {
+              title: 'Lucide Icons',
+              description: '在 Fukict 中集成和使用 Lucide 图标库',
               showInSidebar: true,
             },
           },

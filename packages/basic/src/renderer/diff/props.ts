@@ -55,6 +55,12 @@ export function setProp(
     return;
   }
 
+  // Handle fukict:html (innerHTML setter)
+  if (key === 'fukict:html') {
+    dom.setProperty(element, 'innerHTML', value ?? '');
+    return;
+  }
+
   // Handle events (on: prefix)
   if (key.startsWith('on:')) {
     const eventName = key.slice(3);
@@ -114,6 +120,12 @@ export function removeProp(
   key: string,
   oldValue: PropValue,
 ): void {
+  // Handle fukict:html (innerHTML cleanup)
+  if (key === 'fukict:html') {
+    dom.setProperty(element, 'innerHTML', '');
+    return;
+  }
+
   // Handle events (on: prefix)
   if (key.startsWith('on:')) {
     const eventName = key.slice(3);

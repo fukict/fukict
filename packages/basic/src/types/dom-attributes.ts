@@ -37,6 +37,14 @@ export interface FukictSlotAttribute {
 }
 
 /**
+ * Fukict html attribute (for setting innerHTML)
+ * Used in DOM elements as alternative to children
+ */
+export interface FukictHtmlAttribute {
+  'fukict:html'?: string;
+}
+
+/**
  * Fukict ref attribute (for component instance reference)
  * Used in class components and DOM elements
  */
@@ -58,7 +66,8 @@ export interface FukictDetachAttribute {
  */
 export interface RuntimeAttributes<T extends Element = Element>
   extends EventHandlers,
-    FukictSlotAttribute {
+    FukictSlotAttribute,
+    FukictHtmlAttribute {
   // Runtime ref (DOM element reference callback)
   ref?: RefCallback<T>;
 
