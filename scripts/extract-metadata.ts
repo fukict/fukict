@@ -4,6 +4,7 @@
  * Generates src/metadata.ts with a single METADATA constant
  * Only generates for packages with metadata: true in build.config.yml
  */
+import { execSync } from 'child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
@@ -100,6 +101,17 @@ export const METADATA = {
 
   // Write metadata file
   writeFileSync(metadataPath, metadataContent, 'utf-8');
+
+  // Format with prettier
+  try {
+    execSync(`prettier --write "${metadataPath}"`, {
+      cwd: resolve(__dirname, '..'),
+      stdio: 'ignore',
+    });
+  } catch {
+    log('yellow', `⚠️  Failed to format ${metadataPath} with prettier`);
+  }
+
   log(
     'green',
     `✅ Generated metadata for ${packageName}: ${packageJson.name}@${packageJson.version}`,

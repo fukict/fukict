@@ -1,6 +1,6 @@
 {
   "name": "fukict",
-  "version": "0.0.0",
+  "version": "0.1.3",
   "private": true,
   "description": "专注于性能场景的轻量级 DOM 渲染库",
   "keywords": [
@@ -33,7 +33,7 @@
     "changeset:version": "changeset version",
     "clean": "premove packages/*/dist",
     "clear": "premove **/node_modules && premove pnpm-lock.yaml",
-    "commit": "git cz",
+    "commit": "tsx scripts/commit.ts",
     "dev:no-build": "npx http-server -p 8080 -c-1 --cors",
     "extract-metadata": "tsx scripts/extract-metadata.ts",
     "format": "prettier --write .",
@@ -41,8 +41,9 @@
     "lint:fix": "eslint . --fix",
     "lint:types": "pnpm -r --parallel run lint",
     "prepare": "husky",
-    "publish": "tsx scripts/release.ts",
-    "release": "tsx scripts/release.ts",
+    "publish": "tsx scripts/publish.ts",
+    "sync:version": "tsx scripts/sync-version.ts",
+    "tag": "tsx scripts/tag.ts",
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck",
     "version:alpha": "changeset version --snapshot alpha && changeset publish --tag alpha",

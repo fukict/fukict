@@ -35,6 +35,49 @@ export default declare<PluginOptions>((api, options) => {
           return;
         }
 
+        // Skip generated UIDs (like _component, _Component, etc.)
+        // These are created by auto-define-fukict or this plugin for export default
+        // We'll handle them in the export visitor if needed
+        if (id.name.startsWith('_')) {
+          // Check if this is followed by an export default statement
+          const parentPath = path.parentPath;
+          if (!parentPath || !parentPath.isVariableDeclaration()) {
+            return;
+          }
+
+          const grandParentPath = parentPath.parentPath;
+          if (!grandParentPath || !grandParentPath.isProgram()) {
+            return;
+          }
+
+          // Check if the next statement is export default with this identifier
+          const statements = grandParentPath.get('body') as NodePath[];
+          const currentIndex = statements.indexOf(parentPath as any);
+
+          if (currentIndex >= 0 && currentIndex < statements.length - 1) {
+            const nextPath = statements[currentIndex + 1];
+            if (
+              nextPath.isExportDefaultDeclaration() &&
+              t.isIdentifier(nextPath.node.declaration) &&
+              nextPath.node.declaration.name === id.name
+            ) {
+              // This is an export default pattern, add displayName
+              const displayNameAssignment = t.expressionStatement(
+                t.assignmentExpression(
+                  '=',
+                  t.memberExpression(id, t.identifier('displayName')),
+                  t.stringLiteral('DefaultExport'),
+                ),
+              );
+
+              parentPath.insertAfter(displayNameAssignment);
+              return;
+            }
+          }
+
+          return;
+        }
+
         // Check if name starts with uppercase (component)
         if (!isComponentName(id.name)) {
           return;
@@ -64,23 +107,68 @@ export default declare<PluginOptions>((api, options) => {
           return;
         }
 
-        // Handle anonymous default export
+        // Handle identifiers (e.g., export default Greeting)
+        if (t.isIdentifier(declaration)) {
+          // Don't inject displayName for identifiers
+          // The displayName should already be set when the variable was declared
+          return;
+        }
+
+        // Handle anonymous function export
         if (
           t.isArrowFunctionExpression(declaration) ||
           t.isFunctionExpression(declaration)
         ) {
-          // Create a variable for the component
+          // Check if auto-define-fukict has already created a variable
+          // by looking at the previous statement
+          const programPath = path.findParent(p => p.isProgram());
+          if (!programPath) return;
+
+          const statements = programPath.get('body') as NodePath[];
+          const currentIndex = statements.indexOf(path as any);
+
+          // Check if the previous statement is a variable declaration with defineFukict
+          if (currentIndex > 0) {
+            const prevPath = statements[currentIndex - 1];
+            if (
+              prevPath.isVariableDeclaration() &&
+              prevPath.node.declarations.length === 1
+            ) {
+              const declarator = prevPath.node.declarations[0];
+              if (
+                t.isVariableDeclarator(declarator) &&
+                t.isIdentifier(declarator.id) &&
+                isDefineFukictCall(declarator.init, t)
+              ) {
+                // auto-define-fukict has already created the variable
+                // Just add displayName after the variable declaration
+                const displayNameAssignment = t.expressionStatement(
+                  t.assignmentExpression(
+                    '=',
+                    t.memberExpression(
+                      declarator.id,
+                      t.identifier('displayName'),
+                    ),
+                    t.stringLiteral('DefaultExport'),
+                  ),
+                );
+
+                prevPath.insertAfter(displayNameAssignment);
+
+                // Don't create another variable
+                return;
+              }
+            }
+          }
+
+          // If we get here, auto-define-fukict hasn't run yet
+          // This shouldn't happen if plugin order is correct, but handle it anyway
           const componentId = path.scope.generateUidIdentifier('Component');
 
-          // Replace export with variable declaration + export
           const varDeclaration = t.variableDeclaration('const', [
-            t.variableDeclarator(
-              componentId,
-              declaration as t.ArrowFunctionExpression | t.FunctionExpression,
-            ),
+            t.variableDeclarator(componentId, declaration),
           ]);
 
-          // Add displayName
           const displayNameAssignment = t.expressionStatement(
             t.assignmentExpression(
               '=',
@@ -89,7 +177,6 @@ export default declare<PluginOptions>((api, options) => {
             ),
           );
 
-          // Export the component
           const exportDeclaration = t.exportDefaultDeclaration(componentId);
 
           path.replaceWithMultiple([
@@ -97,12 +184,14 @@ export default declare<PluginOptions>((api, options) => {
             displayNameAssignment,
             exportDeclaration,
           ]);
-        } else if (
+          return;
+        }
+
+        // Handle defineFukict call export
+        if (
           t.isCallExpression(declaration) &&
-          t.isIdentifier(declaration.callee) &&
-          declaration.callee.name === 'defineFukict'
+          isDefineFukictCall(declaration, t)
         ) {
-          // Handle defineFukict call
           const componentId = path.scope.generateUidIdentifier('Component');
 
           const varDeclaration = t.variableDeclaration('const', [

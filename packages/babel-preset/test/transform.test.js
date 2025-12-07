@@ -45,7 +45,7 @@ describe('JSX Transform', () => {
     const input = `const el = <div className="box">Test</div>;`;
     const output = transform(input);
 
-    assert.ok(output.includes('class: "box"'));
+    assert.ok(output.includes('"class": "box"'));
     assert.ok(!output.includes('className'));
   });
 
@@ -130,9 +130,10 @@ describe('Auto defineFukict', () => {
     `;
     const output = transform(input);
 
-    // Should only have one defineFukict call
-    const matches = output.match(/defineFukict/g);
-    assert.strictEqual(matches.length, 1);
+    // Should only have one defineFukict call (not counting the import)
+    // Count calls by looking for "defineFukict("
+    const matches = output.match(/defineFukict\(/g);
+    assert.strictEqual(matches ? matches.length : 0, 1);
   });
 
   test('wraps exported default component', () => {

@@ -27,6 +27,20 @@ export default declare<PluginOptions>(api => {
               needsDefineFukict = true;
             }
           },
+          ExportDefaultDeclaration(exportPath) {
+            const declaration = exportPath.node.declaration;
+
+            // Only handle anonymous function components
+            if (
+              (t.isArrowFunctionExpression(declaration) ||
+                t.isFunctionExpression(declaration)) &&
+              returnsJSX(declaration, t) &&
+              !hasNoFukictComment(exportPath.node.leadingComments) &&
+              !isDefineFukictCall(declaration, t)
+            ) {
+              needsDefineFukict = true;
+            }
+          },
         });
 
         // Add import if needed

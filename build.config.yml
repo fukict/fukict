@@ -34,8 +34,5 @@ packages:
 
   # 未来的包（注释掉）
   #
-  # flux:
-  #   description: '轻量级状态管理'
-  #
   # scheduler:
   #   description: '任务调度器'
