@@ -32,20 +32,26 @@ function runCommand(command: string, description: string): boolean {
   }
 }
 
+// npm 官方 registry
+const NPM_REGISTRY = 'https://registry.npmjs.org/';
+
 /**
  * 检查 npm 登录状态
  */
 function checkNpmLogin(): boolean {
-  log('info', '检查 npm 登录状态...');
+  log('info', `检查 npm 登录状态 (registry: ${NPM_REGISTRY})...`);
   try {
-    const user = execSync('npm whoami', {
+    const user = execSync(`npm whoami --registry ${NPM_REGISTRY}`, {
       encoding: 'utf-8',
       cwd: resolve(__dirname, '..'),
     }).trim();
     log('success', `当前 npm 用户: ${user}`);
     return true;
   } catch {
-    log('error', '未登录 npm，请先运行: npm login');
+    log(
+      'error',
+      `未登录 npm 官方仓库，请先运行: npm login --registry ${NPM_REGISTRY}`,
+    );
     return false;
   }
 }
