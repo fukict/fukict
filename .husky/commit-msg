@@ -1,1 +1,5 @@
-npx --no -- commitlint --edit $1
+# Check changeset for release commits
+npx tsx scripts/check-changeset.ts "$1"
+
+# Run commitlint
+npx --no -- commitlint --edit "$1"
