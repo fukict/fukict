@@ -4,7 +4,7 @@ import { Fukict } from '@fukict/basic';
 class Card extends Fukict<{ title?: string }> {
   render() {
     const { title } = this.props;
-    const { header, default: defaultSlot, footer } = this.slots;
+    const { header, default: defaultSlot, footer } = this.$slots;
 
     return (
       <div class="overflow-hidden rounded-lg bg-white shadow-md">

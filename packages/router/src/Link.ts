@@ -165,10 +165,10 @@ export class Link extends Fukict<LinkProps> {
         class: classes.join(' '),
         'on:click': this.handleClick,
       },
-      Array.isArray(this.slots.default)
-        ? this.slots.default
-        : this.slots.default
-          ? [this.slots.default]
+      Array.isArray(this.$slots.default)
+        ? this.$slots.default
+        : this.$slots.default
+          ? [this.$slots.default]
           : [],
     );
   }

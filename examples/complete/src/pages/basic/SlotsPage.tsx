@@ -12,7 +12,7 @@ class Card extends Fukict {
   render() {
     return (
       <div class="overflow-hidden rounded-lg border border-gray-300">
-        <div class="bg-white p-4">{this.slots.default}</div>
+        <div class="bg-white p-4">{this.$slots.default}</div>
       </div>
     );
   }
@@ -46,19 +46,19 @@ class CardWithSlots extends Fukict<CardWithSlotsProps> {
     return (
       <div class="overflow-hidden rounded-lg border border-gray-300">
         {/* Header 插槽 */}
-        {this.slots.header && (
+        {this.$slots.header && (
           <div class="border-b border-gray-300 bg-gray-50 px-4 py-3">
-            {this.slots.header}
+            {this.$slots.header}
           </div>
         )}
 
         {/* 默认插槽 */}
-        <div class="bg-white p-4">{this.slots.default}</div>
+        <div class="bg-white p-4">{this.$slots.default}</div>
 
         {/* Footer 插槽 */}
-        {this.slots.footer && (
+        {this.$slots.footer && (
           <div class="border-t border-gray-300 bg-gray-50 px-4 py-3">
-            {this.slots.footer}
+            {this.$slots.footer}
           </div>
         )}
       </div>
@@ -143,19 +143,19 @@ class DynamicCard extends Fukict {
     return (
       <div class="overflow-hidden rounded-lg border border-gray-300">
         {/* Header 插槽 */}
-        {this.slots.header && (
+        {this.$slots.header && (
           <div class="border-b border-gray-300 bg-gray-50 px-4 py-3">
-            {this.slots.header}
+            {this.$slots.header}
           </div>
         )}
 
         {/* 默认插槽 */}
-        <div class="bg-white p-4">{this.slots.default}</div>
+        <div class="bg-white p-4">{this.$slots.default}</div>
 
         {/* Footer 插槽 */}
-        {this.slots.footer && (
+        {this.$slots.footer && (
           <div class="border-t border-gray-300 bg-gray-50 px-4 py-3">
-            {this.slots.footer}
+            {this.$slots.footer}
           </div>
         )}
       </div>
@@ -248,7 +248,7 @@ export class SlotsPage extends RouteComponent {
           <div>
             <h3 class="mb-1 text-base font-medium text-gray-800">默认插槽</h3>
             <p class="text-sm leading-relaxed text-gray-600">
-              使用 this.slots.default 访问子内容
+              使用 this.$slots.default 访问子内容
             </p>
           </div>
 
@@ -263,7 +263,7 @@ class Card extends Fukict {
     return (
       <div class="card">
         <div class="card-body">
-          {this.slots.default}
+          {this.$slots.default}
         </div>
       </div>
     );
@@ -304,17 +304,17 @@ export class MyPage extends Fukict {
   render() {
     return (
       <div class="card">
-        {this.slots.header && (
+        {this.$slots.header && (
           <div class="card-header">
-            {this.slots.header}
+            {this.$slots.header}
           </div>
         )}
         <div class="card-body">
-          {this.slots.default}
+          {this.$slots.default}
         </div>
-        {this.slots.footer && (
+        {this.$slots.footer && (
           <div class="card-footer">
-            {this.slots.footer}
+            {this.$slots.footer}
           </div>
         )}
       </div>
@@ -404,12 +404,12 @@ class List extends Fukict<ListProps> {
   render() {
     return (
       <div>
-        {this.slots.header && (
-          <div class="header">{this.slots.header}</div>
+        {this.$slots.header && (
+          <div class="header">{this.$slots.header}</div>
         )}
-        <div class="body">{this.slots.default}</div>
-        {this.slots.footer && (
-          <div class="footer">{this.slots.footer}</div>
+        <div class="body">{this.$slots.default}</div>
+        {this.$slots.footer && (
+          <div class="footer">{this.$slots.footer}</div>
         )}
       </div>
     );

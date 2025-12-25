@@ -25,13 +25,13 @@ export class SplitView extends Fukict<SplitViewProps> {
         {/* 左侧 - 代码示例 */}
         <div class="space-y-3">
           <h3 class="text-base font-medium text-gray-800">{leftTitle}</h3>
-          {this.slots.code}
+          {this.$slots.code}
         </div>
 
         {/* 右侧 - 演示效果 */}
         <div class="space-y-3">
           <h3 class="text-base font-medium text-gray-800">{rightTitle}</h3>
-          {this.slots.demo}
+          {this.$slots.demo}
         </div>
       </div>
     );

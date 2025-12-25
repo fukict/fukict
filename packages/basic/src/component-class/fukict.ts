@@ -99,14 +99,18 @@ export abstract class Fukict<
    *
    * Note: Slots are not available when component is manually instantiated
    * or in detached rendering mode (fukict:detach).
+   *
+   * Uses $ prefix to indicate this is a framework-provided syntax sugar property.
    */
-  protected slots: S;
+  protected $slots: S;
 
   /**
    * Refs object (shared with framework and user)
    * Can be extended by subclasses with specific ref types
+   *
+   * Uses $ prefix to indicate this is a framework-provided syntax sugar property.
    */
-  readonly refs: Refs;
+  readonly $refs: Refs;
 
   /**
    * Current rendered VNode (component's internal render result)
@@ -148,10 +152,10 @@ export abstract class Fukict<
     this.__id__ = ++componentIdCounter;
     this.__name__ = this.constructor.name;
     this.props = props;
-    this.slots = {} as S;
+    this.$slots = {} as S;
 
     // Initialize instance fields (avoid field initializers for better memory efficiency)
-    this.refs = {};
+    this.$refs = {};
     this.__vnode__ = null;
     this.__wrapper__ = null;
     this.__container__ = null;
@@ -403,9 +407,9 @@ export abstract class Fukict<
 
     removeNode(this.__vnode__, this.__container__ as Element);
 
-    // Clear all refs (refs now store instances directly, not Ref wrappers)
-    for (const key in this.refs) {
-      delete this.refs[key];
+    // Clear all refs ($refs now store instances directly, not Ref wrappers)
+    for (const key in this.$refs) {
+      delete this.$refs[key];
     }
 
     this.__vnode__ = null;

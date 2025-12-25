@@ -106,14 +106,14 @@ class CounterComponent extends Fukict {
 
 class ParentWithRef extends Fukict {
   // 类型安全的 refs 声明
-  declare readonly refs: {
+  declare readonly $refs: {
     myCounter: CounterComponent;
   };
 
   private logs: string[] = [];
 
   handleIncrement() {
-    const counter = this.refs.myCounter;
+    const counter = this.$refs.myCounter;
     if (counter) {
       counter.increment();
       const count = counter.getCount();
@@ -123,7 +123,7 @@ class ParentWithRef extends Fukict {
   }
 
   handleGetValue() {
-    const counter = this.refs.myCounter;
+    const counter = this.$refs.myCounter;
     if (counter) {
       const count = counter.getCount();
       this.logs.push(`获取计数器值: ${count}`);
@@ -132,7 +132,7 @@ class ParentWithRef extends Fukict {
   }
 
   handleReset() {
-    const counter = this.refs.myCounter;
+    const counter = this.$refs.myCounter;
     if (counter) {
       counter.reset();
       this.logs.push('外部调用 reset()');
@@ -299,7 +299,7 @@ class DynamicCounter extends Fukict<{ color: string }> {
 
 class ParentWithDynamicRef extends Fukict {
   // 类型安全的 refs 声明
-  declare readonly refs: {
+  declare readonly $refs: {
     activeCounter: DynamicCounter;
   };
 
@@ -313,7 +313,7 @@ class ParentWithDynamicRef extends Fukict {
   }
 
   incrementActive() {
-    const counter = this.refs.activeCounter;
+    const counter = this.$refs.activeCounter;
     if (counter) {
       counter.increment();
       const count = counter.getCount();
@@ -481,12 +481,12 @@ class Counter extends Fukict {
 
 class Parent extends Fukict {
   // 类型安全的 refs 声明
-  declare readonly refs: {
+  declare readonly $refs: {
     myCounter: Counter;
   };
 
   handleClick() {
-    const counter = this.refs.myCounter;
+    const counter = this.$refs.myCounter;
     if (counter) {
       counter.increment();
       console.log(counter.getCount());
@@ -577,7 +577,7 @@ class ExpensiveComponent extends Fukict {
               fukict:slot="code"
               code={`class Parent extends Fukict {
   // 类型安全的 refs 声明
-  declare readonly refs: {
+  declare readonly $refs: {
     activeCounter: Counter;
   };
 
@@ -590,7 +590,7 @@ class ExpensiveComponent extends Fukict {
 
   incrementActive() {
     // ref 会自动指向当前渲染的计数器
-    const counter = this.refs.activeCounter;
+    const counter = this.$refs.activeCounter;
     if (counter) {
       counter.increment();
     }

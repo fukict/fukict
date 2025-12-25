@@ -15,6 +15,7 @@ import { LucideIconsPage } from './pages/basic/LucideIconsPage';
 import { RefsPage } from './pages/basic/RefsPage';
 import { SlotsPage } from './pages/basic/SlotsPage';
 import { StylesPage } from './pages/basic/StylesPage';
+import { DynamicListPage } from './pages/basic/dynamic-list';
 import { ActionsMutationsPage } from './pages/flux/ActionsMutationsPage';
 import { FluxIndexPage } from './pages/flux/FluxIndexPage';
 // Flux 模块
@@ -196,6 +197,16 @@ export const routes: RouteConfig[] = [
             meta: {
               title: '异步事件处理器',
               description: '在事件处理器中使用异步函数',
+              showInSidebar: true,
+            },
+          },
+          {
+            path: '/dynamic-list',
+            component: DynamicListPage,
+            meta: {
+              title: '高性能动态列表',
+              description:
+                '通过 fukict:detach 和 fukict:ref 实现高性能列表操作',
               showInSidebar: true,
             },
           },
