@@ -1,5 +1,13 @@
 # @fukict/vite-plugin
 
+## 0.1.5
+
+### Patch Changes
+
+- 0468890: 优化 changeset 检查
+- Updated dependencies [0468890]
+  - @fukict/babel-preset@0.1.5
+
 ## 0.1.4
 
 ### Patch Changes

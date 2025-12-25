@@ -1,5 +1,11 @@
 # @fukict/i18n
 
+## 0.1.5
+
+### Patch Changes
+
+- 0468890: 优化 changeset 检查
+
 ## 0.1.4
 
 ### Patch Changes
