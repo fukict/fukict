@@ -1,5 +1,13 @@
 # @fukict/router
 
+## 0.1.6
+
+### Patch Changes
+
+- f82ce56: 修复 refs 过继包裹组件问题, 优化 refs/slot 命名 $refs/$slotss
+- Updated dependencies [f82ce56]
+  - @fukict/basic@0.1.6
+
 ## 0.1.5
 
 ### Patch Changes

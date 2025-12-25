@@ -1,5 +1,11 @@
 # @fukict/i18n
 
+## 0.1.6
+
+### Patch Changes
+
+- f82ce56: 修复 refs 过继包裹组件问题, 优化 refs/slot 命名 $refs/$slotss
+
 ## 0.1.5
 
 ### Patch Changes

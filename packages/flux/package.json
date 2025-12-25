@@ -1,6 +1,6 @@
 {
   "name": "@fukict/flux",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Minimal state management library for Fukict framework",
   "keywords": [
     "fukict",
