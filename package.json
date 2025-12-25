@@ -28,6 +28,7 @@
     "changeset": "changeset",
     "changeset:alpha": "changeset version --snapshot alpha",
     "changeset:beta": "changeset version --snapshot beta",
+    "changeset:check": "tsx scripts/check-changeset.ts",
     "changeset:publish": "changeset publish",
     "changeset:release": "pnpm build && changeset publish",
     "changeset:version": "changeset version",

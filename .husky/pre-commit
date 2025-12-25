@@ -1,5 +1,8 @@
 #!/usr/bin/env sh
 
+# Check changeset file
+npx tsx scripts/check-changeset.ts
+
 # Run linter
 pnpm lint
 
