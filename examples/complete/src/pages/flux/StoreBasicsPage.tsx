@@ -1,5 +1,5 @@
 import { Fukict } from '@fukict/basic';
-import { createFlux } from '@fukict/flux';
+import { defineStore } from '@fukict/flux';
 import { RouteComponent } from '@fukict/router';
 
 import { CodeBlock } from '../../components/CodeBlock';
@@ -7,22 +7,23 @@ import { DemoBox } from '../../components/DemoBox';
 import { SplitView } from '../../components/SplitView';
 
 /**
- * 简单计数器 Store
+ * 简单计数器 Store (使用新的 defineStore API)
  */
-const counterStore = createFlux({
+interface CounterState {
+  count: number;
+}
+
+const counterStore = defineStore({
   state: {
     count: 0,
+  } as CounterState,
+  actions: {
+    increment: (state: CounterState) => ({ count: state.count + 1 }),
+    decrement: (state: CounterState) => ({ count: state.count - 1 }),
+    add: (state: CounterState, amount: number) => ({
+      count: state.count + amount,
+    }),
   },
-  actions: flux => ({
-    increment() {
-      const state = flux.getState();
-      flux.setState({ count: state.count + 1 });
-    },
-    decrement() {
-      const state = flux.getState();
-      flux.setState({ count: state.count - 1 });
-    },
-  }),
 });
 
 /**
@@ -42,17 +43,17 @@ class CounterDemo extends Fukict {
   }
 
   render() {
-    const state = counterStore.getState();
-    const { increment, decrement } = counterStore.actions;
+    const { count } = counterStore.state;
+    const { increment, decrement, add } = counterStore.actions;
 
     return (
       <div class="space-y-4">
         <div class="space-y-2 rounded bg-gray-50 p-4">
           <p class="text-gray-700">
-            <strong>Count:</strong> {state.count}
+            <strong>Count:</strong> {count}
           </p>
           <p class="text-gray-700">
-            <strong>Double:</strong> {state.count * 2}
+            <strong>Double:</strong> {count * 2}
           </p>
         </div>
         <div class="flex gap-2">
@@ -61,6 +62,12 @@ class CounterDemo extends Fukict {
             on:click={() => increment()}
           >
             +1
+          </button>
+          <button
+            class="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+            on:click={() => add(5)}
+          >
+            +5
           </button>
           <button
             class="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
@@ -87,7 +94,7 @@ interface ProductsState {
   products: Product[];
 }
 
-const productsStore = createFlux({
+const productsStore = defineStore({
   state: {
     products: [
       { id: 1, name: 'Product A', price: 10 },
@@ -95,7 +102,6 @@ const productsStore = createFlux({
       { id: 3, name: 'Product C', price: 30 },
     ],
   } as ProductsState,
-  actions: () => ({}),
 });
 
 // Selector 函数 (在组件外定义)
@@ -130,7 +136,7 @@ class GettersDemo extends Fukict {
   }
 
   render() {
-    const state = productsStore.getState();
+    const state = productsStore.state as ProductsState;
     const stats = getProductStats(state);
     const selectedProduct = getProductById(state, this.selectedId);
 
@@ -194,29 +200,26 @@ export class StoreBasicsPage extends RouteComponent {
           <div>
             <h3 class="mb-1 text-base font-medium text-gray-800">创建 Store</h3>
             <p class="text-sm leading-relaxed text-gray-600">
-              使用 createFlux 创建状态管理 Store
+              使用 defineStore 创建状态管理 Store（推荐）
             </p>
           </div>
 
           <SplitView leftTitle="代码示例" rightTitle="运行效果">
             <CodeBlock
               fukict:slot="code"
-              code={`import { createFlux } from '@fukict/flux';
+              code={`import { defineStore } from '@fukict/flux';
 
-const counterStore = createFlux({
+// 使用 defineStore 创建 Store（推荐）
+const counterStore = defineStore({
   state: {
     count: 0,
   },
-  actions: flux => ({
-    increment() {
-      const state = flux.getState();
-      flux.setState({ count: state.count + 1 });
-    },
-    decrement() {
-      const state = flux.getState();
-      flux.setState({ count: state.count - 1 });
-    },
-  }),
+  actions: {
+    // 同步 action: (state, ...args) => Partial<State>
+    increment: state => ({ count: state.count + 1 }),
+    decrement: state => ({ count: state.count - 1 }),
+    add: (state, amount: number) => ({ count: state.count + amount }),
+  },
 });
 
 // 在组件中使用
@@ -234,10 +237,11 @@ class Counter extends Fukict {
   }
 
   render() {
-    const state = counterStore.getState();
+    // 直接访问 state（更简洁）
+    const { count } = counterStore.state;
     return (
       <button on:click={() => counterStore.actions.increment()}>
-        Count: {state.count}
+        Count: {count}
       </button>
     );
   }
@@ -256,14 +260,14 @@ class Counter extends Fukict {
               State (状态)
             </h3>
             <p class="text-sm leading-relaxed text-gray-600">
-              存储应用的状态数据,通过 getState() 访问
+              存储应用的状态数据，通过 store.state 直接访问
             </p>
           </div>
 
           <SplitView leftTitle="代码示例" rightTitle="使用说明">
             <CodeBlock
               fukict:slot="code"
-              code={`const store = createFlux({
+              code={`const store = defineStore({
   state: {
     user: null,
     isLoggedIn: false,
@@ -273,15 +277,20 @@ class Counter extends Fukict {
       total: 0,
     },
   },
-  actions: flux => ({
+  actions: {
     // actions 在这里定义
-  }),
+  },
 });
 
-// 访问状态
+// 访问状态（两种方式）
+// 方式 1: 直接访问 state（推荐）
+const { user, cart } = store.state;
+console.log(user);
+console.log(cart.items);
+
+// 方式 2: 使用 getState()
 const state = store.getState();
-console.log(state.user);
-console.log(state.cart.items);`}
+console.log(state.user);`}
             />
             <DemoBox fukict:slot="demo">
               <div class="space-y-2 text-sm text-gray-700">
@@ -289,12 +298,14 @@ console.log(state.cart.items);`}
                 <ul class="ml-2 list-inside list-disc space-y-1">
                   <li>存储应用的全局状态</li>
                   <li>支持任意类型的数据</li>
-                  <li>通过 store.getState() 访问</li>
-                  <li>只能通过 actions 中的 setState 修改</li>
+                  <li>
+                    通过 <code>store.state</code> 直接访问
+                  </li>
+                  <li>只能通过 actions 修改</li>
                 </ul>
                 <div class="mt-3 rounded border border-yellow-200 bg-yellow-50 p-3">
                   <p class="text-xs text-yellow-700">
-                    <strong>提示:</strong> 不要直接修改 state,应该使用 actions
+                    <strong>提示:</strong> 不要直接修改 state，应该使用 actions
                   </p>
                 </div>
               </div>
@@ -309,21 +320,20 @@ console.log(state.cart.items);`}
               Selectors (计算属性)
             </h3>
             <p class="text-sm leading-relaxed text-gray-600">
-              基于 state 派生的计算值,使用纯函数实现
+              基于 state 派生的计算值，使用纯函数实现
             </p>
           </div>
 
           <SplitView leftTitle="代码示例" rightTitle="运行效果">
             <CodeBlock
               fukict:slot="code"
-              code={`const store = createFlux({
+              code={`const store = defineStore({
   state: {
     products: [
       { id: 1, name: 'A', price: 10 },
       { id: 2, name: 'B', price: 20 },
     ],
   },
-  actions: () => ({}),
 });
 
 // Selector 函数 (在组件外定义)
@@ -341,9 +351,8 @@ function getProductById(state, id) {
 }
 
 // 在组件中使用
-const state = store.getState();
-const stats = getProductStats(state);
-const product = getProductById(state, 1);`}
+const stats = getProductStats(store.state);
+const product = getProductById(store.state, 1);`}
             />
             <DemoBox fukict:slot="demo">
               <GettersDemo />

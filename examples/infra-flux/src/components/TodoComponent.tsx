@@ -39,7 +39,7 @@ export class TodoComponent extends Fukict {
   };
 
   render(): VNode {
-    const state = todoStore.getState();
+    const state = todoStore.state;
     const filteredTodos = getFilteredTodos(state);
     const stats = getTodoStats(state);
     const { toggleTodo, deleteTodo, setFilter, clearCompleted } =

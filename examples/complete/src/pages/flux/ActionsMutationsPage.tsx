@@ -1,5 +1,5 @@
 import { Fukict } from '@fukict/basic';
-import { createFlux } from '@fukict/flux';
+import { type ActionContext, defineStore } from '@fukict/flux';
 import { RouteComponent } from '@fukict/router';
 
 import { CodeBlock } from '../../components/CodeBlock';
@@ -7,30 +7,35 @@ import { DemoBox } from '../../components/DemoBox';
 import { SplitView } from '../../components/SplitView';
 
 /**
- * 同步操作 Store (演示直接的状态修改)
+ * 同步操作 Store (使用新的 defineStore API)
  */
-const syncStore = createFlux({
+interface SyncState {
+  count: number;
+  items: string[];
+}
+
+const syncStore = defineStore({
   state: {
     count: 0,
-    items: [] as string[],
+    items: [],
+  } as SyncState,
+  actions: {
+    // 简单修改
+    increment: (state: SyncState) => ({ count: state.count + 1 }),
+
+    // 带参数的修改
+    incrementBy: (state: SyncState, amount: number) => ({
+      count: state.count + amount,
+    }),
+
+    // 数组操作
+    addItem: (state: SyncState, item: string) => ({
+      items: [...state.items, item],
+    }),
+
+    // 批量修改
+    reset: () => ({ count: 0, items: [] }),
   },
-  actions: flux => ({
-    increment() {
-      const state = flux.getState();
-      flux.setState({ count: state.count + 1 });
-    },
-    incrementBy(amount: number) {
-      const state = flux.getState();
-      flux.setState({ count: state.count + amount });
-    },
-    addItem(item: string) {
-      const state = flux.getState();
-      flux.setState({ items: [...state.items, item] });
-    },
-    reset() {
-      flux.setState({ count: 0, items: [] });
-    },
-  }),
 });
 
 /**
@@ -51,17 +56,17 @@ class SyncDemo extends Fukict {
   }
 
   render() {
-    const state = syncStore.getState();
+    const { count, items } = syncStore.state;
     const { increment, incrementBy, addItem, reset } = syncStore.actions;
 
     return (
       <div class="space-y-4">
         <div class="space-y-2 rounded bg-gray-50 p-4 text-sm">
           <p class="text-gray-700">
-            <strong>Count:</strong> {state.count}
+            <strong>Count:</strong> {count}
           </p>
           <p class="text-gray-700">
-            <strong>Items:</strong> {state.items.join(', ') || '(empty)'}
+            <strong>Items:</strong> {items.join(', ') || '(empty)'}
           </p>
         </div>
         <div class="space-y-2">
@@ -116,64 +121,71 @@ class SyncDemo extends Fukict {
 }
 
 /**
- * 异步操作 Store
+ * 异步操作 Store (使用新的 asyncActions API)
  */
-const asyncStore = createFlux({
+interface AsyncState {
+  user: { id: number; name: string } | null;
+  loading: boolean;
+  logs: string[];
+}
+
+const asyncStore = defineStore({
   state: {
-    user: null as { id: number; name: string } | null,
+    user: null,
     loading: false,
-    logs: [] as string[],
-  },
-  actions: flux => ({
-    async loadUser(userId: number) {
-      const state = flux.getState();
+    logs: [],
+  } as AsyncState,
+  asyncActions: {
+    // 异步加载用户
+    async loadUser(ctx: ActionContext<AsyncState>, userId: number) {
+      const state = ctx.getState();
       const newLogs = [`Loading user ${userId}...`, ...state.logs];
       if (newLogs.length > 5) newLogs.pop();
 
-      flux.setState({ loading: true, logs: newLogs });
+      ctx.setState({ loading: true, logs: newLogs });
 
       try {
         // 模拟异步请求
         await new Promise(resolve => setTimeout(resolve, 1000));
         const user = { id: userId, name: `User ${userId}` };
 
-        const currentState = flux.getState();
+        const currentState = ctx.getState();
         const successLogs = [
           `User ${userId} loaded successfully`,
           ...currentState.logs,
         ];
         if (successLogs.length > 5) successLogs.pop();
 
-        flux.setState({ user, logs: successLogs });
+        ctx.setState({ user, loading: false, logs: successLogs });
       } catch (_error) {
-        const currentState = flux.getState();
+        const currentState = ctx.getState();
         const errorLogs = [
           `Failed to load user ${userId}`,
           ...currentState.logs,
         ];
         if (errorLogs.length > 5) errorLogs.pop();
 
-        flux.setState({ logs: errorLogs });
-      } finally {
-        flux.setState({ loading: false });
+        ctx.setState({ loading: false, logs: errorLogs });
       }
     },
-    async logout() {
-      const state = flux.getState();
+
+    // 登出
+    async logout(ctx: ActionContext<AsyncState>) {
+      const state = ctx.getState();
       const logoutLogs = ['Logging out...', ...state.logs];
       if (logoutLogs.length > 5) logoutLogs.pop();
 
-      flux.setState({ loading: true, logs: logoutLogs });
+      ctx.setState({ loading: true, logs: logoutLogs });
 
       await new Promise(resolve => setTimeout(resolve, 500));
 
-      const currentState = flux.getState();
+      const currentState = ctx.getState();
       const completeLogs = ['Logged out', ...currentState.logs];
       if (completeLogs.length > 5) completeLogs.pop();
 
-      flux.setState({ user: null, loading: false, logs: completeLogs });
+      ctx.setState({ user: null, loading: false, logs: completeLogs });
     },
-  }),
+  },
 });
 
 /**
@@ -193,40 +205,38 @@ class AsyncDemo extends Fukict {
   }
 
   render() {
-    const state = asyncStore.getState();
-    const { loadUser, logout } = asyncStore.actions;
+    const { user, loading, logs } = asyncStore.state;
+    const { loadUser, logout } = asyncStore.asyncActions;
 
     return (
       <div class="space-y-4">
         <div class="space-y-2 rounded bg-gray-50 p-4 text-sm">
           <p class="text-gray-700">
-            <strong>Loading:</strong> {state.loading ? 'Yes' : 'No'}
+            <strong>Loading:</strong> {loading ? 'Yes' : 'No'}
           </p>
           <p class="text-gray-700">
             <strong>User:</strong>{' '}
-            {state.user
-              ? `${state.user.name} (ID: ${state.user.id})`
-              : '(none)'}
+            {user ? `${user.name} (ID: ${user.id})` : '(none)'}
           </p>
         </div>
         <div class="flex gap-2">
           <button
             class="rounded bg-blue-500 px-3 py-1.5 text-sm text-white hover:bg-blue-600 disabled:opacity-50"
-            disabled={state.loading}
+            disabled={loading}
             on:click={() => loadUser(1)}
           >
             Load User 1
           </button>
           <button
             class="rounded bg-green-500 px-3 py-1.5 text-sm text-white hover:bg-green-600 disabled:opacity-50"
-            disabled={state.loading}
+            disabled={loading}
             on:click={() => loadUser(2)}
           >
             Load User 2
           </button>
           <button
             class="rounded bg-red-500 px-3 py-1.5 text-sm text-white hover:bg-red-600 disabled:opacity-50"
-            disabled={state.loading}
+            disabled={loading}
             on:click={() => logout()}
           >
             Logout
@@ -235,10 +245,10 @@ class AsyncDemo extends Fukict {
         <div class="rounded bg-gray-50 p-3">
           <p class="mb-2 text-sm font-medium text-gray-900">操作日志:</p>
           <div class="space-y-1 font-mono text-xs text-gray-600">
-            {state.logs.length === 0 ? (
+            {logs.length === 0 ? (
               <p class="text-gray-400">点击按钮查看操作日志...</p>
             ) : (
-              state.logs.map(log => <p>{log}</p>)
+              logs.map(log => <p>{log}</p>)
             )}
           </div>
         </div>
@@ -257,44 +267,43 @@ export class ActionsMutationsPage extends RouteComponent {
         {/* 同步操作 */}
         <div class="space-y-4">
           <div>
-            <h3 class="mb-1 text-base font-medium text-gray-800">同步操作</h3>
+            <h3 class="mb-1 text-base font-medium text-gray-800">
+              同步 Actions
+            </h3>
             <p class="text-sm leading-relaxed text-gray-600">
-              在 actions 中直接修改状态
+              同步 action 接收当前 state，返回需要更新的部分状态
             </p>
           </div>
 
           <SplitView leftTitle="代码示例" rightTitle="运行效果">
             <CodeBlock
               fukict:slot="code"
-              code={`const store = createFlux({
+              code={`import { defineStore } from '@fukict/flux';
+
+const store = defineStore({
   state: {
     count: 0,
     items: [],
   },
-  actions: flux => ({
+  actions: {
+    // 同步 action: (state, ...args) => Partial<State>
+
     // 简单修改
-    increment() {
-      const state = flux.getState();
-      flux.setState({ count: state.count + 1 });
-    },
+    increment: state => ({ count: state.count + 1 }),
 
     // 带参数的修改
-    incrementBy(amount: number) {
-      const state = flux.getState();
-      flux.setState({ count: state.count + amount });
-    },
+    incrementBy: (state, amount: number) => ({
+      count: state.count + amount,
+    }),
 
     // 数组操作
-    addItem(item: string) {
-      const state = flux.getState();
-      flux.setState({ items: [...state.items, item] });
-    },
+    addItem: (state, item: string) => ({
+      items: [...state.items, item],
+    }),
 
-    // 批量修改
-    reset() {
-      flux.setState({ count: 0, items: [] });
-    },
-  }),
+    // 批量修改（可以不依赖 state）
+    reset: () => ({ count: 0, items: [] }),
+  },
 });
 
 // 调用 actions
@@ -311,50 +320,129 @@ store.actions.addItem('New Item');`}
         {/* 异步操作 */}
         <div class="space-y-4">
           <div>
-            <h3 class="mb-1 text-base font-medium text-gray-800">异步操作</h3>
+            <h3 class="mb-1 text-base font-medium text-gray-800">
+              异步 Actions
+            </h3>
             <p class="text-sm leading-relaxed text-gray-600">
-              Actions 可以包含异步逻辑,如 API 调用
+              异步 action 接收 context 对象，通过 ctx.setState() 多次更新状态
             </p>
           </div>
 
           <SplitView leftTitle="代码示例" rightTitle="运行效果">
             <CodeBlock
               fukict:slot="code"
-              code={`const store = createFlux({
+              code={`import { defineStore } from '@fukict/flux';
+
+const store = defineStore({
   state: {
     user: null,
     loading: false,
   },
-  actions: flux => ({
-    // 异步加载用户
-    async loadUser(userId: number) {
-      flux.setState({ loading: true });
+  asyncActions: {
+    // 异步 action: (ctx, ...args) => Promise<void>
+
+    // ctx.getState() - 获取最新状态
+    // ctx.setState() - 更新状态（可多次调用）
+
+    async loadUser(ctx, userId: number) {
+      ctx.setState({ loading: true });
+
       try {
         const user = await fetchUser(userId);
-        flux.setState({ user });
+        ctx.setState({ user, loading: false });
       } catch (error) {
         console.error('Failed to load user:', error);
-      } finally {
-        flux.setState({ loading: false });
+        ctx.setState({ loading: false });
       }
     },
 
-    // 登出
-    async logout() {
-      flux.setState({ loading: true });
-      await new Promise(resolve => setTimeout(resolve, 500));
-      flux.setState({ user: null, loading: false });
+    async logout(ctx) {
+      ctx.setState({ loading: true });
+      await new Promise(r => setTimeout(r, 500));
+      ctx.setState({ user: null, loading: false });
     },
-  }),
+  },
 });
 
 // 调用异步 actions
-await store.actions.loadUser(123);
-await store.actions.logout();`}
+await store.asyncActions.loadUser(123);
+await store.asyncActions.logout();`}
             />
             <DemoBox fukict:slot="demo">
               <AsyncDemo />
             </DemoBox>
+          </SplitView>
+        </div>
+
+        {/* API 对比 */}
+        <div class="space-y-4">
+          <div>
+            <h3 class="mb-1 text-base font-medium text-gray-800">
+              新旧 API 对比
+            </h3>
+            <p class="text-sm leading-relaxed text-gray-600">
+              defineStore 提供更简洁、更类型安全的 API
+            </p>
+          </div>
+
+          <SplitView
+            leftTitle="defineStore (推荐)"
+            rightTitle="createFlux (旧)"
+          >
+            <CodeBlock
+              fukict:slot="code"
+              code={`// ✅ 新 API: defineStore
+const store = defineStore({
+  state: { count: 0 },
+  actions: {
+    // 直接返回要更新的部分
+    increment: state => ({
+      count: state.count + 1
+    }),
+  },
+  asyncActions: {
+    // 通过 ctx 操作
+    async fetchData(ctx, id: string) {
+      ctx.setState({ loading: true });
+      const data = await fetch(id);
+      ctx.setState({ data, loading: false });
+    },
+  },
+});
+
+// 使用
+store.actions.increment();
+await store.asyncActions.fetchData('123');
+console.log(store.state.count);`}
+            />
+            <CodeBlock
+              fukict:slot="demo"
+              code={`// ❌ 旧 API: createFlux
+const store = createFlux({
+  state: { count: 0 },
+  actions: flux => ({
+    // 需要手动 getState 和 setState
+    increment() {
+      const state = flux.getState();
+      flux.setState({
+        count: state.count + 1
+      });
+    },
+
+    // 异步也是一样的写法
+    async fetchData(id: string) {
+      flux.setState({ loading: true });
+      const data = await fetch(id);
+      flux.setState({ data, loading: false });
+    },
+  }),
+});
+
+// 使用
+store.actions.increment();
+await store.actions.fetchData('123');
+console.log(store.getState().count);`}
+            />
           </SplitView>
         </div>
 
@@ -372,61 +460,70 @@ await store.actions.logout();`}
           <SplitView leftTitle="正确的做法" rightTitle="注意事项">
             <CodeBlock
               fukict:slot="code"
-              code={`// ✅ 推荐: 使用 flux.getState() 获取最新状态
-actions: flux => ({
-  increment() {
-    const state = flux.getState();
-    flux.setState({ count: state.count + 1 });
+              code={`// ✅ 同步 action: 直接返回新状态
+actions: {
+  increment: state => ({
+    count: state.count + 1
+  }),
+
+  // 可以接收参数
+  addItem: (state, item: string) => ({
+    items: [...state.items, item]
+  }),
+}
+
+// ✅ 异步 action: 使用 ctx
+asyncActions: {
+  async loadData(ctx, id: string) {
+    // 开始加载
+    ctx.setState({ loading: true });
+
+    try {
+      const data = await fetchData(id);
+
+      // 获取最新状态（重要！）
+      const state = ctx.getState();
+      ctx.setState({
+        data,
+        count: state.count + 1,
+        loading: false,
+      });
+    } catch (error) {
+      ctx.setState({ error, loading: false });
+    }
   },
-
-  // ✅ 异步操作中多次获取状态
-  async loadData() {
-    const state1 = flux.getState();
-    flux.setState({ loading: true });
-
-    const data = await fetchData();
-
-    const state2 = flux.getState();
-    flux.setState({
-      data,
-      count: state2.count + 1,
-      loading: false
-    });
-  }
-})
-
-// ✅ 组件中使用
-const state = store.getState();
-store.actions.increment();`}
+}`}
             />
             <CodeBlock
               fukict:slot="demo"
               code={`// ❌ 避免: 直接修改 state
-actions: flux => ({
-  bad() {
-    const state = flux.getState();
+actions: {
+  bad: state => {
     state.count++;  // ❌ 不要直接修改
+    return state;
   }
-})
+}
 
-// ❌ 避免: 缓存旧的 state
-actions: flux => ({
-  async bad() {
-    const state = flux.getState();
+// ❌ 避免: 在同步 action 中做异步操作
+actions: {
+  bad: async state => {  // ❌ 不要用 async
     await delay(1000);
-    // state 可能已经过期了!
-    flux.setState({ count: state.count + 1 });
+    return { count: state.count + 1 };
   }
-})
+}
 
-// ❌ 避免: 在组件中直接访问 store.state
-render() {
-  // 不要用 store.state (Vuex 风格)
-  const count = store.state.count;  // ❌
+// ❌ 避免: 在异步 action 中缓存旧状态
+asyncActions: {
+  async bad(ctx) {
+    const state = ctx.getState();
+    await delay(1000);
+    // ❌ state 可能已经过期了!
+    ctx.setState({ count: state.count + 1 });
 
-  // 应该用 store.getState()
-  const state = store.getState();   // ✅
-  const count = state.count;
+    // ✅ 应该重新获取
+    const newState = ctx.getState();
+    ctx.setState({ count: newState.count + 1 });
+  }
 }`}
             />
           </SplitView>

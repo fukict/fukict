@@ -1,4 +1,4 @@
-import { createFlux } from '@fukict/flux';
+import { type ActionContext, defineStore } from '@fukict/flux';
 
 /**
  * User Store
@@ -24,7 +24,7 @@ interface UserState {
   isLoading: boolean;
 }
 
-export const userStore = createFlux({
+export const userStore = defineStore({
   state: {
     user: null,
     settings: {
@@ -35,14 +35,27 @@ export const userStore = createFlux({
     isLoading: false,
   } as UserState,
 
-  actions: flux => ({
-    async login(email: string) {
-      flux.setState({ isLoading: true });
+  actions: {
+    logout: () => ({ user: null }),
+
+    updateSettings: (state: UserState, settings: Partial<UserSettings>) => ({
+      settings: { ...state.settings, ...settings },
+    }),
+
+    updateProfile: (state: UserState, user: Partial<User>) => {
+      if (!state.user) return {};
+      return { user: { ...state.user, ...user } };
+    },
+  },
+
+  asyncActions: {
+    async login(ctx: ActionContext<UserState>, email: string) {
+      ctx.setState({ isLoading: true });
 
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      flux.setState({
+      ctx.setState({
         user: {
           name: email.split('@')[0],
           email,
@@ -51,25 +64,5 @@ export const userStore = createFlux({
         isLoading: false,
       });
     },
-
-    logout() {
-      flux.setState({ user: null });
-    },
-
-    updateSettings(settings: Partial<UserSettings>) {
-      const state = flux.getState();
-      flux.setState({
-        settings: { ...state.settings, ...settings },
-      });
-    },
-
-    updateProfile(user: Partial<User>) {
-      const state = flux.getState();
-      if (!state.user) return;
-
-      flux.setState({
-        user: { ...state.user, ...user },
-      });
-    },
-  }),
+  },
 });

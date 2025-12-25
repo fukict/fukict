@@ -34,7 +34,7 @@ export class SubscriptionMonitor extends Fukict {
     });
 
     // Initialize counter display
-    const counterState = counterStore.getState();
+    const counterState = counterStore.state;
     this.lastCounterState = `count: ${counterState.count}, step: ${counterState.step}`;
 
     // Subscribe to todo store
@@ -45,7 +45,7 @@ export class SubscriptionMonitor extends Fukict {
     });
 
     // Initialize todo display
-    const todoState = todoStore.getState();
+    const todoState = todoStore.state;
     this.lastTodoState = `${todoState.todos.length} todos, filter: ${todoState.filter}`;
 
     // Subscribe to user store
@@ -58,7 +58,7 @@ export class SubscriptionMonitor extends Fukict {
     });
 
     // Initialize user display
-    const userState = userStore.getState();
+    const userState = userStore.state;
     this.lastUserState = userState.user
       ? `${userState.user.name} (${userState.settings.theme})`
       : 'Not logged in';

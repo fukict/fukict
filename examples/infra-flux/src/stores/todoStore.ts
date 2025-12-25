@@ -1,4 +1,4 @@
-import { createFlux } from '@fukict/flux';
+import { defineStore } from '@fukict/flux';
 
 /**
  * Todo Store
@@ -19,47 +19,33 @@ interface TodoState {
 
 let nextId = 1;
 
-export const todoStore = createFlux({
+export const todoStore = defineStore({
   state: {
-    todos: [] as Todo[],
-    filter: 'all' as const,
+    todos: [],
+    filter: 'all',
   } as TodoState,
 
-  actions: flux => ({
-    addTodo(text: string) {
-      const state = flux.getState();
-      flux.setState({
-        todos: [...state.todos, { id: nextId++, text, completed: false }],
-      });
-    },
+  actions: {
+    addTodo: (state: TodoState, text: string) => ({
+      todos: [...state.todos, { id: nextId++, text, completed: false }],
+    }),
 
-    toggleTodo(id: number) {
-      const state = flux.getState();
-      flux.setState({
-        todos: state.todos.map(todo =>
-          todo.id === id ? { ...todo, completed: !todo.completed } : todo,
-        ),
-      });
-    },
+    toggleTodo: (state: TodoState, id: number) => ({
+      todos: state.todos.map(todo =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo,
+      ),
+    }),
 
-    deleteTodo(id: number) {
-      const state = flux.getState();
-      flux.setState({
-        todos: state.todos.filter(todo => todo.id !== id),
-      });
-    },
+    deleteTodo: (state: TodoState, id: number) => ({
+      todos: state.todos.filter(todo => todo.id !== id),
+    }),
 
-    setFilter(filter: TodoState['filter']) {
-      flux.setState({ filter });
-    },
+    setFilter: (_state: TodoState, filter: TodoState['filter']) => ({ filter }),
 
-    clearCompleted() {
-      const state = flux.getState();
-      flux.setState({
-        todos: state.todos.filter(todo => !todo.completed),
-      });
-    },
-  }),
+    clearCompleted: (state: TodoState) => ({
+      todos: state.todos.filter(todo => !todo.completed),
+    }),
+  },
 });
 
 // Selector example: computed values

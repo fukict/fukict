@@ -26,9 +26,9 @@ export class CounterComponent extends Fukict {
   }
 
   render(): VNode {
-    const state = counterStore.getState();
-    const { increment, decrement, reset, setStep, incrementAsync } =
-      counterStore.actions;
+    const state = counterStore.state;
+    const { increment, decrement, reset, setStep } = counterStore.actions;
+    const { incrementAsync } = counterStore.asyncActions;
 
     return (
       <div class="rounded-lg border bg-white p-6 shadow-sm">

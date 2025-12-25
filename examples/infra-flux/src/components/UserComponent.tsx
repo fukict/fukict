@@ -43,12 +43,12 @@ export class UserComponent extends Fukict {
   private handleLogin = (e: Event): void => {
     e.preventDefault();
     if (this.email.trim()) {
-      void userStore.actions.login(this.email);
+      void userStore.asyncActions.login(this.email);
     }
   };
 
   render(): VNode {
-    const state = userStore.getState();
+    const state = userStore.state;
     const { logout, updateSettings } = userStore.actions;
 
     return (
