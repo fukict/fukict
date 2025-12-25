@@ -5,7 +5,7 @@
 
 export const METADATA = {
   name: '@fukict/basic',
-  version: '0.1.3',
+  version: '0.1.4',
   description: 'Lightweight DOM rendering basic with extension mechanism',
   author: 'Fukict Team',
   license: 'MIT',

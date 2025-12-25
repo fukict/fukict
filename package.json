@@ -1,6 +1,6 @@
 {
   "name": "fukict",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "private": true,
   "description": "专注于性能场景的轻量级 DOM 渲染库",
   "keywords": [

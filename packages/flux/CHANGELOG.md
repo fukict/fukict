@@ -1,5 +1,16 @@
 # @fukict/flux
 
+## 0.1.4
+
+### Patch Changes
+
+- 76e829a: 优化发布流程
+- a025702: 优化提交检查流程
+- c65380c: 新增 defineStore API，支持同步/异步 actions 分离，简化状态管理写法
+- a985227: 生命周期钩子 mounted/beforeUnmount/updated 支持 async 定义
+- 6c87126: 添加 params/query 泛型类型支持，支持相对路径和 index 路由
+- cc87357: 修复发布脚本登录检查
+
 ## 0.1.3
 
 ### Patch Changes
