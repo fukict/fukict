@@ -105,11 +105,11 @@ function createTag(tagName: string): boolean {
 }
 
 /**
- * 推送 tags 到远程
+ * 推送指定 tag 到远程
  */
-function pushTags(): boolean {
+function pushTag(tagName: string): boolean {
   try {
-    execSync('git push --tags', { stdio: 'inherit' });
+    execSync(`git push origin "${tagName}"`, { stdio: 'inherit' });
     return true;
   } catch {
     return false;
@@ -214,16 +214,16 @@ async function main(): Promise<void> {
   if (await confirm('推送 tag 到远程仓库?', true)) {
     log('info', '推送 tag 到远程...');
 
-    if (pushTags()) {
+    if (pushTag(tagName)) {
       log('success', '✅ Tag 推送成功！');
     } else {
       log('error', 'Tag 推送失败');
-      log('info', '可以稍后手动推送: git push --tags');
+      log('info', `可以稍后手动推送: git push origin ${tagName}`);
       process.exit(1);
     }
   } else {
     log('info', 'Tag 已创建但未推送到远程');
-    log('info', '可以稍后手动推送: git push --tags');
+    log('info', `可以稍后手动推送: git push origin ${tagName}`);
   }
 
   console.log();

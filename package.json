@@ -29,8 +29,8 @@
     "changeset:alpha": "changeset version --snapshot alpha",
     "changeset:beta": "changeset version --snapshot beta",
     "changeset:check": "tsx scripts/check-changeset.ts",
-    "changeset:publish": "changeset publish",
-    "changeset:release": "pnpm build && changeset publish",
+    "changeset:publish": "changeset publish --no-git-tag",
+    "changeset:release": "pnpm build && changeset publish --no-git-tag",
     "changeset:version": "changeset version",
     "clean": "premove packages/*/dist",
     "clear": "premove **/node_modules && premove pnpm-lock.yaml",
@@ -47,9 +47,9 @@
     "tag": "tsx scripts/tag.ts",
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck",
-    "version:alpha": "changeset version --snapshot alpha && changeset publish --tag alpha",
-    "version:beta": "changeset version --snapshot beta && changeset publish --tag beta",
-    "version:rc": "changeset version --snapshot rc && changeset publish --tag rc"
+    "version:alpha": "changeset version --snapshot alpha && changeset publish --tag alpha --no-git-tag",
+    "version:beta": "changeset version --snapshot beta && changeset publish --tag beta --no-git-tag",
+    "version:rc": "changeset version --snapshot rc && changeset publish --tag rc --no-git-tag"
   },
   "config": {
     "commitizen": {
