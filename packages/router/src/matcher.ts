@@ -48,6 +48,16 @@ interface CompiledRoute {
    * 参数名列表
    */
   paramNames: string[];
+
+  /**
+   * 完整路径（用于调试和排序）
+   */
+  fullPath: string;
+
+  /**
+   * 优先级分数（用于排序，数值越高优先级越高）
+   */
+  priority: number;
 }
 
 /**
@@ -76,10 +86,18 @@ export class RouteMatcher {
 
   /**
    * 编译路由配置
+   *
+   * 支持两种路径配置方式：
+   * 1. 绝对路径：以 "/" 开头，如 "/home", "/user/:id"
+   * 2. 相对路径：不以 "/" 开头，会自动拼接父路径，如 "home", "user/:id"
+   *
+   * 特殊情况：
+   * - 空字符串 "" 表示 index 路由，匹配父路径本身
    */
   private compile(routes: RouteConfig[], parentPath: string): void {
     for (const route of routes) {
-      const fullPath = this.normalizePath(parentPath + route.path);
+      // 计算完整路径
+      const fullPath = this.resolvePath(parentPath, route.path);
       const compiled = this.compileRoute(route, fullPath);
       this.compiledRoutes.push(compiled);
 
@@ -90,6 +108,95 @@ export class RouteMatcher {
         this.compiledRoutes.push(...childMatcher.compiledRoutes);
       }
     }
+
+    // 按优先级排序（只在顶层排序一次）
+    if (parentPath === '') {
+      this.sortByPriority();
+    }
+  }
+
+  /**
+   * 解析路径（支持相对路径和绝对路径）
+   *
+   * @param parentPath 父路径
+   * @param childPath 子路径（可以是相对或绝对路径）
+   * @returns 规范化后的完整路径
+   */
+  private resolvePath(parentPath: string, childPath: string): string {
+    // 空字符串表示 index 路由，返回父路径
+    if (childPath === '') {
+      return this.normalizePath(parentPath || '/');
+    }
+
+    // 绝对路径（以 "/" 开头）：保持原有行为，直接拼接
+    if (childPath.startsWith('/')) {
+      return this.normalizePath(parentPath + childPath);
+    }
+
+    // 相对路径：拼接父路径和子路径
+    const separator = parentPath.endsWith('/') ? '' : '/';
+    return this.normalizePath(parentPath + separator + childPath);
+  }
+
+  /**
+   * 按优先级排序编译后的路由
+   *
+   * 优先级规则：
+   * 1. 静态路径 > 动态参数 > 通配符
+   * 2. 路径段数越多优先级越高（更具体的匹配）
+   * 3. 同等条件下，按定义顺序（先定义的优先）
+   */
+  private sortByPriority(): void {
+    this.compiledRoutes.sort((a, b) => b.priority - a.priority);
+  }
+
+  /**
+   * 计算路由的优先级分数
+   *
+   * 优先级规则（从高到低）：
+   * 1. 静态路径 > 动态参数 > 通配符
+   * 2. 更长的路径 > 更短的路径（但通配符除外）
+   * 3. 叶子路由 > 有子路由的父路由
+   *
+   * @param segments 路径段列表
+   * @param config 路由配置（用于检查是否有子路由）
+   */
+  private calculatePriority(
+    segments: PathSegment[],
+    config: RouteConfig,
+  ): number {
+    // 检查是否包含通配符
+    const hasWildcard = segments.some(s => s.isWildcard);
+
+    // 通配符路由的基础优先级最低
+    if (hasWildcard) {
+      return -1000;
+    }
+
+    let priority = 0;
+
+    // 基础分数：静态路径段数量（index 路由也算静态）
+    // 即使 segments 为空（index 路由），也给基础分
+    priority += 1000;
+
+    // 每个段的类型分数
+    for (const segment of segments) {
+      if (segment.isDynamic) {
+        // 动态参数中等优先级
+        priority += 10;
+      } else {
+        // 静态段最高优先级
+        priority += 50;
+      }
+    }
+
+    // 有子路由的父路由优先级降低
+    // 这样 index 子路由（没有子路由）会优先匹配
+    if (config.children && config.children.length > 0) {
+      priority -= 1;
+    }
+
+    return priority;
   }
 
   /**
@@ -120,11 +227,16 @@ export class RouteMatcher {
     // 构建正则表达式
     const regex = this.buildRegex(segments);
 
+    // 计算优先级
+    const priority = this.calculatePriority(segments, config);
+
     return {
       config,
       segments,
       regex,
       paramNames,
+      fullPath,
+      priority,
     };
   }
 

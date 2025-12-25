@@ -2,13 +2,24 @@ import type { VNode } from '@fukict/basic';
 import { RouteComponent } from '@fukict/router';
 
 /**
- * Search 页面 - 展示查询参数
+ * 定义 SearchPage 的查询参数类型
  */
-export class SearchPage extends RouteComponent {
-  routeQueryChanged(
-    newQuery: Record<string, string>,
-    oldQuery: Record<string, string>,
-  ): void {
+interface SearchQuery {
+  q?: string;
+  page?: string;
+}
+
+/**
+ * Search 页面 - 展示查询参数
+ *
+ * 使用泛型 RouteComponent<{}, SearchQuery> 获得 query.q 和 query.page 的类型提示
+ * 第一个泛型参数 {} 表示没有路由参数
+ */
+export class SearchPage extends RouteComponent<
+  Record<string, string>,
+  SearchQuery
+> {
+  routeQueryChanged(newQuery: SearchQuery, oldQuery: SearchQuery): void {
     console.log('Query changed:', oldQuery, '->', newQuery);
   }
 

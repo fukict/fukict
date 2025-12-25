@@ -14,8 +14,28 @@ import type {
  * 路由组件基类
  *
  * 提供路由相关的上下文和工具方法
+ *
+ * @template TParams - 路由参数类型（如 { id: string }）
+ * @template TQuery - 查询参数类型（如 { q?: string; page?: string }）
+ *
+ * @example
+ * ```typescript
+ * // 定义路由参数类型
+ * interface UserParams { id: string }
+ * interface UserQuery { tab?: string }
+ *
+ * class UserPage extends RouteComponent<UserParams, UserQuery> {
+ *   render() {
+ *     const { id } = this.params;    // ✅ TypeScript 知道 id 存在
+ *     const { tab } = this.query;    // ✅ TypeScript 知道 tab 可选
+ *   }
+ * }
+ * ```
  */
-export abstract class RouteComponent extends Fukict<RouteProps> {
+export abstract class RouteComponent<
+  TParams = Record<string, string>,
+  TQuery = Record<string, string>,
+> extends Fukict<RouteProps> {
   /**
    * Router 实例
    */
@@ -39,16 +59,20 @@ export abstract class RouteComponent extends Fukict<RouteProps> {
 
   /**
    * 路由参数（如 { id: '123' }）
+   *
+   * 类型由泛型 TParams 定义，提供完整的类型提示
    */
-  get params(): Record<string, string> {
-    return this.route.params;
+  get params(): TParams {
+    return this.route.params as TParams;
   }
 
   /**
    * 查询参数（如 { page: '1' }）
+   *
+   * 类型由泛型 TQuery 定义，提供完整的类型提示
    */
-  get query(): Record<string, string> {
-    return this.route.query;
+  get query(): TQuery {
+    return this.route.query as TQuery;
   }
 
   /**
@@ -89,7 +113,7 @@ export abstract class RouteComponent extends Fukict<RouteProps> {
   /**
    * 更新查询参数（保留其他参数）
    */
-  updateQuery(query: Record<string, string>): void {
+  updateQuery(query: Partial<TQuery>): void {
     this.push({
       path: this.route.path,
       query: {
@@ -103,7 +127,7 @@ export abstract class RouteComponent extends Fukict<RouteProps> {
   /**
    * 更新路由参数
    */
-  updateParams(params: Record<string, string>): void {
+  updateParams(params: Partial<TParams>): void {
     const matched = this.matched;
     if (!matched) {
       return;
@@ -112,7 +136,9 @@ export abstract class RouteComponent extends Fukict<RouteProps> {
     // 使用新参数构建路径
     let path = matched.path;
     for (const [key, value] of Object.entries(params)) {
-      path = path.replace(`:${key}`, value);
+      if (typeof value === 'string') {
+        path = path.replace(`:${key}`, value);
+      }
     }
 
     this.push({
@@ -126,19 +152,13 @@ export abstract class RouteComponent extends Fukict<RouteProps> {
    * 路由参数变化时的钩子
    * 子类可以重写此方法
    */
-  routeParamsChanged?(
-    newParams: Record<string, string>,
-    oldParams: Record<string, string>,
-  ): void;
+  routeParamsChanged?(newParams: TParams, oldParams: TParams): void;
 
   /**
    * 查询参数变化时的钩子
    * 子类可以重写此方法
    */
-  routeQueryChanged?(
-    newQuery: Record<string, string>,
-    oldQuery: Record<string, string>,
-  ): void;
+  routeQueryChanged?(newQuery: TQuery, oldQuery: TQuery): void;
 
   /**
    * 重写 update 方法，添加参数变化检测
@@ -168,19 +188,18 @@ export abstract class RouteComponent extends Fukict<RouteProps> {
   /**
    * 比较两个参数对象是否相等
    */
-  private isParamsEqual(
-    params1: Record<string, string>,
-    params2: Record<string, string>,
-  ): boolean {
-    const keys1 = Object.keys(params1);
-    const keys2 = Object.keys(params2);
+  private isParamsEqual(params1: TParams, params2: TParams): boolean {
+    const obj1 = params1 as Record<string, unknown>;
+    const obj2 = params2 as Record<string, unknown>;
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
 
     if (keys1.length !== keys2.length) {
       return false;
     }
 
     for (const key of keys1) {
-      if (params1[key] !== params2[key]) {
+      if (obj1[key] !== obj2[key]) {
         return false;
       }
     }
@@ -191,19 +210,18 @@ export abstract class RouteComponent extends Fukict<RouteProps> {
   /**
    * 比较两个查询参数对象是否相等
    */
-  private isQueryEqual(
-    query1: Record<string, string>,
-    query2: Record<string, string>,
-  ): boolean {
-    const keys1 = Object.keys(query1);
-    const keys2 = Object.keys(query2);
+  private isQueryEqual(query1: TQuery, query2: TQuery): boolean {
+    const obj1 = query1 as Record<string, unknown>;
+    const obj2 = query2 as Record<string, unknown>;
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
 
     if (keys1.length !== keys2.length) {
       return false;
     }
 
     for (const key of keys1) {
-      if (query1[key] !== query2[key]) {
+      if (obj1[key] !== obj2[key]) {
         return false;
       }
     }

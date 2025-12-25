@@ -210,9 +210,11 @@ export interface RouterOptions {
 
 /**
  * 路由组件类的构造函数类型
+ *
+ * 使用 unknown 泛型参数以支持任意 params/query 类型的组件
  */
-export interface RouteComponentClass {
-  new (props: RouteProps): RouteComponent;
+export interface RouteComponentClass<TParams = unknown, TQuery = unknown> {
+  new (props: RouteProps): RouteComponent<TParams, TQuery>;
 }
 
 /**
@@ -227,8 +229,14 @@ export interface RouteProps {
 
 /**
  * 路由组件基类的抽象接口
+ *
+ * @template TParams - 路由参数类型（如 { id: string }）
+ * @template TQuery - 查询参数类型（如 { q?: string; page?: string }）
  */
-export interface RouteComponent {
+export interface RouteComponent<
+  TParams = Record<string, string>,
+  TQuery = Record<string, string>,
+> {
   /**
    * Router 实例
    */
@@ -247,12 +255,12 @@ export interface RouteComponent {
   /**
    * 路由参数
    */
-  params: Record<string, string>;
+  params: TParams;
 
   /**
    * 查询参数
    */
-  query: Record<string, string>;
+  query: TQuery;
 
   /**
    * 路由元信息
@@ -282,28 +290,22 @@ export interface RouteComponent {
   /**
    * 更新查询参数（保留其他参数）
    */
-  updateQuery(query: Record<string, string>): void;
+  updateQuery(query: Partial<TQuery>): void;
 
   /**
    * 更新路由参数
    */
-  updateParams(params: Record<string, string>): void;
+  updateParams(params: Partial<TParams>): void;
 
   /**
    * 路由参数变化时的钩子
    */
-  routeParamsChanged?(
-    newParams: Record<string, string>,
-    oldParams: Record<string, string>,
-  ): void;
+  routeParamsChanged?(newParams: TParams, oldParams: TParams): void;
 
   /**
    * 查询参数变化时的钩子
    */
-  routeQueryChanged?(
-    newQuery: Record<string, string>,
-    oldQuery: Record<string, string>,
-  ): void;
+  routeQueryChanged?(newQuery: TQuery, oldQuery: TQuery): void;
 
   /**
    * 组件更新方法（由 Router 调用）

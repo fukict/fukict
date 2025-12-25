@@ -78,8 +78,8 @@ class Icon extends Fukict<{
     this.updateIcon();
   }
 
-  update(newProps: any) {
-    super.update(newProps);
+  update() {
+    super.update();
     this.updateIcon();
   }
 

@@ -2,13 +2,19 @@ import type { VNode } from '@fukict/basic';
 import { RouteComponent } from '@fukict/router';
 
 /**
- * User 页面 - 展示动态路由参数
+ * 定义 UserPage 的路由参数类型
  */
-export class UserPage extends RouteComponent {
-  routeParamsChanged(
-    newParams: Record<string, string>,
-    oldParams: Record<string, string>,
-  ): void {
+interface UserParams {
+  id: string;
+}
+
+/**
+ * User 页面 - 展示动态路由参数
+ *
+ * 使用泛型 RouteComponent<UserParams> 获得 params.id 的类型提示
+ */
+export class UserPage extends RouteComponent<UserParams> {
+  routeParamsChanged(newParams: UserParams, oldParams: UserParams): void {
     console.log('User ID changed:', oldParams.id, '->', newParams.id);
   }
 

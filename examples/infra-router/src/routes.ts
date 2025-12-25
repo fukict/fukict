@@ -14,30 +14,38 @@ import { UserPage } from './pages/UserPage';
 /**
  * 路由配置
  *
- * 使用 Layout 模式 + default：
+ * 支持两种路径配置方式：
+ * 1. 绝对路径：以 "/" 开头，如 "/home", "/user/:id"
+ * 2. 相对路径：不以 "/" 开头，会自动拼接父路径，如 "home", "user/:id"
+ *
+ * 特殊情况：
+ * - 空字符串 "" 表示 index 路由，匹配父路径本身（如访问 "/" 时渲染 HomePage）
+ *
+ * Layout 模式：
  * - 顶层路由是 LayoutPage，包含全局 Header 和 Footer
- * - 使用 default 指定访问 "/" 时的默认子组件
  * - 所有页面作为 LayoutPage 的子路由
- * - 这样 Header 中的 Link 组件能正确响应路由变化
+ * - Header 中的 Link 组件能正确响应路由变化
  */
 export const routes: RouteConfig[] = [
   {
     path: '/',
     component: LayoutPage,
-    redirect: '/home',
     children: [
       {
-        path: '/home',
+        // 空字符串表示 index 路由，访问 "/" 时渲染 HomePage
+        path: '',
         component: HomePage,
         meta: { title: 'Home' },
       },
       {
-        path: '/about',
+        // 相对路径，实际匹配 "/about"
+        path: 'about',
         component: AboutPage,
         meta: { title: 'About' },
       },
       {
-        path: '/user/:id',
+        // 相对路径 + 动态参数，实际匹配 "/user/:id"
+        path: 'user/:id',
         component: UserPage,
         meta: { title: 'User Profile' },
         beforeEnter: (to, _from, next) => {
@@ -46,28 +54,29 @@ export const routes: RouteConfig[] = [
         },
       },
       {
-        path: '/search',
+        path: 'search',
         component: SearchPage,
         meta: { title: 'Search' },
       },
       {
-        path: '/dashboard',
+        path: 'dashboard',
         component: DashboardPage,
         meta: { title: 'Dashboard' },
-        redirect: '/dashboard/overview',
         children: [
           {
-            path: '/overview',
+            // 空字符串表示 index 路由，访问 "/dashboard" 时渲染 Overview
+            path: '',
             component: DashboardOverviewPage,
             meta: { title: 'Dashboard - Overview' },
           },
           {
-            path: '/analytics',
+            // 相对路径，实际匹配 "/dashboard/analytics"
+            path: 'analytics',
             component: DashboardAnalyticsPage,
             meta: { title: 'Dashboard - Analytics' },
           },
           {
-            path: '/settings',
+            path: 'settings',
             component: DashboardSettingsPage,
             meta: { title: 'Dashboard - Settings' },
           },

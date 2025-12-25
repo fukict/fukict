@@ -14,7 +14,6 @@ export function createPrimitiveVNode(value: PrimitiveValue): PrimitiveVNode {
   return {
     __type__: VNodeType.Primitive,
     type: 'primitive',
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     value,
     props: null,
     children: [],
@@ -47,7 +46,6 @@ function normalizeChild(child: any): VNode | null {
   // Primitive values -> PrimitiveVNode
   if (isPrimitiveValue(child)) {
     // Type guard ensures child is PrimitiveValue
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return createPrimitiveVNode(child as PrimitiveValue);
   }
 

@@ -52,7 +52,7 @@ export default declare<PluginOptions>((api, options) => {
 
           // Check if the next statement is export default with this identifier
           const statements = grandParentPath.get('body') as NodePath[];
-          const currentIndex = statements.indexOf(parentPath as any);
+          const currentIndex = statements.indexOf(parentPath);
 
           if (currentIndex >= 0 && currentIndex < statements.length - 1) {
             const nextPath = statements[currentIndex + 1];
@@ -125,7 +125,7 @@ export default declare<PluginOptions>((api, options) => {
           if (!programPath) return;
 
           const statements = programPath.get('body') as NodePath[];
-          const currentIndex = statements.indexOf(path as any);
+          const currentIndex = statements.indexOf(path);
 
           // Check if the previous statement is a variable declaration with defineFukict
           if (currentIndex > 0) {
