@@ -323,31 +323,41 @@ export abstract class Fukict<
     this.__vnode__ = newVNode;
 
     // Call lifecycle hook (protected from re-entry)
-    if (this.updated) {
-      this.updated(prevProps);
-    }
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises -- async lifecycle hooks are intentionally not awaited
+    this.updated?.(prevProps);
 
     this.__inUpdating__ = false;
   }
 
   /**
    * Lifecycle: called after component is mounted
+   *
+   * Can be async, but the framework will not await it.
+   * Use for: DOM manipulation, event listeners, data fetching
    */
-  mounted?(): void;
+  mounted?(): void | Promise<void>;
 
   /**
    * Lifecycle: called before component is unmounted
+   *
+   * Can be async, but the framework will not await it.
+   * Use for: cleanup, removing event listeners, canceling timers
    */
-  beforeUnmount?(): void;
+  beforeUnmount?(): void | Promise<void>;
 
   /**
    * Lifecycle: called after component is updated
+   *
+   * Can be async, but the framework will not await it.
+   * @param prevProps - Previous props before update
    */
-  updated?(prevProps: FukictComponentProps<P>): void;
+  updated?(prevProps: FukictComponentProps<P>): void | Promise<void>;
 
   /**
-   * Mount component (called by renderer or manually)
-   * @internal
+   * Mount component to DOM
+   *
+   * @internal This method is called by the framework. Do NOT override.
+   * @sealed
    */
   mount(container: Element, placeholder?: Comment): void {
     this.__placeholder__ = placeholder || null;
@@ -373,19 +383,22 @@ export abstract class Fukict<
       ...(placeholder ? { placeholder } : { container }),
       onMounted: () => {
         this.__inMounting__ = false;
-        // Trigger mounted() hook (protected from re-entry)
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises -- async lifecycle hooks are intentionally not awaited
         this.mounted?.();
       },
     });
   }
 
   /**
-   * Unmount component (called by renderer)
-   * @internal
+   * Unmount component from DOM
+   *
+   * @internal This method is called by the framework. Do NOT override.
+   * @sealed
    */
   unmount(): void {
     this.__inUnmounting__ = true;
 
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises -- async lifecycle hooks are intentionally not awaited
     this.beforeUnmount?.();
 
     removeNode(this.__vnode__, this.__container__ as Element);

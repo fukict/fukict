@@ -46,25 +46,34 @@ export type Refs = Record<string, any>;
 
 /**
  * Lifecycle hooks interface for Fukict class components
+ *
+ * All lifecycle methods can be async, but the framework will not await them.
+ * The actual DOM operations are always synchronous.
  */
 export interface FukictLifecycle<P extends Record<string, any> = any> {
   /**
    * Called after component is mounted to DOM
+   *
+   * Can be async, but the framework will not await it.
    * Use for: DOM manipulation, event listeners, data fetching
    */
-  mounted?(): void;
+  mounted?(): void | Promise<void>;
 
   /**
    * Called before component is unmounted from DOM
+   *
+   * Can be async, but the framework will not await it.
    * Use for: cleanup, removing event listeners, canceling timers
    */
-  beforeUnmount?(): void;
+  beforeUnmount?(): void | Promise<void>;
 
   /**
    * Called after component is updated (props changed or self-update)
+   *
+   * Can be async, but the framework will not await it.
    * @param prevProps - Previous props before update
    */
-  updated?(prevProps: P): void;
+  updated?(prevProps: P): void | Promise<void>;
 }
 
 /**
@@ -103,16 +112,23 @@ export interface FukictComponent<
    * Can be overridden for custom update logic (e.g., shouldUpdate).
    * Skipped when fukict:detach is set (props updated, but no re-render).
    */
-  update(newProps: P): void;
+  update(newProps?: P): void;
 
   /**
-   * Mount method (called by renderer after instance creation)
-   * @internal
+   * Mount component to DOM
+   *
+   * @internal This method is called by the framework. Do NOT override.
+   * @sealed
    */
-  mount(container: Element, placeholder?: Comment): void;
+  readonly mount: (container: Element, placeholder?: Comment) => void;
 
-  /** Unmount method (internal, framework use) */
-  unmount(): void;
+  /**
+   * Unmount component from DOM
+   *
+   * @internal This method is called by the framework. Do NOT override.
+   * @sealed
+   */
+  readonly unmount: () => void;
 }
 
 /**
