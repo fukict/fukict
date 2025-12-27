@@ -16,6 +16,7 @@ import { RefsPage } from './pages/basic/RefsPage';
 import { SlotsPage } from './pages/basic/SlotsPage';
 import { StylesPage } from './pages/basic/StylesPage';
 import { DynamicListPage } from './pages/basic/dynamic-list';
+import { WebComponentPage } from './pages/basic/webcomponent';
 import { ActionsMutationsPage } from './pages/flux/ActionsMutationsPage';
 import { FluxIndexPage } from './pages/flux/FluxIndexPage';
 // Flux 模块
@@ -207,6 +208,16 @@ export const routes: RouteConfig[] = [
               title: '高性能动态列表',
               description:
                 '通过 fukict:detach 和 fukict:ref 实现高性能列表操作',
+              showInSidebar: true,
+            },
+          },
+          {
+            path: '/webcomponent',
+            component: WebComponentPage,
+            meta: {
+              title: 'Web Component 类型扩展',
+              description:
+                '展示如何扩展 Fukict JSX 类型以支持自定义 Web Component',
               showInSidebar: true,
             },
           },
