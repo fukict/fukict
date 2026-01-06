@@ -1,5 +1,17 @@
 # @fukict/router
 
+## 0.1.7
+
+### Patch Changes
+
+- d67c484: 修复 tag 脚本对子包打 tag
+- 94f7f2f: 添加 web component 类型适配示例
+- 2cabebc: 优化对 web component 支持
+- Updated dependencies [d67c484]
+- Updated dependencies [94f7f2f]
+- Updated dependencies [2cabebc]
+  - @fukict/basic@0.1.7
+
 ## 0.1.6
 
 ### Patch Changes
