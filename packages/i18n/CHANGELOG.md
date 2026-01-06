@@ -1,5 +1,11 @@
 # @fukict/i18n
 
+## 0.1.8
+
+### Patch Changes
+
+- 3fbd68c: 修复 diff 对 webcomponent 的支持
+
 ## 0.1.7
 
 ### Patch Changes

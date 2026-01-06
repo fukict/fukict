@@ -1,6 +1,6 @@
 {
   "name": "@fukict/i18n",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Type-safe internationalization library for Fukict framework",
   "keywords": [
     "fukict",

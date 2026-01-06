@@ -1,5 +1,13 @@
 # @fukict/vite-plugin
 
+## 0.1.8
+
+### Patch Changes
+
+- 3fbd68c: 修复 diff 对 webcomponent 的支持
+- Updated dependencies [3fbd68c]
+  - @fukict/babel-preset@0.1.8
+
 ## 0.1.7
 
 ### Patch Changes

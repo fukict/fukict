@@ -1,6 +1,6 @@
 {
   "name": "@fukict/router",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Router for Fukict framework with nested routing and lazy loading",
   "keywords": [
     "fukict",

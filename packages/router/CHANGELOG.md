@@ -1,5 +1,13 @@
 # @fukict/router
 
+## 0.1.8
+
+### Patch Changes
+
+- 3fbd68c: 修复 diff 对 webcomponent 的支持
+- Updated dependencies [3fbd68c]
+  - @fukict/basic@0.1.8
+
 ## 0.1.7
 
 ### Patch Changes
