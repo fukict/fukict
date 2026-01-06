@@ -5,6 +5,7 @@
  */
 import type { Fukict } from '../component-class/fukict.js';
 import * as dom from '../dom/index.js';
+import { isSVGTag } from '../dom/index.js';
 
 /**
  * Set attributes on element
@@ -73,6 +74,13 @@ export function setAttributes(
         element,
         value as string | string[] | Record<string, boolean>,
       );
+      continue;
+    }
+
+    // Check if property exists on element (for Web Components and special properties)
+    // SVG elements must use setAttribute as their attributes are DOM attributes
+    if (key in element && !isSVGTag(element.tagName.toLowerCase())) {
+      dom.setProperty(element, key, value);
       continue;
     }
 

@@ -184,6 +184,16 @@ export type HTMLAttributes<T extends HTMLElement = HTMLElement> =
       style?: CSSProperties | string;
       // Key attribute for list reconciliation
       key?: string | number;
+
+      // Web Component attributes
+      /** Slot name for element placement in Shadow DOM */
+      slot?: string;
+      /** CSS ::part() selector support */
+      part?: string;
+      /** Export parts for external CSS access */
+      exportparts?: string;
+      /** Custom element "is" attribute for customized built-in elements */
+      is?: string;
     };
 
 /**
