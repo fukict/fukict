@@ -32,13 +32,37 @@ class Counter extends Fukict<Props> {
 
 ## 函数组件
 
-```tsx
-import { defineFukict } from '@fukict/basic';
+**适用场景**：简单 UI 渲染，仅从 props 获取参数进行渲染，无复杂交互逻辑。
 
-const Hello = defineFukict((props: { message: string }) => {
-  return <div>{props.message}</div>;
-});
+```tsx
+// 简单 UI 组件
+const HelloWorld = () => {
+  return (
+    <div>
+      <p>Hello World from Function Component!</p>
+    </div>
+  );
+};
+
+// 带参数的函数组件
+const Greeting = (props: { name: string }) => {
+  return <div>Hello, {props.name}!</div>;
+};
+
+// 使用
+class App extends Fukict {
+  render() {
+    return (
+      <div>
+        <HelloWorld />
+        <Greeting name="Alice" />
+      </div>
+    );
+  }
+}
 ```
+
+**限制**：函数组件没有生命周期、没有 ref、无法使用脱围等高级特性。需要这些功能时使用类组件。
 
 ## 生命周期
 
