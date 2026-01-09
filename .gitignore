@@ -6,3 +6,5 @@ dist
 
 tsconfig.tsbuildinfo
 tsconfig.app.tsbuildinfo
+
+.claude/settings.json
