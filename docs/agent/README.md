@@ -7,6 +7,8 @@
 ```
 @fukict/basic        核心库：组件、渲染、diff
 @fukict/router       路由：SPA 路由管理
+@fukict/flux         状态管理：Flux 模式
+@fukict/i18n         国际化：多语言支持
 @fukict/babel-preset JSX 编译：构建时转换
 @fukict/vite-plugin  Vite 集成：自动应用 babel-preset
 ```
@@ -18,7 +20,7 @@
 ```bash
 pnpm create vite my-app --template vanilla-ts
 cd my-app
-pnpm add @fukict/basic @fukict/vite-plugin
+pnpm add @fukict/basic @fukict/vite-plugin @fukict/router @fukict/flux @fukict/i18n
 ```
 
 ### 2. 配置 Vite
@@ -69,9 +71,11 @@ attach(<App />, document.getElementById('app')!);
 | [02-components](./02-components.md)   | 组件开发、生命周期、通信 |
 | [03-performance](./03-performance.md) | 脱围模式、性能优化       |
 | [04-lists](./04-lists.md)             | 列表渲染、虚拟滚动       |
-| [05-state](./05-state.md)             | 状态管理、Store 模式     |
-| [06-routing](./06-routing.md)         | 路由配置、导航守卫       |
+| [05-state](./05-state.md)             | 组件内状态、自定义 Store |
 | [07-build](./07-build.md)             | 构建配置、发布部署       |
+| [08-flux](./08-flux.md)               | Flux 状态管理（推荐）    |
+| [09-i18n](./09-i18n.md)               | 国际化、多语言           |
+| [06-routing](./06-routing.md)         | 路由配置、导航守卫       |
 
 ## 核心特点
 

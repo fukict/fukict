@@ -1,129 +1,45 @@
-# 状态管理
+# 关于状态
 
-## 组件内状态
+## Fukict 没有状态概念
+
+Fukict 组件就是普通的 TypeScript 类，实例属性就是普通属性。
 
 ```tsx
 class Counter extends Fukict {
+  // 普通实例属性
   count = 0;
 
   render() {
-    return (
-      <div>
-        <p>{this.count}</p>
-        <button on:click={() => this.increment()}>+1</button>
-      </div>
-    );
+    return <div>{this.count}</div>;
   }
 
   increment() {
     this.count++;
-    this.update();
+    this.update(); // 手动决定何时更新
   }
 }
 ```
 
-## Store 模式
+## 与 React 的区别
 
-```tsx
-class Store<T> {
-  private state: T;
-  private listeners = new Set<() => void>();
+| React                 | Fukict                    |
+| --------------------- | ------------------------- |
+| `setState()` 触发更新 | 直接修改属性 + `update()` |
+| 状态更新是异步的      | 属性赋值是同步的          |
+| 状态合并              | 完全由开发者控制          |
+| 有特殊的状态概念      | 没有状态概念              |
 
-  constructor(initialState: T) {
-    this.state = initialState;
-  }
+## 如何管理状态
 
-  get(): T {
-    return this.state;
-  }
+**完全由开发者自行决定**：
 
-  setState(partial: Partial<T>): void {
-    this.state = { ...this.state, ...partial };
-    this.notify();
-  }
+- 实例属性：组件内部
+- Flux：全局共享状态
+- Context：跨层级传递
+- 其他任何模式...
 
-  subscribe(listener: () => void): () => void {
-    this.listeners.add(listener);
-    return () => this.listeners.delete(listener);
-  }
+Fukict 不强制任何状态管理方式。
 
-  private notify(): void {
-    this.listeners.forEach(fn => fn());
-  }
-}
+## 全局状态
 
-// 使用
-interface AppState {
-  user: { name: string } | null;
-  theme: 'light' | 'dark';
-}
-
-export const appStore = new Store<AppState>({
-  user: null,
-  theme: 'light',
-});
-```
-
-## 组件订阅 Store
-
-```tsx
-class Header extends Fukict {
-  private unsubscribe?: () => void;
-
-  mounted() {
-    this.unsubscribe = appStore.subscribe(() => {
-      this.update();
-    });
-  }
-
-  beforeUnmount() {
-    this.unsubscribe?.();
-  }
-
-  render() {
-    const { user } = appStore.get();
-    return <header>{user?.name || 'Guest'}</header>;
-  }
-}
-```
-
-## 精确订阅
-
-```tsx
-class AdvancedStore<T> {
-  subscribeKey<K extends keyof T>(key: K, listener: () => void): () => void {
-    let currentValue = this.state[key];
-
-    const wrappedListener = () => {
-      if (this.state[key] !== currentValue) {
-        currentValue = this.state[key];
-        listener();
-      }
-    };
-
-    this.listeners.add(wrappedListener);
-    return () => this.listeners.delete(wrappedListener);
-  }
-}
-
-// 使用：只在 user 变化时更新
-class Avatar extends Fukict {
-  private unsubscribe?: () => void;
-
-  mounted() {
-    this.unsubscribe = appStore.subscribeKey('user', () => {
-      this.update();
-    });
-  }
-
-  beforeUnmount() {
-    this.unsubscribe?.();
-  }
-
-  render() {
-    const { user } = appStore.get();
-    if (!user) return null;
-    return <img src={`/avatar/${user.name}`} />;
-  }
-}
-```
+对于全局性状态、脱围组件订阅等场景，使用 [@fukict/flux](./08-flux.md)。
