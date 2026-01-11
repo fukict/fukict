@@ -2,7 +2,6 @@ import { RouteComponent } from '@fukict/router';
 
 import { CodeBlock } from '../../../components/CodeBlock';
 import { DemoBox } from '../../../components/DemoBox';
-import { PageHeader } from '../../../components/PageHeader';
 import { HighPerformanceList } from './HighPerformanceList';
 import { TraditionalList } from './TraditionalList';
 
@@ -58,11 +57,6 @@ export class DynamicListPage extends RouteComponent {
   render() {
     return (
       <div class="space-y-8">
-        <PageHeader
-          title="高性能动态列表"
-          description="通过手动实例化 + mount 实现高性能列表操作，避免不必要的重新渲染"
-        />
-
         {/* 概述 */}
         <DemoBox title="核心设计思想">
           <div class="prose max-w-none">

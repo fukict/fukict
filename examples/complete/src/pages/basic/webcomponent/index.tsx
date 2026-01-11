@@ -26,13 +26,6 @@ export class WebComponentPage extends RouteComponent {
   render() {
     return (
       <div class="space-y-8">
-        <div>
-          <h1 class="mb-4 text-2xl font-bold">Web Component 类型扩展</h1>
-          <p class="text-gray-600">
-            本示例展示如何扩展 Fukict 的 JSX 类型以支持自定义 Web Component
-          </p>
-        </div>
-
         {/* 使用示例 */}
         <section class="space-y-4">
           <h2 class="text-xl font-semibold">使用示例</h2>

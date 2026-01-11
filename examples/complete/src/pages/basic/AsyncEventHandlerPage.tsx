@@ -3,7 +3,6 @@ import { RouteComponent } from '@fukict/router';
 
 import { CodeBlock } from '../../components/CodeBlock';
 import { DemoBox } from '../../components/DemoBox';
-import { PageHeader } from '../../components/PageHeader';
 import { SplitView } from '../../components/SplitView';
 
 interface AsyncButtonDemoState {
@@ -304,11 +303,6 @@ export class AsyncEventHandlerPage extends RouteComponent {
   render() {
     return (
       <div>
-        <PageHeader
-          title="异步事件处理器"
-          description="展示如何在 Fukict 事件处理器中使用异步函数，现在支持直接返回 Promise<void>"
-        />
-
         <div class="space-y-8">
           {/* 基础用法 */}
           <SplitView>

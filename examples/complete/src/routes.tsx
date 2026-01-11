@@ -206,8 +206,14 @@ export const routes: RouteConfig[] = [
             component: DynamicListPage,
             meta: {
               title: '高性能动态列表',
-              description:
-                '通过 fukict:detach 和 fukict:ref 实现高性能列表操作',
+              description: (
+                <>
+                  <p>通过 fukict:detach 和 fukict:ref 实现高性能列表操作</p>
+                  <p>
+                    手动实例化 + mount 实现高性能列表操作，避免不必要的重新渲染
+                  </p>
+                </>
+              ),
               showInSidebar: true,
             },
           },

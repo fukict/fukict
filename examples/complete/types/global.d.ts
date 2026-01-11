@@ -4,6 +4,7 @@
  * 此文件会被 tsconfig.json 自动加载，无需在每个文件中手动 import。
  * TypeScript 会自动识别 .d.ts 文件并应用其中的类型声明。
  */
+import { type JSX } from '@fukict/basic';
 
 /**
  * 扩展 @fukict/router 的 RouteMeta 接口
@@ -21,7 +22,7 @@ declare module '@fukict/router' {
     /**
      * 页面描述
      */
-    description?: string;
+    description?: JSX.Element | string;
 
     /**
      * 是否在侧边栏显示

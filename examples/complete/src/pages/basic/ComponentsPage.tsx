@@ -85,9 +85,6 @@ export class ComponentsPage extends RouteComponent {
             <h3 class="mb-1 text-base font-medium text-gray-800">
               函数组件 (defineFukict)
             </h3>
-            <p class="text-sm leading-relaxed text-gray-600">
-              使用 defineFukict 创建函数组件的方法和最佳实践
-            </p>
           </div>
 
           <SplitView leftTitle="代码示例" rightTitle="运行效果">

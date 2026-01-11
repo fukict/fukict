@@ -211,6 +211,97 @@ describe('displayName injection (development mode)', () => {
   });
 });
 
+describe('Development attributes (dev-attributes)', () => {
+  test('adds data-fukict-component attribute in development mode', () => {
+    const input = `const Greeting = ({ name }) => <div>Hello {name}</div>;`;
+    const output = transform(input, { development: true });
+
+    assert.ok(output.includes('data-fukict-component'));
+    assert.ok(output.includes('"Greeting"'));
+  });
+
+  test('adds data-fukict-file attribute in development mode', () => {
+    const input = `const App = () => <div>Content</div>;`;
+    const output = transform(input, { development: true });
+
+    assert.ok(output.includes('data-fukict-file'));
+    assert.ok(output.includes('test.tsx')); // Just check filename is present (may be absolute or relative)
+  });
+
+  test('does not add dev attributes in production mode', () => {
+    const input = `const Greeting = ({ name }) => <div>Hello {name}</div>;`;
+    const output = transform(input, { development: false });
+
+    assert.ok(!output.includes('data-fukict-component'));
+    assert.ok(!output.includes('data-fukict-file'));
+  });
+
+  test('adds dev attributes to function component root element', () => {
+    const input = `
+      const Button = ({ text }) => (
+        <button className="btn">
+          <span>{text}</span>
+        </button>
+      );
+    `;
+    const output = transform(input, { development: true });
+
+    // Root element (button) should have attributes
+    assert.ok(output.includes('data-fukict-component'));
+    assert.ok(output.includes('"Button"'));
+    assert.ok(output.includes('data-fukict-file'));
+  });
+
+  test('adds dev attributes to class component root element', () => {
+    const input = `
+      import { Fukict } from '@fukict/basic';
+      class MyComponent extends Fukict {
+        render() {
+          return <div className="container">Content</div>;
+        }
+      }
+    `;
+    const output = transform(input, { development: true });
+
+    assert.ok(output.includes('data-fukict-component'));
+    assert.ok(output.includes('"MyComponent"'));
+    assert.ok(output.includes('data-fukict-file'));
+  });
+
+  test('adds dev attributes to exported default component', () => {
+    const input = `export default ({ name }) => <div>Hello {name}</div>;`;
+    const output = transform(input, { development: true });
+
+    assert.ok(output.includes('data-fukict-component'));
+    assert.ok(output.includes('data-fukict-file'));
+  });
+
+  test('handles multiple components with separate dev attributes', () => {
+    const input = `
+      const Header = () => <header>Header</header>;
+      const Footer = () => <footer>Footer</footer>;
+    `;
+    const output = transform(input, { development: true });
+
+    // Both components should have their own attributes
+    assert.ok(output.includes('"Header"'));
+    assert.ok(output.includes('"Footer"'));
+
+    // Should have multiple data-fukict-component attributes
+    const matches = output.match(/data-fukict-component/g);
+    assert.ok(matches && matches.length >= 2);
+  });
+
+  test('does not add dev attributes without development flag', () => {
+    const input = `const Greeting = ({ name }) => <div>Hello {name}</div>;`;
+    const output = transform(input, { development: false }); // Explicitly set production mode
+
+    // Production mode should not include dev attributes
+    assert.ok(!output.includes('data-fukict-component'));
+    assert.ok(!output.includes('data-fukict-file'));
+  });
+});
+
 describe('Integration tests', () => {
   test('complete component transformation', () => {
     const input = `

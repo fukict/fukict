@@ -32,7 +32,6 @@ import {
 
 import { CodeBlock } from '../../components/CodeBlock';
 import { DemoBox } from '../../components/DemoBox';
-import { PageHeader } from '../../components/PageHeader';
 import { SplitView } from '../../components/SplitView';
 
 /**
@@ -327,11 +326,6 @@ export class LucideIconsPage extends RouteComponent {
   render() {
     return (
       <div>
-        <PageHeader
-          title="Lucide Icons 集成"
-          description="在 Fukict 中使用 Lucide 图标库，展示图标的各种用法和配置"
-        />
-
         <div class="space-y-8">
           {/* 基础用法 */}
           <SplitView>

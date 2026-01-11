@@ -5,6 +5,7 @@
  */
 import { transformSync } from '@babel/core';
 
+import path from 'node:path';
 import type { Plugin } from 'vite';
 
 /**
@@ -110,6 +111,10 @@ export default function fukict(options: FukictPluginOptions = {}): Plugin {
       }
 
       try {
+        // Convert absolute path to relative path for better readability in DevTools
+        const cwd = process.cwd();
+        const relativePath = path.relative(cwd, id);
+
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment
         const result = transformSync(code, {
           presets: [
@@ -121,7 +126,7 @@ export default function fukict(options: FukictPluginOptions = {}): Plugin {
               },
             ],
           ],
-          filename: id,
+          filename: relativePath,
           sourceMaps: true,
           configFile: false,
           babelrc: false,

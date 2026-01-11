@@ -1,8 +1,8 @@
-import { Fukict } from '@fukict/basic';
+import { Fukict, type JSX } from '@fukict/basic';
 
 interface PageHeaderProps {
   title: string;
-  description?: string;
+  description?: JSX.Element | string;
 }
 
 /**

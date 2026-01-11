@@ -25,7 +25,7 @@ function fukictPreset(_api: any, options: FukictPresetOptions = {}) {
     // 1. Auto wrap components with defineFukict (must run before JSX transform)
     [autoDefineFukict, pluginOptions],
 
-    // 2. Transform JSX to hyperscript
+    // 2. Transform JSX to hyperscript (includes development attributes in dev mode)
     [jsxTransform, pluginOptions],
 
     // 3. Inject displayName in development mode

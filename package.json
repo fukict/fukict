@@ -24,7 +24,6 @@
   "type": "module",
   "scripts": {
     "build": "pnpm clean && pnpm extract-metadata && tsx scripts/build-package.ts --all --no-watch",
-    "build:watch": "tsx scripts/build-package.ts --all --watch",
     "changeset": "changeset",
     "changeset:alpha": "changeset version --snapshot alpha",
     "changeset:beta": "changeset version --snapshot beta",
@@ -36,6 +35,7 @@
     "clear": "premove **/node_modules && premove pnpm-lock.yaml",
     "commit": "tsx scripts/commit.ts",
     "dev:no-build": "npx http-server -p 8080 -c-1 --cors",
+    "dev:pkgs": "tsx scripts/build-package.ts --all --watch",
     "extract-metadata": "tsx scripts/extract-metadata.ts",
     "format": "prettier --write .",
     "lint": "pnpm lint:types && eslint .",
