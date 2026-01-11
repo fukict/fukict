@@ -1,5 +1,19 @@
 # @fukict/router
 
+## 0.1.9
+
+### Patch Changes
+
+- 9eb4b38: 组件根节点渲染添加 组件名/文件路径 属性, 方便开发者定位
+- 84b4aff: 添加 agent 快速理解文档
+- 65ba8c1: 更新 agent 文档
+- ba27ff7: 更新 agent 文档
+- Updated dependencies [9eb4b38]
+- Updated dependencies [84b4aff]
+- Updated dependencies [65ba8c1]
+- Updated dependencies [ba27ff7]
+  - @fukict/basic@0.1.9
+
 ## 0.1.8
 
 ### Patch Changes

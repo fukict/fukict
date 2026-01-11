@@ -1,6 +1,6 @@
 {
   "name": "@fukict/vite-plugin",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Vite plugin for Fukict framework",
   "keywords": [
     "fukict",
