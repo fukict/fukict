@@ -97,10 +97,10 @@ export interface FukictComponent<
   readonly refs: Refs;
 
   /** Current rendered VNode (internal, framework use) */
-  __vnode__: VNode | null;
+  _render: VNode | null;
 
   /** Parent DOM container (internal, framework use) */
-  __container__: Element | null;
+  _container: Element | null;
 
   /** Render method (must be implemented) */
   render(): VNode;

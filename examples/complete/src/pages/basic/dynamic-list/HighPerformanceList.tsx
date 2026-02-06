@@ -163,7 +163,7 @@ export class HighPerformanceList extends Fukict {
       this.containerRef.insertBefore(placeholder, targetPlaceholder);
 
       // 组件会自动跟随占位元素移动（因为组件的 DOM 挂载在占位元素之后）
-      if (placeholder.nextSibling && instance.__vnode__) {
+      if (placeholder.nextSibling && instance._render) {
         const componentDom = this.getComponentDom(instance);
         if (componentDom) {
           this.containerRef.insertBefore(componentDom, targetPlaceholder);
@@ -239,16 +239,16 @@ export class HighPerformanceList extends Fukict {
    * @private
    */
   private getComponentDom(instance: TodoItemComponent): Node | null {
-    if (!instance.__vnode__) return null;
+    if (!instance._render) return null;
 
-    const vnode = instance.__vnode__;
+    const vnode = instance._render;
 
     // 根据 VNode 类型获取 DOM
-    if ('__dom__' in vnode && vnode.__dom__) {
-      if (Array.isArray(vnode.__dom__)) {
-        return vnode.__dom__[0] || null;
+    if ('__node__' in vnode && vnode.__node__) {
+      if (Array.isArray(vnode.__node__)) {
+        return vnode.__node__[0] || null;
       }
-      return vnode.__dom__ as Node;
+      return vnode.__node__ as Node;
     }
 
     return null;

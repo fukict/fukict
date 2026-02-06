@@ -14,7 +14,7 @@ import { replaceNode } from './helpers.js';
  * (These are defined in Fukict class but not in FukictComponent interface)
  */
 interface FukictComponentInternal extends FukictComponent {
-  __wrapper__: VNode | null;
+  _parent: unknown | null;
 }
 
 /**
@@ -56,11 +56,11 @@ export function diffClassComponent(
     return;
   }
 
-  // Setup ClassComponentVNode: instance, slots, refs, wrapper, parent reference
+  // Setup ClassComponentVNode: instance, slots, refs, parent reference
   setupClassComponentVNode(newClassVNode, instance, parentInstance);
 
   // Copy placeholder from old vnode
-  newClassVNode.__placeholder__ = oldClassVNode.__placeholder__;
+  newClassVNode.__node__ = oldClassVNode.__node__;
 
   // Check detached mode
   if (newClassVNode.props && newClassVNode.props['fukict:detach']) {

@@ -18,7 +18,7 @@ import { diff } from './index.js';
  * Diff Function Component VNode
  * - Shallow compare props
  * - Re-call function if props changed
- * - Recursively diff __rendered__
+ * - Recursively diff __render__
  */
 export function diffFunctionComponent(
   oldVNode: VNode,
@@ -48,8 +48,8 @@ export function diffFunctionComponent(
     // Setup FunctionComponentVNode with reused data
     setupFunctionComponentVNode(
       newFuncVNode,
-      oldFuncVNode.__rendered__,
-      oldFuncVNode.__dom__ ?? null,
+      oldFuncVNode.__render__,
+      oldFuncVNode.__node__ ?? null,
     );
     return;
   }
@@ -75,17 +75,17 @@ export function diffFunctionComponent(
       : undefined;
 
   // Diff old and new rendered result
-  const oldRendered = oldFuncVNode.__rendered__;
+  const oldRendered = oldFuncVNode.__render__;
   diff(oldRendered, rendered, container);
 
-  // Update __dom__ reference (only for non-ClassComponent VNodes)
+  // Update __node__ reference (only for non-ClassComponent VNodes)
   let domNode: Node | Node[] | null = null;
   if (
     renderedVNode &&
     renderedVNode.__type__ !== VNodeType.ClassComponent &&
-    '__dom__' in renderedVNode
+    '__node__' in renderedVNode
   ) {
-    domNode = renderedVNode.__dom__ ?? null;
+    domNode = renderedVNode.__node__ ?? null;
   }
 
   // Setup FunctionComponentVNode: save rendered VNode and DOM reference

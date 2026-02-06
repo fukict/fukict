@@ -230,7 +230,7 @@ class App extends Fukict {
     // 2. 更新状态
     this.state.darkMode = !this.state.darkMode;
 
-    // 3. 更新 context（替换 __context__ 中的值）
+    // 3. 更新 context（替换 _render.__context__ 中的值）
     this.provideContext(THEME_CONTEXT, {
       mode: this.state.darkMode ? 'dark' : 'light',
     });
@@ -276,18 +276,20 @@ class Child extends Fukict {
 
 ```typescript
 protected getContext<T>(key: string | symbol, defaultValue?: T): T | undefined {
-  if (!this.__vnode__) {
-    return defaultValue;
+  // 1. Check own _render.__context__
+  if (this._render && this._render.__context__) {
+    let currentContext = this._render.__context__;
+    while (currentContext) {
+      if (key in currentContext) {
+        return currentContext[key] as T;
+      }
+      currentContext = currentContext.__parent__;
+    }
   }
 
-  let currentContext = this.__vnode__.__context__;
-
-  // Traverse up the chain (lower levels checked first)
-  while (currentContext) {
-    if (key in currentContext) {
-      return currentContext[key] as T;
-    }
-    currentContext = currentContext.__parent__;
+  // 2. Traverse up via _parent (parent component instance)
+  if (this._parent) {
+    return this._parent.getContext(key, defaultValue);
   }
 
   // Return default if not found
@@ -299,20 +301,20 @@ protected getContext<T>(key: string | symbol, defaultValue?: T): T | undefined {
 
 ```typescript
 protected provideContext<T>(key: string | symbol, value: T): void {
-  if (!this.__vnode__) {
-    console.warn('[Fukict] Cannot provide context: __vnode__ is null');
+  if (!this._render) {
+    console.warn('[Fukict] Cannot provide context: _render is null');
     return;
   }
 
   // Initialize context if not exists
-  if (!this.__vnode__.__context__) {
-    this.__vnode__.__context__ = {
-      __parent__: getParentContext(this.__vnode__),
+  if (!this._render.__context__) {
+    this._render.__context__ = {
+      __parent__: getParentContext(this._render),
     };
   }
 
   // Wrap in Proxy and store
-  this.__vnode__.__context__[key] = createImmutableProxy(value);
+  this._render.__context__[key] = createImmutableProxy(value);
 }
 ```
 
@@ -340,7 +342,7 @@ Only Class Components have:
 
 1. **Update capability** - Can call `this.update()` to re-render
 2. **Lifecycle hooks** - Can use `mounted()` to provide context
-3. **Instance reference** - Have `this.__vnode__` to store context
+3. **Instance reference** - Have `this._render` to store context
 
 Function components cannot:
 

@@ -13,7 +13,7 @@ import type { ClassComponentVNode, VNode } from '../types/index.js';
 interface ComponentInstanceInternal {
   $slots: any;
   $refs: Record<string, any>;
-  __wrapper__: VNode | null;
+  _parent: unknown | null;
 }
 
 /**
@@ -59,8 +59,7 @@ function markRefOwner(slots: Record<string, unknown>, refOwner: unknown): void {
  * 1. Saves instance to vnode
  * 2. Extracts and sets slots from children, marks slot owner
  * 3. Registers instance to parent's $refs (if fukict:ref is specified)
- * 4. Updates wrapper VNode reference
- * 5. Updates parent instance reference on wrapper VNode
+ * 4. Sets parent instance reference
  *
  * Used by both renderClassComponent (create) and diffClassComponent (update).
  *
@@ -105,13 +104,10 @@ export function setupClassComponentVNode(
     }
   }
 
-  // 4. Update wrapper VNode reference
-  instanceInternal.__wrapper__ = vnode;
-
-  // 5. Update parent instance reference on wrapper VNode (for context chain)
-  if (parentInstance) {
-    (
-      vnode as ClassComponentVNode & { __parentInstance__?: unknown }
-    ).__parentInstance__ = parentInstance;
+  // 4. Set parent instance reference (for context chain)
+  // Only update when parentInstance is explicitly provided (during creation).
+  // During diff, parentInstance is undefined — preserve existing _parent.
+  if (parentInstance !== undefined) {
+    instanceInternal._parent = parentInstance;
   }
 }

@@ -20,7 +20,7 @@ import type {
  * @param element - The DOM element
  */
 export function setupElementVNode(vnode: ElementVNode, element: Element): void {
-  vnode.__dom__ = element;
+  vnode.__node__ = element;
 }
 
 /**
@@ -32,7 +32,7 @@ export function setupElementVNode(vnode: ElementVNode, element: Element): void {
  * @param nodes - The array of DOM nodes
  */
 export function setupFragmentVNode(vnode: FragmentVNode, nodes: Node[]): void {
-  vnode.__dom__ = nodes;
+  vnode.__node__ = nodes;
 }
 
 /**
@@ -49,8 +49,8 @@ export function setupFunctionComponentVNode(
   rendered: VNode | undefined,
   domNode: Node | Node[] | null,
 ): void {
-  vnode.__rendered__ = rendered;
-  vnode.__dom__ = domNode;
+  vnode.__render__ = rendered;
+  vnode.__node__ = domNode;
 }
 
 /**
@@ -65,5 +65,5 @@ export function setupPrimitiveVNode(
   vnode: PrimitiveVNode,
   node: Text | Comment,
 ): void {
-  vnode.__dom__ = node;
+  vnode.__node__ = node;
 }

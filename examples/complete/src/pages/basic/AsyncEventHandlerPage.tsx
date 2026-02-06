@@ -236,6 +236,8 @@ class AsyncErrorHandlingDemo extends Fukict {
       ...this.state,
       ...newState,
     };
+
+    this.update();
   }
 
   private async handleClickWithError(): Promise<void> {
@@ -246,7 +248,7 @@ class AsyncErrorHandlingDemo extends Fukict {
 
       // 模拟 50% 概率失败
       if (Math.random() > 0.5) {
-        throw new Error('网络请求���败');
+        throw new Error('网络请求失败');
       }
 
       this.setState({ status: 'success', error: null });
@@ -491,7 +493,7 @@ export class AsyncEventHandlerPage extends RouteComponent {
               </div>
               <div>
                 <h4 class="mb-2 text-sm font-medium text-gray-900">
-                  �� 修复后（直接使用异步函数）
+                  修复后（直接使用异步函数）
                 </h4>
                 <CodeBlock
                   language="tsx"

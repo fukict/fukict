@@ -42,13 +42,13 @@ attach(vnode, container)
       1. instance = new Component(props, children)
          → constructor() 执行
          → slots = extractSlots(children)
-         → __vnode__ = this.render()  // 初始 VNode
+         → _render = this.render()  // 初始 VNode
 
-      2. createRealNode(instance.__vnode__)
+      2. createRealNode(instance._render)
          → 递归创建 DOM
 
       3. placeholder = createComment(`fukict:${name}#${id}`)
-         vnode.__placeholder__ = placeholder
+         vnode.__node__ = placeholder
 
       4. 返回 placeholder
 
@@ -56,7 +56,7 @@ attach(vnode, container)
     → container.appendChild(placeholder)
     → instance.mount(container)
       → 替换 placeholder 为真实 DOM
-      → 递归 activate(instance.__vnode__)
+      → 递归 activate(instance._render)
       → mounted() 钩子执行 ✅
 ```
 
@@ -89,8 +89,8 @@ diff(oldVNode, newVNode, container)
       1. prevProps = this.props
       2. this.props = newProps
       3. newVNode = this.render()
-      4. diff(this.__vnode__, newVNode, this.__container__)  // 内置 diff
-      5. this.__vnode__ = newVNode
+      4. diff(this._render, newVNode, this._container)  // 内置 diff
+      5. this._render = newVNode
       6. this.updated(prevProps)  // 钩子执行 ✅
 
     → newVNode.__instance__ = instance
@@ -126,7 +126,7 @@ class Counter extends Fukict<{ initial: number }> {
 this.update(this.props)
   → 同样的 update() 逻辑
   → this.render()
-  → diff(this.__vnode__, newVNode, this.__container__)
+  → diff(this._render, newVNode, this._container)
   → this.updated(prevProps)
 ```
 
@@ -176,8 +176,8 @@ unmount(vnode)
            ref.current = null
          }
          this.refs.clear()
-      3. this.__vnode__ = null
-      4. this.__container__ = null
+      3. this._render = null
+      4. this._container = null
 ```
 
 **特点**：

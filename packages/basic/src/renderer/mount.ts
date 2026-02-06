@@ -73,9 +73,9 @@ function autoActivateClassComponentsInTree(
   vnode: VNode,
   _container: Element, // Not used, kept for signature compatibility
 ): void {
-  // Special handling for FunctionComponent: use __rendered__ instead of children
+  // Special handling for FunctionComponent: use __render__ instead of children
   if (vnode.__type__ === VNodeType.FunctionComponent) {
-    const rendered = vnode.__rendered__;
+    const rendered = vnode.__render__;
     if (rendered && typeof rendered === 'object' && '__type__' in rendered) {
       autoActivateClassComponentsInTree(rendered as VNode, _container);
     }
@@ -91,7 +91,7 @@ function autoActivateClassComponentsInTree(
         // If child is a ClassComponent, activate it and stop recursion
         if (childVNode.__type__ === VNodeType.ClassComponent) {
           const instance = childVNode.__instance__ as FukictComponent;
-          const placeholder = childVNode.__placeholder__;
+          const placeholder = childVNode.__node__;
 
           // Placeholder is already in DOM (from parent's createRealNode)
           // Use placeholder replacement mounting
@@ -138,7 +138,7 @@ function activateClassComponent(ctx: ClassComponentActivateContext): void {
  */
 function activateElement(ctx: ElementActivateContext): void {
   const { vnode, container, placeholder, onMounted } = ctx;
-  const dom = vnode.__dom__;
+  const dom = vnode.__node__;
   const actualContainer = container || placeholder?.parentNode;
 
   if (!actualContainer) return;
@@ -163,7 +163,7 @@ function activateElement(ctx: ElementActivateContext): void {
  */
 function activateFragment(ctx: FragmentActivateContext): void {
   const { vnode, container, placeholder, onMounted } = ctx;
-  const domArray = vnode.__dom__;
+  const domArray = vnode.__node__;
   const actualContainer = container || placeholder?.parentNode;
 
   if (!actualContainer) return;
@@ -195,7 +195,7 @@ function activateFunctionComponent(
   ctx: FunctionComponentActivateContext,
 ): void {
   const { vnode, container, placeholder, onMounted } = ctx;
-  const dom = vnode.__dom__;
+  const dom = vnode.__node__;
   const actualContainer = container || placeholder?.parentNode;
 
   if (!actualContainer) return;
@@ -224,8 +224,8 @@ function activateFunctionComponent(
 
   onMounted?.();
 
-  // Auto-activate all ClassComponents in __rendered__ tree
-  const rendered = vnode.__rendered__;
+  // Auto-activate all ClassComponents in __render__ tree
+  const rendered = vnode.__render__;
   if (rendered && typeof rendered === 'object' && '__type__' in rendered) {
     autoActivateClassComponentsInTree(
       rendered as VNode,
@@ -239,7 +239,7 @@ function activateFunctionComponent(
  */
 function activatePrimitive(ctx: PrimitiveActivateContext): void {
   const { vnode, container, placeholder, onMounted } = ctx;
-  const dom = vnode.__dom__;
+  const dom = vnode.__node__;
   const actualContainer = container || placeholder?.parentNode;
 
   if (!actualContainer) return;

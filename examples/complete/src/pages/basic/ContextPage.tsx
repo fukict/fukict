@@ -54,6 +54,8 @@ class ContextDemo extends Fukict {
       mode: this.theme,
       primaryColor: this.theme === 'dark' ? '#6b7280' : '#3b82f6',
     });
+
+    this.update();
   }
 
   render() {
@@ -65,7 +67,6 @@ class ContextDemo extends Fukict {
             on:click={() => {
               this.theme = 'light';
               this.updateContext();
-              this.update();
             }}
           >
             Light Mode
@@ -75,7 +76,6 @@ class ContextDemo extends Fukict {
             on:click={() => {
               this.theme = 'dark';
               this.updateContext();
-              this.update();
             }}
           >
             Dark Mode

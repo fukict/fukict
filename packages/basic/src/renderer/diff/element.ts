@@ -38,7 +38,7 @@ export function diffElement(
   }
 
   // Reuse DOM element
-  const element = oldElementVNode.__dom__ as Element;
+  const element = oldElementVNode.__node__ as Element;
   if (!element) {
     // DOM doesn't exist, replace node
     replaceNode(oldElementVNode, newElementVNode, container);

@@ -13,7 +13,7 @@ class Counter extends Fukict<{ initial: number }> {
   constructor(props, children) {
     super(props, children);
     this.count = props.initial;
-    // Constructor calls render() to initialize __vnode__
+    // Constructor calls render() to initialize _render
   }
 
   increment() {
@@ -39,7 +39,7 @@ class Counter extends Fukict<{ initial: number }> {
 - **Built-in diff**: `update()` includes diff/patch logic
 - **User override**: Override `update()` for custom logic
 - **Detached mode**: `fukict:detach` skips renderer updates
-- **Instance managed**: `__vnode__` and DOM handled internally
+- **Instance managed**: `_render` and DOM handled internally
 
 ### Detached Rendering
 
@@ -95,8 +95,8 @@ const Greeting = defineFukict(({ name }) => (
 - Pure function, no side effects
 - Cannot self-update (parent-only)
 - Shallow props comparison
-- Result saved to `__rendered__`
-- `__dom__` follows from `__rendered__.__dom__`
+- Result saved to `__render__`
+- `__node__` follows from `__render__.__node__`
 
 ## Comparison
 

@@ -80,13 +80,13 @@ export abstract class Fukict<
    * Unique component instance ID (for debugging)
    * @internal
    */
-  readonly __id__: number;
+  readonly $id: number;
 
   /**
    * Component name (for debugging)
    * @internal
    */
-  readonly __name__: string;
+  readonly $name: string;
 
   /**
    * Component props (readonly)
@@ -116,53 +116,42 @@ export abstract class Fukict<
    * Current rendered VNode (component's internal render result)
    * @internal
    */
-  __vnode__: VNode | null;
+  _render: VNode | null;
 
   /**
-   * Wrapper VNode (ClassComponentVNode that wraps this instance in parent's tree)
-   * Used for context traversal - child can access parent's context via __wrapper__
+   * Parent component instance
+   * Used for context traversal - child can access parent's context via _parent
    * @internal
    */
-  __wrapper__: VNode | null;
+  _parent: Fukict | null;
 
   /**
    * Parent DOM container
    * @internal
    */
-  __container__: Element | null;
+  _container: Element | null;
 
   /**
-   * Component placeholder (in container mode)
+   * Lifecycle phase (prevents re-entrant calls during lifecycle)
    * @internal
    */
-  __placeholder__: Comment | null;
-
-  /**
-   * Lifecycle execution flags (prevent re-entrant calls during lifecycle)
-   * @internal
-   */
-  __inUpdating__: boolean;
-  __inMounting__: boolean;
-  __inUnmounting__: boolean;
+  _phase: 'idle' | 'mounting' | 'updating' | 'unmounting';
 
   /**
    * Constructor
    */
   constructor(props: FukictComponentProps<P>) {
-    this.__id__ = ++componentIdCounter;
-    this.__name__ = this.constructor.name;
+    this.$id = ++componentIdCounter;
+    this.$name = this.constructor.name;
     this.props = props;
     this.$slots = {} as S;
 
     // Initialize instance fields (avoid field initializers for better memory efficiency)
     this.$refs = {};
-    this.__vnode__ = null;
-    this.__wrapper__ = null;
-    this.__container__ = null;
-    this.__placeholder__ = null;
-    this.__inUpdating__ = false;
-    this.__inMounting__ = false;
-    this.__inUnmounting__ = false;
+    this._render = null;
+    this._parent = null;
+    this._container = null;
+    this._phase = 'idle';
 
     // Note: Do NOT call render() here!
     // render() will be called in mount() after subclass constructor completes
@@ -199,21 +188,21 @@ export abstract class Fukict<
    * ```
    */
   protected provideContext<T>(key: string | symbol, value: T): void {
-    if (!this.__vnode__) {
+    if (!this._render) {
       console.warn(
-        `[Fukict] Cannot provide context in component "${this.__name__}": __vnode__ is null. ` +
+        `[Fukict] Cannot provide context in component "${this.$name}": _render is null. ` +
           `Make sure to call provideContext() after component is mounted.`,
       );
       return;
     }
 
-    if (!this.__vnode__.__context__) {
-      this.__vnode__.__context__ = {
-        __parent__: getParentContext(this.__vnode__),
+    if (!this._render.__context__) {
+      this._render.__context__ = {
+        __parent__: getParentContext(this._render),
       };
     }
 
-    this.__vnode__.__context__[key] = createImmutableProxy(value);
+    this._render.__context__[key] = createImmutableProxy(value);
   }
 
   /**
@@ -223,8 +212,8 @@ export abstract class Fukict<
    * if context not found.
    *
    * Search order:
-   * 1. Current component's __vnode__.__context__ (if component provided its own context)
-   * 2. Parent component's context (via __wrapper__.__parentInstance__)
+   * 1. Current component's _render.__context__ (if component provided its own context)
+   * 2. Parent component's context (via _parent)
    *
    * @param key - Context key (Symbol or string)
    * @param defaultValue - Default value if context not found
@@ -250,8 +239,8 @@ export abstract class Fukict<
     defaultValue?: T,
   ): T | undefined {
     // First, check if this component has its own context
-    if (this.__vnode__ && this.__vnode__.__context__) {
-      let currentContext: ContextData | undefined = this.__vnode__.__context__;
+    if (this._render && this._render.__context__) {
+      let currentContext: ContextData | undefined = this._render.__context__;
 
       // Traverse up the chain starting from current component
       while (currentContext) {
@@ -263,14 +252,8 @@ export abstract class Fukict<
     }
 
     // If not found in own context chain, look in parent component
-    if (this.__wrapper__) {
-      const parentInstance = (
-        this.__wrapper__ as VNode & { __parentInstance__?: Fukict }
-      ).__parentInstance__;
-      if (parentInstance) {
-        // Recursively search in parent
-        return parentInstance.getContext(key, defaultValue);
-      }
+    if (this._parent) {
+      return this._parent.getContext(key, defaultValue);
     }
 
     return defaultValue;
@@ -287,16 +270,16 @@ export abstract class Fukict<
    */
   update(newProps?: FukictComponentProps<P>): void {
     // Prevent re-entrant update during lifecycle hooks
-    if (this.__inUpdating__ || this.__inMounting__ || this.__inUnmounting__) {
+    if (this._phase !== 'idle') {
       console.warn(
-        `[Fukict] Component "${this.__name__}" tried to update during lifecycle execution. ` +
+        `[Fukict] Component "${this.$name}" tried to update during lifecycle execution (phase: ${this._phase}). ` +
           `This is not allowed and the update was ignored. ` +
           `Do not call update() or trigger parent updates in mounted/updated/beforeUnmount hooks.`,
       );
       return;
     }
 
-    this.__inUpdating__ = true;
+    this._phase = 'updating';
 
     const prevProps = this.props;
 
@@ -315,22 +298,22 @@ export abstract class Fukict<
         : rawVNode;
 
     // Preserve context from old VNode to new VNode
-    if (this.__vnode__?.__context__) {
-      newVNode.__context__ = this.__vnode__.__context__;
+    if (this._render?.__context__) {
+      newVNode.__context__ = this._render.__context__;
     }
 
     // Diff and patch (let diff handle all cases including PrimitiveVNode)
-    if (this.__vnode__ && this.__container__) {
-      diff(this.__vnode__, newVNode, this.__container__);
+    if (this._render && this._container) {
+      diff(this._render, newVNode, this._container);
     }
 
-    this.__vnode__ = newVNode;
+    this._render = newVNode;
 
     // Call lifecycle hook (protected from re-entry)
     // eslint-disable-next-line @typescript-eslint/no-floating-promises -- async lifecycle hooks are intentionally not awaited
     this.updated?.(prevProps);
 
-    this.__inUpdating__ = false;
+    this._phase = 'idle';
   }
 
   /**
@@ -364,29 +347,28 @@ export abstract class Fukict<
    * @sealed
    */
   mount(container: Element, placeholder?: Comment): void {
-    this.__placeholder__ = placeholder || null;
-    this.__container__ = placeholder?.parentElement || container;
-    this.__inMounting__ = true;
+    this._container = placeholder?.parentElement || container;
+    this._phase = 'mounting';
 
     // First render (if not already rendered)
-    if (!this.__vnode__) {
+    if (!this._render) {
       const rawVNode = this.render();
       // Wrap null/undefined as PrimitiveVNode
-      this.__vnode__ =
+      this._render =
         rawVNode === null || rawVNode === undefined
           ? (createPrimitiveVNode(rawVNode) as VNode)
           : rawVNode;
     }
 
-    // Create real DOM for instance.__vnode__ (pass this for fukict:ref)
-    createRealNode(this.__vnode__, this);
+    // Create real DOM for instance._render (pass this for fukict:ref)
+    createRealNode(this._render, this);
 
-    // Recursively activate nested components in instance.__vnode__
+    // Recursively activate nested components in instance._render
     activate({
-      vnode: this.__vnode__,
+      vnode: this._render,
       ...(placeholder ? { placeholder } : { container }),
       onMounted: () => {
-        this.__inMounting__ = false;
+        this._phase = 'idle';
         // eslint-disable-next-line @typescript-eslint/no-floating-promises -- async lifecycle hooks are intentionally not awaited
         this.mounted?.();
       },
@@ -400,21 +382,21 @@ export abstract class Fukict<
    * @sealed
    */
   unmount(): void {
-    this.__inUnmounting__ = true;
+    this._phase = 'unmounting';
 
     // eslint-disable-next-line @typescript-eslint/no-floating-promises -- async lifecycle hooks are intentionally not awaited
     this.beforeUnmount?.();
 
-    removeNode(this.__vnode__, this.__container__ as Element);
+    removeNode(this._render, this._container as Element);
 
     // Clear all refs ($refs now store instances directly, not Ref wrappers)
     for (const key in this.$refs) {
       delete this.$refs[key];
     }
 
-    this.__vnode__ = null;
-    this.__container__ = null;
+    this._render = null;
+    this._container = null;
 
-    this.__inUnmounting__ = false;
+    this._phase = 'idle';
   }
 }

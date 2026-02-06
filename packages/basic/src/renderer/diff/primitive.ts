@@ -29,13 +29,13 @@ export function diffPrimitive(
 
   // Value unchanged - reuse DOM
   if (oldPrimitive.value === newPrimitive.value) {
-    newPrimitive.__dom__ = oldPrimitive.__dom__;
+    newPrimitive.__node__ = oldPrimitive.__node__;
     return;
   }
 
   const oldValue = oldPrimitive.value;
   const newValue = newPrimitive.value;
-  const oldDom = oldPrimitive.__dom__;
+  const oldDom = oldPrimitive.__node__;
 
   // Both are renderable strings/numbers - update text content
   if (

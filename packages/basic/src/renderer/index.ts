@@ -37,6 +37,8 @@ export function attach(
   // 2. Activate: mount DOM and trigger lifecycle
   activate({ vnode, container });
 
+  console.debug('[mine]', vnode);
+
   // Return unmount function
   return () => {
     removeNode(vnode, container);

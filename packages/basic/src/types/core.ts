@@ -66,65 +66,63 @@ interface VNodeBase {
 /**
  * Element VNode
  * - type: string (tag name like 'div', 'span')
- * - __dom__: Node (single DOM element)
+ * - __node__: Node (single DOM element)
  */
 export interface ElementVNode extends VNodeBase {
   __type__: VNodeType.Element;
   type: string;
-  __dom__?: Node | null;
+  __node__?: Node | null;
 }
 
 /**
  * Fragment VNode
  * - type: Fragment symbol
- * - __dom__: Node[] (all child nodes)
+ * - __node__: Node[] (all child nodes)
  */
 export interface FragmentVNode extends VNodeBase {
   __type__: VNodeType.Fragment;
   type: symbol;
-  __dom__?: Node[] | null;
+  __node__?: Node[] | null;
 }
 
 /**
  * Function Component VNode
  * - type: Function
- * - __rendered__: VNode (cached result of function call)
- * - __dom__: Node | Node[] (depends on rendered result)
+ * - __render__: VNode (cached result of function call)
+ * - __node__: Node | Node[] (depends on rendered result)
  */
 export interface FunctionComponentVNode extends VNodeBase {
   __type__: VNodeType.FunctionComponent;
   type: Function;
-  __rendered__?: VNode;
-  __dom__?: Node | Node[] | null;
+  __render__?: VNode;
+  __node__?: Node | Node[] | null;
 }
 
 /**
  * Class Component VNode
  * - type: Function (class constructor)
  * - __instance__: FukictInstance (component instance)
- * - __placeholder__: Comment node as placeholder for insertion position
- * - __dom__: ❌ NOT USED (managed by instance)
+ * - __node__: Comment node as placeholder for insertion position
  */
 export interface ClassComponentVNode extends VNodeBase {
   __type__: VNodeType.ClassComponent;
   type: Function;
   __instance__?: any; // FukictInstance
-  __placeholder__?: Comment; // Comment node placeholder
-  // Note: __dom__ is intentionally omitted for class components
+  __node__?: Comment; // Comment node placeholder
 }
 
 /**
  * Primitive VNode
  * - type: 'primitive'
  * - value: string | number | boolean | null | undefined
- * - __dom__: Text | Comment | null
+ * - __node__: Text | Comment | null
  * - Wraps primitive values to maintain stable VNode tree structure
  */
 export interface PrimitiveVNode extends VNodeBase {
   __type__: VNodeType.Primitive;
   type: 'primitive';
   value: PrimitiveValue;
-  __dom__?: Text | Comment | null;
+  __node__?: Text | Comment | null;
 
   // PrimitiveVNode doesn't use props and children
   props: null;
@@ -139,13 +137,13 @@ export interface PrimitiveVNode extends VNodeBase {
  * ```typescript
  * if (vnode.__type__ === VNodeType.Element) {
  *   // vnode is ElementVNode
- *   const element: Node = vnode.__dom__;
+ *   const element: Node = vnode.__node__;
  * } else if (vnode.__type__ === VNodeType.Fragment) {
  *   // vnode is FragmentVNode
- *   const nodes: Node[] = vnode.__dom__;
+ *   const nodes: Node[] = vnode.__node__;
  * } else if (vnode.__type__ === VNodeType.FunctionComponent) {
  *   // vnode is FunctionComponentVNode
- *   const rendered = vnode.__rendered__;
+ *   const rendered = vnode.__render__;
  * } else if (vnode.__type__ === VNodeType.ClassComponent) {
  *   // vnode is ClassComponentVNode
  *   const instance = vnode.__instance__;

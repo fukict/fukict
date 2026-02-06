@@ -8,11 +8,10 @@ import type { ContextData } from '../types/context.js';
 import type { ClassComponentVNode, VNode } from '../types/core.js';
 
 /**
- * Internal component instance with wrapper and parent
+ * Internal component instance with parent reference
  */
 interface ComponentInstanceInternal extends FukictComponent {
-  __wrapper__?: VNode;
-  __parentInstance__?: ComponentInstanceInternal;
+  _parent?: ComponentInstanceInternal | null;
 }
 
 /**
@@ -64,10 +63,9 @@ export function createImmutableProxy<T>(value: T): T {
 /**
  * Get parent context from VNode
  *
- * Traverses up the wrapper VNode tree to find nearest parent component with context.
- * The wrapper VNode is the ClassComponentVNode that wraps a component instance.
+ * Traverses up the parent instance chain to find nearest parent component with context.
  *
- * @param vnode - Current VNode (unused, we traverse via __wrapper__ on instance)
+ * @param vnode - Current VNode (used to get instance, then traverse via _parent)
  * @returns Parent context data or undefined
  * @internal
  */
@@ -81,30 +79,10 @@ export function getParentContext(vnode: VNode): ContextData | undefined {
     return undefined;
   }
 
-  // Get wrapper VNode (the ClassComponentVNode that wraps this instance)
-  const wrapper = instance.__wrapper__;
-  if (!wrapper || !wrapper.props) {
-    return undefined;
-  }
-
-  // Look for parent context by traversing up the VNode tree
-  // We need to find the parent component that rendered this wrapper VNode
-  // This requires walking through the children arrays to find parent relationship
-
-  // For now, implement a simpler approach:
-  // Look for context in parent by checking if wrapper has __parentInstance__
-  // This will be set during rendering
-
-  // Alternative: Search through all active component instances
-  // But this violates the "no global state" principle
-
-  // The correct approach: During render, when parent creates child VNode,
-  // we should store parent instance reference on the child's wrapper VNode
-  // Let's add __parentInstance__ field during createRealNode
-
-  const parentInstance = instance.__parentInstance__;
-  if (parentInstance && parentInstance.__vnode__) {
-    return parentInstance.__vnode__.__context__;
+  // Traverse via _parent (direct parent instance reference)
+  const parentInstance = instance._parent;
+  if (parentInstance && parentInstance._render) {
+    return parentInstance._render.__context__;
   }
 
   return undefined;

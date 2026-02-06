@@ -25,12 +25,12 @@ export type VNode =
 
 ## Field Usage
 
-| VNode Type         | `__type__` | `type`     | `__dom__`        | `__rendered__` | `__instance__` | `__context__` |
-| ------------------ | ---------- | ---------- | ---------------- | -------------- | -------------- | ------------- |
-| Element            | `element`  | `string`   | `Node`           | -              | -              | ✅ Optional   |
-| Fragment           | `fragment` | `symbol`   | `Node[]`         | -              | -              | ✅ Optional   |
-| Function Component | `function` | `Function` | `Node \| Node[]` | `VNode`        | -              | ✅ Optional   |
-| Class Component    | `class`    | `Function` | -                | -              | `instance`     | ✅ Optional   |
+| VNode Type         | `__type__` | `type`     | `__node__`       | `__render__` | `__instance__` | `__context__` |
+| ------------------ | ---------- | ---------- | ---------------- | ------------ | -------------- | ------------- |
+| Element            | `element`  | `string`   | `Node`           | -            | -              | ✅ Optional   |
+| Fragment           | `fragment` | `symbol`   | `Node[]`         | -            | -              | ✅ Optional   |
+| Function Component | `function` | `Function` | `Node \| Node[]` | `VNode`      | -              | ✅ Optional   |
+| Class Component    | `class`    | `Function` | `Comment`        | -            | `instance`     | ✅ Optional   |
 
 **Note**: `__context__` field (added in v3.1) stores context chain for data passing. See [Context System](./context-system.md).
 
@@ -68,13 +68,13 @@ function processVNode(vnode: VNode) {
   switch (vnode.__type__) {
     case VNodeType.Element:
       // TypeScript knows: vnode is ElementVNode
-      const element: Node = vnode.__dom__!;
+      const element: Node = vnode.__node__!;
       break;
 
     case VNodeType.ClassComponent:
       // TypeScript knows: vnode is ClassComponentVNode
       const instance = vnode.__instance__;
-      // vnode.__dom__ // ❌ Compile error
+      // vnode.__node__ // ✅ Comment placeholder
       break;
   }
 }

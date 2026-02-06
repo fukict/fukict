@@ -80,7 +80,7 @@ class MyComponent extends Fukict<{ userId: string }> {
 //    → render() called (initial VNode)
 
 // 2. instance.mount(container)
-//    → __container__ set
+//    → _container set
 //    → mounted() called ✅
 ```
 
@@ -117,8 +117,8 @@ class MyComponent extends Fukict<{ userId: string }> {
 // 1. instance.unmount()
 //    → beforeUnmount() called ✅
 //    → refs cleaned up
-//    → __vnode__ = null
-//    → __container__ = null
+//    → _render = null
+//    → _container = null
 ```
 
 ## Refs Management

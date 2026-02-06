@@ -15,25 +15,17 @@ VNode (联合类型)
 
 ## 2. 各类型 VNode 属性对照
 
-| 属性              | Element     | Fragment     | Function       | Class      | Primitive       |
-| ----------------- | ----------- | ------------ | -------------- | ---------- | --------------- |
-| `__type__`        | `'element'` | `'fragment'` | `'function'`   | `'class'`  | `'primitive'`   |
-| `type`            | `string`    | `Symbol`     | `Function`     | `Function` | `'primitive'`   |
-| `props`           | ✅          | ✅           | ✅             | ✅         | `null`          |
-| `children`        | ✅          | ✅           | ✅             | ✅\*       | `[]`            |
-| `__dom__`         | `Node`      | `Node[]`     | `Node\|Node[]` | ❌         | `Text\|Comment` |
-| `__rendered__`    | ❌          | ❌           | `VNode`        | ❌         | ❌              |
-| `__instance__`    | ❌          | ❌           | ❌             | `Fukict`   | ❌              |
-| `__placeholder__` | ❌          | ❌           | ❌             | `Comment`  | ❌              |
+| 属性           | Element     | Fragment     | Function       | Class      | Primitive       |
+| -------------- | ----------- | ------------ | -------------- | ---------- | --------------- |
+| `__type__`     | `'element'` | `'fragment'` | `'function'`   | `'class'`  | `'primitive'`   |
+| `type`         | `string`    | `Symbol`     | `Function`     | `Function` | `'primitive'`   |
+| `props`        | ✅          | ✅           | ✅             | ✅         | `null`          |
+| `children`     | ✅          | ✅           | ✅             | ✅\*       | `[]`            |
+| `__node__`     | `Node`      | `Node[]`     | `Node\|Node[]` | `Comment`  | `Text\|Comment` |
+| `__render__`   | ❌          | ❌           | `VNode`        | ❌         | ❌              |
+| `__instance__` | ❌          | ❌           | ❌             | `Fukict`   | ❌              |
 
 > \* ClassComponent 的 `children` 会被提取为 `$slots`，不直接渲染
-
-### 未来优化方向
-
-见 [fukict-class-refactor.md](./fukict-class-refactor.md)：
-
-- `__dom__` + `__placeholder__` → 统一为 `__node__`
-- `__rendered__` → `__render__`
 
 ## 3. ClassComponentVNode 的双层结构
 
@@ -49,16 +41,17 @@ ClassComponentVNode (父组件树中的节点)
 │   ├── props                  │    │
 │   ├── $slots ◄───────────────┼────┘ (由 children 提取)
 │   ├── $refs                  │
-│   ├── __vnode__: VNode ◄─────┼────── render() 的结果（建议改名 _render）
-│   ├── __wrapper__ ◄──────────┼────── 指回 VNode（建议改名 _parent）
-│   └── __container__          │
-└── __placeholder__: Comment ──────── 位置标记（建议合并到 __node__）
+│   ├── _render: VNode ◄───────┼────── render() 的结果
+│   ├── _parent ◄──────────────┼────── 父组件实例
+│   ├── _container             │
+│   └── _phase                 │
+└── __node__: Comment ─────────────── 位置标记
 ```
 
 **关键理解**：
 
 - `vnode.children` → 传给组件的子元素（slots 来源）
-- `vnode.__instance__.__vnode__` → 组件 render() 返回的 DOM 结构
+- `vnode.__instance__._render` → 组件 render() 返回的 DOM 结构
 
 ## 4. 树遍历路径
 
@@ -66,16 +59,16 @@ ClassComponentVNode (父组件树中的节点)
 
 ```typescript
 function traverse(vnode, parent) {
-  // ClassComponent: 穿透到 instance.__vnode__
+  // ClassComponent: 穿透到 instance._render
   if (vnode.__type__ === 'class' && vnode.__instance__) {
     visit(vnode.__instance__, parent);
-    traverse(vnode.__instance__.__vnode__, vnode.__instance__);
+    traverse(vnode.__instance__._render, vnode.__instance__);
     return; // 不遍历 children (已变成 slots)
   }
 
-  // FunctionComponent: 穿透到 __rendered__
-  if (vnode.__type__ === 'function' && vnode.__rendered__) {
-    traverse(vnode.__rendered__, parent);
+  // FunctionComponent: 穿透到 __render__
+  if (vnode.__type__ === 'function' && vnode.__render__) {
+    traverse(vnode.__render__, parent);
     return;
   }
 
@@ -92,16 +85,16 @@ function traverse(vnode, parent) {
 
 ```typescript
 function findDOM(vnode) {
-  if (vnode.__dom__) return vnode.__dom__;
+  if (vnode.__node__) return vnode.__node__;
 
-  // ClassComponent: instance.__vnode__ → DOM
+  // ClassComponent: instance._render → DOM
   if (vnode.__type__ === 'class') {
-    return findDOM(vnode.__instance__.__vnode__);
+    return findDOM(vnode.__instance__._render);
   }
 
-  // FunctionComponent: __rendered__ → DOM
+  // FunctionComponent: __render__ → DOM
   if (vnode.__type__ === 'function') {
-    return findDOM(vnode.__rendered__);
+    return findDOM(vnode.__render__);
   }
 
   // 递归 children
@@ -129,10 +122,10 @@ VNode 树结构:
 
 App (ClassComponentVNode)
 └── __instance__
-    └── __vnode__: Layout (ClassComponentVNode)
+    └── _render: Layout (ClassComponentVNode)
         ├── children: [Sidebar, Content] → 变成 Layout.$slots.default
         └── __instance__
-            └── __vnode__: <div> (ElementVNode)
+            └── _render: <div> (ElementVNode)
                 └── children: [
                       ...,
                       Sidebar (ClassComponentVNode),

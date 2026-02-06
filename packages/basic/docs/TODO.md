@@ -13,8 +13,8 @@
 
 #### 1.2 组件实例标识系统
 
-- `Fukict` 类添加 `__id__`（自增唯一 ID）
-- `Fukict` 类添加 `__name__`（组件名称 = constructor.name）
+- `Fukict` 类添加 `$id`（自增唯一 ID）
+- `Fukict` 类添加 `$name`（组件名称 = constructor.name）
 - 全局计数器 `componentIdCounter` 管理 ID 分配
 
 #### 1.3 注释节点占位符方案
@@ -27,17 +27,17 @@
 // 创建阶段：返回注释节点占位符
 renderClassComponent(vnode) {
   const instance = new Component(props, children);
-  const placeholder = createComment(`fukict:${instance.__name__}#${instance.__id__}`);
-  vnode.__placeholder__ = placeholder;
-  createRealNode(instance.__vnode__);  // 创建真实 DOM 但不挂载
+  const placeholder = createComment(`fukict:${instance.$name}#${instance.$id}`);
+  vnode.__node__ = placeholder;
+  createRealNode(instance._render);  // 创建真实 DOM 但不挂载
   return placeholder;  // 父节点插入占位符
 }
 
 // 激活阶段：替换占位符为真实 DOM
 activate(ClassComponent) {
-  const realDOM = instance.__vnode__.__dom__;
+  const realDOM = instance._render.__node__;
   placeholder.parentNode.replaceChild(realDOM, placeholder);
-  activate(instance.__vnode__, container);  // 递归
+  activate(instance._render, container);  // 递归
   instance.mount(container);  // 触发 mounted()
 }
 ```
@@ -50,7 +50,7 @@ activate(ClassComponent) {
 
 #### 1.4 `activate` 函数重构
 
-- 不再接收 `node` 参数，从 `vnode.__dom__` 或 `__placeholder__` 获取
+- 不再接收 `node` 参数，从 `vnode.__node__` 获取
 - 每种 VNode 类型：先挂载 DOM，再递归 activate children
 - Class Component：替换占位符 → 递归 activate → 触发 mounted()
 - 挂载瞬间触发钩子（保持浏览器原生性）
@@ -59,7 +59,7 @@ activate(ClassComponent) {
 
 ```typescript
 interface ClassComponentVNode {
-  __placeholder__?: Comment; // 注释节点占位符
+  __node__?: Comment; // 注释节点占位符
 }
 ```
 
@@ -139,7 +139,7 @@ function detectVNodeType(type) {
 
 - ✅ `diff` - 主入口函数，处理类型检查和分发
 - ✅ `diffElement` - 复用 DOM，patch props，递归 diff children
-- ✅ `diffFragment` - diff children 数组，更新 `__dom__`
+- ✅ `diffFragment` - diff children 数组，更新 `__node__`
 - ✅ `diffFunctionComponent` - 浅比较 props，re-call function
 - ✅ `diffClassComponent` - 调用 `instance.update(newProps)`，支持 detached 模式
 - ✅ `diffChildren` - 简化的 children diff（无 key 优化）
@@ -161,7 +161,7 @@ function detectVNodeType(type) {
 **完成内容**：
 
 - ✅ 导入 `diff` 函数
-- ✅ 调用 `diff(this.__vnode__, newVNode, this.__container__)`
+- ✅ 调用 `diff(this._render, newVNode, this._container)`
 - ✅ 内置 diff 机制正常工作
 
 ### ✅ 4. 实现 Detached 逻辑（已完成）
@@ -242,7 +242,7 @@ if (newVNode.props && newVNode.props['fukict:detach']) {
 ### ✅ Class Component 渲染和更新机制
 
 - 注释节点占位符方案
-- 组件实例标识系统（**id**、**name**）
+- 组件实例标识系统（`$id`、`$name`）
 - activate 函数（挂载时触发钩子）
 - diff 函数（4 种 VNode 类型的 diff 策略）
 - Fukict.update 内置 diff

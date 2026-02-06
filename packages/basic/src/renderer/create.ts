@@ -256,11 +256,11 @@ function renderClassComponent(vnode: VNode, componentInstance?: Fukict): Node {
 
   // 3. Create comment placeholder with instance ID and name
   const placeholder = dom.createComment(
-    `fukict:${instance.__name__}#${instance.__id__}`,
+    `fukict:${instance.$name}#${instance.$id}`,
   );
 
   // 4. Save placeholder to vnode
-  classVNode.__placeholder__ = placeholder;
+  classVNode.__node__ = placeholder;
 
   return placeholder;
 }

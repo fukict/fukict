@@ -43,7 +43,7 @@ function diffElement(
     return;
   }
 
-  const element = oldVNode.__dom__!;
+  const element = oldVNode.__node__!;
 
   // Patch props and events
   patchProps(element, oldVNode.props, newVNode.props);
@@ -52,7 +52,7 @@ function diffElement(
   diffChildren(oldVNode.children, newVNode.children, element);
 
   // Reuse DOM reference
-  newVNode.__dom__ = element;
+  newVNode.__node__ = element;
 }
 ```
 
@@ -70,21 +70,21 @@ function diffFragment(
   newVNode: FragmentVNode,
   parent: Element,
 ) {
-  const oldNodes = oldVNode.__dom__ || [];
+  const oldNodes = oldVNode.__node__ || [];
   const anchor = oldNodes[0] || null;
 
   // Diff children array
   diffChildren(oldVNode.children, newVNode.children, parent, anchor);
 
   // Collect new DOM nodes from children
-  newVNode.__dom__ = collectDomNodes(newVNode.children);
+  newVNode.__node__ = collectDomNodes(newVNode.children);
 }
 ```
 
 **Strategy**:
 
 - Diff children array
-- Update `__dom__` array with new nodes
+- Update `__node__` array with new nodes
 - No wrapper element to patch
 
 ## Function Component Diff
@@ -98,23 +98,23 @@ function diffFunctionComponent(
   // Shallow compare props (optimization)
   if (shallowEqual(oldVNode.props, newVNode.props)) {
     // Skip re-render
-    newVNode.__rendered__ = oldVNode.__rendered__;
-    newVNode.__dom__ = oldVNode.__dom__;
+    newVNode.__render__ = oldVNode.__render__;
+    newVNode.__node__ = oldVNode.__node__;
     return;
   }
 
   // Re-call function
   const newRendered = newVNode.type(newVNode.props);
 
-  if (oldVNode.__rendered__ && newRendered) {
+  if (oldVNode.__render__ && newRendered) {
     // Diff rendered results
-    diff(oldVNode.__rendered__, newRendered, parent);
+    diff(oldVNode.__render__, newRendered, parent);
   } else {
     replaceNode(oldVNode, newVNode);
   }
 
-  newVNode.__rendered__ = newRendered;
-  newVNode.__dom__ = newRendered?.__dom__;
+  newVNode.__render__ = newRendered;
+  newVNode.__node__ = newRendered?.__node__;
 }
 ```
 
@@ -122,8 +122,8 @@ function diffFunctionComponent(
 
 - Shallow compare props first
 - Re-call function if props changed
-- Diff old vs new `__rendered__`
-- `__dom__` follows from `__rendered__`
+- Diff old vs new `__render__`
+- `__node__` follows from `__render__`
 
 ## Class Component Diff
 
@@ -171,11 +171,11 @@ class Fukict {
     const newVNode = this.render();
 
     // Built-in diff
-    if (this.__vnode__ && this.__container__) {
-      diff(this.__vnode__, newVNode, this.__container__);
+    if (this._render && this._container) {
+      diff(this._render, newVNode, this._container);
     }
 
-    this.__vnode__ = newVNode;
+    this._render = newVNode;
 
     // Lifecycle hook
     if (this.updated) {
