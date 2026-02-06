@@ -12,6 +12,7 @@ interface CounterState {
 }
 
 export const counterStore = defineStore({
+  scope: 'counter',
   state: {
     count: 0,
     step: 1,

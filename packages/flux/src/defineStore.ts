@@ -1,3 +1,5 @@
+import { registerDevContext } from '@fukict/basic';
+
 import { Flux } from './Flux';
 import type {
   ActionContext,
@@ -9,6 +11,9 @@ import type {
   SyncActions,
   Unsubscribe,
 } from './types';
+
+/** Module-level store registry for dev mode */
+const devStores: Array<{ scope: string; store: Record<string, unknown> }> = [];
 
 /**
  * 创建状态管理 Store
@@ -113,6 +118,80 @@ export function defineStore<
         await asyncAction(ctx, ...args);
       };
     }
+  }
+
+  // Dev mode: track store registration, actions, and state changes
+  if (process.env.NODE_ENV !== 'production' && typeof window !== 'undefined') {
+    devStores.push({
+      scope: config.scope,
+      store: {
+        state: config.state,
+        actions: wrappedActions,
+        asyncActions: wrappedAsyncActions,
+      },
+    });
+    registerDevContext('stores', devStores);
+
+    const storeId = config.scope;
+
+    // Wrap sync actions for tracking
+    const syncActions = wrappedActions as Record<
+      string,
+      (...a: unknown[]) => unknown
+    >;
+    for (const key of Object.keys(syncActions)) {
+      const original = syncActions[key];
+      syncActions[key] = (...args: unknown[]) => {
+        window.dispatchEvent(
+          new CustomEvent('fukict:store:action', {
+            detail: { storeId, actionName: key, args },
+          }),
+        );
+        return original(...args);
+      };
+    }
+
+    // Wrap async actions for tracking
+    const asyncActions = wrappedAsyncActions as Record<
+      string,
+      (...a: unknown[]) => Promise<unknown>
+    >;
+    for (const key of Object.keys(asyncActions)) {
+      const original = asyncActions[key];
+      asyncActions[key] = async (...args: unknown[]) => {
+        window.dispatchEvent(
+          new CustomEvent('fukict:store:action', {
+            detail: { storeId, actionName: key, args },
+          }),
+        );
+        return original(...args);
+      };
+    }
+
+    // Track state changes
+    let prevState = flux.getState();
+    flux.subscribe((newState: T) => {
+      window.dispatchEvent(
+        new CustomEvent('fukict:store:state', {
+          detail: { storeId, prevState, nextState: newState },
+        }),
+      );
+      prevState = newState;
+    });
+
+    // Dispatch registration event (after wrapping actions)
+    window.dispatchEvent(
+      new CustomEvent('fukict:store', {
+        detail: {
+          scope: config.scope,
+          store: {
+            state: config.state,
+            actions: wrappedActions,
+            asyncActions: wrappedAsyncActions,
+          },
+        },
+      }),
+    );
   }
 
   // 创建 store 对象

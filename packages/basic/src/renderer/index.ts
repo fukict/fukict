@@ -3,6 +3,7 @@
  *
  * Main rendering API
  */
+import { getDevInfo } from '../dev.js';
 import * as dom from '../dom/index.js';
 import type { VNode, VNodeChild } from '../types/index.js';
 import { createRealNode } from './create.js';
@@ -37,11 +38,33 @@ export function attach(
   // 2. Activate: mount DOM and trigger lifecycle
   activate({ vnode, container });
 
-  console.debug('[mine]', vnode);
+  // Dev mode: expose runtime info and notify debugging tools
+  if (process.env.NODE_ENV !== 'production' && typeof window !== 'undefined') {
+    const devInfo = getDevInfo();
+    if (devInfo) {
+      devInfo.roots.push({ vnode, container });
+      window.dispatchEvent(
+        new CustomEvent('fukict:attach', { detail: { vnode, container } }),
+      );
+    }
+  }
 
   // Return unmount function
   return () => {
     removeNode(vnode, container);
+
+    // Dev mode: remove root from debug info
+    if (process.env.NODE_ENV !== 'production') {
+      const devInfo = getDevInfo();
+      if (devInfo) {
+        devInfo.roots = devInfo.roots.filter(
+          r => r.vnode !== vnode || r.container !== container,
+        );
+        window.dispatchEvent(
+          new CustomEvent('fukict:detach', { detail: { vnode, container } }),
+        );
+      }
+    }
   };
 }
 

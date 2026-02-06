@@ -1,0 +1,30 @@
+{
+  "name": "fukict-devtools",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Developer tools for Fukict applications",
+  "type": "module",
+  "scripts": {
+    "build": "wxt build .",
+    "dev": "wxt .",
+    "postinstall": "wxt prepare",
+    "typecheck": "tsc --noEmit",
+    "zip": "wxt zip ."
+  },
+  "dependencies": {
+    "@fukict/basic": "workspace:*",
+    "@fukict/flux": "workspace:*",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.6.0"
+  },
+  "devDependencies": {
+    "@fukict/vite-plugin": "workspace:*",
+    "@tailwindcss/vite": "^4.1.0",
+    "@types/chrome": "^0.0.268",
+    "@types/node": "^22.10.5",
+    "tailwindcss": "^4.1.0",
+    "typescript": "^5.7.3",
+    "wxt": "^0.20.13"
+  }
+}

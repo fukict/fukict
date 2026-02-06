@@ -30,15 +30,13 @@ This example demonstrates the usage of `@fukict/flux` - a minimal state manageme
 ### State Management Pattern
 
 ```typescript
-// 1. Create flux store with initial state and actions
-const counterStore = createFlux({
+// 1. Create store with defineStore
+const counterStore = defineStore({
+  scope: 'counter',
   state: { count: 0 },
-  actions: (flux) => ({
-    increment() {
-      const state = flux.getState();
-      flux.setState({ count: state.count + 1 });
-    }
-  })
+  actions: {
+    increment: (state) => ({ count: state.count + 1 }),
+  },
 });
 
 // 2. Subscribe in component
@@ -56,8 +54,8 @@ class MyComponent extends Fukict {
 
 // 3. Use state and actions in render
 render() {
-  const state = counterStore.getState();
-  return <div>{state.count}</div>;
+  const { count } = counterStore.state;
+  return <div>{count}</div>;
 }
 ```
 
@@ -68,7 +66,7 @@ Based on Fukict's top-down update mechanism:
 1. **Top-level subscription**: Subscribe at the root/layout component level
 
    ```
-   App (subscribe to globalFlux) ✅
+   App (subscribe to globalStore) ✅
    ├── Header (read state, no subscription)
    └── Content (read state, no subscription)
    ```
@@ -77,9 +75,9 @@ Based on Fukict's top-down update mechanism:
 
    ```
    App
-   ├── CounterPanel (subscribe to counterFlux) ✅
-   ├── TodoPanel (subscribe to todoFlux) ✅
-   └── UserPanel (subscribe to userFlux) ✅
+   ├── CounterPanel (subscribe to counterStore) ✅
+   ├── TodoPanel (subscribe to todoStore) ✅
+   └── UserPanel (subscribe to userStore) ✅
    ```
 
 3. **Detached subscriptions**: Use `fukict:detach` for independent updates
@@ -92,12 +90,12 @@ Based on Fukict's top-down update mechanism:
 Flux uses Proxy to prevent direct state mutation:
 
 ```typescript
-const state = flux.getState();
+const state = store.state;
 state.count = 100; // ❌ Warning in dev mode
 // [Flux] Direct state mutation is not allowed. Please use setState() method.
 
 // ✅ Correct way
-flux.setState({ count: 100 });
+store.actions.setCount(100);
 ```
 
 ## Running the Example

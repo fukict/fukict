@@ -5,6 +5,8 @@ import tsParser from '@typescript-eslint/parser';
 import prettierConfig from 'eslint-config-prettier';
 import globals from 'globals';
 
+import wxtAutoImports from './apps/devtools/.wxt/eslint-auto-imports.mjs';
+
 export default [
   js.configs.recommended,
 
@@ -74,11 +76,31 @@ export default [
     },
   },
 
+  // Chrome Extension DevTools specific config
+  {
+    files: ['apps/devtools/**/*.ts', 'apps/devtools/**/*.tsx'],
+    languageOptions: {
+      globals: {
+        chrome: 'readonly',
+        ...wxtAutoImports.languageOptions.globals,
+      },
+    },
+    rules: {
+      // Chrome extension messages are often loosely typed
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+    },
+  },
+
   {
     ignores: [
       'node_modules/**',
       '**/dist/**',
       '**/build/**',
+      '**/.output/**',
       '*.min.js',
       'coverage/**',
       '**/*.d.ts',

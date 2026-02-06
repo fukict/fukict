@@ -25,6 +25,7 @@ interface UserState {
 }
 
 export const userStore = defineStore({
+  scope: 'user',
   state: {
     user: null,
     settings: {

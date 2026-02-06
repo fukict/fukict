@@ -88,22 +88,25 @@ App
 **优点**：灵活、直接、易理解
 **缺点**：需要手动管理 Flux 实例和 Actions 的关联
 
-### 工厂模式：createFlux（推荐）
+### 工厂模式：defineStore（推荐）
 
 **适用场景**：模块化应用、需要类型安全
 
 **设计思路**：
 
 - 使用工厂函数封装 Flux 创建过程
-- Actions 定义在配置对象中，自动绑定到 Flux 实例
-- 返回统一的接口对象，包含 flux、actions、快捷方法
+- 同步 Actions 定义为 `(state, ...args) => Partial<State>`
+- 异步 Actions 通过 `ctx.setState()` 更新状态
+- `scope` 必填，用于 DevTools 识别
+- 返回统一的 Store 接口
 
 **优点**：
 
 1. API 统一，使用方便
 2. 类型推导完整
-3. Actions 和 Flux 绑定清晰
+3. 同步/异步 Actions 分离清晰
 4. 支持模块化导出
+5. DevTools 集成
 
 **缺点**：增加一层抽象
 
@@ -484,7 +487,7 @@ Component (使用时自动提示)
 
 - Flux：Fukict 框架专用，与生命周期深度集成
 - Zustand：框架无关，React/Vue 通用
-- Flux：createFlux 工厂模式
+- Flux：defineStore 工厂模式
 - Zustand：create 函数 + hooks
 
 **适用场景**：
@@ -497,7 +500,7 @@ Component (使用时自动提示)
 ### 短期（v1.0）
 
 - 核心 Flux 类实现
-- createFlux 工厂函数
+- defineStore 工厂函数
 - 选择器订阅
 - 完整的 TypeScript 类型
 
@@ -546,7 +549,7 @@ Component (使用时自动提示)
 
 ### 为什么选择工厂函数而非类继承？
 
-**决策**：推荐 createFlux 工厂函数，而非 `class MyFlux extends Flux`
+**决策**：推荐 defineStore 工厂函数，而非 `class MyFlux extends Flux`
 
 **原因**：
 
@@ -570,5 +573,5 @@ Component (使用时自动提示)
 
 ```typescript
 // store/index.ts
-export const globalStore = createFlux({ ... });
+export const globalStore = defineStore({ scope: 'global', ... });
 ```

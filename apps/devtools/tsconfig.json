@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "jsx": "preserve",
+    "jsxImportSource": "@fukict/basic"
+  },
+  "exclude": [".output", ".wxt", "node_modules"],
+  "extends": "./.wxt/tsconfig.json",
+  "include": ["**/*", ".wxt/wxt.d.ts"]
+}

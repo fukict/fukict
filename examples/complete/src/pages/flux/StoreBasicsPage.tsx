@@ -14,6 +14,7 @@ interface CounterState {
 }
 
 const counterStore = defineStore({
+  scope: 'basics-counter',
   state: {
     count: 0,
   } as CounterState,
@@ -95,6 +96,7 @@ interface ProductsState {
 }
 
 const productsStore = defineStore({
+  scope: 'basics-products',
   state: {
     products: [
       { id: 1, name: 'Product A', price: 10 },

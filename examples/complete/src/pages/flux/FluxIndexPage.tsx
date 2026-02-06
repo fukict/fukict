@@ -1,5 +1,5 @@
 import { Fukict } from '@fukict/basic';
-import { createFlux } from '@fukict/flux';
+import { type ActionContext, defineStore } from '@fukict/flux';
 import { RouteComponent } from '@fukict/router';
 
 import { CodeBlock } from '../../components/CodeBlock';
@@ -14,68 +14,69 @@ interface CartItem {
   quantity: number;
 }
 
+interface CartState {
+  items: CartItem[];
+  loading: boolean;
+}
+
 // 创建购物车 Store
-const cartStore = createFlux({
+const cartStore = defineStore({
+  scope: 'cart',
+
   state: {
     items: [] as CartItem[],
     loading: false,
+  } as CartState,
+
+  actions: {
+    addItem(state: CartState, item: Omit<CartItem, 'quantity'>) {
+      const existingItem = state.items.find(i => i.id === item.id);
+
+      if (existingItem) {
+        return {
+          items: state.items.map(i =>
+            i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i,
+          ),
+        };
+      } else {
+        return {
+          items: [...state.items, { ...item, quantity: 1 }],
+        };
+      }
+    },
+
+    removeItem(state: CartState, id: number) {
+      return {
+        items: state.items.filter(item => item.id !== id),
+      };
+    },
+
+    updateQuantity(state: CartState, id: number, quantity: number) {
+      if (quantity <= 0) {
+        return {
+          items: state.items.filter(item => item.id !== id),
+        };
+      }
+      return {
+        items: state.items.map(item =>
+          item.id === id ? { ...item, quantity } : item,
+        ),
+      };
+    },
+
+    clearCart() {
+      return { items: [] };
+    },
   },
 
-  actions: flux => {
-    const actions = {
-      addItem(item: Omit<CartItem, 'quantity'>) {
-        const state = flux.getState();
-        const existingItem = state.items.find(i => i.id === item.id);
-
-        if (existingItem) {
-          // 增加数量
-          flux.setState({
-            items: state.items.map(i =>
-              i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i,
-            ),
-          });
-        } else {
-          // 添加新商品
-          flux.setState({
-            items: [...state.items, { ...item, quantity: 1 }],
-          });
-        }
-      },
-
-      removeItem(id: number) {
-        const state = flux.getState();
-        flux.setState({
-          items: state.items.filter(item => item.id !== id),
-        });
-      },
-
-      updateQuantity(id: number, quantity: number) {
-        const state = flux.getState();
-        if (quantity <= 0) {
-          actions.removeItem(id);
-        } else {
-          flux.setState({
-            items: state.items.map(item =>
-              item.id === id ? { ...item, quantity } : item,
-            ),
-          });
-        }
-      },
-
-      clearCart() {
-        flux.setState({ items: [] });
-      },
-
-      async checkout() {
-        flux.setState({ loading: true });
-        // 模拟异步操作
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        flux.setState({ items: [], loading: false });
-        alert('结账成功!');
-      },
-    };
-
-    return actions;
+  asyncActions: {
+    async checkout(ctx: ActionContext<CartState>) {
+      ctx.setState({ loading: true });
+      // 模拟异步操作
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      ctx.setState({ items: [], loading: false });
+      alert('结账成功!');
+    },
   },
 });
 
@@ -205,7 +206,7 @@ class ShoppingCart extends Fukict {
                 <p class="text-lg font-bold text-green-600">¥{total}</p>
               </div>
               <button
-                on:click={() => void cartStore.actions.checkout()}
+                on:click={() => void cartStore.asyncActions.checkout()}
                 disabled={loading}
                 class={`w-full rounded px-4 py-2 text-sm font-medium text-white ${
                   loading
@@ -235,14 +236,14 @@ export class FluxIndexPage extends RouteComponent {
           <div>
             <h3 class="mb-1 text-base font-medium text-gray-800">创建 Store</h3>
             <p class="text-sm leading-relaxed text-gray-600">
-              使用 createFlux 创建状态管理 Store,定义 state 和 actions
+              使用 defineStore 创建状态管理 Store,定义 state 和 actions
             </p>
           </div>
 
           <SplitView leftTitle="代码示例" rightTitle="说明">
             <CodeBlock
               fukict:slot="code"
-              code={`import { createFlux } from '@fukict/flux';
+              code={`import { defineStore } from '@fukict/flux';
 
 interface CartItem {
   id: number;
@@ -251,48 +252,46 @@ interface CartItem {
   quantity: number;
 }
 
-const cartStore = createFlux({
+const cartStore = defineStore({
+  scope: 'cart',
+
   state: {
     items: [] as CartItem[],
     loading: false,
   },
 
-  actions: (flux) => {
-    const actions = {
-      addItem(item: Omit<CartItem, 'quantity'>) {
-        const state = flux.getState();
-        const existing = state.items.find(i => i.id === item.id);
+  actions: {
+    addItem(state, item: Omit<CartItem, 'quantity'>) {
+      const existing = state.items.find(i => i.id === item.id);
 
-        if (existing) {
-          flux.setState({
-            items: state.items.map(i =>
-              i.id === item.id
-                ? { ...i, quantity: i.quantity + 1 }
-                : i
-            ),
-          });
-        } else {
-          flux.setState({
-            items: [...state.items, { ...item, quantity: 1 }],
-          });
-        }
-      },
+      if (existing) {
+        return {
+          items: state.items.map(i =>
+            i.id === item.id
+              ? { ...i, quantity: i.quantity + 1 }
+              : i
+          ),
+        };
+      } else {
+        return {
+          items: [...state.items, { ...item, quantity: 1 }],
+        };
+      }
+    },
 
-      removeItem(id: number) {
-        const state = flux.getState();
-        flux.setState({
-          items: state.items.filter(item => item.id !== id),
-        });
-      },
+    removeItem(state, id: number) {
+      return {
+        items: state.items.filter(item => item.id !== id),
+      };
+    },
+  },
 
-      async checkout() {
-        flux.setState({ loading: true });
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        flux.setState({ items: [], loading: false });
-      },
-    };
-
-    return actions;
+  asyncActions: {
+    async checkout(ctx) {
+      ctx.setState({ loading: true });
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      ctx.setState({ items: [], loading: false });
+    },
   },
 });`}
             />
@@ -305,23 +304,21 @@ const cartStore = createFlux({
                 <div class="rounded border border-green-200 bg-green-50 p-3">
                   <p class="mb-1 font-medium text-green-900">操作 (actions)</p>
                   <p class="text-xs text-green-700">
-                    定义修改状态的方法,可以是同步或异步
+                    定义修改状态的方法,同步 action 返回 Partial&lt;State&gt;
                   </p>
                 </div>
                 <div class="rounded border border-purple-200 bg-purple-50 p-3">
                   <p class="mb-1 font-medium text-purple-900">
-                    获取状态 (getState)
+                    异步操作 (asyncActions)
                   </p>
                   <p class="text-xs text-purple-700">
-                    使用 flux.getState() 读取当前状态
+                    通过 ctx.setState() 多次更新状态
                   </p>
                 </div>
                 <div class="rounded border border-orange-200 bg-orange-50 p-3">
-                  <p class="mb-1 font-medium text-orange-900">
-                    更新状态 (setState)
-                  </p>
+                  <p class="mb-1 font-medium text-orange-900">作用域 (scope)</p>
                   <p class="text-xs text-orange-700">
-                    使用 flux.setState() 更新状态并通知订阅者
+                    必填，用于 DevTools 识别和调试
                   </p>
                 </div>
               </div>
@@ -383,7 +380,7 @@ class ShoppingCart extends Fukict {
         ))}
         <p>总计: ¥{total}</p>
         <button
-          on:click={() => cartStore.actions.checkout()}
+          on:click={() => cartStore.asyncActions.checkout()}
           disabled={loading}
         >
           {loading ? '处理中...' : '结账'}
@@ -437,10 +434,10 @@ class ShoppingCart extends Fukict {
             <div class="rounded-lg border border-purple-200 bg-purple-50 p-4">
               <h4 class="mb-2 text-sm font-medium text-purple-900">异步操作</h4>
               <ul class="space-y-1 text-xs text-purple-700">
-                <li>• Actions 支持异步函数</li>
+                <li>• asyncActions 支持异步函数</li>
                 <li>• 可以包含 API 调用</li>
                 <li>• 使用 loading 状态跟踪进度</li>
-                <li>• 完成后更新状态</li>
+                <li>• 通过 ctx.setState() 多次更新</li>
               </ul>
             </div>
 
@@ -448,7 +445,7 @@ class ShoppingCart extends Fukict {
               <h4 class="mb-2 text-sm font-medium text-orange-900">最佳实践</h4>
               <ul class="space-y-1 text-xs text-orange-700">
                 <li>• 不要直接修改 state 对象</li>
-                <li>• 总是通过 setState 更新状态</li>
+                <li>• 总是通过 actions 更新状态</li>
                 <li>• Actions 中使用不可变更新模式</li>
                 <li>• 妥善管理订阅生命周期</li>
               </ul>

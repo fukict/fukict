@@ -15,6 +15,7 @@ interface SyncState {
 }
 
 const syncStore = defineStore({
+  scope: 'actions-sync',
   state: {
     count: 0,
     items: [],
@@ -130,6 +131,7 @@ interface AsyncState {
 }
 
 const asyncStore = defineStore({
+  scope: 'actions-async',
   state: {
     user: null,
     loading: false,
@@ -371,78 +373,6 @@ await store.asyncActions.logout();`}
             <DemoBox fukict:slot="demo">
               <AsyncDemo />
             </DemoBox>
-          </SplitView>
-        </div>
-
-        {/* API 对比 */}
-        <div class="space-y-4">
-          <div>
-            <h3 class="mb-1 text-base font-medium text-gray-800">
-              新旧 API 对比
-            </h3>
-            <p class="text-sm leading-relaxed text-gray-600">
-              defineStore 提供更简洁、更类型安全的 API
-            </p>
-          </div>
-
-          <SplitView
-            leftTitle="defineStore (推荐)"
-            rightTitle="createFlux (旧)"
-          >
-            <CodeBlock
-              fukict:slot="code"
-              code={`// ✅ 新 API: defineStore
-const store = defineStore({
-  state: { count: 0 },
-  actions: {
-    // 直接返回要更新的部分
-    increment: state => ({
-      count: state.count + 1
-    }),
-  },
-  asyncActions: {
-    // 通过 ctx 操作
-    async fetchData(ctx, id: string) {
-      ctx.setState({ loading: true });
-      const data = await fetch(id);
-      ctx.setState({ data, loading: false });
-    },
-  },
-});
-
-// 使用
-store.actions.increment();
-await store.asyncActions.fetchData('123');
-console.log(store.state.count);`}
-            />
-            <CodeBlock
-              fukict:slot="demo"
-              code={`// ❌ 旧 API: createFlux
-const store = createFlux({
-  state: { count: 0 },
-  actions: flux => ({
-    // 需要手动 getState 和 setState
-    increment() {
-      const state = flux.getState();
-      flux.setState({
-        count: state.count + 1
-      });
-    },
-
-    // 异步也是一样的写法
-    async fetchData(id: string) {
-      flux.setState({ loading: true });
-      const data = await fetch(id);
-      flux.setState({ data, loading: false });
-    },
-  }),
-});
-
-// 使用
-store.actions.increment();
-await store.actions.fetchData('123');
-console.log(store.getState().count);`}
-            />
           </SplitView>
         </div>
 

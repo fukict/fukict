@@ -1,3 +1,5 @@
+import { registerDevContext } from '@fukict/basic';
+
 import { type IHistory, createHistory } from './history';
 import { RouteMatcher } from './matcher';
 import type {
@@ -58,6 +60,11 @@ export class Router {
   private depth: number;
 
   /**
+   * 最近一次导航类型（用于 devtools 追踪）
+   */
+  private lastNavigationType: 'push' | 'replace' | 'pop' = 'pop';
+
+  /**
    * 配置选项
    */
   private options: RouterOptions;
@@ -105,6 +112,38 @@ export class Router {
     // 设置全局单例（仅顶层 Router）
     if (depth === 0) {
       Router.instance = this;
+
+      // Dev mode: expose router and dispatch event
+      if (
+        process.env.NODE_ENV !== 'production' &&
+        typeof window !== 'undefined'
+      ) {
+        const routerDevInfo = {
+          instance: this,
+          mode: options.mode || 'hash',
+          routes: options.routes,
+        };
+        registerDevContext('router', routerDevInfo);
+
+        window.dispatchEvent(
+          new CustomEvent('fukict:router', {
+            detail: {
+              router: this,
+              mode: options.mode || 'hash',
+              routes: options.routes,
+            },
+          }),
+        );
+
+        // Track route changes via afterEach hook
+        this.afterEach((to, from) => {
+          const type = this.lastNavigationType;
+          this.lastNavigationType = 'pop'; // reset: next untagged navigation is browser pop
+          window.dispatchEvent(
+            new CustomEvent('fukict:route', { detail: { from, to, type } }),
+          );
+        });
+      }
     }
   }
 
@@ -143,6 +182,15 @@ export class Router {
     // 清除全局单例
     if (Router.instance === this) {
       Router.instance = null;
+
+      // Dev mode: clear and notify
+      if (
+        process.env.NODE_ENV !== 'production' &&
+        typeof window !== 'undefined'
+      ) {
+        registerDevContext('router', null);
+        window.dispatchEvent(new CustomEvent('fukict:router:destroy'));
+      }
     }
   }
 
@@ -440,6 +488,7 @@ export class Router {
    * 导航到指定路径（添加历史记录）
    */
   push(location: string | Location): void {
+    this.lastNavigationType = 'push';
     const path = this.buildPath(location);
     this.history.push(path);
   }
@@ -448,6 +497,7 @@ export class Router {
    * 替换当前路由（不添加历史记录）
    */
   replace(location: string | Location): void {
+    this.lastNavigationType = 'replace';
     const path = this.buildPath(location);
     this.history.replace(path);
   }
@@ -456,6 +506,7 @@ export class Router {
    * 返回上一页
    */
   back(): void {
+    this.lastNavigationType = 'pop';
     this.history.back();
   }
 
@@ -463,6 +514,7 @@ export class Router {
    * 前进到下一页
    */
   forward(): void {
+    this.lastNavigationType = 'pop';
     this.history.forward();
   }
 
