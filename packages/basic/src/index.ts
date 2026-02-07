@@ -73,3 +73,6 @@ export {
 
 // DOM utilities (exported for widget package use)
 export * as dom from './dom/index.js';
+
+// Dev-mode utilities (for ecosystem packages)
+export { getDevInfo, registerDevContext } from './dev.js';

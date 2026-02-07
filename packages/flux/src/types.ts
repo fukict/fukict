@@ -13,67 +13,12 @@ export type FluxSelector<T, S> = (state: T) => S;
  */
 export type Unsubscribe = () => void;
 
-// ============================================================
-// Legacy createFlux types (保持向后兼容)
-// ============================================================
-
-/**
- * createFlux configuration type
- * @deprecated 推荐使用 defineStore
- */
-export interface CreateFluxConfig<T, A> {
-  /**
-   * Initial state
-   */
-  state: T;
-
-  /**
-   * Actions definition (optional)
-   */
-  actions?: (flux: FluxInstance<T>) => A;
-}
-
 /**
  * Flux instance interface (internal use)
  */
 export interface FluxInstance<T> {
   getState(): T;
-  setState(newState: Partial<T> | T): void;
-  subscribe(listener: FluxListener<T>): Unsubscribe;
-  subscribe<S>(
-    selector: FluxSelector<T, S>,
-    listener: FluxListener<S>,
-  ): Unsubscribe;
-}
-
-/**
- * createFlux return type
- * @deprecated 推荐使用 defineStore
- */
-export interface FluxStore<T, A> {
-  /**
-   * Flux instance
-   */
-  flux: FluxInstance<T>;
-
-  /**
-   * Actions object
-   */
-  actions: A;
-
-  /**
-   * Get current state (shortcut method)
-   */
-  getState(): T;
-
-  /**
-   * Update state (shortcut method)
-   */
-  setState(newState: Partial<T> | T): void;
-
-  /**
-   * Subscribe to state changes (shortcut method)
-   */
+  setState(partial: Partial<T>): void;
   subscribe(listener: FluxListener<T>): Unsubscribe;
   subscribe<S>(
     selector: FluxSelector<T, S>,
@@ -82,7 +27,7 @@ export interface FluxStore<T, A> {
 }
 
 // ============================================================
-// New defineStore types
+// defineStore types
 // ============================================================
 
 /**
@@ -142,6 +87,11 @@ export interface DefineStoreConfig<
   A extends SyncActions<T> = {},
   AA extends AsyncActions<T> = {},
 > {
+  /**
+   * Store scope (用于 DevTools 识别，必填)
+   */
+  scope: string;
+
   /**
    * 初始状态
    */

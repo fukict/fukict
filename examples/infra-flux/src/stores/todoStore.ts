@@ -20,6 +20,7 @@ interface TodoState {
 let nextId = 1;
 
 export const todoStore = defineStore({
+  scope: 'todo',
   state: {
     todos: [],
     filter: 'all',

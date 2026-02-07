@@ -55,7 +55,7 @@ export function diffFunctionComponent(
   }
 
   // Props changed - re-call function
-  // Merge children into props (like React)
+  // Merge children into props
   const propsWithChildren: Record<string, unknown> = {
     ...(newFuncVNode.props ?? {}),
     children:

@@ -48,3 +48,6 @@ export type {
 
 // JSX types (for TypeScript compiler)
 export type { JSX } from './jsx';
+
+// Development types
+export type { FukictDevInfo } from './dev';

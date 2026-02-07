@@ -4,12 +4,13 @@ Minimal state management library for Fukict framework with Flux pattern and reac
 
 ## Features
 
-- **Minimal API**: Simple `createFlux()` factory function
+- **Minimal API**: Simple `defineStore()` factory function
 - **Reactive Subscriptions**: Subscribe to state changes with automatic updates
 - **Selector Pattern**: Subscribe to derived/computed values
 - **Type-Safe**: Full TypeScript support with type inference
-- **Action Pattern**: Organized state mutations through actions
+- **Action Pattern**: Organized state mutations through sync and async actions
 - **Dev Mode Protection**: Prevents direct state mutation in development
+- **DevTools Integration**: Built-in support for Fukict DevTools via `scope`
 - **Zero Dependencies**: No external dependencies
 
 ## Installation
@@ -24,26 +25,19 @@ pnpm add @fukict/flux
 
 ```tsx
 import { Fukict } from '@fukict/basic';
-import { createFlux } from '@fukict/flux';
+import { defineStore } from '@fukict/flux';
 
-// Create flux store
-const counterFlux = createFlux({
+// Create store
+const counterStore = defineStore({
+  scope: 'counter',
   state: {
     count: 0,
   },
-  actions: flux => ({
-    increment() {
-      const state = flux.getState();
-      flux.setState({ count: state.count + 1 });
-    },
-    decrement() {
-      const state = flux.getState();
-      flux.setState({ count: state.count - 1 });
-    },
-    setCount(value: number) {
-      flux.setState({ count: value });
-    },
-  }),
+  actions: {
+    increment: state => ({ count: state.count + 1 }),
+    decrement: state => ({ count: state.count - 1 }),
+    setCount: (_state, value: number) => ({ count: value }),
+  },
 });
 
 // Use in component
@@ -52,7 +46,7 @@ class Counter extends Fukict {
 
   mounted() {
     // Subscribe to state changes
-    this.unsubscribe = counterFlux.subscribe(() => {
+    this.unsubscribe = counterStore.subscribe(() => {
       this.update(this.props);
     });
   }
@@ -63,14 +57,13 @@ class Counter extends Fukict {
   }
 
   render() {
-    const state = counterFlux.getState();
-    const actions = counterFlux.actions;
+    const { count } = counterStore.state;
 
     return (
       <div>
-        <p>Count: {state.count}</p>
-        <button on:click={actions.increment}>+</button>
-        <button on:click={actions.decrement}>-</button>
+        <p>Count: {count}</p>
+        <button on:click={() => counterStore.actions.increment()}>+</button>
+        <button on:click={() => counterStore.actions.decrement()}>-</button>
       </div>
     );
   }
@@ -79,40 +72,33 @@ class Counter extends Fukict {
 
 ## Core Concepts
 
-### Creating Flux Store
+### Creating a Store
 
 ```typescript
-import { createFlux } from '@fukict/flux';
+import { defineStore } from '@fukict/flux';
 
 interface TodoState {
   todos: Todo[];
   filter: 'all' | 'active' | 'completed';
 }
 
-const todoFlux = createFlux({
+const todoStore = defineStore({
+  scope: 'todo',
   state: {
     todos: [],
     filter: 'all',
   } as TodoState,
-  actions: flux => ({
-    addTodo(text: string) {
-      const state = flux.getState();
-      flux.setState({
-        todos: [...state.todos, { id: Date.now(), text, completed: false }],
-      });
-    },
-    toggleTodo(id: number) {
-      const state = flux.getState();
-      flux.setState({
-        todos: state.todos.map(todo =>
-          todo.id === id ? { ...todo, completed: !todo.completed } : todo,
-        ),
-      });
-    },
-    setFilter(filter: TodoState['filter']) {
-      flux.setState({ filter });
-    },
-  }),
+  actions: {
+    addTodo: (state, text: string) => ({
+      todos: [...state.todos, { id: Date.now(), text, completed: false }],
+    }),
+    toggleTodo: (state, id: number) => ({
+      todos: state.todos.map(todo =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo,
+      ),
+    }),
+    setFilter: (_state, filter: TodoState['filter']) => ({ filter }),
+  },
 });
 ```
 
@@ -124,7 +110,7 @@ class TodoList extends Fukict {
 
   mounted() {
     // Subscribe to all state changes
-    this.unsubscribe = todoFlux.subscribe(() => {
+    this.unsubscribe = todoStore.subscribe(() => {
       this.update(this.props);
     });
   }
@@ -134,7 +120,7 @@ class TodoList extends Fukict {
   }
 
   render() {
-    const { todos } = todoFlux.getState();
+    const { todos } = todoStore.state;
     return (
       <ul>
         {todos.map(todo => (
@@ -168,7 +154,7 @@ class FilteredTodoList extends Fukict {
 
   mounted() {
     // Subscribe to selector (only updates when selector result changes)
-    this.unsubscribe = todoFlux.subscribe(
+    this.unsubscribe = todoStore.subscribe(
       visibleTodosSelector,
       visibleTodos => {
         console.log('Visible todos changed:', visibleTodos);
@@ -182,7 +168,7 @@ class FilteredTodoList extends Fukict {
   }
 
   render() {
-    const visibleTodos = visibleTodosSelector(todoFlux.getState());
+    const visibleTodos = visibleTodosSelector(todoStore.getState());
     return (
       <ul>
         {visibleTodos.map(todo => (
@@ -197,30 +183,31 @@ class FilteredTodoList extends Fukict {
 ### Async Actions
 
 ```typescript
-const userFlux = createFlux({
+const userStore = defineStore({
+  scope: 'user',
   state: {
     user: null as User | null,
     loading: false,
     error: null as string | null,
   },
-  actions: flux => ({
-    async login(email: string, password: string) {
-      flux.setState({ loading: true, error: null });
+  asyncActions: {
+    async login(ctx, email: string, password: string) {
+      ctx.setState({ loading: true, error: null });
 
       try {
         const user = await api.login(email, password);
-        flux.setState({ user, loading: false });
+        ctx.setState({ user, loading: false });
       } catch (error) {
-        flux.setState({
+        ctx.setState({
           error: error.message,
           loading: false,
         });
       }
     },
-    logout() {
-      flux.setState({ user: null });
-    },
-  }),
+  },
+  actions: {
+    logout: () => ({ user: null }),
+  },
 });
 ```
 
@@ -236,7 +223,7 @@ class App extends Fukict {
 
   mounted() {
     // App subscribes, all children read state
-    this.unsubscribe = globalFlux.subscribe(() => {
+    this.unsubscribe = globalStore.subscribe(() => {
       this.update(this.props);
     });
   }
@@ -265,9 +252,9 @@ class Dashboard extends Fukict {
   render() {
     return (
       <div>
-        <CounterPanel /> {/* Subscribes to counterFlux */}
-        <TodoPanel /> {/* Subscribes to todoFlux */}
-        <UserPanel /> {/* Subscribes to userFlux */}
+        <CounterPanel /> {/* Subscribes to counterStore */}
+        <TodoPanel /> {/* Subscribes to todoStore */}
+        <UserPanel /> {/* Subscribes to userStore */}
       </div>
     );
   }
@@ -296,19 +283,17 @@ class Parent extends Fukict {
 In development mode, Flux prevents direct state mutation:
 
 ```typescript
-const flux = createFlux({
+const store = defineStore({
+  scope: 'example',
   state: { count: 0 },
-  actions: flux => ({
-    // ✅ Good: Use setState
-    increment() {
-      const state = flux.getState();
-      flux.setState({ count: state.count + 1 });
-    },
-  }),
+  actions: {
+    // ✅ Good: Return partial state
+    increment: state => ({ count: state.count + 1 }),
+  },
 });
 
 // ❌ Bad: Direct mutation (warning in dev mode)
-const state = flux.getState();
+const state = store.state;
 state.count++; // Warning: [Flux] Direct state mutation is not allowed
 ```
 
@@ -318,26 +303,22 @@ state.count++; // Warning: [Flux] Direct state mutation is not allowed
 
 ```typescript
 // User store
-const userFlux = createFlux({
+const userStore = defineStore({
+  scope: 'user',
   state: { user: null },
-  actions: (flux) => ({
-    setUser(user: User) {
-      flux.setState({ user });
-    },
-  }),
+  actions: {
+    setUser: (_state, user: User) => ({ user }),
+  },
 });
 
 // Settings store
-const settingsFlux = createFlux({
+const settingsStore = defineStore({
+  scope: 'settings',
   state: { theme: 'light', language: 'en' },
-  actions: (flux) => ({
-    setTheme(theme: string) {
-      flux.setState({ theme });
-    },
-    setLanguage(language: string) {
-      flux.setState({ language });
-    },
-  }),
+  actions: {
+    setTheme: (_state, theme: string) => ({ theme }),
+    setLanguage: (_state, language: string) => ({ language }),
+  },
 });
 
 // Use both in component
@@ -346,8 +327,8 @@ class Profile extends Fukict {
   private unsubscribeSettings?: () => void;
 
   mounted() {
-    this.unsubscribeUser = userFlux.subscribe(() => this.update(this.props));
-    this.unsubscribeSettings = settingsFlux.subscribe(() =>
+    this.unsubscribeUser = userStore.subscribe(() => this.update(this.props));
+    this.unsubscribeSettings = settingsStore.subscribe(() =>
       this.update(this.props)
     );
   }
@@ -358,8 +339,8 @@ class Profile extends Fukict {
   }
 
   render() {
-    const { user } = userFlux.getState();
-    const { theme } = settingsFlux.getState();
+    const { user } = userStore.state;
+    const { theme } = settingsStore.state;
     return <div class={theme}>{user?.name}</div>;
   }
 }
@@ -378,7 +359,7 @@ class TodoStats extends Fukict {
   private unsubscribe?: () => void;
 
   mounted() {
-    this.unsubscribe = todoFlux.subscribe(statsSelector, (stats) => {
+    this.unsubscribe = todoStore.subscribe(statsSelector, (stats) => {
       console.log('Stats changed:', stats);
       this.update(this.props);
     });
@@ -389,7 +370,7 @@ class TodoStats extends Fukict {
   }
 
   render() {
-    const stats = statsSelector(todoFlux.getState());
+    const stats = statsSelector(todoStore.getState());
     return (
       <div>
         <p>Total: {stats.total}</p>
@@ -401,85 +382,81 @@ class TodoStats extends Fukict {
 }
 ```
 
-### Store Composition
-
-```typescript
-const createAppFlux = () => {
-  const userFlux = createFlux({
-    state: { user: null },
-    actions: (flux) => ({ /*...*/ }),
-  });
-
-  const todoFlux = createFlux({
-    state: { todos: [] },
-    actions: (flux) => ({ /*...*/ }),
-  });
-
-  return {
-    user: userFlux,
-    todo: todoFlux,
-  };
-};
-
-const appFlux = createAppFlux();
-
-// Use in components
-appFlux.user.getState();
-appFlux.user.actions.setUser(...);
-appFlux.todo.getState();
-appFlux.todo.actions.addTodo(...);
-```
-
 ## API Reference
 
-### createFlux(config)
+### defineStore(config)
 
-Creates a new flux store.
+Creates a new store.
 
 ```typescript
-const flux = createFlux({
+const store = defineStore({
+  scope: 'my-store', // Required: unique identifier for DevTools
   state: initialState,
-  actions: flux => ({
-    actionName(...args) {
-      // Action implementation
-      flux.setState(newState);
+  actions: {
+    // Sync actions: (state, ...args) => Partial<State>
+    actionName: (state, ...args) => ({
+      /* partial state */
+    }),
+  },
+  asyncActions: {
+    // Async actions: (ctx, ...args) => Promise<void>
+    async asyncAction(ctx, ...args) {
+      ctx.setState({
+        /* partial state */
+      });
     },
-  }),
+  },
 });
 ```
 
-### flux.getState()
+### store.state
 
-Returns current state (protected from mutation in dev mode).
+Current state (readonly, protected from mutation in dev mode).
 
 ```typescript
-const state = flux.getState();
+const { count } = store.state;
+```
+
+### store.getState()
+
+Returns current state snapshot (readonly).
+
+```typescript
+const state = store.getState();
 console.log(state.count);
 ```
 
-### flux.setState(partial)
+### store.setState(partial)
 
 Updates state with partial state object.
 
 ```typescript
-flux.setState({ count: 10 });
+store.setState({ count: 10 });
 ```
 
-### flux.actions
+### store.actions
 
-Actions object defined in createFlux config.
+Wrapped sync actions (state parameter is automatically injected).
 
 ```typescript
-const actions = flux.actions;
-actions.increment();
+store.actions.increment();
+store.actions.add(5);
 ```
 
-### flux.subscribe(listener)
+### store.asyncActions
+
+Wrapped async actions (context parameter is automatically injected).
+
+```typescript
+await store.asyncActions.fetchUser('123');
+```
+
+### store.subscribe(listener)
 
 Subscribes to all state changes.
 
 ```typescript
-const unsubscribe = flux.subscribe(() => {
+const unsubscribe = store.subscribe(() => {
   console.log('State changed');
 });
 
@@ -487,12 +464,12 @@ const unsubscribe = flux.subscribe(() => {
 unsubscribe();
 ```
 
-### flux.subscribe(selector, listener)
+### store.subscribe(selector, listener)
 
 Subscribes to selector changes (only triggers when selector result changes).
 
 ```typescript
-const unsubscribe = flux.subscribe(
+const unsubscribe = store.subscribe(
   state => state.user.name,
   name => {
     console.log('Name changed:', name);
@@ -506,25 +483,21 @@ const unsubscribe = flux.subscribe(
 
 ```typescript
 // ✅ Good: Group related actions
-const userFlux = createFlux({
+const userStore = defineStore({
+  scope: 'user',
   state: { user: null, preferences: {} },
-  actions: flux => ({
-    // Auth actions
-    login(credentials) {
-      /*...*/
+  actions: {
+    logout: () => ({ user: null }),
+    updatePreference: (state, key: string, value: any) => ({
+      preferences: { ...state.preferences, [key]: value },
+    }),
+    resetPreferences: () => ({ preferences: {} }),
+  },
+  asyncActions: {
+    async login(ctx, credentials: Credentials) {
+      /* ... */
     },
-    logout() {
-      /*...*/
-    },
-
-    // Preference actions
-    updatePreference(key, value) {
-      /*...*/
-    },
-    resetPreferences() {
-      /*...*/
-    },
-  }),
+  },
 });
 ```
 
@@ -538,7 +511,7 @@ const expensiveSelector = (state) => {
 
 // ❌ Bad: Compute in render
 render() {
-  const state = flux.getState();
+  const state = store.getState();
   const result = state.items.filter(/*...*/).map(/*...*/).reduce(/*...*/);
 }
 ```
@@ -551,7 +524,7 @@ class MyComponent extends Fukict {
   private unsubscribe?: () => void;
 
   mounted() {
-    this.unsubscribe = flux.subscribe(() => this.update(this.props));
+    this.unsubscribe = store.subscribe(() => this.update(this.props));
   }
 
   beforeUnmount() {
@@ -566,7 +539,7 @@ class MyComponent extends Fukict {
 // ✅ Good: Subscribe at parent, read in children
 class App extends Fukict {
   mounted() {
-    this.unsubscribe = flux.subscribe(() => this.update(this.props));
+    this.unsubscribe = store.subscribe(() => this.update(this.props));
   }
   render() {
     return (
@@ -579,7 +552,7 @@ class App extends Fukict {
 
 class Child extends Fukict {
   render() {
-    const state = flux.getState(); // Just read
+    const state = store.state; // Just read
     return <div>{state.value}</div>;
   }
 }

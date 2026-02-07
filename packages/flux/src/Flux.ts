@@ -108,18 +108,11 @@ export class Flux<T> implements FluxInstance<T> {
   }
 
   /**
-   * Update state
-   * @param newState New state (full replacement or partial update)
+   * Update state (partial merge)
+   * @param partial Partial state to merge
    */
-  setState(newState: Partial<T> | T): void {
-    // Determine if it's a full replacement or partial update
-    if (this.isPartialUpdate(newState)) {
-      // Partial update: shallow merge
-      this.internalState = { ...this.internalState, ...newState };
-    } else {
-      // Full replacement
-      this.internalState = newState as T;
-    }
+  setState(partial: Partial<T>): void {
+    this.internalState = { ...this.internalState, ...partial };
 
     // Update proxy
     this.stateProxy = this.createReadonlyProxy(this.internalState);
@@ -186,17 +179,6 @@ export class Flux<T> implements FluxInstance<T> {
         subscription.listener(this.stateProxy);
       }
     }
-  }
-
-  /**
-   * Determine if it's a partial update
-   */
-  private isPartialUpdate(newState: Partial<T> | T): newState is Partial<T> {
-    // Simple heuristic:
-    // If newState has fewer keys than current state, consider it a partial update
-    const newKeys = Object.keys(newState as object);
-    const stateKeys = Object.keys(this.internalState as object);
-    return newKeys.length < stateKeys.length;
   }
 
   /**

@@ -207,7 +207,7 @@ function renderFunctionComponent(
   const funcVNode = vnode as FunctionComponentVNode;
   const { type, props, children } = funcVNode;
 
-  // Merge children into props (like React)
+  // Merge children into props
   const propsWithChildren = {
     ...props,
     children: children.length === 1 ? children[0] : children,
