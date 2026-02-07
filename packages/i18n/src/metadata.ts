@@ -5,7 +5,7 @@
 
 export const METADATA = {
   name: '@fukict/i18n',
-  version: '0.1.9',
+  version: '0.1.10',
   description: 'Type-safe internationalization library for Fukict framework',
   author: 'Fukict Team',
   license: 'MIT',

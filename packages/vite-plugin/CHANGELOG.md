@@ -1,5 +1,15 @@
 # @fukict/vite-plugin
 
+## 0.1.10
+
+### Patch Changes
+
+- ed2780a: fukict basic vnode 重构完成
+- 6c7743f: 优化对 devtools 的支持
+- Updated dependencies [ed2780a]
+- Updated dependencies [6c7743f]
+  - @fukict/babel-preset@0.1.10
+
 ## 0.1.9
 
 ### Patch Changes

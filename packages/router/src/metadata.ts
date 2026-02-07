@@ -5,7 +5,7 @@
 
 export const METADATA = {
   name: '@fukict/router',
-  version: '0.1.9',
+  version: '0.1.10',
   description:
     'Router for Fukict framework with nested routing and lazy loading',
   author: 'Fukict Team',
