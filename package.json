@@ -6,21 +6,21 @@
   "keywords": [
     "dom",
     "jsx",
-    "vanilla",
-    "typescript",
+    "performance",
     "rendering",
-    "performance"
+    "typescript",
+    "vanilla"
   ],
   "homepage": "https://github.com/fukict/fukict#readme",
   "bugs": {
     "url": "https://github.com/fukict/fukict/issues"
   },
+  "license": "MIT",
+  "author": "xiaoyown <xiaoyown@example.com>",
   "repository": {
     "type": "git",
     "url": "https://github.com/fukict/fukict.git"
   },
-  "license": "MIT",
-  "author": "xiaoyown <xiaoyown@example.com>",
   "type": "module",
   "scripts": {
     "build": "pnpm clean && pnpm extract-metadata && tsx scripts/build-package.ts --all --no-watch",
@@ -37,9 +37,9 @@
     "dev:no-build": "npx http-server -p 8080 -c-1 --cors",
     "dev:pkgs": "tsx scripts/build-package.ts --all --watch",
     "extract-metadata": "tsx scripts/extract-metadata.ts",
-    "format": "prettier --write .",
-    "lint": "pnpm lint:types && eslint .",
-    "lint:fix": "eslint . --fix",
+    "format": "oxfmt --write .",
+    "lint": "pnpm lint:types && oxlint .",
+    "lint:fix": "oxlint --fix .",
     "lint:types": "pnpm -r --parallel run lint",
     "prepare": "husky",
     "publish": "tsx scripts/publish.ts",
@@ -51,38 +51,29 @@
     "version:beta": "changeset version --snapshot beta && changeset publish --tag beta --no-git-tag",
     "version:rc": "changeset version --snapshot rc && changeset publish --tag rc --no-git-tag"
   },
-  "config": {
-    "commitizen": {
-      "path": "@commitlint/cz-commitlint"
-    }
-  },
   "devDependencies": {
     "@changesets/cli": "^2.29.4",
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
     "@commitlint/cz-commitlint": "^20.1.0",
-    "@eslint/js": "^9.28.0",
-    "@trivago/prettier-plugin-sort-imports": "5.2.2",
     "@types/node": "^20.0.0",
-    "@typescript-eslint/eslint-plugin": "^8.33.1",
-    "@typescript-eslint/parser": "^8.33.1",
     "commitizen": "^4.3.0",
-    "eslint": "^9.28.0",
-    "eslint-config-prettier": "^10.1.5",
-    "globals": "^16.4.0",
     "husky": "^9.1.7",
+    "oxfmt": "^0.28.0",
+    "oxlint": "^1.43.0",
     "premove": "^4.0.0",
-    "prettier": "3.4.2",
-    "prettier-plugin-packagejson": "2.5.6",
-    "prettier-plugin-sort-json": "4.0.0",
-    "prettier-plugin-tailwindcss": "^0.7.0",
     "tsx": "^4.19.2",
     "typescript": "^5.6.3",
     "yaml": "^2.6.1"
   },
-  "packageManager": "pnpm@10.18.1",
+  "config": {
+    "commitizen": {
+      "path": "@commitlint/cz-commitlint"
+    }
+  },
   "engines": {
     "node": ">=16.0.0",
     "pnpm": ">=7.0.0"
-  }
+  },
+  "packageManager": "pnpm@10.18.1"
 }

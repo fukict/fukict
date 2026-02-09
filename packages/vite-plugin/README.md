@@ -128,7 +128,7 @@ const Greeting = ({ name }) => <div>Hello {name}</div>;
 import { defineFukict, hyperscript } from '@fukict/basic';
 
 const Greeting = defineFukict(({ name }) =>
-  hyperscript('div', null, ['Hello ', name])
+  hyperscript('div', null, ['Hello ', name]),
 );
 Greeting.displayName = 'Greeting'; // in development mode
 ```

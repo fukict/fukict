@@ -6,7 +6,7 @@
 import type { PrimitiveVNode, VNode } from '../../types/index.js';
 import { VNodeType } from '../../types/index.js';
 import { setupPrimitiveVNode } from '../vnode-helpers.js';
-import { replaceNode } from './helpers.js';
+import { replaceNode } from './dom-ops.js';
 
 /**
  * Diff Primitive VNode

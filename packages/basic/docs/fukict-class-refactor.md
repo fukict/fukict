@@ -8,12 +8,12 @@
 
 ```typescript
 // VNode 属性
-vnode.__type__, vnode.__dom__, vnode.__instance__;
+(vnode.__type__, vnode.__dom__, vnode.__instance__);
 
 // Fukict 实例属性（混乱）
-instance.__id__, instance.__name__; // 应该用 $
-instance.__vnode__, instance.__wrapper__; // 应该用 _
-instance.$slots, instance.$refs; // ✓ 正确
+(instance.__id__, instance.__name__); // 应该用 $
+(instance.__vnode__, instance.__wrapper__); // 应该用 _
+(instance.$slots, instance.$refs); // ✓ 正确
 ```
 
 ## 2. 命名规范

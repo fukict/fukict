@@ -28,4 +28,4 @@ logs/
 tsconfig.tsbuildinfo
 tsconfig.app.tsbuildinfo
 
-.claude/settings.json
+.claude

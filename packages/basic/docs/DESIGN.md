@@ -158,25 +158,21 @@ class Counter extends Fukict<{ initial: number }> {
 ## Key Design Decisions
 
 1. **`__type__` discriminated union**
-
    - Single field for type identification
    - TypeScript automatic type narrowing
    - Added at compile time by babel-plugin
 
 2. **Built-in everything**
-
    - No registration overhead
    - Direct function calls
    - Minimal abstraction
 
 3. **Props-driven update for Class**
-
    - `update(newProps)` has built-in diff
    - User can override for custom logic
    - Detached mode: props updated, no re-render
 
 4. **Shallow compare for Function**
-
    - Skip re-render if props unchanged
    - Minimal overhead
    - Parent-driven only

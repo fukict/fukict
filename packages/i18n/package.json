@@ -7,21 +7,28 @@
     "i18n",
     "internationalization",
     "localization",
-    "translation",
-    "reactive"
+    "reactive",
+    "translation"
   ],
   "bugs": {
     "url": "https://github.com/fukict/fukict/issues"
   },
+  "license": "MIT",
+  "author": "Fukict Team",
   "repository": {
     "type": "git",
     "url": "https://github.com/fukict/fukict.git",
     "directory": "packages/i18n"
   },
-  "license": "MIT",
-  "author": "Fukict Team",
-  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -29,13 +36,9 @@
       "default": "./dist/index.js"
     }
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist",
-    "README.md"
-  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
   "scripts": {
     "build": "tsx ../../scripts/build-package.ts --pkg-name i18n --no-watch",
     "dev": "tsx ../../scripts/build-package.ts --pkg-name i18n --watch",
@@ -47,8 +50,5 @@
   },
   "engines": {
     "node": ">=16.0.0"
-  },
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
   }
 }

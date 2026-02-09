@@ -263,8 +263,7 @@ export namespace JSX {
    * All intrinsic elements (HTML + SVG)
    */
   export interface IntrinsicElements
-    extends IntrinsicHTMLElements,
-      IntrinsicSVGElements {}
+    extends IntrinsicHTMLElements, IntrinsicSVGElements {}
 
   export interface ElementChildrenAttribute {
     children: {};

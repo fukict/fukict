@@ -7,7 +7,7 @@ import type { FukictComponent } from '../../types/class.js';
 import type { ClassComponentVNode, VNode } from '../../types/index.js';
 import { VNodeType } from '../../types/index.js';
 import { setupClassComponentVNode } from '../class-helpers.js';
-import { replaceNode } from './helpers.js';
+import { replaceNode } from './dom-ops.js';
 
 /**
  * Extended FukictComponent interface with internal properties

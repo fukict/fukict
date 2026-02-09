@@ -159,7 +159,7 @@ const asyncStore = defineStore({
         if (successLogs.length > 5) successLogs.pop();
 
         ctx.setState({ user, loading: false, logs: successLogs });
-      } catch (_error) {
+      } catch {
         const currentState = ctx.getState();
         const errorLogs = [
           `Failed to load user ${userId}`,

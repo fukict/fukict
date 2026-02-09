@@ -3,25 +3,32 @@
   "version": "0.1.10",
   "description": "Lightweight DOM rendering basic with extension mechanism",
   "keywords": [
-    "fukict",
     "basic",
-    "vdom",
-    "rendering",
+    "browser",
     "dom",
-    "browser"
+    "fukict",
+    "rendering",
+    "vdom"
   ],
   "bugs": {
     "url": "https://github.com/fukict/fukict/issues"
   },
+  "license": "MIT",
+  "author": "Fukict Team",
   "repository": {
     "type": "git",
     "url": "https://github.com/fukict/fukict.git",
     "directory": "packages/basic"
   },
-  "license": "MIT",
-  "author": "Fukict Team",
-  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -39,13 +46,9 @@
       "default": "./dist/jsx-runtime.js"
     }
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist",
-    "README.md"
-  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
   "scripts": {
     "build": "tsx ../../scripts/build-package.ts --pkg-name basic --no-watch",
     "dev": "tsx ../../scripts/build-package.ts --pkg-name basic --watch",
@@ -57,8 +60,5 @@
   },
   "engines": {
     "node": ">=16.0.0"
-  },
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
   }
 }

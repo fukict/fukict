@@ -472,7 +472,7 @@ class Form extends Fukict {
   }
 
   render() {
-    return <input ref={(el) => (this.inputRef = el)} />;
+    return <input ref={el => (this.inputRef = el)} />;
   }
 }
 

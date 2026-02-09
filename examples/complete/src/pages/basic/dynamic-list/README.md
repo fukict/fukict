@@ -254,17 +254,14 @@ class App extends Fukict {
 ### ✅ 正确的做法
 
 1. **Item 组件不是通过 JSX 决定渲染位置的**
-
    - ❌ 错误：`{todos.map(todo => <TodoItem fukict:detach />)}`
    - ✅ 正确：`new TodoItemComponent()` + `mount()`
 
 2. **使用 Comment 占位元素**
-
    - `dom.createComment('fukict:todo:1')`
    - 标记组件应该在的位置
 
 3. **暴露 APIs 给外部调用**
-
    - 高性能列表组件提供 `add/remove/update/move` 等方法
    - 外部通过 `this.refs.listRef.add(todo)` 调用
 
@@ -275,12 +272,10 @@ class App extends Fukict {
 ### ❌ 避免的做法
 
 1. **不要使用 `fukict:detach` + JSX 渲染**
-
    - 这样仍然会在父组件 update 时执行 diff
    - 性能提升有限
 
 2. **不要依赖框架自动管理**
-
    - 高性能场景需要手动控制
 
 3. **不要忘记清理**

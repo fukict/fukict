@@ -1,7 +1,8 @@
 /**
- * @fukict/basic - Diff: Helpers
+ * @fukict/basic - Diff: DOM Operations
  *
- * Helper functions for diff operations
+ * DOM manipulation helpers for diff operations
+ * Dependencies: create.ts, mount.ts (no diff dependencies)
  */
 import type {
   ClassComponentVNode,
@@ -67,45 +68,6 @@ function getFirstDomNode(vnode: VNodeChild): Node | null {
   }
 
   return null;
-}
-
-/**
- * Replace old node with new node
- */
-export function replaceNode(
-  oldVNode: VNodeChild,
-  newVNode: VNodeChild,
-  container: Element,
-): void {
-  if (!oldVNode) {
-    throw new Error('Old VNode is required for replaceNode');
-  }
-
-  // Get the first DOM node of oldVNode to find insertion position
-  const oldFirstNode = getFirstDomNode(oldVNode);
-  const nextSibling = oldFirstNode?.nextSibling ?? null;
-
-  // Remove old node
-  removeNode(oldVNode, container);
-
-  // Create new node
-  const node = createRealNode(newVNode);
-
-  if (!node) {
-    return;
-  }
-
-  // Insert placeholder at the same position
-  const placeholder = document.createComment('fukict-replace');
-
-  if (nextSibling && nextSibling.parentNode === container) {
-    container.insertBefore(placeholder, nextSibling);
-  } else {
-    container.appendChild(placeholder);
-  }
-
-  // Use activate in placeholder mode - it will replace placeholder with DOM
-  activate({ vnode: newVNode, placeholder });
 }
 
 /**
@@ -179,6 +141,45 @@ function unmountVNode(vnode: VNodeChild): void {
 }
 
 /**
+ * Replace old node with new node
+ */
+export function replaceNode(
+  oldVNode: VNodeChild,
+  newVNode: VNodeChild,
+  container: Element,
+): void {
+  if (!oldVNode) {
+    throw new Error('Old VNode is required for replaceNode');
+  }
+
+  // Get the first DOM node of oldVNode to find insertion position
+  const oldFirstNode = getFirstDomNode(oldVNode);
+  const nextSibling = oldFirstNode?.nextSibling ?? null;
+
+  // Remove old node
+  removeNode(oldVNode, container);
+
+  // Create new node
+  const node = createRealNode(newVNode);
+
+  if (!node) {
+    return;
+  }
+
+  // Insert placeholder at the same position
+  const placeholder = document.createComment('fukict-replace');
+
+  if (nextSibling && nextSibling.parentNode === container) {
+    container.insertBefore(placeholder, nextSibling);
+  } else {
+    container.appendChild(placeholder);
+  }
+
+  // Use activate in placeholder mode - it will replace placeholder with DOM
+  activate({ vnode: newVNode, placeholder });
+}
+
+/**
  * Remove node from DOM
  */
 export function removeNode(vnode: VNodeChild, container: Element): void {
@@ -240,26 +241,4 @@ export function removeNode(vnode: VNodeChild, container: Element): void {
       }
     }
   }
-}
-
-/**
- * Shallow compare two objects
- */
-export function shallowEqual(
-  a: Record<string, unknown> | null,
-  b: Record<string, unknown> | null,
-): boolean {
-  if (a === b) return true;
-  if (!a || !b) return false;
-
-  const keysA = Object.keys(a);
-  const keysB = Object.keys(b);
-
-  if (keysA.length !== keysB.length) return false;
-
-  for (const key of keysA) {
-    if (a[key] !== b[key]) return false;
-  }
-
-  return true;
 }

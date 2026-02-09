@@ -65,9 +65,7 @@ export interface FukictDetachAttribute {
  * This type is merged with native HTML element attributes
  */
 export interface RuntimeAttributes<T extends Element = Element>
-  extends EventHandlers,
-    FukictSlotAttribute,
-    FukictHtmlAttribute {
+  extends EventHandlers, FukictSlotAttribute, FukictHtmlAttribute {
   // Runtime ref (DOM element reference callback)
   ref?: RefCallback<T>;
 

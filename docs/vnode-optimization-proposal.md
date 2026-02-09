@@ -540,22 +540,18 @@ diffChildren:
 ## 优势总结
 
 1. **结构稳定性** ✅
-
    - children 数组长度固定，槽位对应清晰
    - 条件渲染不会导致位置错乱
 
 2. **类型统一性** ✅
-
    - children 始终是 `VNode[]`
    - 消除类型判断，简化代码
 
 3. **diff 简化** ✅
-
    - 不再需要处理基础值的特殊情况
    - 逻辑更清晰，维护成本降低
 
 4. **可调试性** ✅
-
    - DOM 中可见注释节点，方便调试条件渲染
    - `<!--fukict:primitive:false-->` 清晰表明状态
 
@@ -629,7 +625,6 @@ if (process.env.NODE_ENV === 'production') {
 ## 实现检查清单
 
 - [ ] 修改 `packages/basic/src/types/core.ts`
-
   - [ ] 新增 `PrimitiveValue` 类型
   - [ ] 新增 `VNodeType.Primitive` 枚举值
   - [ ] 新增 `PrimitiveVNode` 接口
@@ -637,34 +632,28 @@ if (process.env.NODE_ENV === 'production') {
   - [ ] 更新 `VNodeChild` 类型定义
 
 - [ ] 修改 `packages/basic/src/vnode.ts`
-
   - [ ] 实现 `createPrimitiveVNode()`
   - [ ] 实现 `normalizeChild()`
   - [ ] 实现 `normalizeChildren()`
   - [ ] 更新 `hyperscript()` 函数
 
 - [ ] 修改 `packages/basic/src/renderer/create.ts`
-
   - [ ] 实现 `createPrimitiveNode()`
   - [ ] 更新 `createRealNode()` 添加 Primitive 分支
 
 - [ ] 新增 `packages/basic/src/renderer/diff/primitive.ts`
-
   - [ ] 实现 `diffPrimitive()`
 
 - [ ] 修改 `packages/basic/src/renderer/diff/index.ts`
-
   - [ ] 简化类型判断逻辑
   - [ ] 添加 Primitive diff 分支
   - [ ] 移除基础值特殊处理
 
 - [ ] 修改 `packages/basic/src/renderer/diff/children.ts`
-
   - [ ] 更新类型签名（VNode[] 而非 VNodeChild[]）
   - [ ] 移除基础值判断逻辑
 
 - [ ] 修改 `packages/basic/src/renderer/diff/helpers.ts`
-
   - [ ] 更新 `removeNode()` 支持 PrimitiveVNode
 
 - [ ] 测试

@@ -3,9 +3,21 @@
  *
  * Create VNode from function calls
  */
-import { Fukict } from './component-class/fukict.js';
 import type { PrimitiveVNode, PrimitiveValue, VNode } from './types/index.js';
 import { Fragment, VNodeType } from './types/index.js';
+
+/**
+ * Check if a function is a Fukict class component
+ * Uses static marker to avoid circular dependency with fukict.ts
+ */
+function isFukictComponent(
+  type: Function,
+): type is new (props: any) => { render(): VNode | null } {
+  return (
+    type.prototype &&
+    (type as { __isFukictComponent__?: boolean }).__isFukictComponent__ === true
+  );
+}
 
 /**
  * Create a PrimitiveVNode from a primitive value
@@ -96,8 +108,8 @@ function detectVNodeType(type: string | Function | typeof Fragment): VNodeType {
 
   // Function
   if (typeof type === 'function') {
-    // Class Component (extends Fukict)
-    if (type.prototype && type.prototype instanceof Fukict) {
+    // Class Component (has __isFukictComponent__ marker)
+    if (isFukictComponent(type)) {
       return VNodeType.ClassComponent;
     }
 

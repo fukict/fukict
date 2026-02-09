@@ -220,22 +220,18 @@ export class DashboardPage extends RouteComponent {
 ## 学习要点
 
 1. **声明式 vs 编程式导航**
-
    - 使用 `<Link>` 组件进行声明式导航
    - 使用 `push()`、`replace()` 等方法进行编程式导航
 
 2. **路由参数 vs 查询参数**
-
    - 路由参数 (`/user/:id`) - 路径的一部分，通过 `this.params` 访问
    - 查询参数 (`/search?q=...`) - URL 查询字符串，通过 `this.query` 访问
 
 3. **嵌套路由的层级关系**
-
    - 父路由组件中使用 `<RouterView>` 渲染子路由
    - 子路由继承父路由的 Router 实例
 
 4. **导航守卫的执行顺序**
-
    - 全局 `beforeEach` → 路由级 `beforeEnter` → 组件挂载
    - 导航完成后执行 `afterEach`
 

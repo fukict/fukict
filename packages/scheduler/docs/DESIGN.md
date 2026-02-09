@@ -158,8 +158,8 @@ class Scheduler {
 
 ```typescript
 if (priority === Priority.Immediate) {
-  callback()  // 立即执行
-  return
+  callback(); // 立即执行
+  return;
 }
 ```
 

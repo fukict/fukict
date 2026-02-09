@@ -1,22 +1,24 @@
 import { Fukict } from '@fukict/basic';
 import { Link, Router } from '@fukict/router';
 
-import { type SidebarItem, getSidebarItems } from '../routes';
+import { sidebarStore } from '../stores/sidebarStore';
+
+interface SidebarProps {
+  router: Router;
+}
 
 /**
  * 侧边栏组件
  * 二级导航: 分组 + 页面列表
  */
-export class Sidebar extends Fukict<{ router: Router }> {
-  private sidebarItems: SidebarItem[] = [];
+export class Sidebar extends Fukict<SidebarProps> {
   private expandedGroups: Set<string> = new Set();
 
-  constructor(props: { router: Router }) {
+  constructor(props: SidebarProps) {
     super(props);
-    this.sidebarItems = getSidebarItems();
 
     // 默认展开所有有子项的分组
-    this.sidebarItems.forEach(item => {
+    sidebarStore.state.items.forEach(item => {
       if (item.children && item.children.length > 0) {
         this.expandedGroups.add(item.path);
       }
@@ -48,7 +50,7 @@ export class Sidebar extends Fukict<{ router: Router }> {
 
           {/* Navigation */}
           <nav class="space-y-1.5">
-            {this.sidebarItems.map(item => {
+            {sidebarStore.state.items.map(item => {
               // 有子项的分组
               if (item.children && item.children.length > 0) {
                 const isExpanded = this.expandedGroups.has(item.path);

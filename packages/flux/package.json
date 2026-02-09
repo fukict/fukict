@@ -3,24 +3,31 @@
   "version": "0.1.10",
   "description": "Minimal state management library for Fukict framework",
   "keywords": [
-    "fukict",
     "flux",
+    "fukict",
+    "reactive",
     "state-management",
-    "store",
-    "reactive"
+    "store"
   ],
   "bugs": {
     "url": "https://github.com/fukict/fukict/issues"
   },
+  "license": "MIT",
+  "author": "Fukict Team",
   "repository": {
     "type": "git",
     "url": "https://github.com/fukict/fukict.git",
     "directory": "packages/flux"
   },
-  "license": "MIT",
-  "author": "Fukict Team",
-  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -28,13 +35,9 @@
       "default": "./dist/index.js"
     }
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist",
-    "README.md"
-  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
   "scripts": {
     "build": "tsx ../../scripts/build-package.ts --pkg-name flux --no-watch",
     "dev": "tsx ../../scripts/build-package.ts --pkg-name flux --watch",
@@ -49,8 +52,5 @@
   },
   "engines": {
     "node": ">=16.0.0"
-  },
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
   }
 }

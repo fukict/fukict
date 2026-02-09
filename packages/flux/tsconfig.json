@@ -6,5 +6,5 @@
     "composite": false
   },
   "extends": "../../config/typescript/tsconfig.client.json",
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "env.d.ts"]
 }

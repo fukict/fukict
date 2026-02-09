@@ -3,7 +3,7 @@
  *
  * Create real DOM nodes from VNode (supports Node | Node[] return)
  */
-import { Fukict } from '../component-class/fukict.js';
+import type { Fukict } from '../component-class/fukict.js';
 import type { FunctionComponent } from '../component-function/index.js';
 import * as dom from '../dom/index.js';
 import type {

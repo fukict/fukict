@@ -280,23 +280,19 @@ UserDetail / UserEdit (depth=2)
 ## 关键设计点
 
 1. **自动深度管理**：
-
    - Router 内部知道自己在第几层
    - `matched` getter 根据 depth 返回当前层级匹配的路由
 
 2. **子路由自动创建**：
-
    - RouterView 检测到 `children` 时自动创建子路由
    - `router.createChild()` 返回 depth+1 的新 Router
 
 3. **状态共享**：
-
    - 子路由订阅父路由变化
    - 共享 `currentRoute`
    - 只有顶层监听 history
 
 4. **用户透明**：
-
    - 用户只需传递 `router` prop
    - 无需关心 depth
    - 无需手动创建子路由

@@ -9,5 +9,5 @@
     "jsxImportSource": "."
   },
   "extends": "../../config/typescript/tsconfig.client.json",
-  "include": ["src/**/*", "./fukict-dev.d.ts"]
+  "include": ["src/**/*", "env.d.ts"]
 }

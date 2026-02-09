@@ -13,9 +13,9 @@ import type {
 /**
  * I18n class
  */
-export class I18n<Messages extends Record<string, any>>
-  implements I18nInstance<Messages>
-{
+export class I18n<
+  Messages extends Record<string, any>,
+> implements I18nInstance<Messages> {
   /**
    * Current locale
    */

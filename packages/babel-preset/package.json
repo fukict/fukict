@@ -3,35 +3,38 @@
   "version": "0.1.10",
   "description": "Zero-config Babel preset for Fukict with automatic component wrapping",
   "keywords": [
-    "fukict",
     "babel",
-    "preset",
-    "jsx",
     "compiler",
+    "fukict",
+    "jsx",
+    "preset",
     "transform"
   ],
   "bugs": {
     "url": "https://github.com/fukict/fukict/issues"
   },
+  "license": "MIT",
+  "author": "Fukict Team",
   "repository": {
     "type": "git",
     "url": "https://github.com/fukict/fukict.git",
     "directory": "packages/babel-preset"
   },
-  "license": "MIT",
-  "author": "Fukict Team",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     }
   },
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist",
-    "README.md"
-  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
   "scripts": {
     "build": "tsx ../../scripts/build-package.ts --pkg-name babel-preset --no-watch",
     "dev": "tsx ../../scripts/build-package.ts --pkg-name babel-preset --watch",
@@ -56,8 +59,5 @@
   },
   "engines": {
     "node": ">=16.0.0"
-  },
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
   }
 }

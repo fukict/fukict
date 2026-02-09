@@ -131,10 +131,10 @@ import { defineFukict } from '@fukict/basic';
 **导出的函数组件**：
 
 ```tsx
-export const Greeting = ({ name }) => <div>Hello {name}</div>
+export const Greeting = ({ name }) => <div>Hello {name}</div>;
 
 // 转换为
-export const Greeting = defineFukict(({ name }) => <div>Hello {name}</div>)
+export const Greeting = defineFukict(({ name }) => <div>Hello {name}</div>);
 ```
 
 **默认导出**：
@@ -493,11 +493,11 @@ at App.tsx:5
 
 ```tsx
 // 输入
-const Greeting = ({ name }) => <div>{name}</div>
+const Greeting = ({ name }) => <div>{name}</div>;
 
 // 输出（仅添加必要的包裹）
-import { defineFukict } from '@fukict/basic'
-const Greeting = defineFukict(({ name }) => <div>{name}</div>)
+import { defineFukict } from '@fukict/basic';
+const Greeting = defineFukict(({ name }) => <div>{name}</div>);
 ```
 
 ## 测试策略

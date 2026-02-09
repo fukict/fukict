@@ -77,6 +77,13 @@ export abstract class Fukict<
   S extends Slots = Slots,
 > {
   /**
+   * Static marker for class component detection (avoids instanceof check)
+   * Used by vnode.ts to detect class components without circular dependency
+   * @internal
+   */
+  static readonly __isFukictComponent__ = true;
+
+  /**
    * Unique component instance ID (for debugging)
    * @internal
    */
