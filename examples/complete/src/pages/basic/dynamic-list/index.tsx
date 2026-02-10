@@ -25,11 +25,17 @@ export class DynamicListPage extends RouteComponent {
   handleAdd() {
     const perfList = this.$refs.perfList;
     if (perfList) {
-      perfList.add({
+      const i = perfList.getAll().length;
+      perfList.addItem({
         id: `perf-${Date.now()}`,
-        text: `新任务 ${perfList.getAll().length + 1}`,
+        text: `新任务 ${i + 1}`,
         completed: false,
         createdAt: Date.now(),
+        priority: (['high', 'medium', 'low'] as const)[i % 3],
+        tags: ['新增'],
+        dueDate: i % 2 === 0 ? Date.now() + 3 * 86_400_000 : null,
+        description: '通过按钮新增的任务',
+        progress: 0,
       });
     }
 
@@ -104,13 +110,13 @@ export class DynamicListPage extends RouteComponent {
             on:click={() => this.handleAdd()}
             class="rounded bg-blue-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-600"
           >
-            🆕 两个列表都添加任务
+            两个列表都添加任务
           </button>
           <button
             on:click={() => this.handleSort()}
             class="rounded bg-purple-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-purple-600"
           >
-            🔄 两个列表都排序
+            两个列表都排序
           </button>
         </div>
 
@@ -123,7 +129,7 @@ export class DynamicListPage extends RouteComponent {
 
           {/* 高性能列表 */}
           <DemoBox title="高性能模式（手动实例化 + mount）">
-            <HighPerformanceList fukict:ref="perfList" />
+            <HighPerformanceList fukict:detach fukict:ref="perfList" />
           </DemoBox>
         </div>
 

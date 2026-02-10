@@ -3,6 +3,11 @@
  */
 
 /**
+ * 优先级
+ */
+export type Priority = 'high' | 'medium' | 'low';
+
+/**
  * Todo 数据项
  */
 export interface TodoItem {
@@ -10,13 +15,19 @@ export interface TodoItem {
   text: string;
   completed: boolean;
   createdAt: number;
+  priority: Priority;
+  tags: string[];
+  dueDate: number | null;
+  description: string;
+  progress: number;
 }
 
 /**
  * 性能统计
  */
 export interface PerformanceStats {
-  totalRenders: number;
-  lastOperationTime: number;
-  operationCount: number;
+  title: string;
+  domCount: number;
+  optCount: number;
+  optTime: number;
 }

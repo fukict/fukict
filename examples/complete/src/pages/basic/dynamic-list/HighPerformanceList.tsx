@@ -1,7 +1,9 @@
 import { Fukict, dom } from '@fukict/basic';
 
 import { TodoItemComponent } from './TodoItemComponent';
-import type { PerformanceStats, TodoItem } from './types';
+import type { PerformanceStats, Priority, TodoItem } from './types';
+import { StatsPanel } from './StatsDisplay';
+import { TOTAL_COUNT } from './constants';
 
 /**
  * 高性能列表组件
@@ -14,29 +16,21 @@ import type { PerformanceStats, TodoItem } from './types';
  */
 export class HighPerformanceList extends Fukict {
   private containerRef: HTMLDivElement | null = null;
-  private statsRef: HTMLDivElement | null = null;
-  private todos: Map<string, TodoItem> = new Map();
+  private todos: TodoItem[] = [];
   private todoInstances: Map<string, TodoItemComponent> = new Map();
   private todoPlaceholders: Map<string, Comment> = new Map();
+
   private stats: PerformanceStats = {
-    totalRenders: 0,
-    lastOperationTime: 0,
-    operationCount: 0,
+    title: '高性能模式',
+    domCount: 0,
+    optCount: 0,
+    optTime: 0,
   };
 
+  private timestart = 0;
+
   mounted() {
-    // 初始化 1000 个 Todo（超大列表）
-    for (let i = 1; i <= 1000; i++) {
-      const todo: TodoItem = {
-        id: `perf-${i}`,
-        text: `高性能模式任务 ${i}`,
-        completed: false,
-        createdAt: Date.now() + i,
-      };
-      this.add(todo);
-    }
-    // 初始化后更新一次统计显示
-    this.updateStatsDisplay();
+    this.setup();
   }
 
   beforeUnmount() {
@@ -48,14 +42,74 @@ export class HighPerformanceList extends Fukict {
     this.todoPlaceholders.clear();
   }
 
+  private setup() {
+    window.queueMicrotask(() => {
+      this.setStart();
+      const priorities: Priority[] = ['high', 'medium', 'low'];
+      const tagPool = [
+        '前端',
+        '后端',
+        '设计',
+        '测试',
+        'Bug',
+        '优化',
+        '文档',
+        '紧急',
+      ];
+      const descPool = [
+        '需要重构现有实现，提升代码可维护性和扩展性',
+        '与后端团队对接 API 接口，确认数据格式和错误码',
+        '编写单元测试覆盖核心逻辑，目标覆盖率 80%+',
+        '优化首屏加载性能，减少不必要的资源请求',
+        '设计并实现响应式布局方案，适配移动端',
+      ];
+
+      for (let i = 1; i <= TOTAL_COUNT; i++) {
+        const tagCount = (i % 3) + 1;
+        const tags: string[] = [];
+        for (let t = 0; t < tagCount; t++) {
+          tags.push(tagPool[(i + t) % tagPool.length]);
+        }
+
+        const todo: TodoItem = {
+          id: `perf-${i}`,
+          text: `高性能模式任务 ${i}`,
+          completed: false,
+          createdAt: Date.now() + i,
+          priority: priorities[i % 3],
+          tags,
+          dueDate: i % 4 === 0 ? Date.now() + ((i % 7) - 3) * 86_400_000 : null,
+          description: descPool[i % descPool.length],
+          progress: (i * 13) % 101,
+        };
+        this.add(todo);
+      }
+      this.setEnd();
+    });
+  }
+
+  /** 开始计时 */
+  private setStart() {
+    this.timestart = performance.now();
+  }
+
+  /** 结束计时 */
+  private setEnd() {
+    this.stats.optTime = performance.now() - this.timestart;
+    this.stats.optCount++;
+
+    this.$refs.statsDispaly.updateView({
+      ...this.stats,
+      domCount: this.todos.length,
+    });
+  }
+
   /**
    * API: 添加 Todo 项
    * 外部组件可通过 this.$refs.listRef.add(todo) 调用
    */
-  add(todo: TodoItem) {
+  private add(todo: TodoItem) {
     if (!this.containerRef) return;
-
-    const start = performance.now();
 
     // 1. 创建 Comment 占位元素
     const placeholder = dom.createComment(`fukict:todo:${todo.id}`);
@@ -68,25 +122,29 @@ export class HighPerformanceList extends Fukict {
       todo,
       onToggle: (id: string) => this.toggle(id),
       onDelete: (id: string) => this.remove(id),
+      onPriorityChange: (id: string, priority: Priority) =>
+        this.changePriority(id, priority),
+      onProgressChange: (id: string, progress: number) =>
+        this.changeProgress(id, progress),
+      onMoveUp: (id: string) => this.moveUp(id),
+      onMoveDown: (id: string) => this.moveDown(id),
     });
 
     // 4. 调用 mount 方法挂载（传入 placeholder）
     instance.mount(this.containerRef, placeholder);
 
     // 5. 保存数据和引用
-    this.todos.set(todo.id, todo);
+    this.todos.push(todo);
     this.todoInstances.set(todo.id, instance);
     this.todoPlaceholders.set(todo.id, placeholder);
-
-    this.updateStats(start);
   }
 
   /**
    * API: 删除 Todo 项
    * 外部组件可通过 this.$refs.listRef.remove(id) 调用
    */
-  remove(id: string) {
-    const start = performance.now();
+  private remove(id: string) {
+    this.setStart();
 
     const instance = this.todoInstances.get(id);
     const placeholder = this.todoPlaceholders.get(id);
@@ -101,39 +159,44 @@ export class HighPerformanceList extends Fukict {
       }
 
       // 清理引用
-      this.todos.delete(id);
+      const todoIndex = this.todos.findIndex(todo => todo.id === id);
+      this.todos.splice(todoIndex, 1);
       this.todoInstances.delete(id);
       this.todoPlaceholders.delete(id);
     }
 
-    this.updateStats(start);
+    this.setEnd();
   }
 
   /**
    * API: 更新 Todo 项（精确更新单个组件）
    * 外部组件可通过 this.$refs.listRef.updateItem(id, newData) 调用
    */
-  updateItem(id: string, newTodo: TodoItem) {
-    const start = performance.now();
+  private updateItem(id: string, newTodo: TodoItem) {
+    this.setStart();
 
     const instance = this.todoInstances.get(id);
 
     if (instance) {
       // 更新数据
-      this.todos.set(id, newTodo);
+      const todoIndex = this.todos.findIndex(todo => todo.id === id);
+
+      if (todoIndex >= 0) {
+        this.todos[todoIndex] = { ...newTodo };
+      }
 
       // 手动更新子组件（不触发父组件渲染）
       instance.updateTodo(newTodo);
     }
 
-    this.updateStats(start);
+    this.setEnd();
   }
 
   /**
    * API: 切换完成状态
    */
-  toggle(id: string) {
-    const todo = this.todos.get(id);
+  private toggle(id: string) {
+    const todo = this.todos.find(todo => todo.id === id);
     if (todo) {
       const newTodo = { ...todo, completed: !todo.completed };
       this.updateItem(id, newTodo);
@@ -141,117 +204,99 @@ export class HighPerformanceList extends Fukict {
   }
 
   /**
-   * API: 移动 Todo 项到指定位置
-   * 外部组件可通过 this.$refs.listRef.move(fromId, toId) 调用
+   * API: 切换优先级
    */
-  move(fromId: string, toIndex: number) {
-    if (!this.containerRef) return;
-
-    const start = performance.now();
-
-    const placeholder = this.todoPlaceholders.get(fromId);
-    const instance = this.todoInstances.get(fromId);
-
-    if (!placeholder || !instance) return;
-
-    // 获取所有占位元素（按 DOM 顺序）
-    const allPlaceholders = Array.from(this.todoPlaceholders.values());
-    const targetPlaceholder = allPlaceholders[toIndex];
-
-    if (targetPlaceholder) {
-      // 移动占位元素到目标位置之前
-      this.containerRef.insertBefore(placeholder, targetPlaceholder);
-
-      // 组件会自动跟随占位元素移动（因为组件的 DOM 挂载在占位元素之后）
-      if (placeholder.nextSibling && instance._render) {
-        const componentDom = this.getComponentDom(instance);
-        if (componentDom) {
-          this.containerRef.insertBefore(componentDom, targetPlaceholder);
-        }
-      }
+  private changePriority(id: string, priority: Priority) {
+    const todo = this.todos.find(todo => todo.id === id);
+    if (todo) {
+      this.updateItem(id, { ...todo, priority });
     }
+  }
 
-    this.updateStats(start);
+  /**
+   * API: 更新进度
+   */
+  private changeProgress(id: string, progress: number) {
+    const todo = this.todos.find(todo => todo.id === id);
+    if (todo) {
+      this.updateItem(id, { ...todo, progress });
+    }
+  }
+
+  /**
+   * API: 上移
+   *
+   * 把当前元素插到上方元素之前，不触发任何组件重渲染
+   */
+  private moveUp(id: string) {
+    const index = this.todos.findIndex(t => t.id === id);
+    if (index <= 0 || !this.containerRef) return;
+
+    const elCurrent = this.todoInstances
+      .get(this.todos[index].id)
+      ?.getElement();
+    const elAbove = this.todoInstances
+      .get(this.todos[index - 1].id)
+      ?.getElement();
+    if (!elCurrent || !elAbove) return;
+
+    this.setStart();
+    this.containerRef.insertBefore(elCurrent, elAbove);
+    [this.todos[index], this.todos[index - 1]] = [
+      this.todos[index - 1],
+      this.todos[index],
+    ];
+    this.setEnd();
+  }
+
+  /**
+   * API: 下移
+   *
+   * 把下方元素插到当前元素之前，不触发任何组件重渲染
+   */
+  private moveDown(id: string) {
+    const index = this.todos.findIndex(t => t.id === id);
+    if (index < 0 || index >= this.todos.length - 1 || !this.containerRef)
+      return;
+
+    const elCurrent = this.todoInstances
+      .get(this.todos[index].id)
+      ?.getElement();
+    const elBelow = this.todoInstances
+      .get(this.todos[index + 1].id)
+      ?.getElement();
+    if (!elCurrent || !elBelow) return;
+
+    this.setStart();
+    this.containerRef.insertBefore(elBelow, elCurrent);
+    [this.todos[index], this.todos[index + 1]] = [
+      this.todos[index + 1],
+      this.todos[index],
+    ];
+    this.setEnd();
   }
 
   /**
    * API: 排序
+   *
+   * 通过 instance.getElement() 获取真实 DOM，
+   * 使用 DocumentFragment 批量移动，只触发 1 次 reflow
    */
-  sort(compareFn: (a: TodoItem, b: TodoItem) => number) {
+  private sort(compareFn: (a: TodoItem, b: TodoItem) => number) {
     if (!this.containerRef) return;
 
-    const start = performance.now();
+    const sorted = [...this.todos].sort(compareFn);
+    const fragment = document.createDocumentFragment();
 
-    // 获取排序后的 Todo 列表
-    const sorted = Array.from(this.todos.values()).sort(compareFn);
-
-    // 重新排列 DOM 节点
-    sorted.forEach(todo => {
-      const placeholder = this.todoPlaceholders.get(todo.id);
-      const instance = this.todoInstances.get(todo.id);
-
-      if (placeholder && instance) {
-        // 移动占位元素到末尾
-        this.containerRef!.appendChild(placeholder);
-
-        // 移动组件 DOM 到占位元素之后
-        const componentDom = this.getComponentDom(instance);
-        if (componentDom && placeholder.nextSibling !== componentDom) {
-          this.containerRef!.insertBefore(
-            componentDom,
-            placeholder.nextSibling,
-          );
-        }
+    for (let i = 0; i < sorted.length; i++) {
+      const el = this.todoInstances.get(sorted[i].id)?.getElement();
+      if (el) {
+        fragment.appendChild(el);
       }
-    });
-
-    // 更新 Map 顺序
-    const newTodos = new Map<string, TodoItem>();
-    sorted.forEach(todo => newTodos.set(todo.id, todo));
-    this.todos = newTodos;
-
-    this.updateStats(start);
-  }
-
-  /**
-   * API: 按时间排序
-   */
-  sortByDate() {
-    this.sort((a, b) => a.createdAt - b.createdAt);
-  }
-
-  /**
-   * API: 获取所有 Todo 项
-   */
-  getAll(): TodoItem[] {
-    return Array.from(this.todos.values());
-  }
-
-  /**
-   * API: 获取单个 Todo 项
-   */
-  get(id: string): TodoItem | undefined {
-    return this.todos.get(id);
-  }
-
-  /**
-   * 获取组件的 DOM 节点
-   * @private
-   */
-  private getComponentDom(instance: TodoItemComponent): Node | null {
-    if (!instance._render) return null;
-
-    const vnode = instance._render;
-
-    // 根据 VNode 类型获取 DOM
-    if ('__node__' in vnode && vnode.__node__) {
-      if (Array.isArray(vnode.__node__)) {
-        return vnode.__node__[0] || null;
-      }
-      return vnode.__node__ as Node;
     }
 
-    return null;
+    this.containerRef.appendChild(fragment);
+    this.todos = sorted;
   }
 
   /**
@@ -267,54 +312,11 @@ export class HighPerformanceList extends Fukict {
     return total;
   }
 
-  /**
-   * 更新统计信息（直接操作 DOM，不依赖 update）
-   */
-  private updateStats(startTime: number) {
-    this.stats.operationCount++;
-    this.stats.lastOperationTime = performance.now() - startTime;
-    this.updateStatsDisplay();
-  }
-
-  /**
-   * 直接更新统计信息的 DOM 显示
-   */
-  private updateStatsDisplay() {
-    if (!this.statsRef) return;
-
-    const html = `
-      <div class="font-semibold text-green-800 mb-1">
-        ✅ 高性能模式性能统计
-      </div>
-      <div class="text-gray-600 space-y-1 text-xs">
-        <div>父组件渲染次数: ${this.stats.totalRenders}</div>
-        <div>子组件总渲染次数: ${this.getTotalChildRenders()}</div>
-        <div>当前任务数: ${this.todos.size}</div>
-        <div>操作总次数: ${this.stats.operationCount}</div>
-        <div>
-          上次操作耗时: ${this.stats.lastOperationTime.toFixed(2)}ms
-        </div>
-        <div class="text-green-600 font-medium pt-1 border-t border-green-200">
-          使用手动实例化 + mount，只更新必要的组件
-        </div>
-      </div>
-    `;
-
-    this.statsRef.innerHTML = html;
-  }
-
   render() {
-    this.stats.totalRenders++;
-
     return (
       <div class="space-y-4">
-        {/* 性能统计（通过 DOM 直接更新，不依赖 render） */}
-        <div
-          ref={el => (this.statsRef = el)}
-          class="rounded border border-green-200 bg-green-50 p-3 text-sm"
-        >
-          {/* 统计内容由 updateStatsDisplay() 直接操作 DOM 更新 */}
-        </div>
+        {/* 性能统计 */}
+        <StatsPanel fukict:detach fukict:ref="statsDispaly" />
 
         {/* Todo 容器（带滚动，子组件通过 add() API 手动添加） */}
         <div
@@ -327,5 +329,32 @@ export class HighPerformanceList extends Fukict {
         </div>
       </div>
     );
+  }
+
+  // ================= 暴露 API =================
+
+  /**
+   * API: 按时间排序
+   */
+  public sortByDate() {
+    this.setStart();
+    this.sort((a, b) => a.createdAt - b.createdAt);
+    this.setEnd();
+  }
+
+  /**
+   * API: 添加 Todo 项
+   */
+  public addItem(todo: TodoItem) {
+    this.setStart();
+    this.add(todo);
+    this.setEnd();
+  }
+
+  /**
+   * API: 获取所有 Todo 项
+   */
+  getAll(): TodoItem[] {
+    return this.todos;
   }
 }
