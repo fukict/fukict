@@ -12,6 +12,7 @@
   "ignorePatterns": [
     "node_modules",
     ".pnpm-store",
+    ".changeset",
     "dist",
     "build",
     ".vite",
