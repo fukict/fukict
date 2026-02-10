@@ -108,6 +108,7 @@ export enum VNodeType {
   Fragment = 'fragment', // Multiple roots
   FunctionComponent = 'function', // Stateless
   ClassComponent = 'class', // Stateful
+  Primitive = 'primitive', // Primitive values
 }
 ```
 

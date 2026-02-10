@@ -14,14 +14,12 @@ export function shallowEqual(
   if (a === b) return true;
   if (!a || !b) return false;
 
-  const keysA = Object.keys(a);
-  const keysB = Object.keys(b);
-
-  if (keysA.length !== keysB.length) return false;
-
-  for (const key of keysA) {
+  let countA = 0;
+  for (const key in a) {
     if (a[key] !== b[key]) return false;
+    countA++;
   }
-
-  return true;
+  let countB = 0;
+  for (const _ in b) countB++;
+  return countA === countB;
 }

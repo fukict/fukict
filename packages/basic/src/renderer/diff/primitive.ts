@@ -4,7 +4,6 @@
  * Diff primitive VNodes
  */
 import type { PrimitiveVNode, VNode } from '../../types/index.js';
-import { VNodeType } from '../../types/index.js';
 import { setupPrimitiveVNode } from '../vnode-helpers.js';
 import { replaceNode } from './dom-ops.js';
 
@@ -17,13 +16,6 @@ export function diffPrimitive(
   newVNode: VNode,
   container: Element,
 ): void {
-  if (
-    oldVNode.__type__ !== VNodeType.Primitive ||
-    newVNode.__type__ !== VNodeType.Primitive
-  ) {
-    throw new Error('Expected PrimitiveVNode');
-  }
-
   const oldPrimitive = oldVNode as PrimitiveVNode;
   const newPrimitive = newVNode as PrimitiveVNode;
 

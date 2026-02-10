@@ -5,7 +5,6 @@
  */
 import type { FukictComponent } from '../../types/class.js';
 import type { ClassComponentVNode, VNode } from '../../types/index.js';
-import { VNodeType } from '../../types/index.js';
 import { setupClassComponentVNode } from '../class-helpers.js';
 import { replaceNode } from './dom-ops.js';
 
@@ -29,14 +28,6 @@ export function diffClassComponent(
   container: Element,
   parentInstance?: FukictComponent,
 ): void {
-  if (
-    oldVNode.__type__ !== VNodeType.ClassComponent ||
-    newVNode.__type__ !== VNodeType.ClassComponent
-  ) {
-    throw new Error('Expected ClassComponentVNode');
-  }
-
-  // Type assertion after runtime check
   const oldClassVNode = oldVNode as ClassComponentVNode;
   const newClassVNode = newVNode as ClassComponentVNode;
 

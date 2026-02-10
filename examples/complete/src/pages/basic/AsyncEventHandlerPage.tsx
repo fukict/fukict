@@ -25,6 +25,8 @@ class AsyncButtonDemo extends Fukict {
       ...this.state,
       ...newState,
     };
+
+    this.update();
   }
 
   // 异步函数 - 模拟 API 调用
@@ -129,6 +131,8 @@ class AsyncFormDemo extends Fukict {
       ...this.state,
       ...newState,
     };
+
+    this.update();
   }
 
   private async handleFormSubmit(e: Event): Promise<void> {

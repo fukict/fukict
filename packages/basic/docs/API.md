@@ -607,6 +607,7 @@ enum VNodeType {
   Fragment = 'fragment',
   FunctionComponent = 'function',
   ClassComponent = 'class',
+  Primitive = 'primitive',
 }
 ```
 

@@ -32,7 +32,9 @@ import { shallowEqual } from './utils.js';
 
 /**
  * Diff children arrays
- * Simplified algorithm without key-based optimization
+ *
+ * Performance optimized: All children are VNodes (primitives wrapped in PrimitiveVNode by h()).
+ * No need for primitive type checking - directly diff VNodes using cached __node__ references.
  */
 export function diffChildren(
   oldChildren: VNodeChild[],
@@ -43,27 +45,9 @@ export function diffChildren(
   const newLen = newChildren.length;
   const commonLen = Math.min(oldLen, newLen);
 
-  // Diff common children
+  // Diff common children - all are VNodes with __node__ cache
   for (let i = 0; i < commonLen; i++) {
-    const oldChild = oldChildren[i];
-    const newChild = newChildren[i];
-
-    // Both are primitives - update text node directly
-    if (
-      (typeof oldChild === 'string' || typeof oldChild === 'number') &&
-      (typeof newChild === 'string' || typeof newChild === 'number')
-    ) {
-      if (oldChild !== newChild) {
-        // Find the i-th text node in container
-        const childNodes = Array.from(container.childNodes);
-        if (childNodes[i] && childNodes[i].nodeType === Node.TEXT_NODE) {
-          childNodes[i].textContent = String(newChild);
-        }
-      }
-    } else {
-      // VNode diff
-      diff(oldChild, newChild, container);
-    }
+    diff(oldChildren[i], newChildren[i], container);
   }
 
   // Remove extra old children
@@ -104,13 +88,6 @@ function diffElement(
   newVNode: VNode,
   container: Element,
 ): void {
-  if (
-    oldVNode.__type__ !== VNodeType.Element ||
-    newVNode.__type__ !== VNodeType.Element
-  ) {
-    throw new Error('Expected ElementVNode');
-  }
-
   const oldElementVNode = oldVNode as ElementVNode;
   const newElementVNode = newVNode as ElementVNode;
 
@@ -152,13 +129,6 @@ function diffFragment(
   newVNode: VNode,
   container: Element,
 ): void {
-  if (
-    oldVNode.__type__ !== VNodeType.Fragment ||
-    newVNode.__type__ !== VNodeType.Fragment
-  ) {
-    throw new Error('Expected FragmentVNode');
-  }
-
   const newFragmentVNode = newVNode as FragmentVNode;
 
   // Diff children
@@ -198,14 +168,6 @@ function diffFunctionComponent(
   newVNode: VNode,
   container: Element,
 ): void {
-  if (
-    oldVNode.__type__ !== VNodeType.FunctionComponent ||
-    newVNode.__type__ !== VNodeType.FunctionComponent
-  ) {
-    throw new Error('Expected FunctionComponentVNode');
-  }
-
-  // Type assertion after runtime check
   const oldFuncVNode = oldVNode as FunctionComponentVNode;
   const newFuncVNode = newVNode as FunctionComponentVNode;
 
@@ -315,43 +277,8 @@ export function diff(
     return;
   }
 
-  // Both are primitives
-  if (
-    (typeof oldVNode === 'string' ||
-      typeof oldVNode === 'number' ||
-      typeof oldVNode === 'boolean') &&
-    (typeof newVNode === 'string' ||
-      typeof newVNode === 'number' ||
-      typeof newVNode === 'boolean')
-  ) {
-    // Text changed - replace text node
-    if (oldVNode !== newVNode) {
-      const oldText = String(oldVNode);
-      const newText = String(newVNode);
-      // Find and replace text node (simplified - assumes single text node)
-      const textNodes = Array.from(container.childNodes).filter(
-        node =>
-          node.nodeType === Node.TEXT_NODE && node.textContent === oldText,
-      );
-      if (textNodes.length > 0) {
-        textNodes[0].textContent = newText;
-      }
-    }
-    return;
-  }
-
-  // One is primitive, one is VNode - replace
-  const isOldVNode =
-    typeof oldVNode === 'object' && oldVNode !== null && '__type__' in oldVNode;
-  const isNewVNode =
-    typeof newVNode === 'object' && newVNode !== null && '__type__' in newVNode;
-
-  if (!isOldVNode || !isNewVNode) {
-    replaceNode(oldVNode, newVNode, container);
-    return;
-  }
-
-  // Both are VNodes - check type match
+  // All children are VNodes (primitives wrapped in PrimitiveVNode by h())
+  // Direct type assertion - no need for expensive typeof checks
   const oldVN = oldVNode as VNode;
   const newVN = newVNode as VNode;
 

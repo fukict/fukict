@@ -24,14 +24,14 @@ export function patchProps(
   const newP = newProps || {};
 
   // Remove old props not in new
-  for (const key of Object.keys(old)) {
+  for (const key in old) {
     if (!(key in newP)) {
       removeProp(element, key, old[key]);
     }
   }
 
   // Set new props
-  for (const key of Object.keys(newP)) {
+  for (const key in newP) {
     const oldValue = old[key];
     const newValue = newP[key];
 
@@ -84,15 +84,15 @@ export function setProp(
     const newStyle = value as Record<string, string>;
 
     // Remove old styles not in new
-    for (const styleKey of Object.keys(oldStyle)) {
+    for (const styleKey in oldStyle) {
       if (!(styleKey in newStyle)) {
         dom.setStyle(element as HTMLElement, styleKey, '');
       }
     }
 
     // Set new styles
-    for (const [styleKey, styleValue] of Object.entries(newStyle)) {
-      dom.setStyle(element as HTMLElement, styleKey, styleValue);
+    for (const styleKey in newStyle) {
+      dom.setStyle(element as HTMLElement, styleKey, newStyle[styleKey]);
     }
     return;
   }

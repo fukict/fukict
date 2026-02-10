@@ -14,6 +14,7 @@ export enum VNodeType {
   Fragment = 'fragment',
   FunctionComponent = 'function',
   ClassComponent = 'class',
+  Primitive = 'primitive',
 }
 
 export type VNode =
@@ -25,12 +26,13 @@ export type VNode =
 
 ## Field Usage
 
-| VNode Type         | `__type__` | `type`     | `__node__`       | `__render__` | `__instance__` | `__context__` |
-| ------------------ | ---------- | ---------- | ---------------- | ------------ | -------------- | ------------- |
-| Element            | `element`  | `string`   | `Node`           | -            | -              | ✅ Optional   |
-| Fragment           | `fragment` | `symbol`   | `Node[]`         | -            | -              | ✅ Optional   |
-| Function Component | `function` | `Function` | `Node \| Node[]` | `VNode`      | -              | ✅ Optional   |
-| Class Component    | `class`    | `Function` | `Comment`        | -            | `instance`     | ✅ Optional   |
+| VNode Type         | `__type__`  | `type`        | `__node__`        | `__render__` | `__instance__` | `__context__` |
+| ------------------ | ----------- | ------------- | ----------------- | ------------ | -------------- | ------------- |
+| Element            | `element`   | `string`      | `Node`            | -            | -              | ✅ Optional   |
+| Fragment           | `fragment`  | `symbol`      | `Node[]`          | -            | -              | ✅ Optional   |
+| Function Component | `function`  | `Function`    | `Node \| Node[]`  | `VNode`      | -              | ✅ Optional   |
+| Class Component    | `class`     | `Function`    | `Comment`         | -            | `instance`     | ✅ Optional   |
+| Primitive          | `primitive` | `'primitive'` | `Text \| Comment` | -            | -              | ✅ Optional   |
 
 **Note**: `__context__` field (added in v3.1) stores context chain for data passing. See [Context System](./context-system.md).
 

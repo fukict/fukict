@@ -11,7 +11,13 @@ sidebarStore.actions.init(routes);
 
 const root = document.getElementById('app');
 if (root) {
-  console.time('render');
+  const timeStart = performance.now();
+
   attach(<App />, root);
-  console.timeEnd('render');
+
+  requestAnimationFrame(() => {
+    const timeEnd = performance.now();
+
+    console.log(`App rendered in ${timeEnd - timeStart}ms`);
+  });
 }

@@ -24,15 +24,6 @@ import { activate } from '../mount.js';
 function getFirstDomNode(vnode: VNodeChild): Node | null {
   if (!vnode) return null;
 
-  // Primitive - not reliable
-  if (
-    typeof vnode === 'string' ||
-    typeof vnode === 'number' ||
-    typeof vnode === 'boolean'
-  ) {
-    return null;
-  }
-
   // VNode object
   if (typeof vnode === 'object' && '__type__' in vnode) {
     const vnodeObj = vnode as VNode;
@@ -75,15 +66,6 @@ function getFirstDomNode(vnode: VNodeChild): Node | null {
  */
 function unmountVNode(vnode: VNodeChild): void {
   if (!vnode) return;
-
-  // Primitive - nothing to unmount
-  if (
-    typeof vnode === 'string' ||
-    typeof vnode === 'number' ||
-    typeof vnode === 'boolean'
-  ) {
-    return;
-  }
 
   // Array - unmount each item
   if (Array.isArray(vnode)) {
@@ -182,27 +164,13 @@ export function replaceNode(
 /**
  * Remove node from DOM
  */
-export function removeNode(vnode: VNodeChild, container: Element): void {
+export function removeNode(vnode: VNodeChild, _container: Element): void {
   if (!vnode) return;
 
   // First, unmount all components recursively (trigger beforeUnmount hooks)
   unmountVNode(vnode);
 
   // Then remove DOM nodes
-  // Primitive - find and remove text node (simplified)
-  if (
-    typeof vnode === 'string' ||
-    typeof vnode === 'number' ||
-    typeof vnode === 'boolean'
-  ) {
-    const text = String(vnode);
-    const textNodes = Array.from(container.childNodes).filter(
-      node => node.nodeType === Node.TEXT_NODE && node.textContent === text,
-    );
-    textNodes.forEach(node => container.removeChild(node));
-    return;
-  }
-
   // VNode object
   if (typeof vnode === 'object' && '__type__' in vnode) {
     const vnodeObj = vnode as VNode;
