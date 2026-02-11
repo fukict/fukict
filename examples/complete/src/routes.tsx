@@ -1,21 +1,18 @@
 import { type RouteConfig } from '@fukict/router';
 
-// 导入页面组件
-import { HomePage } from './pages/HomePage';
-import { LayoutPage } from './pages/LayoutPage';
 // Basic 模块
 import { AsyncEventHandlerPage } from './pages/basic/AsyncEventHandlerPage';
 import { AttributesPage } from './pages/basic/AttributesPage';
 import { BasicIndexPage } from './pages/basic/BasicIndexPage';
 import { ComponentsPage } from './pages/basic/ComponentsPage';
 import { ContextPage } from './pages/basic/ContextPage';
+import { DynamicListPage } from './pages/basic/dynamic-list';
 import { EventsPage } from './pages/basic/EventsPage';
 import { JSXPage } from './pages/basic/JSXPage';
 import { LucideIconsPage } from './pages/basic/LucideIconsPage';
 import { RefsPage } from './pages/basic/RefsPage';
 import { SlotsPage } from './pages/basic/SlotsPage';
 import { StylesPage } from './pages/basic/StylesPage';
-import { DynamicListPage } from './pages/basic/dynamic-list';
 import { WebComponentPage } from './pages/basic/webcomponent';
 import { ActionsMutationsPage } from './pages/flux/ActionsMutationsPage';
 import { FluxIndexPage } from './pages/flux/FluxIndexPage';
@@ -26,16 +23,14 @@ import { StoreBasicsPage } from './pages/flux/StoreBasicsPage';
 import { GettingStartedIndexPage } from './pages/getting-started/GettingStartedIndexPage';
 import { InstallationPage } from './pages/getting-started/InstallationPage';
 import { QuickStartPage } from './pages/getting-started/QuickStartPage';
+// 导入页面组件
+import { HomePage } from './pages/HomePage';
 import { I18nConfigPage } from './pages/i18n/I18nConfigPage';
 import { I18nIndexPage } from './pages/i18n/I18nIndexPage';
 // I18n 模块
 import { I18nModuleIndexPage } from './pages/i18n/I18nModuleIndexPage';
 import { TranslationPage } from './pages/i18n/TranslationPage';
-import { NavigationPage } from './pages/router/NavigationPage';
-import { RouterConfigPage } from './pages/router/RouterConfigPage';
-import { RouterIndexPage } from './pages/router/RouterIndexPage';
-// Router 模块
-import { RouterModuleIndexPage } from './pages/router/RouterModuleIndexPage';
+import { LayoutPage } from './pages/LayoutPage';
 // Router Demo 子页面
 import { DemoAboutPage } from './pages/router/demo/DemoAboutPage';
 import { DemoDashboardLayout } from './pages/router/demo/DemoDashboardLayout';
@@ -44,6 +39,11 @@ import { DemoOverviewPage } from './pages/router/demo/DemoOverviewPage';
 import { DemoSettingsPage } from './pages/router/demo/DemoSettingsPage';
 import { DemoStatsPage } from './pages/router/demo/DemoStatsPage';
 import { DemoUserPage } from './pages/router/demo/DemoUserPage';
+import { NavigationPage } from './pages/router/NavigationPage';
+import { RouterConfigPage } from './pages/router/RouterConfigPage';
+import { RouterIndexPage } from './pages/router/RouterIndexPage';
+// Router 模块
+import { RouterModuleIndexPage } from './pages/router/RouterModuleIndexPage';
 // Tooling 模块
 import { BabelPresetPage } from './pages/tooling/BabelPresetPage';
 

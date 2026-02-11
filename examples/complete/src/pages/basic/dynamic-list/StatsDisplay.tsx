@@ -1,4 +1,5 @@
 import { Fukict } from '@fukict/basic';
+
 import { PerformanceStats } from './types';
 
 export class StatsPanel extends Fukict {

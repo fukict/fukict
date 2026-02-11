@@ -1,9 +1,9 @@
-import { transformSync } from '@babel/core';
-
 import { strict as assert } from 'node:assert';
 import { dirname, join } from 'node:path';
 import { describe, test } from 'node:test';
 import { fileURLToPath } from 'node:url';
+
+import { transformSync } from '@babel/core';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

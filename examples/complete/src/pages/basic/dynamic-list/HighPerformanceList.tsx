@@ -1,9 +1,9 @@
 import { Fukict, dom } from '@fukict/basic';
 
+import { TOTAL_COUNT } from './constants';
+import { StatsPanel } from './StatsDisplay';
 import { TodoItemComponent } from './TodoItemComponent';
 import type { PerformanceStats, Priority, TodoItem } from './types';
-import { StatsPanel } from './StatsDisplay';
-import { TOTAL_COUNT } from './constants';
 
 /**
  * 高性能列表组件

@@ -5,6 +5,7 @@
  */
 import type { PrimitiveVNode, VNode } from '../../types/index.js';
 import { setupPrimitiveVNode } from '../vnode-helpers.js';
+
 import { replaceNode } from './dom-ops.js';
 
 /**

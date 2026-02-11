@@ -48,6 +48,7 @@
     "@fukict/babel-preset": "workspace:*"
   },
   "devDependencies": {
+    "@types/babel__core": "^7.20.5",
     "typescript": "^5.6.3"
   },
   "peerDependencies": {

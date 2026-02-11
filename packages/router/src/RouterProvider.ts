@@ -1,8 +1,8 @@
 import { Fukict, type VNode, VNodeType } from '@fukict/basic';
 
+import { type IHistory, createHistory } from './history';
 import { Router } from './Router';
 import { RouterView } from './RouterView';
-import { type IHistory, createHistory } from './history';
 import type { RouterProviderProps } from './types';
 
 /**

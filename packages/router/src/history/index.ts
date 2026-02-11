@@ -1,4 +1,5 @@
 import type { RouterMode } from '../types';
+
 import { BaseHistory } from './base';
 import { BrowserHistory } from './browser';
 import { HashHistory } from './hash';

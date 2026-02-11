@@ -20,6 +20,7 @@ import {
   setupFragmentVNode,
   setupFunctionComponentVNode,
 } from '../vnode-helpers.js';
+
 import { diffClassComponent } from './class.js';
 import { removeNode, replaceNode } from './dom-ops.js';
 import { diffPrimitive } from './primitive.js';

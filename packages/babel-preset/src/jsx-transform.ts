@@ -1,7 +1,7 @@
+import * as pathUtil from 'node:path';
+
 import type { NodePath, PluginObj, types as t } from '@babel/core';
 import { declare } from '@babel/helper-plugin-utils';
-
-import * as pathUtil from 'node:path';
 
 import type { PluginOptions } from './types.js';
 import {

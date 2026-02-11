@@ -1,35 +1,37 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "arrowParens": "avoid",
+  "bracketSpacing": true,
+  "endOfLine": "lf",
+  "experimentalSortImports": {
+    "groups": [
+      ["builtin"],
+      ["external", "type-external"],
+      ["internal", "type-internal"],
+      ["parent", "type-parent"],
+      ["sibling", "type-sibling"],
+      ["index", "type-index"],
+      ["side-effect"]
+    ],
+    "newlinesBetween": true
+  },
+  "experimentalTailwindcss": {
+    "attributes": ["class", "className"],
+    "functions": ["clsx", "cn"],
+    "preserveWhitespace": true
+  },
   "printWidth": 80,
-  "tabWidth": 2,
-  "useTabs": false,
   "semi": true,
   "singleQuote": true,
-  "bracketSpacing": true,
-  "arrowParens": "avoid",
+  "tabWidth": 2,
   "trailingComma": "all",
-  "endOfLine": "lf",
+  "useTabs": false,
+  "experimentalSortPackageJson": {},
   "ignorePatterns": [
-    "node_modules",
-    ".pnpm-store",
-    ".changeset",
     "dist",
-    "build",
-    ".vite",
-    "*.local",
-    "*.log",
-    "logs",
-    ".vscode",
-    ".idea",
-    "*.swp",
-    "*.swo",
-    ".DS_Store",
-    "Thumbs.db",
-    "package-lock.json",
+    "node_modules",
     "pnpm-lock.yaml",
-    "yarn.lock",
-    "coverage",
-    ".nyc_output",
-    "old"
+    "desktop/target",
+    ".changeset"
   ]
 }

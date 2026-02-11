@@ -1,6 +1,5 @@
 import { Fukict, h } from '@fukict/basic';
 import { RouteComponent } from '@fukict/router';
-
 import {
   AlertCircle,
   Calendar,

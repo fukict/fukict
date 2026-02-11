@@ -1,11 +1,11 @@
+import path from 'node:path';
+
 /**
  * @fukict/vite-plugin
  *
  * Vite plugin for Fukict framework
  */
 import { transformSync } from '@babel/core';
-
-import path from 'node:path';
 import type { Plugin } from 'vite';
 
 /**

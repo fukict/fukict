@@ -16,6 +16,7 @@ import type {
   VNodeChild,
 } from '../types/index.js';
 import { VNodeType } from '../types/index.js';
+
 import { setAttributes } from './attributes.js';
 import { setupClassComponentVNode } from './class-helpers.js';
 import {

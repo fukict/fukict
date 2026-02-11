@@ -7,6 +7,7 @@ import { existsSync, readFileSync } from 'fs';
 import { dirname, resolve } from 'path';
 import { createInterface } from 'readline';
 import { fileURLToPath } from 'url';
+
 import { parse as parseYaml } from 'yaml';
 
 const __filename = fileURLToPath(import.meta.url);

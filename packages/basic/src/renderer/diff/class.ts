@@ -6,6 +6,7 @@
 import type { FukictComponent } from '../../types/class.js';
 import type { ClassComponentVNode, VNode } from '../../types/index.js';
 import { setupClassComponentVNode } from '../class-helpers.js';
+
 import { replaceNode } from './dom-ops.js';
 
 /**

@@ -6,6 +6,7 @@
 import { getDevInfo } from '../dev.js';
 import * as dom from '../dom/index.js';
 import type { VNode, VNodeChild } from '../types/index.js';
+
 import { createRealNode } from './create.js';
 import { removeNode } from './diff/index.js';
 import { activate } from './mount.js';
