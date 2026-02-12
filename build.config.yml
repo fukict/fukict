@@ -32,6 +32,11 @@ packages:
     description: '国际化库'
     metadata: true
 
+  # fetch
+  fetch:
+    description: '基于原生 fetch 的 HTTP 客户端'
+    metadata: true
+
   # 未来的包（注释掉）
   #
   # scheduler:

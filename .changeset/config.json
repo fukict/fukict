@@ -10,7 +10,8 @@
     "complete",
     "infra-flux",
     "infra-i18n",
-    "infra-router"
+    "infra-router",
+    "infra-fetch"
   ],
   "linked": [],
   "updateInternalDependencies": "patch"

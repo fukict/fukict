@@ -1,13 +1,14 @@
 {
-  "name": "@fukict/vite-plugin",
+  "name": "@fukict/fetch",
   "version": "0.1.10",
-  "description": "Vite plugin for Fukict framework",
+  "description": "Axios-style HTTP client built on native fetch for Fukict framework",
   "keywords": [
+    "axios",
+    "client",
+    "fetch",
     "fukict",
-    "jsx",
-    "plugin",
-    "typescript",
-    "vite"
+    "http",
+    "request"
   ],
   "bugs": {
     "url": "https://github.com/fukict/fukict/issues"
@@ -17,7 +18,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/fukict/fukict.git",
-    "directory": "packages/vite-plugin"
+    "directory": "packages/fetch"
   },
   "files": [
     "dist",
@@ -31,6 +32,7 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
+      "browser": "./dist/index.js",
       "default": "./dist/index.js"
     }
   },
@@ -38,21 +40,13 @@
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
+    "build": "tsx ../../scripts/build-package.ts --pkg-name fetch --no-watch",
+    "dev": "tsx ../../scripts/build-package.ts --pkg-name fetch --watch",
     "lint": "tsc --noEmit",
     "typecheck": "tsc --noEmit"
   },
-  "dependencies": {
-    "@babel/core": "^7.26.0",
-    "@fukict/babel-preset": "workspace:*"
-  },
   "devDependencies": {
-    "@types/babel__core": "^7.20.5",
     "typescript": "^5.6.3"
-  },
-  "peerDependencies": {
-    "vite": "^7.3.1"
   },
   "engines": {
     "node": ">=16.0.0"

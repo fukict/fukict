@@ -1,5 +1,5 @@
 {
-  "name": "complete",
+  "name": "infra-fetch",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -12,10 +12,7 @@
   },
   "dependencies": {
     "@fukict/basic": "workspace:*",
-    "@fukict/flux": "workspace:*",
-    "@fukict/i18n": "workspace:*",
-    "@fukict/router": "workspace:*",
-    "lucide": "^0.556.0"
+    "@fukict/fetch": "workspace:*"
   },
   "devDependencies": {
     "@fukict/vite-plugin": "workspace:*",
