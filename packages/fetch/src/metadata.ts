@@ -4,9 +4,10 @@
  */
 
 export const METADATA = {
-  name: '@fukict/basic',
+  name: '@fukict/fetch',
   version: '0.1.11',
-  description: 'Lightweight DOM rendering basic with extension mechanism',
+  description:
+    'Axios-style HTTP client built on native fetch for Fukict framework',
   author: 'Fukict Team',
   license: 'MIT',
   homepage: '',

@@ -1,5 +1,23 @@
 # @fukict/router
 
+## 0.1.11
+
+### Patch Changes
+
+- 0393641: 重构 diff
+- b2361a4: 更新 传统/手动 列表渲染性能对比示例
+- 8074aa1: 优化 format import 排序, vite-plugin 添加 @types/babel\_\_core 依赖
+- f13869d: diff 性能优化
+- 8289767: 添加 fetch 包
+- 1c514d5: 忽略对 .changeset 目录文件的格式化
+- Updated dependencies [0393641]
+- Updated dependencies [b2361a4]
+- Updated dependencies [8074aa1]
+- Updated dependencies [f13869d]
+- Updated dependencies [8289767]
+- Updated dependencies [1c514d5]
+  - @fukict/basic@0.1.11
+
 ## 0.1.10
 
 ### Patch Changes

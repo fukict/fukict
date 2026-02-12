@@ -1,6 +1,6 @@
 {
   "name": "@fukict/babel-preset",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "Zero-config Babel preset for Fukict with automatic component wrapping",
   "keywords": [
     "babel",
