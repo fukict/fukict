@@ -1,5 +1,13 @@
 # @fukict/flux
 
+## 0.1.12
+
+### Patch Changes
+
+- a519c04: 优化 flux 类型推断
+- Updated dependencies [a519c04]
+  - @fukict/basic@0.1.12
+
 ## 0.1.11
 
 ### Patch Changes
