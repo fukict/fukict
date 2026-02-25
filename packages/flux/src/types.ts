@@ -108,7 +108,7 @@ export interface DefineStoreConfig<
    * }
    * ```
    */
-  actions?: A;
+  actions?: A & SyncActions<NoInfer<T>>;
 
   /**
    * 异步 Actions
@@ -124,7 +124,7 @@ export interface DefineStoreConfig<
    * }
    * ```
    */
-  asyncActions?: AA;
+  asyncActions?: AA & AsyncActions<NoInfer<T>>;
 }
 
 /**

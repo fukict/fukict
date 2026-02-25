@@ -27,23 +27,23 @@ export const todoStore = defineStore({
   } as TodoState,
 
   actions: {
-    addTodo: (state: TodoState, text: string) => ({
+    addTodo: (state, text: string) => ({
       todos: [...state.todos, { id: nextId++, text, completed: false }],
     }),
 
-    toggleTodo: (state: TodoState, id: number) => ({
+    toggleTodo: (state, id: number) => ({
       todos: state.todos.map(todo =>
         todo.id === id ? { ...todo, completed: !todo.completed } : todo,
       ),
     }),
 
-    deleteTodo: (state: TodoState, id: number) => ({
+    deleteTodo: (state, id: number) => ({
       todos: state.todos.filter(todo => todo.id !== id),
     }),
 
-    setFilter: (_state: TodoState, filter: TodoState['filter']) => ({ filter }),
+    setFilter: (_state, filter: TodoState['filter']) => ({ filter }),
 
-    clearCompleted: (state: TodoState) => ({
+    clearCompleted: state => ({
       todos: state.todos.filter(todo => !todo.completed),
     }),
   },

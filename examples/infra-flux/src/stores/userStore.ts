@@ -1,4 +1,4 @@
-import { type ActionContext, defineStore } from '@fukict/flux';
+import { defineStore } from '@fukict/flux';
 
 /**
  * User Store
@@ -39,18 +39,18 @@ export const userStore = defineStore({
   actions: {
     logout: () => ({ user: null }),
 
-    updateSettings: (state: UserState, settings: Partial<UserSettings>) => ({
+    updateSettings: (state, settings: Partial<UserSettings>) => ({
       settings: { ...state.settings, ...settings },
     }),
 
-    updateProfile: (state: UserState, user: Partial<User>) => {
+    updateProfile: (state, user: Partial<User>) => {
       if (!state.user) return {};
       return { user: { ...state.user, ...user } };
     },
   },
 
   asyncActions: {
-    async login(ctx: ActionContext<UserState>, email: string) {
+    async login(ctx, email: string) {
       ctx.setState({ isLoading: true });
 
       // Simulate API call

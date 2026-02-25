@@ -1,4 +1,4 @@
-import { type ActionContext, defineStore } from '@fukict/flux';
+import { defineStore } from '@fukict/flux';
 
 /**
  * Counter Store
@@ -19,14 +19,14 @@ export const counterStore = defineStore({
   } as CounterState,
 
   actions: {
-    increment: (state: CounterState) => ({ count: state.count + state.step }),
-    decrement: (state: CounterState) => ({ count: state.count - state.step }),
+    increment: state => ({ count: state.count + state.step }),
+    decrement: state => ({ count: state.count - state.step }),
     reset: () => ({ count: 0 }),
-    setStep: (_state: CounterState, step: number) => ({ step }),
+    setStep: (_state, step: number) => ({ step }),
   },
 
   asyncActions: {
-    async incrementAsync(ctx: ActionContext<CounterState>) {
+    async incrementAsync(ctx) {
       await new Promise(resolve => setTimeout(resolve, 1000));
       const state = ctx.getState();
       ctx.setState({ count: state.count + state.step });
