@@ -1,5 +1,11 @@
 # @fukict/babel-preset
 
+## 0.1.13
+
+### Patch Changes
+
+- d0b9dbe: router 添加辅助函数, 方便非 router 组件获取上下文
+
 ## 0.1.12
 
 ### Patch Changes

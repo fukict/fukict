@@ -5,7 +5,7 @@
 
 export const METADATA = {
   name: '@fukict/fetch',
-  version: '0.1.12',
+  version: '0.1.13',
   description:
     'Axios-style HTTP client built on native fetch for Fukict framework',
   author: 'Fukict Team',
