@@ -44,6 +44,7 @@ import { RouterConfigPage } from './pages/router/RouterConfigPage';
 import { RouterIndexPage } from './pages/router/RouterIndexPage';
 // Router 模块
 import { RouterModuleIndexPage } from './pages/router/RouterModuleIndexPage';
+import { UseRouterPage } from './pages/router/UseRouterPage';
 // Tooling 模块
 import { BabelPresetPage } from './pages/tooling/BabelPresetPage';
 
@@ -256,6 +257,16 @@ export const routes: RouteConfig[] = [
             meta: {
               title: '导航组件',
               description: '使用 Link 和 RouterView 组件实现页面导航',
+              showInSidebar: true,
+            },
+          },
+          {
+            path: '/use-router',
+            component: UseRouterPage,
+            meta: {
+              title: '子组件路由访问',
+              description:
+                '使用 useRouter / useRoute 在非 RouteComponent 子组件中访问路由上下文',
               showInSidebar: true,
             },
           },

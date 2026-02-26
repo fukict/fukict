@@ -14,6 +14,7 @@ SPA router for Fukict framework with nested routing, lazy loading, and navigatio
 - **Link Component**: Declarative navigation with automatic active states
 - **Programmatic Navigation**: `push()`, `replace()`, `back()`, `forward()` methods
 - **Route Meta**: Attach custom metadata to routes
+- **Child Component Access**: `useRouter()` / `useRoute()` helpers for non-RouteComponent children
 
 ## Installation
 
@@ -514,6 +515,62 @@ const routes = [
   { path: '/new-path', component: NewPage },
 ];
 ```
+
+## Child Component Route Access
+
+Non-RouteComponent children can access routing context via `useRouter()` and `useRoute()` helpers.
+
+### useRouter / useRoute
+
+```tsx
+import { Fukict } from '@fukict/basic';
+import { useRouter, useRoute } from '@fukict/router';
+
+// Read route info in a regular child component
+class Breadcrumb extends Fukict {
+  render() {
+    const route = useRoute(this);
+    return <nav>Current: {route.path}</nav>;
+  }
+}
+
+// Programmatic navigation from a child component
+class NavButton extends Fukict<{ to: string }> {
+  private handleClick = () => {
+    useRouter(this).push(this.props.to);
+  };
+
+  render() {
+    return <button on:click={this.handleClick}>Navigate</button>;
+  }
+}
+
+// Use inside a RouteComponent page
+class DashboardPage extends RouteComponent {
+  render() {
+    return (
+      <div>
+        <Breadcrumb />
+        <NavButton to="/settings" />
+      </div>
+    );
+  }
+}
+```
+
+### How It Works
+
+1. Traverses the component's `_parent` chain to find the nearest `RouteComponent` ancestor
+2. Returns that ancestor's `router` instance (supports nested routes correctly)
+3. Falls back to `Router.getInstance()` (global singleton)
+4. Throws an error if no Router is found
+
+### When to Use
+
+| Approach                             | Use Case                                        |
+| ------------------------------------ | ----------------------------------------------- |
+| `RouteComponent`                     | Page components directly matched by routes      |
+| `useRouter(this)` / `useRoute(this)` | Regular child components that need route access |
 
 ## Best Practices
 

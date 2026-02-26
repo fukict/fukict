@@ -30,6 +30,9 @@ export { RouterProvider } from './RouterProvider';
 export { RouterView } from './RouterView';
 export { Link } from './Link';
 
+// 导出辅助函数
+export { useRouter, useRoute } from './helpers';
+
 // 导出工具类（可选）
 export { RouteMatcher } from './matcher';
 export { createHistory, HashHistory, BrowserHistory } from './history';

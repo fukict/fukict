@@ -1,6 +1,7 @@
 import { Fukict, type VNode, h } from '@fukict/basic';
 
-import { Router } from './Router';
+import { useRouter } from './helpers';
+import type { Router } from './Router';
 import type { LinkProps } from './types';
 
 /**
@@ -13,7 +14,11 @@ export class Link extends Fukict<LinkProps> {
    * 获取 Router 实例
    */
   private getRouter(): Router | null {
-    return Router.getInstance();
+    try {
+      return useRouter(this);
+    } catch {
+      return null;
+    }
   }
 
   /**
