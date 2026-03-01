@@ -327,8 +327,8 @@ export default declare<PluginOptions>((api, options) => {
             const child = childPath.node;
 
             if (t.isJSXText(child)) {
-              const text = child.value.replace(/\s+/g, ' ');
-              if (text.trim() === '') continue;
+              const text = child.value.replace(/\s+/g, ' ').trim();
+              if (text === '') continue;
               children.push(t.stringLiteral(text));
             } else if (t.isJSXExpressionContainer(child)) {
               if (t.isJSXEmptyExpression(child.expression)) continue;
@@ -413,8 +413,8 @@ export default declare<PluginOptions>((api, options) => {
             const child = childPath.node;
 
             if (t.isJSXText(child)) {
-              const text = child.value.replace(/\s+/g, ' ');
-              if (text.trim() === '') continue;
+              const text = child.value.replace(/\s+/g, ' ').trim();
+              if (text === '') continue;
               children.push(t.stringLiteral(text));
             } else if (t.isJSXExpressionContainer(child)) {
               if (t.isJSXEmptyExpression(child.expression)) continue;
