@@ -1,5 +1,13 @@
 # @fukict/flux
 
+## 0.1.14
+
+### Patch Changes
+
+- 4f47d07: 修复 babel-preset jsx 字符串首尾空格问题
+- Updated dependencies [4f47d07]
+  - @fukict/basic@0.1.14
+
 ## 0.1.13
 
 ### Patch Changes
