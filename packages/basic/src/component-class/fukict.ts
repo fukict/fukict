@@ -267,6 +267,27 @@ export abstract class Fukict<
   }
 
   /**
+   * Report a render/lifecycle error with component context, then re-throw.
+   *
+   * Logs the error so failures are attributable to a specific component and
+   * operation, then re-throws so it still surfaces (and a future error boundary
+   * can catch it). Pair with try/finally in mount/update/unmount so the phase
+   * lock is always released even when this throws.
+   *
+   * @internal
+   */
+  private reportRenderError(
+    operation: 'mount' | 'update' | 'unmount',
+    error: unknown,
+  ): never {
+    console.error(
+      `[Fukict] Error during ${operation} of component "${this.$name}":`,
+      error,
+    );
+    throw error;
+  }
+
+  /**
    * Update component (props-driven update with built-in diff)
    *
    * Can be overridden by user for custom update logic.
@@ -288,39 +309,46 @@ export abstract class Fukict<
 
     this._phase = 'updating';
 
-    const prevProps = this.props;
+    // Guarantee the phase is released even if render/diff/lifecycle throws.
+    // Without this, a single render error would permanently leave the component
+    // in 'updating' and block all future updates (e.g. router navigation).
+    try {
+      const prevProps = this.props;
 
-    // Update props (use current props if not provided)
-    if (newProps !== undefined) {
-      (this.props as FukictComponentProps<P>) = newProps;
+      // Update props (use current props if not provided)
+      if (newProps !== undefined) {
+        (this.props as FukictComponentProps<P>) = newProps;
+      }
+
+      // Re-render
+      const rawVNode = this.render();
+
+      // Wrap null/undefined as PrimitiveVNode for consistent diff handling
+      const newVNode: VNode =
+        rawVNode === null || rawVNode === undefined
+          ? (createPrimitiveVNode(rawVNode) as VNode)
+          : rawVNode;
+
+      // Preserve context from old VNode to new VNode
+      if (this._render?.__context__) {
+        newVNode.__context__ = this._render.__context__;
+      }
+
+      // Diff and patch (let diff handle all cases including PrimitiveVNode)
+      if (this._render && this._container) {
+        diff(this._render, newVNode, this._container);
+      }
+
+      this._render = newVNode;
+
+      // Call lifecycle hook (protected from re-entry)
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises -- async lifecycle hooks are intentionally not awaited
+      this.updated?.(prevProps);
+    } catch (error) {
+      this.reportRenderError('update', error);
+    } finally {
+      this._phase = 'idle';
     }
-
-    // Re-render
-    const rawVNode = this.render();
-
-    // Wrap null/undefined as PrimitiveVNode for consistent diff handling
-    const newVNode: VNode =
-      rawVNode === null || rawVNode === undefined
-        ? (createPrimitiveVNode(rawVNode) as VNode)
-        : rawVNode;
-
-    // Preserve context from old VNode to new VNode
-    if (this._render?.__context__) {
-      newVNode.__context__ = this._render.__context__;
-    }
-
-    // Diff and patch (let diff handle all cases including PrimitiveVNode)
-    if (this._render && this._container) {
-      diff(this._render, newVNode, this._container);
-    }
-
-    this._render = newVNode;
-
-    // Call lifecycle hook (protected from re-entry)
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises -- async lifecycle hooks are intentionally not awaited
-    this.updated?.(prevProps);
-
-    this._phase = 'idle';
   }
 
   /**
@@ -357,29 +385,38 @@ export abstract class Fukict<
     this._container = placeholder?.parentElement || container;
     this._phase = 'mounting';
 
-    // First render (if not already rendered)
-    if (!this._render) {
-      const rawVNode = this.render();
-      // Wrap null/undefined as PrimitiveVNode
-      this._render =
-        rawVNode === null || rawVNode === undefined
-          ? (createPrimitiveVNode(rawVNode) as VNode)
-          : rawVNode;
+    // Guarantee the phase is released even if DOM creation throws.
+    // Without this, a render error during initial mount (e.g. before onMounted
+    // runs) would permanently leave the component in 'mounting'.
+    try {
+      // First render (if not already rendered)
+      if (!this._render) {
+        const rawVNode = this.render();
+        // Wrap null/undefined as PrimitiveVNode
+        this._render =
+          rawVNode === null || rawVNode === undefined
+            ? (createPrimitiveVNode(rawVNode) as VNode)
+            : rawVNode;
+      }
+
+      // Create real DOM for instance._render (pass this for fukict:ref)
+      createRealNode(this._render, this);
+
+      // Recursively activate nested components in instance._render
+      activate({
+        vnode: this._render,
+        ...(placeholder ? { placeholder } : { container }),
+        onMounted: () => {
+          this._phase = 'idle';
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises -- async lifecycle hooks are intentionally not awaited
+          this.mounted?.();
+        },
+      });
+    } catch (error) {
+      this.reportRenderError('mount', error);
+    } finally {
+      this._phase = 'idle';
     }
-
-    // Create real DOM for instance._render (pass this for fukict:ref)
-    createRealNode(this._render, this);
-
-    // Recursively activate nested components in instance._render
-    activate({
-      vnode: this._render,
-      ...(placeholder ? { placeholder } : { container }),
-      onMounted: () => {
-        this._phase = 'idle';
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises -- async lifecycle hooks are intentionally not awaited
-        this.mounted?.();
-      },
-    });
   }
 
   /**
@@ -391,19 +428,24 @@ export abstract class Fukict<
   unmount(): void {
     this._phase = 'unmounting';
 
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises -- async lifecycle hooks are intentionally not awaited
-    this.beforeUnmount?.();
+    // Guarantee the phase is released even if lifecycle/DOM removal throws.
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises -- async lifecycle hooks are intentionally not awaited
+      this.beforeUnmount?.();
 
-    removeNode(this._render, this._container as Element);
+      removeNode(this._render, this._container as Element);
 
-    // Clear all refs ($refs now store instances directly, not Ref wrappers)
-    for (const key in this.$refs) {
-      delete this.$refs[key];
+      // Clear all refs ($refs now store instances directly, not Ref wrappers)
+      for (const key in this.$refs) {
+        delete this.$refs[key];
+      }
+
+      this._render = null;
+      this._container = null;
+    } catch (error) {
+      this.reportRenderError('unmount', error);
+    } finally {
+      this._phase = 'idle';
     }
-
-    this._render = null;
-    this._container = null;
-
-    this._phase = 'idle';
   }
 }
