@@ -3,7 +3,8 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "module": "ES2022",
-    "moduleResolution": "bundler"
+    "moduleResolution": "bundler",
+    "skipLibCheck": true
   },
   "extends": "../../tsconfig.json",
   "include": ["src"]
