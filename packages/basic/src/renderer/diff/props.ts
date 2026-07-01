@@ -4,7 +4,6 @@
  * Patch element properties
  */
 import * as dom from '../../dom/index.js';
-import { isSVGTag } from '../../dom/index.js';
 import type { ClassValue } from '../../types/dom-attributes.js';
 
 /**
@@ -110,8 +109,8 @@ export function setProp(
   }
 
   // Check if property exists on element (for Web Components)
-  // SVG elements must use setAttribute
-  if (key in element && !isSVGTag(element.tagName.toLowerCase())) {
+  // SVG elements must use setAttribute (geometry attrs are read-only IDL props)
+  if (key in element && !dom.isSVGElement(element)) {
     dom.setProperty(element, key, value);
     return;
   }
@@ -150,8 +149,8 @@ export function removeProp(
   }
 
   // Check if property exists on element (for Web Components)
-  // SVG elements must use removeAttribute
-  if (key in element && !isSVGTag(element.tagName.toLowerCase())) {
+  // SVG elements must use removeAttribute (geometry attrs are read-only IDL props)
+  if (key in element && !dom.isSVGElement(element)) {
     dom.setProperty(element, key, undefined);
     return;
   }

@@ -10,6 +10,7 @@ export {
   createTextNode,
   createComment,
   isSVGTag,
+  isSVGElement,
 } from './element.js';
 
 // Node operations

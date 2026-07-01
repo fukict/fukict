@@ -79,6 +79,19 @@ export function isSVGTag(tag: string): boolean {
 }
 
 /**
+ * Check if a DOM element lives in the SVG namespace.
+ *
+ * Used for attribute/property decisions: SVG elements expose many geometry
+ * attributes (x1, cx, cy, r, d, ...) as read-only IDL properties, so they must
+ * be set via setAttribute. Namespace detection is tag-list-independent and
+ * case-safe, unlike matching on tagName (whose camelCase form, e.g.
+ * "linearGradient", is broken by toLowerCase()).
+ */
+export function isSVGElement(element: Element): boolean {
+  return element.namespaceURI === SVG_NAMESPACE;
+}
+
+/**
  * Create an element (HTML or SVG)
  */
 export function createElement(tag: string): Element {
